@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import Amplify from "aws-amplify";
+import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import "./App.css";
+import ConfirmSignUp from "./components/ConfirmSignUp";
+import Register from "./components/Register";
+import { history } from "./helpers/history";
 
-function App() {
+const App = () => {
+  useEffect(() => {
+    Amplify.configure({
+      Auth: {
+        region: process.env.REACT_APP_REGION,
+        userPoolId: process.env.REACT_APP_USER_POOL_ID,
+        userPoolWebClientId: process.env.REACT_APP_USER_POOL_WEB_CLIENT_ID,
+      },
+    });
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router history={history}>
+      <br></br>
+      <Routes>
+        <Route path="/" element={<Register />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/confirm-sign-up" element={<ConfirmSignUp />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
