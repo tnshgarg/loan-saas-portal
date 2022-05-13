@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import ConfirmSignUp from "./components/ConfirmSignUp";
 import Login from "./components/Login";
-import Register from "./components/Register";
+import SignUp from "./components/SignUp";
 import { history } from "./helpers/history";
 
 const App = () => {
@@ -23,8 +23,8 @@ const App = () => {
     <Router history={history}>
       <br></br>
       <Routes>
-        <Route path="/" element={<Register />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<SignUp />} />
+        <Route path="/register" element={<SignUp />} />
         <Route path="/confirm-sign-up" element={<ConfirmSignUp />} />
         <Route path="/login" element={<Login />} />
       </Routes>
