@@ -93,9 +93,14 @@ export const confirmSignUp = (email, code) => (dispatch) => {
 export const login = (username, password) => (dispatch) => {
   return AuthService.login(username, password).then(
     (data) => {
+      console.log(data);
       dispatch({
         type: LOGIN_SUCCESS,
         payload: { user: data },
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        payload: data.signInUserSession.accessToken.jwtToken,
       });
       return Promise.resolve();
     },
