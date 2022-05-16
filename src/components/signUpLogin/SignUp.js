@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../actions/auth";
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "../../actions/auth";
 import "./styles.css";
 
-const Login = () => {
+const SignUp = () => {
   const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { message } = useSelector((state) => state.message);
 
@@ -18,12 +20,32 @@ const Login = () => {
   } = useForm();
   const onSubmit = (data) => {
     console.log(data);
-    const { email: username, password } = data;
-    console.log(username, password);
+    const {
+      email: username,
+      password,
+      email,
+      phone_number,
+      name,
+      company_name,
+      no_of_employees,
+      title,
+    } = data;
 
-    dispatch(login(username, password))
+    dispatch(
+      registerUser(
+        username,
+        password,
+        email,
+        phone_number,
+        name,
+        company_name,
+        no_of_employees,
+        title
+      )
+    )
       .then(() => {
         setSuccessful(true);
+        navigate("/confirm-sign-up");
       })
       .catch(() => {
         setSuccessful(false);
@@ -34,7 +56,7 @@ const Login = () => {
 
   return (
     <div>
-      <h1>Login</h1>
+      <h1>Sign Up</h1>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
@@ -42,6 +64,16 @@ const Login = () => {
         <input {...register("email")} />
         <label>Password</label>
         <input type="password" {...register("password")} />
+        <label>Phone Number</label>
+        <input {...register("phone_number")} />
+        <label>Full Name</label>
+        <input {...register("name")} />
+        <label>Company Name</label>
+        <input {...register("company_name")} />
+        <label>Number of Employees</label>
+        <input {...register("no_of_employees")} />
+        <label>Title</label>
+        <input {...register("title")} />
 
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
@@ -65,4 +97,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;
