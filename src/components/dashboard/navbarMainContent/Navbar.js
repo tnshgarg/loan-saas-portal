@@ -18,6 +18,7 @@ import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -121,16 +122,24 @@ const Navbar = ({ child }) => {
         </DrawerHeader>
         <Divider />
         <List>
-          {["Register", "Logout"].map((text, index) => (
-            <ListItem key={text} disablePadding>
+          <Link to="/register-form" style={{ textDecoration: "none" }}>
+            <ListItem key={"Register"} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
-                  {index % 2 === 0 ? <AppRegistrationIcon /> : <LogoutIcon />}
+                  <AppRegistrationIcon />
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={"Register"} />
               </ListItemButton>
             </ListItem>
-          ))}
+          </Link>
+          <ListItem key={"Logout"} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Logout"} />
+            </ListItemButton>
+          </ListItem>
         </List>
         <Divider />
       </Drawer>

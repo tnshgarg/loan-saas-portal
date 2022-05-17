@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Navbar from "./Navbar";
+import Navbar from "../navbarMainContent/Navbar";
+import { AddressForm, TaxSetupForm } from "./registerFormTabs/index";
+import RegisterFormTabSwitcher from "./RegisterFormTabSwitcher";
 
-const ProfileContent = () => {
+const RegisterFormContent = () => {
   const auth = useSelector((state) => state.auth);
   const [userName, setUserName] = useState("");
   const navigate = useNavigate();
@@ -21,12 +23,18 @@ const ProfileContent = () => {
   }, [auth, navigate]);
 
   return (
-    <>Hello {userName}, please access the sidebar to continue registeration.</>
+    <>
+      <h5 style={{ color: "white" }}>
+        Hello {userName}, let's get to know your company.
+      </h5>
+      <br />
+      <RegisterFormTabSwitcher tab1={<AddressForm />} tab2={<TaxSetupForm />} />
+    </>
   );
 };
 
-const Profile = () => {
-  return <Navbar child={<ProfileContent />} />;
+const RegisterForm = () => {
+  return <Navbar child={<RegisterFormContent />} />;
 };
 
-export default Profile;
+export default RegisterForm;
