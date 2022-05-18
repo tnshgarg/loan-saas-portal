@@ -1,6 +1,6 @@
 import { Auth } from "aws-amplify";
 
-const register = (
+const signUp = (
   username,
   password,
   email,
@@ -41,7 +41,7 @@ const logout = () => {
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
-  register,
+  signUp,
   confirmSignUp,
   login,
   logout,

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { registerUser } from "../actions/auth";
 import "./styles.css";
 
-const Register = () => {
+const SignUp = () => {
   const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ const Register = () => {
 
   return (
     <div>
-      <h1>Register</h1>
+      <h1>Sign Up</h1>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
@@ -97,4 +97,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default SignUp;
