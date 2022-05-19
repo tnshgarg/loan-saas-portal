@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../navbarMainContent/Navbar";
-import { AddressForm, TaxSetupForm } from "./registerFormTabs/index";
+import Navbar from "../navbarMainComponent/Navbar";
+import {
+  AddressForm,
+  AutomationForm,
+  TaxSetupForm,
+} from "./registerFormTabs/index";
 import RegisterFormTabSwitcher from "./RegisterFormTabSwitcher";
 
 const RegisterFormContent = () => {
@@ -28,7 +32,11 @@ const RegisterFormContent = () => {
         Hello {userName}, let's get to know your company.
       </h5>
       <br />
-      <RegisterFormTabSwitcher tab1={<AddressForm />} tab2={<TaxSetupForm />} />
+      <RegisterFormTabSwitcher
+        tab1={<AddressForm />}
+        tab2={<TaxSetupForm />}
+        tab3={<AutomationForm />}
+      />
     </>
   );
 };

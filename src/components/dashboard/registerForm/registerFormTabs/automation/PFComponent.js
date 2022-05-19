@@ -2,20 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setAddressForm } from "../../../../actions/registerForm";
+import { setPfForm } from "../../../../../actions/registerForm";
 import "./styles.css";
 
-const AddressForm = () => {
+const PFComponent = () => {
   const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {
-    company: companyIntial,
-    brand: brandInitial,
-    address: addressInitial,
-    state: stateInitial,
-    pincode: pincodeInitial,
-  } = useSelector((state) => state.registerForm.addressFormDetails) || "";
+
+  const { pf_username: pfUsernameInitial, pf_password: pfPasswordInitial } =
+    useSelector((state) => state.registerForm.pfFormDetails) || "";
 
   const {
     register,
@@ -25,18 +21,15 @@ const AddressForm = () => {
     // formState: { errors },
   } = useForm({
     defaultValues: {
-      company: companyIntial,
-      brand: brandInitial,
-      address: addressInitial,
-      state: stateInitial,
-      pincode: pincodeInitial,
+      pf_username: pfUsernameInitial,
+      pf_password: pfPasswordInitial,
     },
   });
 
   useEffect(() => {
     return () => {
       const data = getValues();
-      const { company, brand, address, state, pincode } = data;
+      const { pf_username, pf_password } = data;
       const isEmpty = Object.values(data).every((value) => {
         if (value === "") {
           return true;
@@ -44,7 +37,7 @@ const AddressForm = () => {
         return false;
       });
       if (!isEmpty) {
-        dispatch(setAddressForm(company, brand, address, state, pincode));
+        dispatch(setPfForm(pf_username, pf_password));
       }
     };
   }, [dispatch, getValues]);
@@ -57,19 +50,13 @@ const AddressForm = () => {
 
   return (
     <div>
+      <h1>Enter your PF details</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
-
-        <label>Company Name</label>
-        <input {...register("company")} />
-        <label>Brand Name</label>
-        <input {...register("brand")} />
-        <label>Registered Address</label>
-        <input {...register("address")} />
-        <label>State</label>
-        <input {...register("state")} />
-        <label>Pincode</label>
-        <input {...register("pincode")} />
+        <label>Username</label>
+        <input {...register("pf_username")} />
+        <label>Password</label>
+        <input type="password" {...register("pf_password")} />
 
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
@@ -81,4 +68,4 @@ const AddressForm = () => {
   );
 };
 
-export default AddressForm;
+export default PFComponent;

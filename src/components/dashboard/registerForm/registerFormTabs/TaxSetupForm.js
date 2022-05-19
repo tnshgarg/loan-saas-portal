@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setTaxSetupForm } from "../../../../actions/registerForm";
 import "./styles.css";
 
 const TaxSetupForm = () => {
@@ -9,14 +10,42 @@ const TaxSetupForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { message } = useSelector((state) => state.message);
+  const {
+    company_pan: companyPaninitial,
+    company_tan: companyTanInitial,
+    company_gstin: companyGstinInitial,
+  } = useSelector((state) => state.registerForm.taxSetupFormDetails) || "";
 
   const {
     register,
     handleSubmit,
+    getValues,
     // watch,
     // formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      company_pan: companyPaninitial,
+      company_tan: companyTanInitial,
+      company_gstin: companyGstinInitial,
+    },
+  });
+
+  useEffect(() => {
+    return () => {
+      const data = getValues();
+      const { company_pan, company_tan, company_gstin } = data;
+      const isEmpty = Object.values(data).every((value) => {
+        if (value === "") {
+          return true;
+        }
+        return false;
+      });
+      if (!isEmpty) {
+        dispatch(setTaxSetupForm(company_pan, company_tan, company_gstin));
+      }
+    };
+  }, [dispatch, getValues]);
+
   const onSubmit = (data) => {
     console.log(data);
   }; // your form submit function which will invoke after successful validation
