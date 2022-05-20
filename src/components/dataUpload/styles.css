@@ -1,0 +1,17 @@
+.buttonDiv {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.button {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.inputFile {
+  color: white;
+  margin-top: 50px;
+}
