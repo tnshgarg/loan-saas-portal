@@ -2,73 +2,57 @@ import React, { useState } from "react";
 import "./styles.css";
 import { CSVLink } from "react-csv";
 import AWS from "aws-sdk";
+import { Alert, Collapse } from "@mui/material";
+import { headers } from "./headerData";
+import { FileDrop } from "react-file-drop";
 
 const CSVUpload = () => {
   const [file, setFile] = useState();
+  const [uploadStatus, setUploadStatus] = useState(false);
 
-  const headers = [
-    [
-      "Employee ID",
-      "Name",
-      "Mobile Number",
-      "Email",
-      "Gender (M/F/T)",
-      "Nationality",
-      "Date of Joining  (dd/mm/yyyy)",
-      "Aadhar Number",
-      "PAN Card Number",
-      "Beneficiary Name",
-      "Bank Account Number",
-      "Bank IFSC Code",
-      "Date of Birth  (dd/mm/yyyy)",
-      "Location  (State)",
-      "Location  (District)",
-      "Business Unit (BU) (Leave Blank if not applicable)",
-      "Job Title",
-      "Annual CTC",
-      "Provident Fund (PF) ?  (Y/N)",
-      "PF UAN (Enter if available or else leave blank)",
-      "ESIC Number (Enter if available or else leave blank)",
-      "Taxable salary paid in current F.Y. till now (Optional)",
-      "Exemptions in current F.Y. till now (Optional)",
-      "TDS deducted in current F.Y. till now (Optional)",
-      "Employer Establishment Code (Username for ESIC Login)",
-      "ESIC Number (aka IP Number) already registered (Yes/No)",
-      "ESIC Number (aka IP Number) - (Incase of new employee generation leave it blank)",
-      "Father's Name / Husband Name",
-      "Relation with Employee",
-      "Marital Status (Married,Un-married,Widow/Widower,Divorcee)",
-      "Present Address",
-      "District",
-      "State",
-      "Pincode",
-      "Permanent Address",
-      "District",
-      "State",
-      "Pincode",
-      "Name of Family Member",
-      "Date of birth of Family Member",
-      "Relationship with Employee of the Family Member",
-      "Employer Code Number",
-      "Name of Employer",
-      "Address of Employer",
-      "State",
-      "District",
-      "Pin Code",
-      "Employer Email ID",
-      "Employer Phone Number",
-      "Employer Mobile Number",
-      "Name of Nominee (As per Aadhar card name of the nominee)",
-      "Relationship with Insured Person",
-      "Address of Nominee",
-      "State of Nominee",
-      "District of Nominee",
-      "Pincode of Nominee",
-      "Is Nominee a Family Member",
-      "Mobile Number of Nominee",
-      "Aadhar Number of Nominee",
-    ],
-  ];
+  const alertStyle = {
+    alignItems: "center",
+    button: {
+      backgroundColor: "transparent",
+      color: "black",
+      border: "none",
+      padding: "3px",
+    },
+  };
+
+  const S3_BUCKET = "unipe-dev/test/data";
+  const REGION = "ap-south-1";
+
+  AWS.config.update({
+    accessKeyId: process.env.REACT_APP_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
+  });
+
+  const targetBucket = new AWS.S3({
+    params: {
+      Bucket: S3_BUCKET,
+    },
+    region: REGION,
+  });
+
+  const handleFileUpload = (e) => {
+    const params = {
+      Body: file,
+      Bucket: S3_BUCKET,
+      Key: file.name,
+    };
+
+    targetBucket
+      .putObject(params)
+      .on("httpUploadProgress", (evt) => {
+        if (Math.round((evt.loaded / evt.total) * 100) === 100) {
+          setUploadStatus(true);
+        }
+      })
+      .send((err) => {
+        if (err) alert("An error occurred while uploading the file.");
+      });
+  };
 
   const handleChange = (e) => {
     setFile(e.target.files[0]);
@@ -76,14 +60,24 @@ const CSVUpload = () => {
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
+    handleFileUpload(e);
   };
 
   return (
-    <div className="">
-      <div>
-        <h1>Upload Employee Details</h1>
-      </div>
-      <div className="mb-3 w-96 ">
+    <div className="container">
+      <Collapse in={uploadStatus}>
+        <Alert
+          sx={alertStyle}
+          onClose={() => {
+            setUploadStatus(!uploadStatus);
+          }}
+          severity="success"
+        >
+          File Uploaded Successfully
+        </Alert>
+      </Collapse>
+      <h1>Upload Employee Details</h1>
+      <div className="">
         <form>
           <input
             type="file"
@@ -94,19 +88,14 @@ const CSVUpload = () => {
           />
         </form>
       </div>
-      {/* <label className="mb-2">Or</label> */}
-      {/* <div>
-        <FileUploader
-            handleChange={(file) => {
-                setFile(file);
-            }}
-            classes="h-12"
-            label="Upload a file"
-            name="file"
-            type={["csv"]}
-            maxSize={1}
-        />
-    </div> */}
+      <label>or</label>
+      <div className="dropArea">
+        <FileDrop onDrop={(files) => setFile(files[0])}>
+          <label style={{ fontSize: 24 }}>
+            {file ? file.name : "Drop CSV file here"}
+          </label>
+        </FileDrop>
+      </div>
       <div className="buttonDiv">
         <button
           className="button"
