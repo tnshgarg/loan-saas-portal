@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../actions/auth";
 import "./styles.css";
 
-const SignUp = () => {
+export const SignUp = () => {
   const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -96,5 +96,3 @@ const SignUp = () => {
     </div>
   );
 };
-
-export default SignUp;

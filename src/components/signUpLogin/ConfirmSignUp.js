@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { confirmSignUp } from "../../actions/auth";
 import "./styles.css";
 
-const ConfirmSignUp = () => {
+export const ConfirmSignUp = () => {
   const [successful, setSuccessful] = useState(true);
   const dispatch = useDispatch();
 
@@ -19,10 +19,10 @@ const ConfirmSignUp = () => {
   const onSubmit = (data) => {
     console.log(data);
     const { code } = data;
-    const email = message;
-    console.log(email, code);
+    const username = message;
+    console.log(username, code);
 
-    dispatch(confirmSignUp(email, code))
+    dispatch(confirmSignUp(username, code))
       .then(() => {
         setSuccessful(true);
       })
@@ -63,5 +63,3 @@ const ConfirmSignUp = () => {
     </div>
   );
 };
-
-export default ConfirmSignUp;
