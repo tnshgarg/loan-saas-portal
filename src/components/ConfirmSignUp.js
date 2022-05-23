@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { confirmSignUp } from "../actions/auth";
 import "./styles.css";
 
-const ConfirmSignUp = () => {
+export const ConfirmSignUp = () => {
   const [successful, setSuccessful] = useState(true);
   const dispatch = useDispatch();
 
@@ -63,5 +63,3 @@ const ConfirmSignUp = () => {
     </div>
   );
 };
-
-export default ConfirmSignUp;

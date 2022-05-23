@@ -3,9 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
-import ConfirmSignUp from "./components/ConfirmSignUp";
-import Login from "./components/Login";
-import SignUp from "./components/SignUp";
+import { ConfirmSignUp } from "./components/ConfirmSignUp";
+import { Login } from "./components/Login";
+import { SignUp } from "./components/SignUp";
 import { history } from "./helpers/history";
 
 const App = () => {

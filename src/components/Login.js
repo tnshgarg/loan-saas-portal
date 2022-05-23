@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../actions/auth";
 import "./styles.css";
 
-const Login = () => {
+export const Login = () => {
   const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
 
@@ -64,5 +64,3 @@ const Login = () => {
     </div>
   );
 };
-
-export default Login;
