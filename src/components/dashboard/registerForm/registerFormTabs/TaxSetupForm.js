@@ -11,9 +11,9 @@ const TaxSetupForm = () => {
   const navigate = useNavigate();
 
   const {
-    company_pan: companyPaninitial,
-    company_tan: companyTanInitial,
-    company_gstin: companyGstinInitial,
+    pan: panInitial,
+    tan: tanInitial,
+    gstin: gstinInitial,
   } = useSelector((state) => state.registerForm.taxSetupFormDetails) || "";
 
   const {
@@ -24,16 +24,16 @@ const TaxSetupForm = () => {
     // formState: { errors },
   } = useForm({
     defaultValues: {
-      company_pan: companyPaninitial,
-      company_tan: companyTanInitial,
-      company_gstin: companyGstinInitial,
+      pan: panInitial,
+      tan: tanInitial,
+      gstin: gstinInitial,
     },
   });
 
   useEffect(() => {
     return () => {
       const data = getValues();
-      const { company_pan, company_tan, company_gstin } = data;
+      const { pan, tan, gstin } = data;
       const isEmpty = Object.values(data).every((value) => {
         if (value === "") {
           return true;
@@ -41,7 +41,7 @@ const TaxSetupForm = () => {
         return false;
       });
       if (!isEmpty) {
-        dispatch(setTaxSetupForm(company_pan, company_tan, company_gstin));
+        dispatch(setTaxSetupForm(pan, tan, gstin));
       }
     };
   }, [dispatch, getValues]);
@@ -57,11 +57,11 @@ const TaxSetupForm = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
         <label>Company PAN</label>
-        <input {...register("company_pan")} />
+        <input {...register("pan")} />
         <label>Company TAN</label>
-        <input {...register("company_tan")} />
+        <input {...register("tan")} />
         <label>Company GSTIN</label>
-        <input {...register("company_gstin")} />
+        <input {...register("gstin")} />
 
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}

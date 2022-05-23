@@ -21,18 +21,17 @@ export const setAddressForm =
     });
   };
 
-export const setTaxSetupForm =
-  (company_pan, company_tan, company_gstin) => (dispatch) => {
-    const taxSetupFormDetails = {
-      company_pan: company_pan,
-      company_tan: company_tan,
-      company_gstin: company_gstin,
-    };
-    dispatch({
-      type: SET_TAX_SETUP_FORM,
-      payload: taxSetupFormDetails,
-    });
+export const setTaxSetupForm = (pan, tan, gstin) => (dispatch) => {
+  const taxSetupFormDetails = {
+    pan: pan,
+    tan: tan,
+    gstin: gstin,
   };
+  dispatch({
+    type: SET_TAX_SETUP_FORM,
+    payload: taxSetupFormDetails,
+  });
+};
 
 export const setPfForm = (pf_username, pf_password) => (dispatch) => {
   const pfFormDetails = {
