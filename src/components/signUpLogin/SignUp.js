@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 import { registerUser } from "../../actions/auth";
+import { numberOfEmployees } from "../../helpers/numberOfEmployees";
 import "./styles.css";
 
 export const SignUp = () => {
@@ -15,9 +17,10 @@ export const SignUp = () => {
   const {
     register,
     handleSubmit,
+    control,
     // watch,
-    // formState: { errors },
-  } = useForm();
+    formState: { errors },
+  } = useForm({ mode: "all" });
   const onSubmit = (data) => {
     console.log(data);
     const {
@@ -61,23 +64,81 @@ export const SignUp = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
         <label>Email</label>
-        <input {...register("email")} />
+        <input
+          {...register("email", {
+            required: true,
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            },
+          })}
+        />
+        {errors.email && <p>Enter correct email address</p>}
+
         <label>Password</label>
-        <input type="password" {...register("password")} />
+        <input
+          type="password"
+          {...register("password", {
+            required: true,
+          })}
+        />
+        {errors.password && <p>Password cannot be empty</p>}
+
         <label>Phone Number</label>
-        <input {...register("phone_number")} />
+        <input
+          {...register("phone_number", {
+            required: true,
+            pattern: {
+              value: /(\+91)?\d{12}/,
+            },
+          })}
+        />
+        {errors.phone_number && <p>Enter 10 digit number starting with +91</p>}
+
         <label>Full Name</label>
-        <input {...register("name")} />
+        <input
+          {...register("name", {
+            required: true,
+          })}
+        />
+        {errors.name && <p>Full Name cannot be empty</p>}
+
         <label>Company Name</label>
-        <input {...register("company_name")} />
+        <input
+          {...register("company_name", {
+            required: true,
+          })}
+        />
+        {errors.company_name && <p>Company Name cannot be empty</p>}
+
         <label>Number of Employees</label>
-        <input {...register("no_of_employees")} />
+        {/* <input {...register("no_of_employees")} /> */}
+        <Controller
+          control={control}
+          defaultValue={numberOfEmployees[0]}
+          name="no_of_employees"
+          render={({ field }) => (
+            <Select
+              inputRef={field.ref}
+              classNamePrefix="addl-class"
+              options={numberOfEmployees}
+              value={numberOfEmployees.find((c) => c.value === field.value)}
+              onChange={(val) => {
+                field.onChange(val.value);
+              }}
+            />
+          )}
+        />
+
         <label>Title</label>
-        <input {...register("title")} />
+        <input
+          {...register("title", {
+            required: true,
+          })}
+        />
+        {errors.title && <p>Title cannot be empty</p>}
 
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
-        {/* {errors.exampleRequired && <p>This field is required</p>} */}
 
         <input type="submit" />
       </form>
