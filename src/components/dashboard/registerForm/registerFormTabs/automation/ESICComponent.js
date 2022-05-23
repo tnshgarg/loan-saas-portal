@@ -66,7 +66,7 @@ const ESICStateComponent = () => {
         {showOtherIndianState && (
           <>
             <label>Please enter</label>
-            <input {...register("esic_other_state")} />
+            <input {...register("esic_state_other")} />
           </>
         )}
         <label>ESIC Employer Establishment Code</label>

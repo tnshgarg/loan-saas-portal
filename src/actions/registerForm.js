@@ -45,11 +45,11 @@ export const setPfForm = (pf_username, pf_password) => (dispatch) => {
 };
 
 export const setEsicStateForm =
-  (esic_state, esic_other_state, esic_employer_code, esic_password) =>
+  (esic_state, esic_state_other, esic_employer_code, esic_password) =>
   (dispatch) => {
     const esicFormDetails = {
       esic_state: esic_state,
-      esic_other_state: esic_other_state,
+      esic_state_other: esic_state_other,
       esic_employer_code: esic_employer_code,
       esic_password: esic_password,
     };
