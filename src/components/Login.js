@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { confirmSignUp } from "../actions/auth";
+import { login } from "../actions/auth";
 import "./styles.css";
 
-export const ConfirmSignUp = () => {
-  const [successful, setSuccessful] = useState(true);
+export const Login = () => {
+  const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
 
   const { message } = useSelector((state) => state.message);
@@ -18,11 +18,10 @@ export const ConfirmSignUp = () => {
   } = useForm();
   const onSubmit = (data) => {
     console.log(data);
-    const { code } = data;
-    const username = message;
-    console.log(username, code);
+    const { email: username, password } = data;
+    console.log(username, password);
 
-    dispatch(confirmSignUp(username, code))
+    dispatch(login(username, password))
       .then(() => {
         setSuccessful(true);
       })
@@ -35,12 +34,14 @@ export const ConfirmSignUp = () => {
 
   return (
     <div>
-      <h1>Confirm Sign Up</h1>
+      <h1>Login</h1>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
-        <label>Verification Code</label>
-        <input {...register("code")} />
+        <label>Email</label>
+        <input {...register("email")} />
+        <label>Password</label>
+        <input type="password" {...register("password")} />
 
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}

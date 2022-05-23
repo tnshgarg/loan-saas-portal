@@ -1,11 +1,12 @@
+import { getMessageFromError } from "../helpers/getMessageFromError";
 import AuthService from "../services/auth.service";
 import {
   LOGIN_FAIL,
   LOGIN_SUCCESS,
   LOGOUT,
-  REGISTER_FAIL,
-  REGISTER_SUCCESS,
   SET_MESSAGE,
+  SIGNUP_FAIL,
+  SIGNUP_SUCCESS,
 } from "./types";
 
 export const registerUser =
@@ -20,7 +21,7 @@ export const registerUser =
     title
   ) =>
   (dispatch) => {
-    return AuthService.register(
+    return AuthService.signUp(
       username,
       password,
       email,
@@ -32,7 +33,7 @@ export const registerUser =
     ).then(
       (response) => {
         dispatch({
-          type: REGISTER_SUCCESS,
+          type: SIGNUP_SUCCESS,
         });
         dispatch({
           type: SET_MESSAGE,
@@ -41,29 +42,23 @@ export const registerUser =
         return Promise.resolve();
       },
       (error) => {
-        const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
         dispatch({
-          type: REGISTER_FAIL,
+          type: SIGNUP_FAIL,
         });
         dispatch({
           type: SET_MESSAGE,
-          payload: message,
+          payload: getMessageFromError(error),
         });
         return Promise.reject();
       }
     );
   };
 
-export const confirmSignUp = (email, code) => (dispatch) => {
-  return AuthService.confirmSignUp(email, code).then(
+export const confirmSignUp = (username, code) => (dispatch) => {
+  return AuthService.confirmSignUp(username, code).then(
     (response) => {
       dispatch({
-        type: REGISTER_SUCCESS,
+        type: SIGNUP_SUCCESS,
       });
       dispatch({
         type: SET_MESSAGE,
@@ -72,18 +67,12 @@ export const confirmSignUp = (email, code) => (dispatch) => {
       return Promise.resolve();
     },
     (error) => {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
       dispatch({
-        type: REGISTER_FAIL,
+        type: SIGNUP_FAIL,
       });
       dispatch({
         type: SET_MESSAGE,
-        payload: message,
+        payload: getMessageFromError(error),
       });
       return Promise.reject();
     }
@@ -93,25 +82,24 @@ export const confirmSignUp = (email, code) => (dispatch) => {
 export const login = (username, password) => (dispatch) => {
   return AuthService.login(username, password).then(
     (data) => {
+      console.log(data);
       dispatch({
         type: LOGIN_SUCCESS,
         payload: { user: data },
       });
+      dispatch({
+        type: SET_MESSAGE,
+        payload: data.signInUserSession.accessToken.jwtToken,
+      });
       return Promise.resolve();
     },
     (error) => {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
       dispatch({
         type: LOGIN_FAIL,
       });
       dispatch({
         type: SET_MESSAGE,
-        payload: message,
+        payload: getMessageFromError(error),
       });
       return Promise.reject();
     }
