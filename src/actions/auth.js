@@ -54,8 +54,8 @@ export const registerUser =
     );
   };
 
-export const confirmSignUp = (email, code) => (dispatch) => {
-  return AuthService.confirmSignUp(email, code).then(
+export const confirmSignUp = (username, code) => (dispatch) => {
+  return AuthService.confirmSignUp(username, code).then(
     (response) => {
       dispatch({
         type: SIGNUP_SUCCESS,

@@ -19,10 +19,10 @@ export const ConfirmSignUp = () => {
   const onSubmit = (data) => {
     console.log(data);
     const { code } = data;
-    const email = message;
-    console.log(email, code);
+    const username = message;
+    console.log(username, code);
 
-    dispatch(confirmSignUp(email, code))
+    dispatch(confirmSignUp(username, code))
       .then(() => {
         setSuccessful(true);
       })
