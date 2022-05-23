@@ -8,8 +8,9 @@
   color: white;
 }
 
-h1 {
+.uploadHeading {
   width: 100vw;
+  /* margin-top: -50px; */
 }
 
 .buttonDiv {
@@ -20,9 +21,11 @@ h1 {
   margin-top: 10px;
 }
 
-.button {
+.Downloadbutton {
   margin-right: 10px;
   margin-left: 10px;
+  background-color: #333;
+  color: white;
 }
 
 .inputFile {
@@ -104,7 +107,19 @@ div.container > label {
 }
 
 .file-drop > .file-drop-target.file-drop-dragging-over-target {
-  /* turn stuff orange when we are dragging over the target */
-  color: #ff6e40;
+  /* turn shadow purple when we are dragging over the target */
+  color: white;
   box-shadow: 0 0 13px 3px #9403bbcf;
+}
+
+button[type="button"] {
+  display: block;
+  appearance: none;
+  background: transparent;
+  color: black;
+  border: none;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  font-size: xx-small;
+  border-radius: 4px;
 }

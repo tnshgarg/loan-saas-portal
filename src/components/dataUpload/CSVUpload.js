@@ -3,22 +3,13 @@ import "./styles.css";
 import { CSVLink } from "react-csv";
 import AWS from "aws-sdk";
 import { Alert, Collapse } from "@mui/material";
+import Navbar from "../dashboard/navbarMainContent/Navbar";
 import { headers } from "./headerData";
 import { FileDrop } from "react-file-drop";
 
 const CSVUpload = () => {
   const [file, setFile] = useState();
-  const [uploadStatus, setUploadStatus] = useState(false);
-
-  const alertStyle = {
-    alignItems: "center",
-    button: {
-      backgroundColor: "transparent",
-      color: "black",
-      border: "none",
-      padding: "3px",
-    },
-  };
+  const [uploadStatus, setUploadStatus] = useState(true);
 
   const S3_BUCKET = "unipe-dev/test/data";
   const REGION = "ap-south-1";
@@ -65,9 +56,9 @@ const CSVUpload = () => {
 
   return (
     <div className="container">
-      <Collapse in={uploadStatus}>
+      <Navbar />
+      <Collapse sx={{ marginTop: "-7vh" }} in={uploadStatus}>
         <Alert
-          sx={alertStyle}
           onClose={() => {
             setUploadStatus(!uploadStatus);
           }}
@@ -76,7 +67,7 @@ const CSVUpload = () => {
           File Uploaded Successfully
         </Alert>
       </Collapse>
-      <h1>Upload Employee Details</h1>
+      <h1 className="uploadHeading">Upload Employee Details</h1>
       <div className="">
         <form>
           <input
@@ -111,9 +102,7 @@ const CSVUpload = () => {
           filename={"Employee Details Format.csv"}
           style={{ textDecoration: "none" }}
         >
-          <button type="button" className=" button">
-            Download Format
-          </button>
+          <button className="Downloadbutton">Download Format</button>
         </CSVLink>
       </div>
     </div>
