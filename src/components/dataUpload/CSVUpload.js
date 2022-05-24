@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import "./styles.css";
 import { CSVLink } from "react-csv";
 import AWS from "aws-sdk";
@@ -8,8 +10,26 @@ import { headers } from "./headerData";
 import { FileDrop } from "react-file-drop";
 
 const CSVUpload = () => {
+  // AUTH LAYER
+  const navigate = useNavigate();
+  const auth = useSelector((state) => state.auth);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    console.log(auth);
+    if (auth === undefined || auth === {}) {
+      navigate("/login");
+    } else if (!auth.isLoggedIn) {
+      navigate("/login");
+    } else {
+      // setUserName(user.signInUserSession.idToken.payload.name);
+      setUserName(auth.user.attributes.name);
+    }
+  }, [auth, navigate]);
+
+  // CSV FILE UPLOAD
   const [file, setFile] = useState();
-  const [uploadStatus, setUploadStatus] = useState(true);
+  const [uploadStatus, setUploadStatus] = useState(false);
 
   const S3_BUCKET = "unipe-dev/test/data";
   const REGION = "ap-south-1";

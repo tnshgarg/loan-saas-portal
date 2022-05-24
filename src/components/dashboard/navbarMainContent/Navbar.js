@@ -14,6 +14,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -129,6 +130,16 @@ const Navbar = ({ child }) => {
                   <AppRegistrationIcon />
                 </ListItemIcon>
                 <ListItemText primary={"Register"} />
+              </ListItemButton>
+            </ListItem>
+          </Link>
+          <Link to="/upload" style={{ textDecoration: "none", color: "black" }}>
+            <ListItem key={"Upload Employee details"} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <FileUploadIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Upload Employee Details"} />
               </ListItemButton>
             </ListItem>
           </Link>
