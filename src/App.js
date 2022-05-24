@@ -3,9 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
-import { ConfirmSignUp } from "./components/ConfirmSignUp";
-import { Login } from "./components/Login";
-import { SignUp } from "./components/SignUp";
+import Profile from "./components/dashboard/profile/Profile";
+import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
+import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
 import { history } from "./helpers/history";
 
 const App = () => {
@@ -27,6 +27,8 @@ const App = () => {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/confirm-sign-up" element={<ConfirmSignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/register-form" element={<RegisterForm />} />
       </Routes>
     </Router>
   );

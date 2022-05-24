@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { confirmSignUp } from "../actions/auth";
+import { useNavigate } from "react-router-dom";
+import { confirmSignUp } from "../../actions/auth";
 import "./styles.css";
 
 export const ConfirmSignUp = () => {
   const [successful, setSuccessful] = useState(true);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { message } = useSelector((state) => state.message);
 
@@ -25,6 +27,7 @@ export const ConfirmSignUp = () => {
     dispatch(confirmSignUp(username, code))
       .then(() => {
         setSuccessful(true);
+        navigate("/login");
       })
       .catch(() => {
         setSuccessful(false);
