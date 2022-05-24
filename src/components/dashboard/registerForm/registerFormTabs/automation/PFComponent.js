@@ -2,38 +2,34 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setTaxSetupForm } from "../../../../actions/registerForm";
+import { setPfForm } from "../../../../../actions/registerForm";
 import "./styles.css";
 
-const TaxSetupForm = () => {
+const PFComponent = () => {
   const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const {
-    pan: panInitial,
-    tan: tanInitial,
-    gstin: gstinInitial,
-  } = useSelector((state) => state.registerForm.taxSetupFormDetails) || "";
+  const { pf_username: pfUsernameInitial, pf_password: pfPasswordInitial } =
+    useSelector((state) => state.registerForm.pfFormDetails) || "";
 
   const {
     register,
-    handleSubmit,
     getValues,
+    handleSubmit,
     // watch,
     // formState: { errors },
   } = useForm({
     defaultValues: {
-      pan: panInitial,
-      tan: tanInitial,
-      gstin: gstinInitial,
+      pf_username: pfUsernameInitial,
+      pf_password: pfPasswordInitial,
     },
   });
 
   useEffect(() => {
     return () => {
       const data = getValues();
-      const { pan, tan, gstin } = data;
+      const { pf_username, pf_password } = data;
       const isEmpty = Object.values(data).every((value) => {
         if (value === "") {
           return true;
@@ -41,7 +37,7 @@ const TaxSetupForm = () => {
         return false;
       });
       if (!isEmpty) {
-        dispatch(setTaxSetupForm(pan, tan, gstin));
+        dispatch(setPfForm(pf_username, pf_password));
       }
     };
   }, [dispatch, getValues]);
@@ -54,14 +50,13 @@ const TaxSetupForm = () => {
 
   return (
     <div>
+      <h1>Enter your PF details</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
-        <label>Company PAN</label>
-        <input {...register("pan")} />
-        <label>Company TAN</label>
-        <input {...register("tan")} />
-        <label>Company GSTIN</label>
-        <input {...register("gstin")} />
+        <label>Username</label>
+        <input {...register("pf_username")} />
+        <label>Password</label>
+        <input type="password" {...register("pf_password")} />
 
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
@@ -73,4 +68,4 @@ const TaxSetupForm = () => {
   );
 };
 
-export default TaxSetupForm;
+export default PFComponent;

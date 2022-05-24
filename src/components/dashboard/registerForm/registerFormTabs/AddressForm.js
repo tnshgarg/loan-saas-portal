@@ -1,22 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setAddressForm } from "../../../../actions/registerForm";
 import "./styles.css";
 
 const AddressForm = () => {
   const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const { message } = useSelector((state) => state.message);
+  const {
+    company: companyIntial,
+    brand: brandInitial,
+    address: addressInitial,
+    state: stateInitial,
+    pincode: pincodeInitial,
+  } = useSelector((state) => state.registerForm.addressFormDetails) || "";
 
   const {
     register,
+    getValues,
     handleSubmit,
     // watch,
     // formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      company: companyIntial,
+      brand: brandInitial,
+      address: addressInitial,
+      state: stateInitial,
+      pincode: pincodeInitial,
+    },
+  });
+
+  useEffect(() => {
+    return () => {
+      const data = getValues();
+      const { company, brand, address, state, pincode } = data;
+      const isEmpty = Object.values(data).every((value) => {
+        if (value === "") {
+          return true;
+        }
+        return false;
+      });
+      if (!isEmpty) {
+        dispatch(setAddressForm(company, brand, address, state, pincode));
+      }
+    };
+  }, [dispatch, getValues]);
+
   const onSubmit = (data) => {
     console.log(data);
   }; // your form submit function which will invoke after successful validation
@@ -27,6 +59,7 @@ const AddressForm = () => {
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
+
         <label>Company Name</label>
         <input {...register("company")} />
         <label>Brand Name</label>

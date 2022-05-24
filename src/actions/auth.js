@@ -1,3 +1,4 @@
+import { getMessageFromError } from "../helpers/getMessageFromError";
 import AuthService from "../services/auth.service";
 import {
   LOGIN_FAIL,
@@ -41,26 +42,20 @@ export const registerUser =
         return Promise.resolve();
       },
       (error) => {
-        const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
         dispatch({
           type: SIGNUP_FAIL,
         });
         dispatch({
           type: SET_MESSAGE,
-          payload: message,
+          payload: getMessageFromError(error),
         });
         return Promise.reject();
       }
     );
   };
 
-export const confirmSignUp = (email, code) => (dispatch) => {
-  return AuthService.confirmSignUp(email, code).then(
+export const confirmSignUp = (username, code) => (dispatch) => {
+  return AuthService.confirmSignUp(username, code).then(
     (response) => {
       dispatch({
         type: SIGNUP_SUCCESS,
@@ -72,18 +67,12 @@ export const confirmSignUp = (email, code) => (dispatch) => {
       return Promise.resolve();
     },
     (error) => {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
       dispatch({
         type: SIGNUP_FAIL,
       });
       dispatch({
         type: SET_MESSAGE,
-        payload: message,
+        payload: getMessageFromError(error),
       });
       return Promise.reject();
     }
@@ -105,18 +94,12 @@ export const login = (username, password) => (dispatch) => {
       return Promise.resolve();
     },
     (error) => {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
       dispatch({
         type: LOGIN_FAIL,
       });
       dispatch({
         type: SET_MESSAGE,
-        payload: message,
+        payload: getMessageFromError(error),
       });
       return Promise.reject();
     }
