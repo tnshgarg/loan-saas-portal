@@ -31,8 +31,8 @@ const CSVUpload = () => {
   const [file, setFile] = useState();
   const [uploadStatus, setUploadStatus] = useState(false);
 
-  const S3_BUCKET = "unipe-dev/test/data";
-  const REGION = "ap-south-1";
+  const S3_BUCKET = process.env.REACT_APP_S3_BUCKET;
+  const REGION = process.env.REACT_APP_S3_REGION;
 
   AWS.config.update({
     accessKeyId: process.env.REACT_APP_ACCESS_KEY,
@@ -61,7 +61,7 @@ const CSVUpload = () => {
         }
       })
       .send((err) => {
-        if (err) alert("An error occurred while uploading the file.");
+        if (err) alert("An error occurred while uploading the file. Please try uploading again.");
       });
   };
 
@@ -84,7 +84,7 @@ const CSVUpload = () => {
           }}
           severity="success"
         >
-          File Uploaded Successfully
+          {file? `File ${file.name} Uploaded Successfully` : null}
         </Alert>
       </Collapse>
       <h1 className="uploadHeading">Upload Employee Details</h1>
@@ -119,7 +119,7 @@ const CSVUpload = () => {
 
         <CSVLink
           data={headers}
-          filename={"Employee Details Format.csv"}
+          filename={"Employee_Details_Format.csv"}
           style={{ textDecoration: "none" }}
         >
           <button className="Downloadbutton">Download Format</button>
