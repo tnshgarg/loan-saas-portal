@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../../actions/auth";
 import "./styles.css";
 
-const Login = () => {
+export const Login = () => {
   const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -67,5 +67,3 @@ const Login = () => {
     </div>
   );
 };
-
-export default Login;

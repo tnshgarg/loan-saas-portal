@@ -5,7 +5,7 @@ import "./styles.css";
 import { CSVLink } from "react-csv";
 import AWS from "aws-sdk";
 import { Alert, Collapse } from "@mui/material";
-import Navbar from "../dashboard/navbarMainContent/Navbar";
+import Navbar from "../navbarMainContent/Navbar";
 import { headers } from "./headerData";
 import { FileDrop } from "react-file-drop";
 

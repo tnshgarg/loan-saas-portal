@@ -24,8 +24,8 @@ const signUp = (
   });
 };
 
-const confirmSignUp = (email, code) => {
-  return Auth.confirmSignUp(email, code);
+const confirmSignUp = (username, code) => {
+  return Auth.confirmSignUp(username, code);
 };
 
 const login = (username, password) => {

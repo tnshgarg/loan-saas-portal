@@ -6,7 +6,7 @@ import "./App.css";
 import Profile from "./components/dashboard/profile/Profile";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
 import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
-import CSVUpload from "./components/dataUpload/CSVUpload";
+import CSVUpload from "./components/dashboard/dataUpload/CSVUpload";
 import { history } from "./helpers/history";
 
 const App = () => {

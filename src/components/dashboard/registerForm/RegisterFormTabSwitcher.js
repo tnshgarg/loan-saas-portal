@@ -3,6 +3,8 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import PropTypes from "prop-types";
 import * as React from "react";
+import { useDispatch } from "react-redux";
+import { setRegisterFormTabValue } from "../../../actions/registerForm";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -35,9 +37,11 @@ function a11yProps(index) {
 
 export default function RegisterFormTabSwitcher({ tab1, tab2, tab3 }) {
   const [value, setValue] = React.useState(0);
+  const dispatch = useDispatch();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    dispatch(setRegisterFormTabValue(newValue));
   };
 
   return (
