@@ -1,4 +1,4 @@
-import ESICComponent from "./ESICComponent";
+import ESICComponent from "./ESICComponent/ESICComponent";
 import PFComponent from "./PFComponent";
 
 const AutomationForm = () => {

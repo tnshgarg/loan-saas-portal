@@ -50,6 +50,7 @@ export const setEsicStateForm =
     const esicFormDetails = {
       esic_state: esic_state,
       esic_state_other: esic_state_other,
+      esic_state_identifier: esic_state_other ? esic_state_other : esic_state,
       esic_employer_code: esic_employer_code,
       esic_password: esic_password,
     };
