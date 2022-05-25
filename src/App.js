@@ -8,7 +8,6 @@ import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
 import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
 import CSVUpload from "./components/dashboard/dataUpload/CSVUpload";
 import { history } from "./helpers/history";
-import View from "./components/tabularView/viewTables";
 
 const App = () => {
   useEffect(() => {
@@ -32,7 +31,6 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/register-form" element={<RegisterForm />} />
         <Route path="/upload" element={<CSVUpload />} />
-        <Route path="/view" element={<View />} />
       </Routes>
     </Router>
   );
