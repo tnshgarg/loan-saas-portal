@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Profile from "./components/dashboard/profile/Profile";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
+import { InvalidRoute } from "./components/errorDisplayComponents/InvalidRoute";
 import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
 import { history } from "./helpers/history";
 
@@ -29,6 +30,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/register-form" element={<RegisterForm />} />
+        <Route path="*" element={<InvalidRoute />} />
       </Routes>
     </Router>
   );
