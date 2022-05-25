@@ -18,7 +18,9 @@ import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { logout } from "../../../actions/auth";
 
 const drawerWidth = 240;
 
@@ -70,6 +72,14 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 const Navbar = ({ child }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -132,7 +142,7 @@ const Navbar = ({ child }) => {
               </ListItemButton>
             </ListItem>
           </Link>
-          <ListItem key={"Logout"} disablePadding>
+          <ListItem key={"Logout"} onClick={handleLogout} disablePadding>
             <ListItemButton>
               <ListItemIcon>
                 <LogoutIcon />
