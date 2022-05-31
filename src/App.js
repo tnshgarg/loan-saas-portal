@@ -6,6 +6,7 @@ import "./App.css";
 import Profile from "./components/dashboard/profile/Profile";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
 import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
+import CSVUpload from "./components/dashboard/dataUpload/CSVUpload";
 import { history } from "./helpers/history";
 
 const App = () => {
@@ -29,6 +30,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/register-form" element={<RegisterForm />} />
+        <Route path="/upload" element={<CSVUpload />} />
       </Routes>
     </Router>
   );
