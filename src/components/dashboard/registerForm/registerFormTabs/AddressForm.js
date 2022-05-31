@@ -3,12 +3,16 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setAddressForm } from "../../../../actions/registerForm";
+import { getDocumentFromState } from "../../../../helpers/getDocumentFromState";
 import "./styles.css";
 
 const AddressForm = () => {
   const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const currState = useSelector((state) => state) || {};
+
   const {
     company: companyIntial,
     brand: brandInitial,
@@ -16,6 +20,9 @@ const AddressForm = () => {
     state: stateInitial,
     pincode: pincodeInitial,
   } = useSelector((state) => state.registerForm.addressFormDetails) || "";
+
+  const { jwtToken } =
+    useSelector((state) => state.auth.user.signInUserSession.idToken) ?? "";
 
   const {
     register,
@@ -51,6 +58,17 @@ const AddressForm = () => {
 
   const onSubmit = (data) => {
     console.log(data);
+    const { company, brand, address, state, pincode } = data;
+    const isEmpty = Object.values(data).every((value) => {
+      if (value === "") {
+        return true;
+      }
+      return false;
+    });
+    if (!isEmpty) {
+      dispatch(setAddressForm(company, brand, address, state, pincode));
+    }
+    console.log(getDocumentFromState(currState));
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input

@@ -2,6 +2,7 @@ import {
   SET_ADDRESS_FORM,
   SET_ESIC_STATE_FORM,
   SET_PF_FORM,
+  SET_REGISTER_FORM_LOGOUT,
   SET_REGISTER_FORM_TAB_VALUE,
   SET_TAX_SETUP_FORM,
 } from "../actions/types";
@@ -44,6 +45,15 @@ export default function (state = initialState, action) {
       return {
         ...state,
         tabValueDetails: payload,
+      };
+    case SET_REGISTER_FORM_LOGOUT:
+      return {
+        ...state,
+        addressFormDetails: null,
+        taxSetupFormDetails: null,
+        pfFormDetails: null,
+        esicFormDetails: {},
+        tabValueDetails: { tabValue: 0 },
       };
 
     default:
