@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from "react";
+import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setAddressForm } from "../../../../actions/registerForm";
-import { getDocumentFromState } from "../../../../helpers/getDocumentFromState";
+import { getDocumentFromAddressFormDetails } from "../../../../helpers/getDocumentFromState";
+import { postRegisterFormData } from "../../../../services/user.services";
 import "./styles.css";
 
 const AddressForm = () => {
   const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const currState = useSelector((state) => state) || {};
+  const alert = useAlert();
 
   const {
-    company: companyIntial,
+    company: companyInitial,
     brand: brandInitial,
     address: addressInitial,
     state: stateInitial,
@@ -22,7 +23,10 @@ const AddressForm = () => {
   } = useSelector((state) => state.registerForm.addressFormDetails) || "";
 
   const { jwtToken } =
-    useSelector((state) => state.auth.user.signInUserSession.idToken) ?? "";
+    useSelector((state) => state.auth.user?.signInUserSession.idToken) ?? "";
+
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
   const {
     register,
@@ -32,7 +36,7 @@ const AddressForm = () => {
     // formState: { errors },
   } = useForm({
     defaultValues: {
-      company: companyIntial,
+      company: companyInitial,
       brand: brandInitial,
       address: addressInitial,
       state: stateInitial,
@@ -42,33 +46,51 @@ const AddressForm = () => {
 
   useEffect(() => {
     return () => {
-      const data = getValues();
-      const { company, brand, address, state, pincode } = data;
-      const isEmpty = Object.values(data).every((value) => {
-        if (value === "") {
-          return true;
-        }
-        return false;
-      });
-      if (!isEmpty) {
+      const addressFormDetailsNew = getValues();
+      const { company, brand, address, state, pincode } = addressFormDetailsNew;
+      const isEqual =
+        company === companyInitial &&
+        brand === brandInitial &&
+        address === addressInitial &&
+        state === stateInitial &&
+        pincode === pincodeInitial;
+      if (!isEqual) {
         dispatch(setAddressForm(company, brand, address, state, pincode));
       }
     };
-  }, [dispatch, getValues]);
+  }, [
+    addressInitial,
+    brandInitial,
+    companyInitial,
+    dispatch,
+    getValues,
+    pincodeInitial,
+    stateInitial,
+  ]);
 
-  const onSubmit = (data) => {
-    console.log(data);
-    const { company, brand, address, state, pincode } = data;
-    const isEmpty = Object.values(data).every((value) => {
-      if (value === "") {
-        return true;
-      }
-      return false;
-    });
-    if (!isEmpty) {
+  const onSubmit = (addressFormDetailsNew) => {
+    const { company, brand, address, state, pincode } = addressFormDetailsNew;
+    const isEqual =
+      company === companyInitial &&
+      brand === brandInitial &&
+      address === addressInitial &&
+      state === stateInitial &&
+      pincode === pincodeInitial;
+    if (!isEqual) {
       dispatch(setAddressForm(company, brand, address, state, pincode));
+      postRegisterFormData(
+        jwtToken,
+        getDocumentFromAddressFormDetails(employerId, addressFormDetailsNew)
+      )
+        .then((response) => {
+          const message = response.data.body.message;
+          alert.success(message);
+        })
+        .catch((error) => {
+          const message = error.response.data.message;
+          alert.error(message);
+        });
     }
-    console.log(getDocumentFromState(currState));
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
@@ -93,7 +115,7 @@ const AddressForm = () => {
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}
 
-        <input type="submit" value="next" />
+        <input type="submit" value="Submit" />
       </form>
     </div>
   );

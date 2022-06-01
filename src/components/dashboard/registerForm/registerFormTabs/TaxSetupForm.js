@@ -67,7 +67,7 @@ const TaxSetupForm = () => {
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}
 
-        <input type="submit" value="next" />
+        <input type="submit" value="Submit" />
       </form>
     </div>
   );
