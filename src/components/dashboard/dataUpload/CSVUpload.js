@@ -1,13 +1,13 @@
+import { Alert, Collapse } from "@mui/material";
+import AWS from "aws-sdk";
 import React, { useEffect, useState } from "react";
+import { CSVLink } from "react-csv";
+import { FileDrop } from "react-file-drop";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import "./styles.css";
-import { CSVLink } from "react-csv";
-import AWS from "aws-sdk";
-import { Alert, Collapse } from "@mui/material";
-import Navbar from "../navbarMainContent/Navbar";
+import Navbar from "../navbarMainComponent/Navbar";
 import { headers } from "./headerData";
-import { FileDrop } from "react-file-drop";
+import "./styles.css";
 
 const CSVUpload = () => {
   // AUTH LAYER
@@ -61,7 +61,10 @@ const CSVUpload = () => {
         }
       })
       .send((err) => {
-        if (err) alert("An error occurred while uploading the file. Please try uploading again.");
+        if (err)
+          alert(
+            "An error occurred while uploading the file. Please try uploading again."
+          );
       });
   };
 
@@ -84,7 +87,7 @@ const CSVUpload = () => {
           }}
           severity="success"
         >
-          {file? `File ${file.name} Uploaded Successfully` : null}
+          {file ? `File ${file.name} Uploaded Successfully` : null}
         </Alert>
       </Collapse>
       <h1 className="uploadHeading">Upload Employee Details</h1>
