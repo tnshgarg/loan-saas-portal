@@ -1,6 +1,7 @@
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import MuiAppBar from "@mui/material/AppBar";
@@ -139,6 +140,16 @@ const Navbar = ({ child }) => {
                   <AppRegistrationIcon />
                 </ListItemIcon>
                 <ListItemText primary={"Register"} />
+              </ListItemButton>
+            </ListItem>
+          </Link>
+          <Link to="/upload" style={{ textDecoration: "none", color: "black" }}>
+            <ListItem key={"Upload Employee details"} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <FileUploadIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Upload Employee Details"} />
               </ListItemButton>
             </ListItem>
           </Link>
