@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import "./styles.css";
 import { CSVLink } from "react-csv";
 import AWS from "aws-sdk";
-import { Alert, Collapse } from "@mui/material";
-import Navbar from "../navbarMainContent/Navbar";
+import {Upload} from "@aws-sdk/lib-storage"
+import {S3Client} from '@aws-sdk/client-s3'
+import { Alert, Collapse, CircularProgress } from "@mui/material";
+import Navbar from "../navbarMainComponent/Navbar";
 import { headers } from "./headerData";
 import { FileDrop } from "react-file-drop";
 
@@ -30,39 +32,42 @@ const CSVUpload = () => {
   // CSV FILE UPLOAD
   const [file, setFile] = useState();
   const [uploadStatus, setUploadStatus] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   const S3_BUCKET = process.env.REACT_APP_S3_BUCKET;
   const REGION = process.env.REACT_APP_S3_REGION;
 
-  AWS.config.update({
+  const credentials = {
     accessKeyId: process.env.REACT_APP_ACCESS_KEY,
     secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
-  });
+  }
 
-  const targetBucket = new AWS.S3({
-    params: {
-      Bucket: S3_BUCKET,
-    },
-    region: REGION,
-  });
-
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const params = {
       Body: file,
       Bucket: S3_BUCKET,
-      Key: file.name,
+      Key: `test/data/${file.name}`,
     };
 
-    targetBucket
-      .putObject(params)
-      .on("httpUploadProgress", (evt) => {
-        if (Math.round((evt.loaded / evt.total) * 100) === 100) {
-          setUploadStatus(true);
-        }
-      })
-      .send((err) => {
-        if (err) alert("An error occurred while uploading the file. Please try uploading again.");
-      });
+    try{
+    const parallelUploads3 = new Upload({
+      client: new S3Client({region: REGION, credentials: credentials}),
+      params: params,
+      partSize: 1024 * 1024 * 5, 
+      leavePartsOnError: false, 
+    });
+
+    await parallelUploads3.done();
+    setDisabled(false);
+    setLoading(false);
+    setUploadStatus(true);
+  }
+  catch(err){
+    console.log(err);
+    alert("An error occurred while uploading the file. Please try uploading again.");
+  }
+
   };
 
   const handleChange = (e) => {
@@ -71,6 +76,8 @@ const CSVUpload = () => {
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
+    setDisabled(true);
+    setLoading(true);
     handleFileUpload(e);
   };
 
@@ -110,11 +117,14 @@ const CSVUpload = () => {
       <div className="buttonDiv">
         <button
           className="button"
+          disabled = {disabled}
           onClick={(e) => {
-            handleOnSubmit(e);
+            !file ? alert("Please select a file to upload") : handleOnSubmit(e);
+            
           }}
+          
         >
-          Upload
+          {loading ? <CircularProgress size={16} /> : "Upload"}
         </button>
 
         <CSVLink
