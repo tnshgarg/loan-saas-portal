@@ -3,6 +3,13 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../actions/auth";
+import {
+  setAddressForm,
+  setEsicStateForm,
+  setPfForm,
+  setTaxSetupForm,
+} from "../../actions/registerForm";
+import { getRegisterFormData } from "../../services/user.services";
 import "./styles.css";
 
 export const Login = () => {
@@ -19,14 +26,62 @@ export const Login = () => {
     // formState: { errors },
   } = useForm();
   const onSubmit = (data) => {
-    console.log(data);
     const { email: username, password } = data;
-    console.log(username, password);
 
     dispatch(login(username, password))
-      .then(() => {
+      .then((loginData) => {
         setSuccessful(true);
-        navigate("/profile");
+
+        const { authToken, employerId } = loginData;
+
+        getRegisterFormData(authToken, employerId)
+          .then((response) => {
+            const registerFormObject = response.data.body;
+
+            const {
+              companyName: company,
+              brandName: brand,
+              registeredAddress: address,
+              pincode,
+            } = registerFormObject ?? "";
+
+            dispatch(setAddressForm(company, brand, address, pincode));
+
+            const { id: pan } = registerFormObject?.PAN ?? "";
+            const { id: tan } = registerFormObject?.TAN ?? "";
+            const { id: gstin } = registerFormObject?.GSTIN ?? "";
+
+            dispatch(setTaxSetupForm(pan, tan, gstin));
+
+            const { username: pf_username, password: pf_password } =
+              registerFormObject?.credentials_epfo ?? "";
+
+            dispatch(setPfForm(pf_username, pf_password));
+
+            Object.entries(registerFormObject ?? {}).forEach(([key, value]) => {
+              if (key.startsWith("esic")) {
+                const esic_state_identifier = key.split("_")[2];
+                const {
+                  username: esic_employer_code,
+                  password: esic_password,
+                } = value ?? "";
+                dispatch(
+                  setEsicStateForm(
+                    esic_state_identifier,
+                    esic_state_identifier,
+                    esic_employer_code,
+                    esic_password
+                  )
+                );
+              }
+            });
+
+            navigate("/profile");
+          })
+          .catch((error) => {
+            console.log(error);
+            setSuccessful(false);
+          });
       })
       .catch(() => {
         setSuccessful(false);
