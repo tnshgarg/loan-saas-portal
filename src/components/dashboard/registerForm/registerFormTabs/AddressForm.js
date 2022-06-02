@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setAddressForm } from "../../../../actions/registerForm";
 import { getDocumentFromAddressFormDetails } from "../../../../helpers/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
 import { postRegisterFormData } from "../../../../services/user.services";
 import "./styles.css";
 
@@ -90,6 +91,8 @@ const AddressForm = () => {
           const message = error.response.data.message;
           alert.error(message);
         });
+    } else {
+      alert.error(NO_CHANGE_ERROR);
     }
   }; // your form submit function which will invoke after successful validation
 

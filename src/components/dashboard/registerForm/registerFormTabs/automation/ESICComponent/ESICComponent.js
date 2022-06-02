@@ -1,12 +1,16 @@
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
+import { useAlert } from "react-alert";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { setEsicStateForm } from "../../../../../../actions/registerForm";
+import { getDocumentFromEsicFormDetails } from "../../../../../../helpers/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../../../../helpers/messageStrings";
 import statesAndUts from "../../../../../../helpers/statesAndUts";
+import { postRegisterFormData } from "../../../../../../services/user.services";
 import "./ESICComponentStyles.css";
 
 const ESICStateComponent = ({
@@ -19,8 +23,13 @@ const ESICStateComponent = ({
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const alert = useAlert();
 
-  const { message } = useSelector((state) => state.message);
+  const { jwtToken } =
+    useSelector((state) => state.auth.user?.signInUserSession.idToken) ?? "";
+
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
   const states = Object.keys(statesAndUts).map((indianState) => {
     return {
@@ -54,21 +63,21 @@ const ESICStateComponent = ({
 
   useEffect(() => {
     return () => {
-      const data = getValues();
+      const esicStateDataNew = getValues();
       const {
         esic_state,
         esic_state_other,
         esic_employer_code,
         esic_password,
-      } = data || "";
-      const isEmpty =
-        (esic_employer_code === "" ||
+      } = esicStateDataNew || "";
+      const isEqual =
+        (esic_employer_code === esicEmployerCodeInitial ||
           esic_employer_code === null ||
           esic_employer_code === undefined) &
-        (esic_password === "" ||
+        (esic_password === esicPasswordInitial ||
           esic_password === null ||
           esic_password === undefined);
-      if (!isEmpty) {
+      if (!isEqual) {
         dispatch(
           setEsicStateForm(
             esic_state,
@@ -79,10 +88,51 @@ const ESICStateComponent = ({
         );
       }
     };
-  }, [dispatch, getValues]);
+  }, [dispatch, esicEmployerCodeInitial, esicPasswordInitial, getValues]);
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = (esicStateDataNew) => {
+    const { esic_state, esic_state_other, esic_employer_code, esic_password } =
+      esicStateDataNew || "";
+    const esic_state_identifier = esic_state_other
+      ? esic_state_other
+      : esic_state;
+    const isEqual =
+      (esic_employer_code === esicEmployerCodeInitial ||
+        esic_employer_code === null ||
+        esic_employer_code === undefined) &
+      (esic_password === esicPasswordInitial ||
+        esic_password === null ||
+        esic_password === undefined);
+    if (!isEqual) {
+      dispatch(
+        setEsicStateForm(
+          esic_state,
+          esic_state_other,
+          esic_employer_code,
+          esic_password
+        )
+      );
+      postRegisterFormData(
+        jwtToken,
+        getDocumentFromEsicFormDetails(
+          employerId,
+          esic_state_identifier,
+          esic_employer_code,
+          esic_password
+        )
+      )
+        .then((response) => {
+          const message = response.data.body.message;
+          alert.success(message);
+        })
+        .catch((error) => {
+          const message = error.response.data.message;
+          alert.error(message);
+        });
+    } else if (!isComponentDisabled) {
+      alert.error(NO_CHANGE_ERROR);
+    }
+
     setIsComponentDisabled(!isComponentDisabled);
   }; // your form submit function which will invoke after successful validation
 
@@ -155,10 +205,6 @@ const ESICComponent = () => {
 
   const { esicFormDetails: initialEsicFormDetails } =
     useSelector((state) => state.registerForm) || {};
-
-  useEffect(() => {
-    console.log(initialEsicFormDetails);
-  }, [initialEsicFormDetails]);
 
   return (
     <div>

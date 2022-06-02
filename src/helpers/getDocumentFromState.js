@@ -51,6 +51,66 @@ export const getDocumentFromAddressFormDetails = (
   return document;
 };
 
+export const getDocumentFromTaxSetupFormDetails = (
+  employerId,
+  taxSetupFormDetails
+) => {
+  const { pan, tan, gstin } = taxSetupFormDetails ?? "";
+  const document = {
+    employerId: employerId ?? "",
+    PAN: {
+      id: pan ?? "",
+      verification_status: "Done",
+    },
+    TAN: {
+      id: tan ?? "",
+      verification_status: "Done",
+    },
+    GSTIN: {
+      id: gstin ?? "",
+      verification_status: "Done",
+    },
+  };
+
+  return document;
+};
+
+export const getDocumentFromPfFormDetails = (employerId, pfFormDetails) => {
+  const { pf_username, pf_password } = pfFormDetails ?? "";
+  const document = {
+    employerId: employerId ?? "",
+    credentials: {
+      epfo: {
+        username: pf_username ?? "",
+        password: pf_password ?? "",
+      },
+    },
+  };
+
+  return document;
+};
+
+export const getDocumentFromEsicFormDetails = (
+  employerId,
+  esic_state_identifier,
+  esic_employer_code,
+  esic_password
+) => {
+  const document = {
+    employerId: employerId ?? "",
+    credentials: {
+      esic: {
+        [esic_state_identifier]: {
+          username: esic_employer_code,
+          password: esic_password,
+        },
+      },
+    },
+  };
+
+  return document;
+};
+
 // export const getDocumentFromState = (
 //   jwtToken,
 //   addressFormDetails,
