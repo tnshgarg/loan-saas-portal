@@ -54,13 +54,13 @@ export const Login = () => {
             dispatch(setTaxSetupForm(pan, tan, gstin));
 
             const { username: pf_username, password: pf_password } =
-              registerFormObject?.credentials_epfo ?? "";
+              registerFormObject?.credentials?.epfo ?? "";
 
             dispatch(setPfForm(pf_username, pf_password));
 
-            Object.entries(registerFormObject ?? {}).forEach(([key, value]) => {
-              if (key.startsWith("esic")) {
-                const esic_state_identifier = key.split("_")[2];
+            Object.entries(registerFormObject?.credentials?.esic ?? {}).forEach(
+              ([key, value]) => {
+                const esic_state_identifier = key;
                 const {
                   username: esic_employer_code,
                   password: esic_password,
@@ -74,7 +74,7 @@ export const Login = () => {
                   )
                 );
               }
-            });
+            );
 
             navigate("/profile");
           })

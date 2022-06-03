@@ -79,9 +79,11 @@ export const getDocumentFromPfFormDetails = (employerId, pfFormDetails) => {
   const { pf_username, pf_password } = pfFormDetails ?? "";
   const document = {
     employerId: employerId ?? "",
-    credentials_epfo: {
-      username: pf_username ?? "",
-      password: pf_password ?? "",
+    credentials: {
+      epfo: {
+        username: pf_username ?? "",
+        password: pf_password ?? "",
+      },
     },
   };
 
@@ -94,12 +96,15 @@ export const getDocumentFromEsicFormDetails = (
   esic_employer_code,
   esic_password
 ) => {
-  const esic_state_key = `esic_credentials_${esic_state_identifier}`;
   const document = {
     employerId: employerId ?? "",
-    [esic_state_key]: {
-      username: esic_employer_code,
-      password: esic_password,
+    credentials: {
+      esic: {
+        [esic_state_identifier]: {
+          username: esic_employer_code,
+          password: esic_password,
+        },
+      },
     },
   };
 
