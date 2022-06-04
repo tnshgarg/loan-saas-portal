@@ -113,7 +113,6 @@ div.container > label {
 }
 
 button[type="button"] {
-  width: 50px;
   display: block;
   appearance: none;
   background: transparent;

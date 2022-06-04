@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import "./styles.css";
 import { CSVLink } from "react-csv";
 import AWS from "aws-sdk";
-import {Upload} from "@aws-sdk/lib-storage"
-import {S3Client} from '@aws-sdk/client-s3'
+import { Upload } from "@aws-sdk/lib-storage";
+import { S3Client } from "@aws-sdk/client-s3";
 import { Alert, Collapse, CircularProgress } from "@mui/material";
 import Navbar from "../navbarMainComponent/Navbar";
 import { headers } from "./headerData";
@@ -31,6 +31,8 @@ const CSVUpload = () => {
 
   // CSV FILE UPLOAD
   const [file, setFile] = useState();
+  const [fileSize, setFileSize] = useState(0);
+  const maxSize = 1024 * 1024 * 3.5; // 3.5MB
   const [uploadStatus, setUploadStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
@@ -41,7 +43,7 @@ const CSVUpload = () => {
   const credentials = {
     accessKeyId: process.env.REACT_APP_ACCESS_KEY,
     secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
-  }
+  };
 
   const handleFileUpload = async (e) => {
     const params = {
@@ -50,27 +52,38 @@ const CSVUpload = () => {
       Key: `test/data/${file.name}`,
     };
 
-    try{
-    const parallelUploads3 = new Upload({
-      client: new S3Client({region: REGION, credentials: credentials}),
-      params: params,
-      partSize: 1024 * 1024 * 5, 
-      leavePartsOnError: false, 
-    });
+    try {
+      const parallelUploads3 = new Upload({
+        client: new S3Client({ region: REGION, credentials: credentials }),
+        params: params,
+        partSize: 1024 * 1024 * 5,
+        leavePartsOnError: false,
+      });
 
-    await parallelUploads3.done();
-    setDisabled(false);
-    setLoading(false);
-    setUploadStatus(true);
-  }
-  catch(err){
-    console.log(err);
-    alert("An error occurred while uploading the file. Please try uploading again.");
-  }
-
+      if (fileSize > maxSize) {
+        throw new Error("FileTooLarge");
+      } else {
+        await parallelUploads3.done();
+        setDisabled(false);
+        setLoading(false);
+        setUploadStatus(true);
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.message === "FileTooLarge") {
+        alert("File is too large. Please upload the file in parts.");
+      } else {
+        alert(
+          "An error occurred while uploading the file. Please try uploading again."
+        );
+      }
+      setDisabled(false);
+      setLoading(false);
+    }
   };
 
   const handleChange = (e) => {
+    setFileSize(e.target.files[0].size);
     setFile(e.target.files[0]);
   };
 
@@ -91,7 +104,7 @@ const CSVUpload = () => {
           }}
           severity="success"
         >
-          {file? `File ${file.name} Uploaded Successfully` : null}
+          {file ? `File ${file.name} Uploaded Successfully` : null}
         </Alert>
       </Collapse>
       <h1 className="uploadHeading">Upload Employee Details</h1>
@@ -108,7 +121,12 @@ const CSVUpload = () => {
       </div>
       <label>or</label>
       <div className="dropArea">
-        <FileDrop onDrop={(files) => setFile(files[0])}>
+        <FileDrop
+          onDrop={(files) => {
+            setFile(files[0]);
+            setFileSize(files[0].size);
+          }}
+        >
           <label style={{ fontSize: 24 }}>
             {file ? file.name : "Drop CSV file here"}
           </label>
@@ -117,12 +135,10 @@ const CSVUpload = () => {
       <div className="buttonDiv">
         <button
           className="button"
-          disabled = {disabled}
+          disabled={disabled}
           onClick={(e) => {
             !file ? alert("Please select a file to upload") : handleOnSubmit(e);
-            
           }}
-          
         >
           {loading ? <CircularProgress size={16} /> : "Upload"}
         </button>
