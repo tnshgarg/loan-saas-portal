@@ -3,10 +3,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
+import CSVUpload from "./components/dashboard/dataUpload/CSVUpload";
 import Profile from "./components/dashboard/profile/Profile";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
+import { InvalidRoute } from "./components/errorDisplayComponents/InvalidRoute";
 import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
-import CSVUpload from "./components/dashboard/dataUpload/CSVUpload";
 import { history } from "./helpers/history";
 
 const App = () => {
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/register-form" element={<RegisterForm />} />
         <Route path="/upload" element={<CSVUpload />} />
+        <Route path="*" element={<InvalidRoute />} />
       </Routes>
     </Router>
   );

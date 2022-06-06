@@ -1,6 +1,7 @@
 import { getMessageFromError } from "../helpers/getMessageFromError";
 import AuthService from "../services/auth.service";
 import {
+  CLEAR_MESSAGE,
   LOGIN_FAIL,
   LOGIN_SUCCESS,
   LOGOUT,
@@ -107,8 +108,11 @@ export const login = (username, password) => (dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
-  AuthService.logout();
+  // AuthService.logout();
   dispatch({
     type: LOGOUT,
+  });
+  dispatch({
+    type: CLEAR_MESSAGE,
   });
 };

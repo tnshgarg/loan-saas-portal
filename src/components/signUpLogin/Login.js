@@ -6,7 +6,7 @@ import { login } from "../../actions/auth";
 import "./styles.css";
 
 export const Login = () => {
-  const [successful, setSuccessful] = useState(false);
+  const [successful, setSuccessful] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

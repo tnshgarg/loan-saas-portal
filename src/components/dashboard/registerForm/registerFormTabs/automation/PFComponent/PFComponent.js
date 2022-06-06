@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setPfForm } from "../../../../../actions/registerForm";
-import "./styles.css";
+import { setPfForm } from "../../../../../../actions/registerForm";
+import "./PFComponentStyles.css";
 
 const PFComponent = () => {
   const [successful, setSuccessful] = useState(false);
@@ -12,6 +12,8 @@ const PFComponent = () => {
 
   const { pf_username: pfUsernameInitial, pf_password: pfPasswordInitial } =
     useSelector((state) => state.registerForm.pfFormDetails) || "";
+
+  const [isComponentDisabled, setIsComponentDisabled] = useState(true);
 
   const {
     register,
@@ -44,6 +46,7 @@ const PFComponent = () => {
 
   const onSubmit = (data) => {
     console.log(data);
+    setIsComponentDisabled(!isComponentDisabled);
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
@@ -51,18 +54,27 @@ const PFComponent = () => {
   return (
     <div>
       <h1>Enter your PF details</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="form-row">
         {/* register your input into the hook by invoking the "register" function */}
-        <label>Username</label>
-        <input {...register("pf_username")} />
-        <label>Password</label>
-        <input type="password" {...register("pf_password")} />
+        <div className="form-row-new">
+          <label>Username</label>
+          <label>Password</label>
+          <label>Action</label>
+        </div>
+
+        <div className="form-row-new">
+          <input {...register("pf_username")} disabled={isComponentDisabled} />
+          <input
+            type="password"
+            {...register("pf_password")}
+            disabled={isComponentDisabled}
+          />
+          <input type="submit" value={isComponentDisabled ? "edit" : "lock"} />
+        </div>
 
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}
-
-        <input type="submit" value="next" />
       </form>
     </div>
   );

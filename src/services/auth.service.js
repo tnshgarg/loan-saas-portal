@@ -35,14 +35,14 @@ const login = (username, password) => {
   });
 };
 
-const logout = () => {
-  localStorage.removeItem("user");
-};
+// const logout = () => {
+//   localStorage.removeItem("user");
+// };
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   signUp,
   confirmSignUp,
   login,
-  logout,
+  // logout,
 };
