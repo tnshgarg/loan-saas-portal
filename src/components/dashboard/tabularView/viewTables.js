@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import "./styles.css"
+import "./styles.css";
 import {
   Typography,
   Table,
@@ -8,6 +8,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
+  TableContainer,
   IconButton,
   Input,
   Paper,
@@ -19,16 +20,21 @@ import DoneIcon from "@mui/icons-material/Done";
 import EditIcon from "@mui/icons-material/Edit";
 import RevertIcon from "@mui/icons-material/Undo";
 import axios from "axios";
-
+import { headers } from "../dataUpload/headerData";
+import Navbar from "../navbarMainComponent/Navbar";
 
 const classes = {
   root: {
-    width: "100%",
+    width: "70%",
     marginTop: "20px",
-    overflowX: "auto",
+    overflow: "hidden",
+    overflowY: "scroll",
+    overflowX: "scroll",
   },
   table: {
-    minWidth: 650,
+    width: "70%",
+    overflow: "hidden",
+    overflowY: "scroll",
   },
   selectTableCell: {
     width: 60,
@@ -43,9 +49,7 @@ const classes = {
   },
 };
 
-
-
- 
+const headerFields = headers[0];
 
 const createData = (name, calories, fat, carbs, protein) => ({
   id: name.replace(" ", "_"),
@@ -102,27 +106,31 @@ TabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-
 function View() {
+  const [edit, setEdit] = useState(false);
+  const [rows, setRows] = useState([]);
+
   useEffect(() => {
     axios
-      .get("https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/default/tabula-crud-api")
+      .get(
+        "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/default/tabula-crud-api"
+      )
       .then((res) => {
-        console.log(res.data);
+        const tempData = res.data;
+        for (let i = 0; i < tempData.length; i++) {
+          tempData[i].isEditMode = false;
+        }
+        setRows(tempData);
+        console.log(rows);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
-  const [rows, setRows] = useState([
-    createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-    createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-    createData("Eclair", 262, 16.0, 24, 6.0),
-  ]);
+
   const [previous, setPrevious] = useState({});
   const [value, setValue] = useState(0);
 
-  
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -137,7 +145,7 @@ function View() {
   const onToggleEditMode = (id) => {
     setRows((state) => {
       return rows.map((row) => {
-        if (row.id === id) {
+        if (row._id === id) {
           return { ...row, isEditMode: !row.isEditMode };
         }
         return row;
@@ -146,14 +154,14 @@ function View() {
   };
 
   const onChange = (e, row) => {
-    if (!previous[row.id]) {
-      setPrevious((state) => ({ ...state, [row.id]: row }));
+    if (!previous[row._id]) {
+      setPrevious((state) => ({ ...state, [row._id]: row }));
     }
     const value = e.target.value;
     const name = e.target.name;
-    const { id } = row;
+    const id = row._id;
     const newRows = rows.map((row) => {
-      if (row.id === id) {
+      if (row._id === id) {
         return { ...row, [name]: value };
       }
       return row;
@@ -163,87 +171,126 @@ function View() {
 
   const onRevert = (id) => {
     const newRows = rows.map((row) => {
-      if (row.id === id) {
-        return previous[id] ? previous[id] : row;
+      if (row._id === id) {
+        return previous["Employee ID"] ? previous["Employee ID"] : row;
       }
       return row;
     });
     setRows(newRows);
     setPrevious((state) => {
-      delete state[id];
+      delete state["Employee ID"];
       return state;
     });
     onToggleEditMode(id);
   };
 
   return (
-    <Paper className={classes.root}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-          variant="fullWidth"
+    <div className="container">
+      <Navbar />
+      <Paper className="root">
+        <Box
+          sx={{ borderBottom: 1, borderColor: "divider", marginBottom: "10px" }}
         >
-          <Tab style={{fontSize: 20}} label="Checks Failed" {...a11yProps(0)} />
-          <Tab style={{fontSize: 20}} label="Checks Passed" {...a11yProps(1)} />
-        </Tabs>
-      </Box>
-      <TabPanel value={value} index={0}>
-        <Table className={classes.table} aria-label="caption table">
-          <caption>A barbone structure table example with a caption</caption>
-          <TableHead>
-            <TableRow>
-              <TableCell align="left" />
-              <TableCell align="left">Dessert (100g serving)</TableCell>
-              <TableCell align="left">Calories</TableCell>
-              <TableCell align="left">Fat&nbsp;(g)</TableCell>
-              <TableCell align="left">Carbs&nbsp;(g)</TableCell>
-              <TableCell align="left">Protein&nbsp;(g)</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell className={classes.selectTableCell}>
-                  {row.isEditMode ? (
-                    <>
-                      <IconButton
-                        aria-label="done"
-                        onClick={() => onToggleEditMode(row.id)}
-                      >
-                        <DoneIcon />
-                      </IconButton>
-                      <IconButton
-                        aria-label="revert"
-                        onClick={() => onRevert(row.id)}
-                      >
-                        <RevertIcon />
-                      </IconButton>
-                    </>
-                  ) : (
-                    <IconButton
-                      aria-label="delete"
-                      onClick={() => onToggleEditMode(row.id)}
+          <Tabs
+            sx={{ position: "sticky", top: 0, zIndex: 100 }}
+            value={value}
+            onChange={handleChange}
+            variant="fullWidth"
+          >
+            <Tab
+              style={{ fontSize: 20 }}
+              label="Checks Failed"
+              {...a11yProps(0)}
+            />
+            <Tab
+              style={{ fontSize: 20 }}
+              label="Checks Passed"
+              {...a11yProps(1)}
+            />
+          </Tabs>
+        </Box>
+        <TabPanel value={value} index={0}>
+          <TableContainer>
+            <Table className="table" aria-label="caption table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left" />
+                  {headerFields.map((header, index) => (
+                    <TableCell
+                      size="medium"
+                      className="tableCell"
+                      key={index}
+                      align="left"
                     >
-                      <EditIcon />
-                    </IconButton>
-                  )}
-                </TableCell>
-                <CustomTableCell {...{ row, name: "name", onChange }} />
-                <CustomTableCell {...{ row, name: "calories", onChange }} />
-                <CustomTableCell {...{ row, name: "fat", onChange }} />
-                <CustomTableCell {...{ row, name: "carbs", onChange }} />
-                <CustomTableCell {...{ row, name: "protein", onChange }} />
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <div></div>
-      </TabPanel>
-    </Paper>
+                      {header}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row, index) => (
+                  <TableRow key={index}>
+                    {row.isEditMode ? (
+                      <>
+                        <IconButton onClick={() => onToggleEditMode(row._id)}>
+                          <DoneIcon />
+                        </IconButton>
+                        <IconButton onClick={() => onRevert(row._id)}>
+                          <RevertIcon />
+                        </IconButton>
+                      </>
+                    ) : (
+                      <IconButton
+                        sx={{ marginTop: "20px" }}
+                        onClick={() => {
+                          console.log(row._id);
+                          onToggleEditMode(row._id);
+                        }}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    )}
+                    {Object.values(row).map((cell, index) => (
+                      <CustomTableCell
+                        {...{ row, name: headerFields[index], onChange }}
+                        className="tableCell"
+                        key={index}
+                      />
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <TableContainer>
+            <Table className="table" aria-label="caption table">
+              <TableHead>
+                <TableRow>
+                  {headerFields.map((header, index) => (
+                    <TableCell className="tableCell" key={index} align="left">
+                      {header}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row, index) => (
+                  <TableRow key={index}>
+                    {Object.values(row).map((cell, index) => (
+                      <TableCell className="tableCell" key={index}>
+                        {row[headerFields[index]]}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </TabPanel>
+      </Paper>
+    </div>
   );
 }
 
