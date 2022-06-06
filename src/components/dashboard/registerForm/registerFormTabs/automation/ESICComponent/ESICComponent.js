@@ -180,10 +180,7 @@ const ESICStateComponent = ({
             />
           )}
 
-          <input
-            {...register("esic_employer_code")}
-            disabled={isComponentDisabled}
-          />
+          <input {...register("esic_employer_code")} />
 
           <input
             type="password"

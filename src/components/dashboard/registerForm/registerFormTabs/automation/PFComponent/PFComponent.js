@@ -94,7 +94,7 @@ const PFComponent = () => {
         </div>
 
         <div className="form-row-new">
-          <input {...register("pf_username")} disabled={isComponentDisabled} />
+          <input {...register("pf_username")} />
           <input
             type="password"
             {...register("pf_password")}
