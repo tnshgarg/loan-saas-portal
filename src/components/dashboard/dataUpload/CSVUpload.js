@@ -31,6 +31,8 @@ const CSVUpload = () => {
 
   // CSV FILE UPLOAD
   const [file, setFile] = useState();
+  const [fileSize, setFileSize] = useState(0);
+  const maxSize = 1024 * 1024 * 3.5; // 3.5MB
   const [uploadStatus, setUploadStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
@@ -58,19 +60,30 @@ const CSVUpload = () => {
         leavePartsOnError: false,
       });
 
-      await parallelUploads3.done();
-      setDisabled(false);
-      setLoading(false);
-      setUploadStatus(true);
+      if (fileSize > maxSize) {
+        throw new Error("FileTooLarge");
+      } else {
+        await parallelUploads3.done();
+        setDisabled(false);
+        setLoading(false);
+        setUploadStatus(true);
+      }
     } catch (err) {
       console.log(err);
-      alert(
-        "An error occurred while uploading the file. Please try uploading again."
-      );
+      if (err.message === "FileTooLarge") {
+        alert("File is too large. Please upload the file in parts.");
+      } else {
+        alert(
+          "An error occurred while uploading the file. Please try uploading again."
+        );
+      }
+      setDisabled(false);
+      setLoading(false);
     }
   };
 
   const handleChange = (e) => {
+    setFileSize(e.target.files[0].size);
     setFile(e.target.files[0]);
   };
 
@@ -108,7 +121,12 @@ const CSVUpload = () => {
       </div>
       <label>or</label>
       <div className="dropArea">
-        <FileDrop onDrop={(files) => setFile(files[0])}>
+        <FileDrop
+          onDrop={(files) => {
+            setFile(files[0]);
+            setFileSize(files[0].size);
+          }}
+        >
           <label style={{ fontSize: 24 }}>
             {file ? file.name : "Drop CSV file here"}
           </label>
