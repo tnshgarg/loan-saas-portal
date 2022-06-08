@@ -9,7 +9,7 @@ const initialState = {
   addressFormDetails: null,
   taxSetupFormDetails: null,
   pfFormDetails: null,
-  esicFormDetails: [],
+  esicFormDetails: {},
   tabValueDetails: { tabValue: 0 },
 };
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -34,7 +34,11 @@ export default function (state = initialState, action) {
     case SET_ESIC_STATE_FORM:
       return {
         ...state,
-        esicFormDetails: [...state.esicFormDetails, payload],
+        // esicFormDetails: [...state.esicFormDetails, payload],
+        esicFormDetails: {
+          ...state.esicFormDetails,
+          [payload.esic_state_identifier]: payload,
+        },
       };
     case SET_REGISTER_FORM_TAB_VALUE:
       return {

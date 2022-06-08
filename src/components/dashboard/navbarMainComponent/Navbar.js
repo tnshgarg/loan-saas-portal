@@ -1,6 +1,7 @@
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import MuiAppBar from "@mui/material/AppBar";
@@ -14,12 +15,13 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { logout } from "../../../actions/auth";
 
 const drawerWidth = 240;
 
@@ -71,6 +73,14 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 const Navbar = ({ child }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -143,7 +153,7 @@ const Navbar = ({ child }) => {
               </ListItemButton>
             </ListItem>
           </Link>
-          <ListItem key={"Logout"} disablePadding>
+          <ListItem key={"Logout"} onClick={handleLogout} disablePadding>
             <ListItemButton>
               <ListItemIcon>
                 <LogoutIcon />

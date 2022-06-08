@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { CSVLink } from "react-csv";
+import { FileDrop } from "react-file-drop";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "./styles.css";
-import { CSVLink } from "react-csv";
-import AWS from "aws-sdk";
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Alert, Collapse, CircularProgress } from "@mui/material";
 import Navbar from "../navbarMainComponent/Navbar";
 import { headers } from "./headerData";
-import { FileDrop } from "react-file-drop";
+import "./styles.css";
 
 const CSVUpload = () => {
   // AUTH LAYER
