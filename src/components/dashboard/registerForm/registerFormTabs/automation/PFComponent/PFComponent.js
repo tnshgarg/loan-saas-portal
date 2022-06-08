@@ -1,17 +1,28 @@
 import React, { useEffect, useState } from "react";
+import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setPfForm } from "../../../../../../actions/registerForm";
+import { getDocumentFromPfFormDetails } from "../../../../../../helpers/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../../../../helpers/messageStrings";
+import { postRegisterFormData } from "../../../../../../services/user.services";
 import "./PFComponentStyles.css";
 
 const PFComponent = () => {
   const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const alert = useAlert();
 
   const { pf_username: pfUsernameInitial, pf_password: pfPasswordInitial } =
     useSelector((state) => state.registerForm.pfFormDetails) || "";
+
+  const { jwtToken } =
+    useSelector((state) => state.auth.user?.signInUserSession.idToken) ?? "";
+
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
   const [isComponentDisabled, setIsComponentDisabled] = useState(true);
 
@@ -30,22 +41,42 @@ const PFComponent = () => {
 
   useEffect(() => {
     return () => {
-      const data = getValues();
-      const { pf_username, pf_password } = data;
-      const isEmpty = Object.values(data).every((value) => {
-        if (value === "") {
-          return true;
-        }
-        return false;
-      });
-      if (!isEmpty) {
-        dispatch(setPfForm(pf_username, pf_password));
+      const pfFormDetailsNew = getValues();
+      const { pf_username: pfUserNameNew, pf_password: pfPasswordNew } =
+        pfFormDetailsNew;
+      const isEqual =
+        pfUserNameNew === pfUsernameInitial &&
+        pfPasswordNew === pfPasswordInitial;
+      if (!isEqual) {
+        dispatch(setPfForm(pfUserNameNew, pfPasswordNew));
       }
     };
-  }, [dispatch, getValues]);
+  }, [dispatch, getValues, pfPasswordInitial, pfUsernameInitial]);
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = (pfFormDetailsNew) => {
+    const { pf_username: pfUserNameNew, pf_password: pfPasswordNew } =
+      pfFormDetailsNew;
+    const isEqual =
+      pfUserNameNew === pfUsernameInitial &&
+      pfPasswordNew === pfPasswordInitial;
+    if (!isEqual) {
+      dispatch(setPfForm(pfUserNameNew, pfPasswordNew));
+      postRegisterFormData(
+        jwtToken,
+        getDocumentFromPfFormDetails(employerId, pfFormDetailsNew)
+      )
+        .then((response) => {
+          const message = response.data.body.message;
+          alert.success(message);
+        })
+        .catch((error) => {
+          const message = error.response.data.message;
+          alert.error(message);
+        });
+    } else if (!isComponentDisabled) {
+      alert.error(NO_CHANGE_ERROR);
+    }
+
     setIsComponentDisabled(!isComponentDisabled);
   }; // your form submit function which will invoke after successful validation
 
@@ -63,7 +94,7 @@ const PFComponent = () => {
         </div>
 
         <div className="form-row-new">
-          <input {...register("pf_username")} disabled={isComponentDisabled} />
+          <input {...register("pf_username")} />
           <input
             type="password"
             {...register("pf_password")}

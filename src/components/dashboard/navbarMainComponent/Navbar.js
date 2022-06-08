@@ -22,6 +22,7 @@ import * as React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../../actions/auth";
+import { setRegisterFormLogout } from "../../../actions/registerForm";
 
 const drawerWidth = 240;
 
@@ -79,6 +80,7 @@ const Navbar = ({ child }) => {
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(setRegisterFormLogout());
     navigate("/login");
   };
 
