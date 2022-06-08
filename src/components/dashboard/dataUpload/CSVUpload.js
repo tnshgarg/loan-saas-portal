@@ -32,7 +32,7 @@ const CSVUpload = () => {
   // CSV FILE UPLOAD
   const [file, setFile] = useState();
   const [fileSize, setFileSize] = useState(0);
-  const maxSize = 1024 * 1024 * 3.5; // 3.5MB
+  const maxSize = 1024 * 1024 * 2; // 2MB
   const [uploadStatus, setUploadStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
