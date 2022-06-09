@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { CSVLink } from "react-csv";
+import { FileDrop } from "react-file-drop";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "./styles.css";
-import { CSVLink } from "react-csv";
-import AWS from "aws-sdk";
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Alert, Collapse, CircularProgress } from "@mui/material";
 import Navbar from "../navbarMainComponent/Navbar";
 import { headers } from "./headerData";
-import { FileDrop } from "react-file-drop";
+import "./styles.css";
 
 const CSVUpload = () => {
   // AUTH LAYER
@@ -32,7 +32,7 @@ const CSVUpload = () => {
   // CSV FILE UPLOAD
   const [file, setFile] = useState();
   const [fileSize, setFileSize] = useState(0);
-  const maxSize = 1024 * 1024 * 3.5; // 3.5MB
+  const maxSize = 1024 * 1024 * 2; // 2MB
   const [uploadStatus, setUploadStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
