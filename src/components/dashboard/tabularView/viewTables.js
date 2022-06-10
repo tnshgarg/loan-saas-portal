@@ -18,9 +18,11 @@ import {
 } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import EditIcon from "@mui/icons-material/Edit";
-import RevertIcon from "@mui/icons-material/Undo";
+import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { headers } from "../dataUpload/headerData";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../navbarMainComponent/Navbar";
 
 const classes = {
@@ -51,21 +53,11 @@ const classes = {
 
 const headerFields = headers[0];
 
-const createData = (name, calories, fat, carbs, protein) => ({
-  id: name.replace(" ", "_"),
-  name,
-  calories,
-  fat,
-  carbs,
-  protein,
-  isEditMode: false,
-});
-
 const CustomTableCell = ({ row, name, onChange }) => {
   //   const classes = useStyles();
   const { isEditMode } = row;
   return (
-    <TableCell align="left" className={classes.tableCell}>
+    <TableCell align="left" className="tableCell">
       {isEditMode ? (
         <Input
           value={row[name]}
@@ -107,25 +99,52 @@ TabPanel.propTypes = {
 };
 
 function View() {
-  const [edit, setEdit] = useState(false);
   const [rows, setRows] = useState([]);
 
+  // AUTH LAYER
+  const navigate = useNavigate();
+  const auth = useSelector((state) => state.auth);
+  const [userName, setUserName] = useState("");
+
   useEffect(() => {
-    axios
-      .get(
-        "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/default/tabula-crud-api"
-      )
-      .then((res) => {
-        const tempData = res.data;
-        for (let i = 0; i < tempData.length; i++) {
-          tempData[i].isEditMode = false;
-        }
-        setRows(tempData);
-        console.log(rows);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    console.log(auth);
+    if (auth === undefined || auth === {}) {
+      navigate("/login");
+    } else if (!auth.isLoggedIn) {
+      navigate("/login");
+    } else {
+      // setUserName(user.signInUserSession.idToken.payload.name);
+      setUserName(auth.user.attributes.name);
+    }
+  }, [auth, navigate]);
+
+  useEffect(() => {
+    const fetchData = () => {
+      axios
+        .get(
+          "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud",
+          {
+            headers: {
+              Authorization: auth.user
+                ? auth.user.signInUserSession.idToken.jwtToken
+                : null,
+            },
+          }
+        )
+        .then((res) => {
+          const tempData = res.data["body"];
+          for (let i = 0; i < tempData.length; i++) {
+            tempData[i].isEditMode = false;
+          }
+          setRows(tempData);
+          console.log(rows);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    fetchData();
   }, []);
 
   const [previous, setPrevious] = useState({});
@@ -169,19 +188,49 @@ function View() {
     setRows(newRows);
   };
 
-  const onRevert = (id) => {
-    const newRows = rows.map((row) => {
-      if (row._id === id) {
-        return previous["Employee ID"] ? previous["Employee ID"] : row;
-      }
-      return row;
-    });
-    setRows(newRows);
-    setPrevious((state) => {
-      delete state["Employee ID"];
-      return state;
-    });
-    onToggleEditMode(id);
+  const publishChange = async (row) => {
+    console.log(row);
+    await axios
+      .put(
+        "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/default/employer/account/tabular-crud",
+        {
+          headers: {
+            Authorization: auth.user
+              ? auth.user.signInUserSession.idToken.jwtToken
+              : null,
+          },
+          body: row,
+        }
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const deleteRecord = async (id) => {
+    await axios
+      .delete(
+        "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/default/employer/account/tabular-crud",
+        {
+          headers: {
+            Authorization: auth.user
+              ? auth.user.signInUserSession.idToken.jwtToken
+              : null,
+          },
+          data: {
+            _id: id,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -218,7 +267,7 @@ function View() {
                   {headerFields.map((header, index) => (
                     <TableCell
                       size="medium"
-                      className="tableCell"
+                      className="headerCell"
                       key={index}
                       align="left"
                     >
@@ -228,37 +277,49 @@ function View() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row, index) => (
-                  <TableRow key={index}>
-                    {row.isEditMode ? (
-                      <>
-                        <IconButton onClick={() => onToggleEditMode(row._id)}>
-                          <DoneIcon />
-                        </IconButton>
-                        <IconButton onClick={() => onRevert(row._id)}>
-                          <RevertIcon />
-                        </IconButton>
-                      </>
-                    ) : (
-                      <IconButton
-                        sx={{ marginTop: "20px" }}
-                        onClick={() => {
-                          console.log(row._id);
-                          onToggleEditMode(row._id);
-                        }}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    )}
-                    {Object.values(row).map((cell, index) => (
-                      <CustomTableCell
-                        {...{ row, name: headerFields[index], onChange }}
-                        className="tableCell"
-                        key={index}
-                      />
-                    ))}
-                  </TableRow>
-                ))}
+                {rows.length > 0
+                  ? rows.map((row, index) => (
+                      <TableRow key={index}>
+                        {row.isEditMode ? (
+                          <>
+                            <IconButton
+                              onClick={() => {
+                                onToggleEditMode(row._id);
+                                publishChange(row);
+                              }}
+                            >
+                              <DoneIcon />
+                            </IconButton>
+                            <IconButton
+                              onClick={() => {
+                                let delID = row._id;
+                                rows.pop(row);
+                                onToggleEditMode(row._id);
+                                deleteRecord(delID);
+                              }}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </>
+                        ) : (
+                          <IconButton
+                            sx={{ marginTop: "20px" }}
+                            onClick={() => {
+                              onToggleEditMode(row._id);
+                            }}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                        )}
+                        {Object.values(row).map((cell, index) => (
+                          <CustomTableCell
+                            {...{ row, name: headerFields[index], onChange }}
+                            key={index}
+                          />
+                        ))}
+                      </TableRow>
+                    ))
+                  : null}
               </TableBody>
             </Table>
           </TableContainer>
@@ -269,22 +330,24 @@ function View() {
               <TableHead>
                 <TableRow>
                   {headerFields.map((header, index) => (
-                    <TableCell className="tableCell" key={index} align="left">
+                    <TableCell className="headerCell" key={index} align="left">
                       {header}
                     </TableCell>
                   ))}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row, index) => (
-                  <TableRow key={index}>
-                    {Object.values(row).map((cell, index) => (
-                      <TableCell className="tableCell" key={index}>
-                        {row[headerFields[index]]}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
+                {rows.length > 0
+                  ? rows.map((row, index) => (
+                      <TableRow key={index}>
+                        {Object.values(row).map((cell, index) => (
+                          <TableCell className="tableCell" key={index}>
+                            {row[headerFields[index]]}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  : null}
               </TableBody>
             </Table>
           </TableContainer>

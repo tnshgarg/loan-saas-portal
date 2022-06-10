@@ -15,6 +15,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import TableChartIcon from "@mui/icons-material/TableChart";
 import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -140,6 +141,16 @@ const Navbar = ({ child }) => {
                   <FileUploadIcon />
                 </ListItemIcon>
                 <ListItemText primary={"Upload Employee Details"} />
+              </ListItemButton>
+            </ListItem>
+          </Link>
+          <Link to="/view" style={{ textDecoration: "none", color: "black" }}>
+            <ListItem key={"Table View"} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <TableChartIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Employee Tabular View"} />
               </ListItemButton>
             </ListItem>
           </Link>

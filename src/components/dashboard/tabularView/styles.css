@@ -9,7 +9,7 @@
 
 .root {  
   width: 80vw;
-  height: 80vh;
+  height: 70vh;
   border: 0px;
   box-shadow: none;
   overflow: hidden;
@@ -31,9 +31,19 @@
   overflow-x: scroll;
 }
 
+.headerCell {
+  font-weight: bold;
+  font-size: 1.2em;
+  border-right: .5px solid #5d5959;
+  border-top: .5px solid #5d5959;
+  border-left: .5px solid #5d5959;
+}
+
 .tableCell{
   table-layout: auto;
-  width: 100px;
+  min-width: 150px;
+  border-right: .5px solid #5d5959;
+  border-left: .5px solid #5d5959;
 }
 
 p::before{

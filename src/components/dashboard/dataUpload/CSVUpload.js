@@ -17,17 +17,17 @@ const CSVUpload = () => {
   const auth = useSelector((state) => state.auth);
   const [userName, setUserName] = useState("");
 
-  // useEffect(() => {
-  //   console.log(auth);
-  //   if (auth === undefined || auth === {}) {
-  //     navigate("/login");
-  //   } else if (!auth.isLoggedIn) {
-  //     navigate("/login");
-  //   } else {
-  //     // setUserName(user.signInUserSession.idToken.payload.name);
-  //     setUserName(auth.user.attributes.name);
-  //   }
-  // }, [auth, navigate]);
+  useEffect(() => {
+    console.log(auth);
+    if (auth === undefined || auth === {}) {
+      navigate("/login");
+    } else if (!auth.isLoggedIn) {
+      navigate("/login");
+    } else {
+      // setUserName(user.signInUserSession.idToken.payload.name);
+      setUserName(auth.user.attributes.name);
+    }
+  }, [auth, navigate]);
 
   // CSV FILE UPLOAD
   const [file, setFile] = useState();
