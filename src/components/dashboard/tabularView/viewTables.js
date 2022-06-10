@@ -98,7 +98,7 @@ TabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-function View() {
+function TableView() {
   const [rows, setRows] = useState([]);
 
   // AUTH LAYER
@@ -357,4 +357,4 @@ function View() {
   );
 }
 
-export default View;
+export default TableView;

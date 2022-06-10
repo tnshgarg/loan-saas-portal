@@ -1,6 +1,7 @@
 import { getMessageFromError } from "../helpers/getMessageFromError";
 import AuthService from "../services/auth.service";
 import {
+  CLEAR_MESSAGE,
   LOGIN_FAIL,
   LOGIN_SUCCESS,
   LOGOUT,
@@ -82,7 +83,11 @@ export const confirmSignUp = (username, code) => (dispatch) => {
 export const login = (username, password) => (dispatch) => {
   return AuthService.login(username, password).then(
     (data) => {
-      console.log(data);
+      const loginData = {
+        authToken: data.signInUserSession.idToken.jwtToken,
+        employerId: data.attributes.sub,
+      };
+
       dispatch({
         type: LOGIN_SUCCESS,
         payload: { user: data },
@@ -91,7 +96,7 @@ export const login = (username, password) => (dispatch) => {
         type: SET_MESSAGE,
         payload: data.signInUserSession.accessToken.jwtToken,
       });
-      return Promise.resolve();
+      return Promise.resolve(loginData);
     },
     (error) => {
       dispatch({
@@ -107,8 +112,11 @@ export const login = (username, password) => (dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
-  AuthService.logout();
+  // AuthService.logout();
   dispatch({
     type: LOGOUT,
+  });
+  dispatch({
+    type: CLEAR_MESSAGE,
   });
 };
