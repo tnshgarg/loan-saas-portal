@@ -148,7 +148,7 @@ const CSVUpload = () => {
           filename={"Employee_Details_Format.csv"}
           style={{ textDecoration: "none" }}
         >
-          <button className="Downloadbutton">Download Format</button>
+          <button className="button">Download Format</button>
         </CSVLink>
       </div>
     </div>
