@@ -137,7 +137,7 @@ function TableView() {
             tempData[i].isEditMode = false;
           }
           setRows(tempData);
-          console.log(rows);
+          console.log(`Rows: ${rows}`);
         })
         .catch((err) => {
           console.log(err);
