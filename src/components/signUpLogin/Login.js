@@ -42,10 +42,11 @@ export const Login = () => {
               companyName: company,
               brandName: brand,
               registeredAddress: address,
+              state,
               pincode,
             } = registerFormObject ?? "";
 
-            dispatch(setAddressForm(company, brand, address, pincode));
+            dispatch(setAddressForm(company, brand, address, state, pincode));
 
             const { id: pan } = registerFormObject?.PAN ?? "";
             const { id: tan } = registerFormObject?.TAN ?? "";
