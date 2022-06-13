@@ -189,31 +189,31 @@ function TableView() {
   };
 
   const publishChange = async (row) => {
-    console.log(row);
-    await axios
-      .put(
-        "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/default/employer/account/tabular-crud",
-        {
-          headers: {
-            Authorization: auth.user
-              ? auth.user.signInUserSession.idToken.jwtToken
-              : null,
-          },
-          body: row,
+    await axios(
+      {
+        method: "put",
+        url: "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud",
+        headers: {
+          Authorization: auth.user
+            ? auth.user.signInUserSession.idToken.jwtToken
+            : null,
+        },
+        data: row,
+      },
+      (err, res) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(res);
         }
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      }
+    );
   };
 
   const deleteRecord = async (id) => {
     await axios
       .delete(
-        "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/default/employer/account/tabular-crud",
+        "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud",
         {
           headers: {
             Authorization: auth.user
@@ -293,8 +293,13 @@ function TableView() {
                             <IconButton
                               onClick={() => {
                                 let delID = row._id;
-                                rows.pop(row);
-                                onToggleEditMode(row._id);
+                                rows.splice(
+                                  rows.findIndex(function (i) {
+                                    return i._id === row._id;
+                                  }),
+                                  1
+                                );
+                                onToggleEditMode(delID);
                                 deleteRecord(delID);
                               }}
                             >
