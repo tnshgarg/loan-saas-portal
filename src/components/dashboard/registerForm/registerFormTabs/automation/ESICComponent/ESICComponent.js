@@ -54,7 +54,7 @@ const ESICStateComponent = ({
     // formState: { errors },
   } = useForm({
     defaultValues: {
-      esic_state: esicStateInitial,
+      esic_state: esicStateInitial ?? "",
       esic_state_other: esicStateOtherInitial,
       esic_employer_code: esicEmployerCodeInitial,
       esic_password: esicPasswordInitial,
@@ -71,12 +71,13 @@ const ESICStateComponent = ({
         esic_password,
       } = esicStateDataNew || "";
       const isEqual =
-        (esic_employer_code === esicEmployerCodeInitial ||
+        ((esic_employer_code === esicEmployerCodeInitial ||
           esic_employer_code === null ||
-          esic_employer_code === undefined) &
-        (esic_password === esicPasswordInitial ||
-          esic_password === null ||
-          esic_password === undefined);
+          esic_employer_code === undefined) &&
+          (esic_password === esicPasswordInitial ||
+            esic_password === null ||
+            esic_password === undefined)) ||
+        esic_state === "";
       if (!isEqual) {
         dispatch(
           setEsicStateForm(
@@ -99,7 +100,7 @@ const ESICStateComponent = ({
     const isEqual =
       (esic_employer_code === esicEmployerCodeInitial ||
         esic_employer_code === null ||
-        esic_employer_code === undefined) &
+        esic_employer_code === undefined) &&
       (esic_password === esicPasswordInitial ||
         esic_password === null ||
         esic_password === undefined);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import {
   setAddressForm,
   setEsicStateForm,
   setPfForm,
+  setRegisterFormLogout,
   setTaxSetupForm,
 } from "../../actions/registerForm";
 import { getRegisterFormData } from "../../services/user.services";
@@ -18,6 +19,10 @@ export const Login = () => {
   const navigate = useNavigate();
 
   const { message } = useSelector((state) => state.message);
+
+  useEffect(() => {
+    dispatch(setRegisterFormLogout());
+  }, [dispatch]);
 
   const {
     register,
