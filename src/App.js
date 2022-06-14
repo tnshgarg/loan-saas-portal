@@ -7,6 +7,7 @@ import CSVUpload from "./components/dashboard/dataUpload/CSVUpload";
 import Profile from "./components/dashboard/profile/Profile";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
 import { InvalidRoute } from "./components/errorDisplayComponents/InvalidRoute";
+import { LandingPageMainComponent } from "./components/landingPage/landingPageMainComponent";
 import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
 import { history } from "./helpers/history";
 
@@ -25,7 +26,7 @@ const App = () => {
     <Router history={history}>
       <br></br>
       <Routes>
-        <Route path="/" element={<SignUp />} />
+        <Route path="/" element={<LandingPageMainComponent />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/confirm-sign-up" element={<ConfirmSignUp />} />
         <Route path="/login" element={<Login />} />
