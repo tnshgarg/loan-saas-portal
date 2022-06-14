@@ -3,7 +3,10 @@ import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setTaxSetupForm } from "../../../../actions/registerForm";
+import {
+  setRegisterFormTabValue,
+  setTaxSetupForm,
+} from "../../../../actions/registerForm";
 import { getDocumentFromTaxSetupFormDetails } from "../../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
 import { postRegisterFormData } from "../../../../services/user.services";
@@ -67,6 +70,7 @@ const TaxSetupForm = () => {
         .then((response) => {
           const message = response.data.body.message;
           alert.success(message);
+          dispatch(setRegisterFormTabValue(2));
         })
         .catch((error) => {
           const message = error.response.data.message;

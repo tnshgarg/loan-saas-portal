@@ -4,7 +4,10 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
-import { setAddressForm } from "../../../../actions/registerForm";
+import {
+  setAddressForm,
+  setRegisterFormTabValue,
+} from "../../../../actions/registerForm";
 import { getDocumentFromAddressFormDetails } from "../../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
 import statesAndUts from "../../../../helpers/statesAndUts";
@@ -99,6 +102,7 @@ const AddressForm = () => {
         .then((response) => {
           const message = response.data.body.message;
           alert.success(message);
+          dispatch(setRegisterFormTabValue(1));
         })
         .catch((error) => {
           const message = error.response.data.message;
