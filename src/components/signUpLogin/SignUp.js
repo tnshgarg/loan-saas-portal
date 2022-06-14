@@ -79,9 +79,18 @@ export const SignUp = () => {
           type="password"
           {...register("password", {
             required: true,
+            pattern: {
+              value:
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/i,
+            },
           })}
         />
-        {errors.password && <p>Password cannot be empty</p>}
+        {errors.password && (
+          <p>
+            Password must contain atleast 8 letters, including numbers,
+            uppercase, lowercase and special characters{" "}
+          </p>
+        )}
 
         <label>Phone Number</label>
         <input
