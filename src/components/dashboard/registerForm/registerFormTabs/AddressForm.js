@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useAlert } from "react-alert";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 import { setAddressForm } from "../../../../actions/registerForm";
 import { getDocumentFromAddressFormDetails } from "../../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
+import statesAndUts from "../../../../helpers/statesAndUts";
 import { postRegisterFormData } from "../../../../services/user.services";
 import "./styles.css";
 
@@ -29,12 +31,22 @@ const AddressForm = () => {
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
+  const states = Object.keys(statesAndUts).map((indianState) => {
+    return {
+      value: indianState,
+      label: indianState,
+    };
+  });
+
+  const defaultIndianState = states[0].label;
+
   const {
     register,
     getValues,
     handleSubmit,
+    control,
     // watch,
-    // formState: { errors },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       company: companyInitial,
@@ -43,6 +55,7 @@ const AddressForm = () => {
       state: stateInitial,
       pincode: pincodeInitial,
     },
+    mode: "all",
   });
 
   useEffect(() => {
@@ -104,15 +117,57 @@ const AddressForm = () => {
         {/* register your input into the hook by invoking the "register" function */}
 
         <label>Company Name</label>
-        <input {...register("company")} />
+        <input
+          {...register("company", {
+            required: true,
+          })}
+        />
+        {errors.company && <p>Company Name cannot be empty</p>}
+
         <label>Brand Name</label>
-        <input {...register("brand")} />
+        <input
+          {...register("brand", {
+            required: true,
+          })}
+        />
+        {errors.brand && <p>Brand Name cannot be empty</p>}
+
         <label>Registered Address</label>
-        <input {...register("address")} />
+        <input
+          {...register("address", {
+            required: true,
+          })}
+        />
+        {errors.address && <p>Address cannot be empty</p>}
+
         <label>State</label>
-        <input {...register("state")} />
+        <Controller
+          control={control}
+          defaultValue={defaultIndianState}
+          name="state"
+          render={({ field }) => (
+            <Select
+              inputRef={field.ref}
+              classNamePrefix="addl-class"
+              options={states}
+              value={states.find((c) => c.value === field.value)}
+              onChange={(val) => {
+                field.onChange(val.value);
+              }}
+            />
+          )}
+        />
+
         <label>Pincode</label>
-        <input {...register("pincode")} />
+        <input
+          {...register("pincode", {
+            required: true,
+            pattern: {
+              value: /^[1-9][0-9]{5}$/,
+            },
+          })}
+        />
+        {errors.pincode && <p>Pincode must consist of 6 digits</p>}
 
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}

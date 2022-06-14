@@ -32,13 +32,14 @@ const TaxSetupForm = () => {
     handleSubmit,
     getValues,
     // watch,
-    // formState: { errors },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       pan: panInitial,
       tan: tanInitial,
       gstin: gstinInitial,
     },
+    mode: "all",
   });
 
   useEffect(() => {
@@ -83,11 +84,37 @@ const TaxSetupForm = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
         <label>Company PAN</label>
-        <input {...register("pan")} />
+        <input
+          {...register("pan", {
+            required: true,
+            pattern: {
+              value: /^([a-zA-Z0-9]{10})$/,
+            },
+          })}
+        />
+        {errors.pan && <p>Enter a valid PAN Number having 10 characters</p>}
+
         <label>Company TAN</label>
-        <input {...register("tan")} />
+        <input
+          {...register("tan", {
+            required: true,
+            pattern: {
+              value: /^([a-zA-Z0-9]{10})$/,
+            },
+          })}
+        />
+        {errors.tan && <p>Enter a valid TAN Number having 10 characters</p>}
+
         <label>Company GSTIN</label>
-        <input {...register("gstin")} />
+        <input
+          {...register("gstin", {
+            required: true,
+            pattern: {
+              value: /^([a-zA-Z0-9]{15})$/,
+            },
+          })}
+        />
+        {errors.gstin && <p>Enter a valid GSTIN Number having 15 characters</p>}
 
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}

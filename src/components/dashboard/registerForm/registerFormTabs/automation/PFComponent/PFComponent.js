@@ -31,12 +31,13 @@ const PFComponent = () => {
     getValues,
     handleSubmit,
     // watch,
-    // formState: { errors },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       pf_username: pfUsernameInitial,
       pf_password: pfPasswordInitial,
     },
+    mode: "all",
   });
 
   useEffect(() => {
@@ -52,6 +53,10 @@ const PFComponent = () => {
       }
     };
   }, [dispatch, getValues, pfPasswordInitial, pfUsernameInitial]);
+
+  const toggleDisabledStatus = () => {
+    setIsComponentDisabled(!isComponentDisabled);
+  };
 
   const onSubmit = (pfFormDetailsNew) => {
     const { pf_username: pfUserNameNew, pf_password: pfPasswordNew } =
@@ -73,11 +78,9 @@ const PFComponent = () => {
           const message = error.response.data.message;
           alert.error(message);
         });
-    } else if (!isComponentDisabled) {
+    } else {
       alert.error(NO_CHANGE_ERROR);
     }
-
-    setIsComponentDisabled(!isComponentDisabled);
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
@@ -94,13 +97,29 @@ const PFComponent = () => {
         </div>
 
         <div className="form-row-new">
-          <input {...register("pf_username")} />
+          <input
+            {...register("pf_username", {
+              required: true,
+            })}
+          />
           <input
             type="password"
-            {...register("pf_password")}
+            {...register("pf_password", {
+              required: true,
+            })}
             disabled={isComponentDisabled}
           />
-          <input type="submit" value={isComponentDisabled ? "edit" : "lock"} />
+          <input
+            type="submit"
+            value={isComponentDisabled ? "edit" : "lock"}
+            onClick={toggleDisabledStatus}
+          />
+        </div>
+
+        <div className="form-row-new">
+          <label>{errors.pf_username && <p>Username cannot be empty</p>}</label>
+          <label>{errors.pf_password && <p>Password cannot be empty</p>}</label>
+          <label></label>
         </div>
 
         {/* include validation with required or other standard HTML validation rules */}

@@ -51,7 +51,7 @@ const ESICStateComponent = ({
     handleSubmit,
     control,
     // watch,
-    // formState: { errors },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       esic_state: esicStateInitial ?? "",
@@ -59,6 +59,7 @@ const ESICStateComponent = ({
       esic_employer_code: esicEmployerCodeInitial,
       esic_password: esicPasswordInitial,
     },
+    mode: "all",
   });
 
   useEffect(() => {
@@ -91,6 +92,10 @@ const ESICStateComponent = ({
     };
   }, [dispatch, esicEmployerCodeInitial, esicPasswordInitial, getValues]);
 
+  const toggleDisabledStatus = () => {
+    setIsComponentDisabled(!isComponentDisabled);
+  };
+
   const onSubmit = (esicStateDataNew) => {
     const { esic_state, esic_state_other, esic_employer_code, esic_password } =
       esicStateDataNew || "";
@@ -122,11 +127,9 @@ const ESICStateComponent = ({
           const message = error.response.data.message;
           alert.error(message);
         });
-    } else if (!isComponentDisabled) {
+    } else {
       alert.error(NO_CHANGE_ERROR);
     }
-
-    setIsComponentDisabled(!isComponentDisabled);
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
@@ -168,22 +171,50 @@ const ESICStateComponent = ({
           />
           {showOtherIndianState && (
             <input
-              {...register("esic_state_other")}
+              {...register("esic_state_other", {
+                required: true,
+              })}
               disabled={isComponentDisabled}
             />
           )}
 
-          <input {...register("esic_employer_code")} />
+          <input
+            {...register("esic_employer_code", {
+              required: true,
+            })}
+          />
 
           <input
             type="password"
-            {...register("esic_password")}
+            {...register("esic_password", {
+              required: true,
+            })}
             disabled={isComponentDisabled}
           />
           {/* include validation with required or other standard HTML validation rules */}
           {/* errors will return when field validation fails  */}
           {/* {errors.exampleRequired && <p>This field is required</p>} */}
-          <input type="submit" value={isComponentDisabled ? "edit" : "lock"} />
+          <input
+            type="submit"
+            value={isComponentDisabled ? "edit" : "lock"}
+            onClick={toggleDisabledStatus}
+          />
+        </div>
+
+        <div className="form-row-new">
+          <label></label>
+          {showOtherIndianState && (
+            <label>
+              {errors.esic_state_other && <p>This field cannot be empty</p>}
+            </label>
+          )}
+          <label>
+            {errors.esic_employer_code && <p>Employer code cannot be empty</p>}
+          </label>
+          <label>
+            {errors.esic_password && <p>Password cannot be empty</p>}
+          </label>
+          <label></label>
         </div>
       </form>
     </div>
