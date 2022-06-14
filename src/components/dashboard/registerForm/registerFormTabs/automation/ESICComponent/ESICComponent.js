@@ -104,14 +104,6 @@ const ESICStateComponent = ({
         esic_password === null ||
         esic_password === undefined);
     if (!isEqual) {
-      dispatch(
-        setEsicStateForm(
-          esic_state,
-          esic_state_other,
-          esic_employer_code,
-          esic_password
-        )
-      );
       postRegisterFormData(
         jwtToken,
         getDocumentFromEsicFormDetails(
