@@ -47,7 +47,8 @@ input {
 
 button[type="submit"],
 input[type="submit"] {
-  background: #ec5990;
+  background: #4e46f1;
+  opacity: 0.9;
   color: white;
   text-transform: uppercase;
   border: none;
@@ -60,7 +61,8 @@ input[type="submit"] {
 
 button[type="submit"]:hover,
 input[type="submit"]:hover {
-  background: #bf1650;
+  background: #4e46f1;
+  opacity: 1;
 }
 
 button[type="submit"]:active,
