@@ -31,7 +31,7 @@ const AddressForm = () => {
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
-  const states = Object.keys(statesAndUts).map((indianState) => {
+  const states = statesAndUts.map((indianState) => {
     return {
       value: indianState,
       label: indianState,
