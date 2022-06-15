@@ -8,6 +8,8 @@ import Profile from "./components/dashboard/profile/Profile";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
 import { InvalidRoute } from "./components/errorDisplayComponents/InvalidRoute";
 import { LandingPageMainComponent } from "./components/landingPage/landingPageMainComponent";
+import { ConfirmForgotPassword } from "./components/signUpLogin/ConfirmForgotPassword";
+import { ForgotPassword } from "./components/signUpLogin/ForgotPassword";
 import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
 import { history } from "./helpers/history";
 
@@ -30,6 +32,11 @@ const App = () => {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/confirm-sign-up" element={<ConfirmSignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route
+          path="/confirm-forgot-password"
+          element={<ConfirmForgotPassword />}
+        />
         <Route path="/profile" element={<Profile />} />
         <Route path="/register-form" element={<RegisterForm />} />
         <Route path="/upload" element={<CSVUpload />} />

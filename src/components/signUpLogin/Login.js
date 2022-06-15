@@ -24,6 +24,10 @@ export const Login = () => {
     dispatch(setRegisterFormLogout());
   }, [dispatch]);
 
+  const handleForgotPasswordOnClick = () => {
+    navigate("/forgot-password");
+  };
+
   const {
     register,
     handleSubmit,
@@ -110,6 +114,10 @@ export const Login = () => {
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}
+
+        <label onClick={handleForgotPasswordOnClick}>
+          Forgot Password? Click here to reset it
+        </label>
 
         <input type="submit" />
       </form>
