@@ -105,7 +105,7 @@ const AddressForm = () => {
           dispatch(setRegisterFormTabValue(1));
         })
         .catch((error) => {
-          const message = error.response.data.message;
+          const message = error.response?.data?.message ?? "Some error occured";
           alert.error(message);
         });
     } else {

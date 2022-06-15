@@ -124,7 +124,7 @@ const ESICStateComponent = ({
           alert.success(message);
         })
         .catch((error) => {
-          const message = error.response.data.message;
+          const message = error.response?.data?.message ?? "Some error occured";
           alert.error(message);
         });
     } else {
