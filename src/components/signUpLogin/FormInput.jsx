@@ -30,6 +30,7 @@ export default function FormInput({
       subLabel={inputProps.subLabel}
     >
       <InputGroup
+        large={inputProps.large}
         id={fieldId}
         leftIcon={icon}
         type={inputProps.type}
