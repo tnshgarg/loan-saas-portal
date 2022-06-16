@@ -10,6 +10,7 @@ import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
 import CSVUpload from "./components/dashboard/dataUpload/CSVUpload";
 import TableView from "./components/dashboard/tabularView/viewTables";
 import { history } from "./helpers/history";
+import BaseLayout from "./layout/base";
 
 const App = () => {
   useEffect(() => {
@@ -23,20 +24,22 @@ const App = () => {
   });
 
   return (
-    <Router history={history}>
-      <br></br>
-      <Routes>
-        <Route path="/" element={<SignUp />} />
-        <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/confirm-sign-up" element={<ConfirmSignUp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/register-form" element={<RegisterForm />} />
-        <Route path="/upload" element={<CSVUpload />} />
-        <Route path="/view" element={<TableView />} />
-        <Route path="*" element={<InvalidRoute />} />
-      </Routes>
-    </Router>
+    <BaseLayout>
+      <Router history={history}>
+        <br></br>
+        <Routes>
+          <Route path="/" element={<SignUp />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/confirm-sign-up" element={<ConfirmSignUp />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/register-form" element={<RegisterForm />} />
+          <Route path="/upload" element={<CSVUpload />} />
+          <Route path="/view" element={<TableView />} />
+          <Route path="*" element={<InvalidRoute />} />
+        </Routes>
+      </Router>
+    </BaseLayout>
   );
 };
 
