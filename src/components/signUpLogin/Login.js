@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -115,7 +115,10 @@ export const Login = () => {
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}
 
-        <label onClick={handleForgotPasswordOnClick}>
+        <label
+          className="forgot-password-label"
+          onClick={handleForgotPasswordOnClick}
+        >
           Forgot Password? Click here to reset it
         </label>
 
