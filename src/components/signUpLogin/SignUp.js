@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { registerUser } from "../../actions/auth";
 import { numberOfEmployees } from "../../helpers/numberOfEmployees";
-import "./styles.css";
+// import "./styles.css";
 
 export const SignUp = () => {
   const [successful, setSuccessful] = useState(false);

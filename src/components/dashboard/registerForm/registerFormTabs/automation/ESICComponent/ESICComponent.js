@@ -11,7 +11,6 @@ import { getDocumentFromEsicFormDetails } from "../../../../../../helpers/getDoc
 import { NO_CHANGE_ERROR } from "../../../../../../helpers/messageStrings";
 import statesAndUts from "../../../../../../helpers/statesAndUts";
 import { postRegisterFormData } from "../../../../../../services/user.services";
-import "./ESICComponentStyles.css";
 
 const ESICStateComponent = ({
   esicStateInitial,

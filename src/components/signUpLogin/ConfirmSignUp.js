@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { confirmSignUp } from "../../actions/auth";
-import "./styles.css";
 
 export const ConfirmSignUp = () => {
   const [successful, setSuccessful] = useState(true);

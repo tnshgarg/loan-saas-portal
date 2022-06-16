@@ -10,7 +10,6 @@ import {
   setTaxSetupForm,
 } from "../../actions/registerForm";
 import { getRegisterFormData } from "../../services/user.services";
-import "./styles.css";
 
 export const Login = () => {
   const [successful, setSuccessful] = useState(true);

@@ -7,7 +7,6 @@ import { setTaxSetupForm } from "../../../../actions/registerForm";
 import { getDocumentFromTaxSetupFormDetails } from "../../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
 import { postRegisterFormData } from "../../../../services/user.services";
-import "./styles.css";
 
 const TaxSetupForm = () => {
   const [successful, setSuccessful] = useState(false);

@@ -7,7 +7,6 @@ import { setAddressForm } from "../../../../actions/registerForm";
 import { getDocumentFromAddressFormDetails } from "../../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
 import { postRegisterFormData } from "../../../../services/user.services";
-import "./styles.css";
 
 const AddressForm = () => {
   const [successful, setSuccessful] = useState(false);

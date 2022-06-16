@@ -3,13 +3,11 @@ import { CSVLink } from "react-csv";
 import { FileDrop } from "react-file-drop";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import "./styles.css";
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Alert, Collapse, CircularProgress } from "@mui/material";
 import Navbar from "../navbarMainComponent/Navbar";
 import { headers } from "./headerData";
-import "./styles.css";
 
 const CSVUpload = () => {
   // AUTH LAYER

@@ -7,7 +7,6 @@ import { setPfForm } from "../../../../../../actions/registerForm";
 import { getDocumentFromPfFormDetails } from "../../../../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../../../helpers/messageStrings";
 import { postRegisterFormData } from "../../../../../../services/user.services";
-import "./PFComponentStyles.css";
 
 const PFComponent = () => {
   const [successful, setSuccessful] = useState(false);
