@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -69,7 +69,7 @@ export const ConfirmForgotPassword = () => {
 
         <input type="submit" />
       </form>
-      {message && (
+      {message && !successful && (
         <div className="form-group">
           <div
             className={

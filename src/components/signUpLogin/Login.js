@@ -124,7 +124,7 @@ export const Login = () => {
 
         <input type="submit" />
       </form>
-      {message && (
+      {message && !successful && (
         <div className="form-group">
           <div
             className={
