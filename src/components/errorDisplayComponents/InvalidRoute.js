@@ -4,7 +4,7 @@ export const InvalidRoute = () => {
   const navigate = useNavigate();
 
   const handleSubmit = () => {
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -12,7 +12,7 @@ export const InvalidRoute = () => {
       <h1>404 Error</h1>
       <h1>Page not found</h1>
       <form onSubmit={handleSubmit}>
-        <input type="submit" value="Return to Login" />
+        <input type="submit" value="Return to Main Page" />
       </form>
     </>
   );

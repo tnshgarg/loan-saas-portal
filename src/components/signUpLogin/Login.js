@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import {
   setAddressForm,
   setEsicStateForm,
   setPfForm,
+  setRegisterFormLogout,
   setTaxSetupForm,
 } from "../../actions/registerForm";
 import { getRegisterFormData } from "../../services/user.services";
@@ -18,6 +19,14 @@ export const Login = () => {
   const navigate = useNavigate();
 
   const { message } = useSelector((state) => state.message);
+
+  useEffect(() => {
+    dispatch(setRegisterFormLogout());
+  }, [dispatch]);
+
+  const handleForgotPasswordOnClick = () => {
+    navigate("/forgot-password");
+  };
 
   const {
     register,
@@ -42,10 +51,11 @@ export const Login = () => {
               companyName: company,
               brandName: brand,
               registeredAddress: address,
+              state,
               pincode,
             } = registerFormObject ?? "";
 
-            dispatch(setAddressForm(company, brand, address, pincode));
+            dispatch(setAddressForm(company, brand, address, state, pincode));
 
             const { id: pan } = registerFormObject?.PAN ?? "";
             const { id: tan } = registerFormObject?.TAN ?? "";
@@ -105,9 +115,16 @@ export const Login = () => {
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}
 
+        <label
+          className="forgot-password-label"
+          onClick={handleForgotPasswordOnClick}
+        >
+          Forgot Password? Click here to reset it
+        </label>
+
         <input type="submit" />
       </form>
-      {message && (
+      {message && !successful && (
         <div className="form-group">
           <div
             className={

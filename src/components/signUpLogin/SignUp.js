@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +39,7 @@ export const SignUp = () => {
         username,
         password,
         email,
-        phone_number,
+        `+91${phone_number}`,
         name,
         company_name,
         no_of_employees,
@@ -79,20 +79,29 @@ export const SignUp = () => {
           type="password"
           {...register("password", {
             required: true,
+            pattern: {
+              value:
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/i,
+            },
           })}
         />
-        {errors.password && <p>Password cannot be empty</p>}
+        {errors.password && (
+          <p>
+            Password must contain atleast 8 letters, including numbers,
+            uppercase, lowercase and special characters{" "}
+          </p>
+        )}
 
         <label>Phone Number</label>
         <input
           {...register("phone_number", {
             required: true,
             pattern: {
-              value: /(\+91)?\d{12}/,
+              value: /^\d{10}$/,
             },
           })}
         />
-        {errors.phone_number && <p>Enter 10 digit number starting with +91</p>}
+        {errors.phone_number && <p>Enter 10 digit phone number</p>}
 
         <label>Full Name</label>
         <input
