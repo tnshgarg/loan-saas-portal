@@ -128,3 +128,11 @@ button {
   padding: 10px 20px;
   border-radius: 4px;
 }
+
+.forgot-password-label {
+  font-size: 18px;
+  text-decoration: underline;
+  text-decoration-color: white;
+  text-underline-offset: 5px;
+  cursor: pointer;
+}

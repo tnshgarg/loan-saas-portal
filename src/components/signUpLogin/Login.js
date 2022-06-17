@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +23,10 @@ export const Login = () => {
   useEffect(() => {
     dispatch(setRegisterFormLogout());
   }, [dispatch]);
+
+  const handleForgotPasswordOnClick = () => {
+    navigate("/forgot-password");
+  };
 
   const {
     register,
@@ -111,9 +115,16 @@ export const Login = () => {
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}
 
+        <label
+          className="forgot-password-label"
+          onClick={handleForgotPasswordOnClick}
+        >
+          Forgot Password? Click here to reset it
+        </label>
+
         <input type="submit" />
       </form>
-      {message && (
+      {message && !successful && (
         <div className="form-group">
           <div
             className={
