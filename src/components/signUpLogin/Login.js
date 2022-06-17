@@ -1,13 +1,5 @@
-import {
-  Card,
-  Button,
-  Elevation,
-  Icon,
-  Divider,
-  Intent,
-  Colors,
-} from "@blueprintjs/core";
-import React, { useState } from "react";
+import { Card, Button, Elevation, Intent } from "@blueprintjs/core";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +8,7 @@ import {
   setAddressForm,
   setEsicStateForm,
   setPfForm,
+  setRegisterFormLogout,
   setTaxSetupForm,
 } from "../../actions/registerForm";
 import { getRegisterFormData } from "../../services/user.services";
@@ -68,6 +61,14 @@ export const Login = () => {
 
   const { message } = useSelector((state) => state.message);
 
+  useEffect(() => {
+    dispatch(setRegisterFormLogout());
+  }, [dispatch]);
+
+  const handleForgotPasswordOnClick = () => {
+    navigate("/forgot-password");
+  };
+
   const {
     register,
     handleSubmit,
@@ -92,10 +93,11 @@ export const Login = () => {
               companyName: company,
               brandName: brand,
               registeredAddress: address,
+              state,
               pincode,
             } = registerFormObject ?? "";
 
-            dispatch(setAddressForm(company, brand, address, pincode));
+            dispatch(setAddressForm(company, brand, address, state, pincode));
 
             const { id: pan } = registerFormObject?.PAN ?? "";
             const { id: tan } = registerFormObject?.TAN ?? "";
@@ -143,14 +145,8 @@ export const Login = () => {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Card
-          style={LOGIN_CARD_STYLING}
-          interactive={true}
-          elevation={Elevation.TWO}
-        >
+        <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
           <div style={LOGIN_CONTAINER_STYLING}>
-            <Icon icon="user" size={"8em"} color={Colors.LIGHT_GRAY1} />
-            <Divider style={DIVIDER_STYLING} />
             <div style={INPUT_CONTAINER_STYLING}>
               <FormInput
                 register={register}
@@ -199,6 +195,10 @@ export const Login = () => {
               <ErrorDialog message={message} success={successful} />
             </div>
           </div>
+
+          <label onClick={handleForgotPasswordOnClick}>
+            Click here to reset password
+          </label>
         </Card>
 
         {/* register your input into the hook by invoking the "register" function */}
@@ -207,6 +207,19 @@ export const Login = () => {
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}
       </form>
+
+      {message && !successful && (
+        <div className="form-group">
+          <div
+            className={
+              successful ? "alert alert-success" : "alert alert-danger"
+            }
+            role="alert"
+          >
+            {message}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

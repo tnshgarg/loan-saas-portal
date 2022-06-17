@@ -34,6 +34,7 @@ const EPFOComponent = () => {
       pf_username: pfUsernameInitial,
       pf_password: pfPasswordInitial,
     },
+    mode: "all",
   });
 
   useEffect(() => {
@@ -49,6 +50,10 @@ const EPFOComponent = () => {
       }
     };
   }, [dispatch, getValues, pfPasswordInitial, pfUsernameInitial]);
+
+  const toggleDisabledStatus = () => {
+    setIsComponentDisabled(!isComponentDisabled);
+  };
 
   const onSubmit = (pfFormDetailsNew) => {
     const { pf_username: pfUserNameNew, pf_password: pfPasswordNew } =
@@ -67,14 +72,12 @@ const EPFOComponent = () => {
           alert.success(message);
         })
         .catch((error) => {
-          const message = error.response.data.message;
+          const message = error.response?.data?.message ?? "Some error occured";
           alert.error(message);
         });
-    } else if (!isComponentDisabled) {
+    } else {
       alert.error(NO_CHANGE_ERROR);
     }
-
-    setIsComponentDisabled(!isComponentDisabled);
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input

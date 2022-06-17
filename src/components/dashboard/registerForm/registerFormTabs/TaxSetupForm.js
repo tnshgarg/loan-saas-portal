@@ -2,7 +2,11 @@ import React, { useEffect } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { setTaxSetupForm } from "../../../../actions/registerForm";
+import {
+  setRegisterFormTabValue,
+  setTaxSetupForm,
+} from "../../../../actions/registerForm";
+
 import { getDocumentFromTaxSetupFormDetails } from "../../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
 import { postRegisterFormData } from "../../../../services/user.services";
@@ -36,6 +40,7 @@ const TaxSetupForm = () => {
       tan: tanInitial,
       gstin: gstinInitial,
     },
+    mode: "all",
   });
 
   useEffect(() => {
@@ -63,9 +68,10 @@ const TaxSetupForm = () => {
         .then((response) => {
           const message = response.data.body.message;
           alert.success(message);
+          dispatch(setRegisterFormTabValue(2));
         })
         .catch((error) => {
-          const message = error.response.data.message;
+          const message = error.response?.data?.message ?? "Some error occured";
           alert.error(message);
         });
     } else {
@@ -132,11 +138,9 @@ const TaxSetupForm = () => {
               "Please enter a valid GSTIN number with 15 characters",
           }}
         />
-
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}
-
         <input type="submit" value="Submit" />
       </form>
     </div>

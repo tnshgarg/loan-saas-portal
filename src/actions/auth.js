@@ -2,6 +2,8 @@ import { getMessageFromError } from "../helpers/getMessageFromError";
 import AuthService from "../services/auth.service";
 import {
   CLEAR_MESSAGE,
+  FORGOT_PASSWORD_FAIL,
+  FORGOT_PASSWORD_SUCCESS,
   LOGIN_FAIL,
   LOGIN_SUCCESS,
   LOGOUT,
@@ -120,3 +122,54 @@ export const logout = () => (dispatch) => {
     type: CLEAR_MESSAGE,
   });
 };
+
+export const forgotPassword = (username) => (dispatch) => {
+  return AuthService.forgotPassword(username).then(
+    (response) => {
+      dispatch({
+        type: FORGOT_PASSWORD_SUCCESS,
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        payload: username,
+      });
+      return Promise.resolve();
+    },
+    (error) => {
+      dispatch({
+        type: FORGOT_PASSWORD_FAIL,
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        payload: getMessageFromError(error),
+      });
+      return Promise.reject();
+    }
+  );
+};
+
+export const confirmForgotPassword =
+  (username, code, password) => (dispatch) => {
+    return AuthService.confirmForgotPassword(username, code, password).then(
+      (response) => {
+        dispatch({
+          type: FORGOT_PASSWORD_SUCCESS,
+        });
+        dispatch({
+          type: SET_MESSAGE,
+          payload: response,
+        });
+        return Promise.resolve();
+      },
+      (error) => {
+        dispatch({
+          type: FORGOT_PASSWORD_FAIL,
+        });
+        dispatch({
+          type: SET_MESSAGE,
+          payload: getMessageFromError(error),
+        });
+        return Promise.reject();
+      }
+    );
+  };

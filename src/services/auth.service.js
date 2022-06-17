@@ -35,6 +35,14 @@ const login = (username, password) => {
   });
 };
 
+const forgotPassword = (username) => {
+  return Auth.forgotPassword(username);
+};
+
+const confirmForgotPassword = (username, code, password) => {
+  return Auth.forgotPasswordSubmit(username, code, password);
+};
+
 // const logout = () => {
 //   localStorage.removeItem("user");
 // };
@@ -44,5 +52,7 @@ export default {
   signUp,
   confirmSignUp,
   login,
+  forgotPassword,
+  confirmForgotPassword,
   // logout,
 };

@@ -40,7 +40,7 @@ export const SignUp = () => {
         username,
         password,
         email,
-        phone_number,
+        `+91${phone_number}`,
         name,
         company_name,
         no_of_employees,
@@ -215,9 +215,7 @@ export const SignUp = () => {
                     errorMessage: "Title cannot be empty",
                   }}
                 />
-
                 <label>Number of Employees</label>
-                {/* <input {...register("no_of_employees")} /> */}
                 <Controller
                   control={control}
                   defaultValue={numberOfEmployees[0]}

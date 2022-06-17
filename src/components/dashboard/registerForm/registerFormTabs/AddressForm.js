@@ -2,9 +2,13 @@ import React, { useEffect } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { setAddressForm } from "../../../../actions/registerForm";
+import {
+  setAddressForm,
+  setRegisterFormTabValue,
+} from "../../../../actions/registerForm";
 import { getDocumentFromAddressFormDetails } from "../../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
+import statesAndUts from "../../../../helpers/statesAndUts";
 import { postRegisterFormData } from "../../../../services/user.services";
 import FormInput from "../../../common/FormInput";
 
@@ -26,10 +30,18 @@ const AddressForm = () => {
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
+  const states = statesAndUts.map((indianState) => {
+    return {
+      value: indianState,
+      label: indianState,
+    };
+  });
+
   const {
     register,
     getValues,
     handleSubmit,
+    control,
     // watch,
     formState: { errors, dirtyFields },
   } = useForm({
@@ -40,6 +52,7 @@ const AddressForm = () => {
       state: stateInitial,
       pincode: pincodeInitial,
     },
+    mode: "all",
   });
 
   useEffect(() => {
@@ -83,9 +96,10 @@ const AddressForm = () => {
         .then((response) => {
           const message = response.data.body.message;
           alert.success(message);
+          dispatch(setRegisterFormTabValue(1));
         })
         .catch((error) => {
-          const message = error.response.data.message;
+          const message = error.response?.data?.message ?? "Some error occured";
           alert.error(message);
         });
     } else {
@@ -183,10 +197,9 @@ const AddressForm = () => {
           inputProps={{
             label: "Pincode",
             placeholder: "Please enter company address pincode",
-            errorMessage: "Please enter company address pincode",
+            errorMessage: "Pincode must be 6 digits",
           }}
         />
-
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}

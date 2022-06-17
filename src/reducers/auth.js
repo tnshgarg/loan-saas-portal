@@ -1,4 +1,6 @@
 import {
+  FORGOT_PASSWORD_FAIL,
+  FORGOT_PASSWORD_SUCCESS,
   LOGIN_FAIL,
   LOGIN_SUCCESS,
   LOGOUT,
@@ -40,6 +42,16 @@ export default function (state = initialState, action) {
         ...state,
         isLoggedIn: false,
         user: null,
+      };
+    case FORGOT_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        isLoggedIn: false,
+      };
+    case FORGOT_PASSWORD_FAIL:
+      return {
+        ...state,
+        isLoggedIn: false,
       };
     default:
       return state;
