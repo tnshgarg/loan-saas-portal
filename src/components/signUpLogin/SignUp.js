@@ -115,7 +115,8 @@ export const SignUp = () => {
                   validations={{
                     required: true,
                     pattern: {
-                      value: /^[A-Za-z\d@$!%*?&]{8,}$/,
+                      value:
+                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/i,
                     },
                   }}
                   errors={errors}

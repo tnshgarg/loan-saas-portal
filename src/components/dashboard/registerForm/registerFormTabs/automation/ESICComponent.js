@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useAlert } from "react-alert";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { setEsicStateForm } from "../../../../../actions/registerForm";
 import { getDocumentFromEsicFormDetails } from "../../../../../helpers/getDocumentFromState";
@@ -215,6 +214,7 @@ const ESICComponent = () => {
   const { esicFormDetails: initialEsicFormDetails } =
     useSelector((state) => state.registerForm) || {};
 
+  console.log("rendering");
   return (
     <div>
       <h1>Enter your ESIC details</h1>

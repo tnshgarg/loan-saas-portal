@@ -178,7 +178,10 @@ export const Login = () => {
                 icon={"shield"}
                 validations={{
                   required: true,
-                  minLength: 8,
+                  pattern: {
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,}$/i,
+                  },
                 }}
                 errors={errors}
                 field={"password"}
