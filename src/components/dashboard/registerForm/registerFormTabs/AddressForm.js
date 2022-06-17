@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { setAddressForm } from "../../../../actions/registerForm";
 import { getDocumentFromAddressFormDetails } from "../../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
 import { postRegisterFormData } from "../../../../services/user.services";
+import FormInput from "../../../common/FormInput";
 
 const AddressForm = () => {
-  const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const alert = useAlert();
 
   const {
@@ -33,7 +31,7 @@ const AddressForm = () => {
     getValues,
     handleSubmit,
     // watch,
-    // formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm({
     defaultValues: {
       company: companyInitial,
@@ -96,22 +94,98 @@ const AddressForm = () => {
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
+  console.log({ dirtyFields, errors });
 
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* register your input into the hook by invoking the "register" function */}
-
-        <label>Company Name</label>
-        <input {...register("company")} />
-        <label>Brand Name</label>
-        <input {...register("brand")} />
-        <label>Registered Address</label>
-        <input {...register("address")} />
-        <label>State</label>
-        <input {...register("state")} />
-        <label>Pincode</label>
-        <input {...register("pincode")} />
+        <FormInput
+          register={register}
+          validations={{
+            required: true,
+            pattern: {
+              value: /^[A-Z0-9a-z ]+$/,
+            },
+          }}
+          errors={errors}
+          field={"company"}
+          icon={"office"}
+          inputProps={{
+            label: "Company Name",
+            placeholder: "Please enter your company name",
+            errorMessage: "Please enter your company name",
+          }}
+        />
+        <FormInput
+          register={register}
+          validations={{
+            required: false,
+          }}
+          errors={errors}
+          field={"brand"}
+          icon={"tag"}
+          inputProps={{
+            label: "Brand Name",
+            placeholder: "Please enter your brand name",
+            errorMessage: "Please enter your brand name",
+          }}
+        />
+        <FormInput
+          register={register}
+          validations={{
+            required: true,
+            minLength: 1,
+            pattern: {
+              value: /^[A-Z0-9a-z, ]+$/,
+            },
+          }}
+          errors={errors}
+          field={"address"}
+          icon={"home"}
+          inputProps={{
+            label: "Address",
+            placeholder: "Please enter your company address",
+            errorMessage: "Please enter your company address",
+          }}
+        />
+        <FormInput
+          register={register}
+          validations={{
+            required: true,
+            minLength: 1,
+            pattern: {
+              value: /^[A-Za-z ]+$/,
+            },
+          }}
+          errors={errors}
+          field={"state"}
+          icon={"locate"}
+          inputProps={{
+            label: "State",
+            placeholder:
+              "Please enter the State in which your company office is located",
+            errorMessage:
+              "Please enter the State in which your company office is located",
+          }}
+        />
+        <FormInput
+          register={register}
+          validations={{
+            required: true,
+            minLength: 1,
+            pattern: {
+              value: /^\d{6}$/,
+            },
+          }}
+          errors={errors}
+          field={"pincode"}
+          icon={"pin"}
+          inputProps={{
+            label: "Pincode",
+            placeholder: "Please enter company address pincode",
+            errorMessage: "Please enter company address pincode",
+          }}
+        />
 
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}

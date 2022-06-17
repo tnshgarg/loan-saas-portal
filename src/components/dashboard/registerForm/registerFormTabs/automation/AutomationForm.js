@@ -1,10 +1,10 @@
-import ESICComponent from "./ESICComponent/ESICComponent";
-import PFComponent from "./PFComponent/PFComponent";
+import ESICComponent from "./ESICComponent";
+import EPFOComponent from "./EPFOComponent";
 
 const AutomationForm = () => {
   return (
     <>
-      <PFComponent />
+      <EPFOComponent />
       <br />
       <br />
       <ESICComponent />

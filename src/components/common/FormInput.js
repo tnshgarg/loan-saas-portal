@@ -10,6 +10,7 @@ export default function FormInput({
 }) {
   const { onChange, onBlur, name, ref } = register(field, validations);
   const fieldId = `${field}-input`;
+
   return (
     <FormGroup
       key={fieldId}

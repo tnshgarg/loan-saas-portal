@@ -6,7 +6,6 @@ import {
   Divider,
   Intent,
   Colors,
-  H3,
 } from "@blueprintjs/core";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -20,10 +19,10 @@ import {
   setTaxSetupForm,
 } from "../../actions/registerForm";
 import { getRegisterFormData } from "../../services/user.services";
-import FormInput from "./FormInput";
+import FormInput from "../common/FormInput";
 
 const LOGIN_CARD_STYLING = {
-  width: "20vw",
+  width: "20%",
   minWidth: "500px",
   marginRight: "auto",
   marginLeft: "auto",
@@ -150,7 +149,7 @@ export const Login = () => {
           elevation={Elevation.TWO}
         >
           <div style={LOGIN_CONTAINER_STYLING}>
-            <Icon icon="user" size={"8em"} color={Colors.LIGHT_GRAY1}/>
+            <Icon icon="user" size={"8em"} color={Colors.LIGHT_GRAY1} />
             <Divider style={DIVIDER_STYLING} />
             <div style={INPUT_CONTAINER_STYLING}>
               <FormInput

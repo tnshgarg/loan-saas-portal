@@ -1,8 +1,4 @@
-import {
-  Card,
-  DialogStep,
-  MultistepDialog,
-} from "@blueprintjs/core";
+import { Card, DialogStep, MultistepDialog } from "@blueprintjs/core";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { registerUser } from "../../actions/auth";
 import { numberOfEmployees } from "../../helpers/numberOfEmployees";
-import FormInput from "./FormInput";
+import FormInput from "../common/FormInput";
 
 export const SignUp = () => {
   const [successful, setSuccessful] = useState(false);
@@ -99,7 +95,6 @@ export const SignUp = () => {
                   register={register}
                   validations={{
                     required: true,
-                    minLength: 1,
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                     },
@@ -117,18 +112,20 @@ export const SignUp = () => {
                 />
                 <FormInput
                   register={register}
-                  icon={"shield"}
                   validations={{
                     required: true,
-                    minLength: 8,
+                    pattern: {
+                      value: /^[A-Za-z\d@$!%*?&]{8,}$/,
+                    },
                   }}
                   errors={errors}
                   field={"password"}
+                  icon={"shield"}
                   inputProps={{
                     type: "password",
                     label: "Password",
                     subLabel:
-                      "Enter a strong 8 lettered password with an alphabet, a special character and a number",
+                      "Enter a strong atleast 8 lettered password with a special character, a number, a lowercase and an uppercase alphabet",
                     placeholder: "Enter your password",
                     errorMessage: "Password cannot be empty",
                   }}

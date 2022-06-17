@@ -2,16 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { setPfForm } from "../../../../../../actions/registerForm";
-import { getDocumentFromPfFormDetails } from "../../../../../../helpers/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../../../../helpers/messageStrings";
-import { postRegisterFormData } from "../../../../../../services/user.services";
+import { setPfForm } from "../../../../../actions/registerForm";
+import { getDocumentFromPfFormDetails } from "../../../../../helpers/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../../../helpers/messageStrings";
+import { postRegisterFormData } from "../../../../../services/user.services";
+import FormInput from "../../../../common/FormInput";
 
-const PFComponent = () => {
-  const [successful, setSuccessful] = useState(false);
+const EPFOComponent = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const alert = useAlert();
 
   const { pf_username: pfUsernameInitial, pf_password: pfPasswordInitial } =
@@ -30,7 +28,7 @@ const PFComponent = () => {
     getValues,
     handleSubmit,
     // watch,
-    // formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm({
     defaultValues: {
       pf_username: pfUsernameInitial,
@@ -80,27 +78,50 @@ const PFComponent = () => {
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
+  console.log({ dirtyFields, errors });
 
   return (
     <div>
-      <h1>Enter your PF details</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="form-row">
+      <h5>EPFO Portal Credentials</h5>
+      <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
-        <div className="form-row-new">
-          <label>Username</label>
-          <label>Password</label>
-          <label>Action</label>
-        </div>
-
-        <div className="form-row-new">
-          <input {...register("pf_username")} />
-          <input
-            type="password"
-            {...register("pf_password")}
-            disabled={isComponentDisabled}
-          />
-          <input type="submit" value={isComponentDisabled ? "edit" : "lock"} />
-        </div>
+        <FormInput
+          register={register}
+          validations={{
+            required: true,
+            pattern: {
+              value: /^([A-Z0-9])$/,
+            },
+          }}
+          errors={errors}
+          field={"pf_username"}
+          icon={"user"}
+          inputProps={{
+            label: "Username",
+            placeholder: "Please enter company's EPFO Portal Username",
+            errorMessage: "Please enter company's EPFO Portal Username",
+          }}
+        />
+        <FormInput
+          register={register}
+          validations={{
+            required: true,
+            pattern: {
+              value: /^([A-Z0-9])$/,
+            },
+          }}
+          errors={errors}
+          field={"pf_password"}
+          icon={"shield"}
+          inputProps={{
+            type: "password",
+            disabled: { isComponentDisabled },
+            label: "Password",
+            placeholder: "Please enter company's EPFO Portal Password",
+            errorMessage: "Please enter company's EPFO Portal Password",
+          }}
+        />
+        <input type="submit" value={isComponentDisabled ? "Edit" : "Submit"} />
 
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
@@ -110,4 +131,4 @@ const PFComponent = () => {
   );
 };
 
-export default PFComponent;
+export default EPFOComponent;
