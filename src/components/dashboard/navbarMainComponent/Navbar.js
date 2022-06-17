@@ -22,8 +22,8 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { logout } from "../../../actions/auth";
-import { setRegisterFormLogout } from "../../../actions/registerForm";
+import { logout } from "../../../store/actions/auth";
+import { setRegisterFormLogout } from "../../../store/actions/registerForm";
 
 const drawerWidth = 240;
 

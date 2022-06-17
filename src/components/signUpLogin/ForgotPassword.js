@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { forgotPassword } from "../../actions/auth";
+import { forgotPassword } from "../../store/actions/auth";
 
 export const ForgotPassword = () => {
   const [successful, setSuccessful] = useState(false);

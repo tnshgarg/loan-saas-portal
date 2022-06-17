@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setRegisterFormTabValue,
   setTaxSetupForm,
-} from "../../../../actions/registerForm";
+} from "../../../../store/actions/registerForm";
 
 import { getDocumentFromTaxSetupFormDetails } from "../../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";

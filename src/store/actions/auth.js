@@ -1,5 +1,5 @@
-import { getMessageFromError } from "../helpers/getMessageFromError";
-import AuthService from "../services/auth.service";
+import { getMessageFromError } from "../../helpers/getMessageFromError";
+import AuthService from "../../services/auth.service";
 import {
   CLEAR_MESSAGE,
   FORGOT_PASSWORD_FAIL,

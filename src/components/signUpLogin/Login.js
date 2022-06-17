@@ -3,14 +3,14 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../actions/auth";
+import { login } from "../../store/actions/auth";
 import {
   setAddressForm,
   setEsicStateForm,
   setPfForm,
   setRegisterFormLogout,
   setTaxSetupForm,
-} from "../../actions/registerForm";
+} from "../../store/actions/registerForm";
 import { getRegisterFormData } from "../../services/user.services";
 import FormInput from "../common/FormInput";
 
@@ -30,10 +30,6 @@ const LOGIN_CONTAINER_STYLING = {
 const INPUT_CONTAINER_STYLING = {
   padding: "2em",
   paddingBottom: "0",
-};
-
-const DIVIDER_STYLING = {
-  marginTop: "3em",
 };
 
 const SPACE_REDUCER = () => <div style={{ marginTop: "-10px" }}></div>;

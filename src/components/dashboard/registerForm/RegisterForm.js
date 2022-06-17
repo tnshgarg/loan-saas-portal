@@ -11,7 +11,7 @@ import {
   AutomationForm,
   TaxSetupForm,
 } from "./registerFormTabs/index";
-import { setRegisterFormTabValue } from "../../../actions/registerForm";
+import { setRegisterFormTabValue } from "../../../store/actions/registerForm";
 
 const REGISTER_FORM_CARD_STYLING = {
   width: "70%",

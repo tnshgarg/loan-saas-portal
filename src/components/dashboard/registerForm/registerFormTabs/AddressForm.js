@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setAddressForm,
   setRegisterFormTabValue,
-} from "../../../../actions/registerForm";
+} from "../../../../store/actions/registerForm";
 import { getDocumentFromAddressFormDetails } from "../../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
 import statesAndUts from "../../../../helpers/statesAndUts";

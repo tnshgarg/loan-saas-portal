@@ -5,7 +5,7 @@ import { useAlert } from "react-alert";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
-import { setEsicStateForm } from "../../../../../actions/registerForm";
+import { setEsicStateForm } from "../../../../../store/actions/registerForm";
 import { getDocumentFromEsicFormDetails } from "../../../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../../helpers/messageStrings";
 import statesAndUts from "../../../../../helpers/statesAndUts";
