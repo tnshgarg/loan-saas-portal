@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { setPfForm } from "../../../../../store/actions/registerForm";
-import { getDocumentFromPfFormDetails } from "../../../../../helpers/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../../../helpers/messageStrings";
-import { postRegisterFormData } from "../../../../../services/user.services";
-import FormInput from "../../../../common/FormInput";
+import { setPfForm } from "../../../../store/actions/registerForm";
+import { getDocumentFromPfFormDetails } from "../../../../helpers/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
+import { postRegisterFormData } from "../../../../services/user.services";
+import FormInput from "../../../common/FormInput";
 
 const EPFOComponent = () => {
   const dispatch = useDispatch();
@@ -93,16 +93,16 @@ const EPFOComponent = () => {
           validations={{
             required: true,
             pattern: {
-              value: /^([A-Z0-9])$/,
+              value: /^[A-Za-z0-9]+$/,
             },
           }}
           errors={errors}
           field={"pf_username"}
-          icon={"user"}
           inputProps={{
+            icon: "user",
             label: "Username",
-            placeholder: "Please enter company's EPFO Portal Username",
-            errorMessage: "Please enter company's EPFO Portal Username",
+            placeholder: "Please enter EPFO Portal Username",
+            errorMessage: "Please enter EPFO Portal Username",
           }}
         />
         <FormInput
@@ -115,8 +115,8 @@ const EPFOComponent = () => {
           }}
           errors={errors}
           field={"pf_password"}
-          icon={"shield"}
           inputProps={{
+            icon: "shield",
             type: "password",
             disabled: { isComponentDisabled },
             label: "Password",

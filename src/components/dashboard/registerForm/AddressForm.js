@@ -5,12 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setAddressForm,
   setRegisterFormTabValue,
-} from "../../../../store/actions/registerForm";
-import { getDocumentFromAddressFormDetails } from "../../../../helpers/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
-import statesAndUts from "../../../../helpers/statesAndUts";
-import { postRegisterFormData } from "../../../../services/user.services";
-import FormInput from "../../../common/FormInput";
+} from "../../../store/actions/registerForm";
+import { getDocumentFromAddressFormDetails } from "../../../helpers/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../helpers/messageStrings";
+import statesAndUts from "../../../helpers/statesAndUts";
+import { postRegisterFormData } from "../../../services/user.services";
+import FormInput from "../../common/FormInput";
 
 const AddressForm = () => {
   const dispatch = useDispatch();
@@ -123,8 +123,8 @@ const AddressForm = () => {
           }}
           errors={errors}
           field={"company"}
-          icon={"office"}
           inputProps={{
+            icon: "office",
             label: "Company Name",
             placeholder: "Please enter your company name",
             errorMessage: "Please enter your company name",
@@ -137,8 +137,8 @@ const AddressForm = () => {
           }}
           errors={errors}
           field={"brand"}
-          icon={"tag"}
           inputProps={{
+            icon: "tag",
             label: "Brand Name",
             placeholder: "Please enter your brand name",
             errorMessage: "Please enter your brand name",
@@ -155,8 +155,8 @@ const AddressForm = () => {
           }}
           errors={errors}
           field={"address"}
-          icon={"home"}
           inputProps={{
+            icon: "home",
             label: "Address",
             placeholder: "Please enter your company address",
             errorMessage: "Please enter your company address",
@@ -173,8 +173,8 @@ const AddressForm = () => {
           }}
           errors={errors}
           field={"state"}
-          icon={"locate"}
           inputProps={{
+            icon: "locate",
             label: "State",
             placeholder:
               "Please enter the State in which your company office is located",
@@ -193,8 +193,8 @@ const AddressForm = () => {
           }}
           errors={errors}
           field={"pincode"}
-          icon={"pin"}
           inputProps={{
+            icon: "pin",
             label: "Pincode",
             placeholder: "Please enter company address pincode",
             errorMessage: "Pincode must be 6 digits",

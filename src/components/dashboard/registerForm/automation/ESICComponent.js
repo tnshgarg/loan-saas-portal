@@ -5,11 +5,12 @@ import { useAlert } from "react-alert";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
-import { setEsicStateForm } from "../../../../../store/actions/registerForm";
-import { getDocumentFromEsicFormDetails } from "../../../../../helpers/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../../../helpers/messageStrings";
-import statesAndUts from "../../../../../helpers/statesAndUts";
-import { postRegisterFormData } from "../../../../../services/user.services";
+import { setEsicStateForm } from "../../../../store/actions/registerForm";
+import { getDocumentFromEsicFormDetails } from "../../../../helpers/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
+import statesAndUts from "../../../../helpers/statesAndUts";
+import { postRegisterFormData } from "../../../../services/user.services";
+import FormInput from "../../../common/FormInput";
 
 const ESICStateComponent = ({
   esicStateInitial,
@@ -131,62 +132,72 @@ const ESICStateComponent = ({
 
   return (
     <div>
+      <h5>ESIC Portal Credentials</h5>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
 
-        <div className="form-row-new">
-          <Controller
-            control={control}
-            defaultValue={defaultIndianState}
-            name="esic_state"
-            render={({ field }) => (
-              <Select
-                inputRef={field.ref}
-                classNamePrefix="addl-class"
-                className="select-comp"
-                options={states}
-                value={states.find((c) => c.value === field.value)}
-                onChange={(val) => {
-                  val.value === "Other"
-                    ? setShowOtherIndianState(true)
-                    : setShowOtherIndianState(false);
-                  field.onChange(val.value);
-                }}
-                isDisabled={isComponentDisabled}
-              />
-            )}
-          />
-          {showOtherIndianState && (
-            <input
-              {...register("esic_state_other", {
-                required: true,
-              })}
-              disabled={isComponentDisabled}
+        <label>State</label>
+        <Controller
+          control={control}
+          defaultValue={defaultIndianState}
+          name="esic_state"
+          render={({ field }) => (
+            <Select
+              inputRef={field.ref}
+              classNamePrefix="addl-class"
+              className="select-comp"
+              options={states}
+              value={states.find((c) => c.value === field.value)}
+              onChange={(val) => {
+                val.value === "Other"
+                  ? setShowOtherIndianState(true)
+                  : setShowOtherIndianState(false);
+                field.onChange(val.value);
+              }}
+              isDisabled={isComponentDisabled}
             />
           )}
-
-          <input
-            {...register("esic_employer_code", {
+        />
+        {showOtherIndianState && (
+          <FormInput
+            register={register}
+            validations={{
               required: true,
-            })}
+              pattern: {
+                value: /^[0-9]+$/,
+              },
+            }}
+            errors={errors}
+            field={"esic_state_other"}
+            inputProps={{
+              icon: "state",
+              placeholder: "Please enter State Name",
+              errorMessage: "Please enter State Name",
+            }}
           />
+        )}
 
-          <input
-            type="password"
-            {...register("esic_password", {
-              required: true,
-            })}
-            disabled={isComponentDisabled}
-          />
-          {/* include validation with required or other standard HTML validation rules */}
-          {/* errors will return when field validation fails  */}
-          {/* {errors.exampleRequired && <p>This field is required</p>} */}
-          <input
-            type="submit"
-            value={isComponentDisabled ? "edit" : "lock"}
-            onClick={toggleDisabledStatus}
-          />
-        </div>
+        <input
+          {...register("esic_employer_code", {
+            required: true,
+          })}
+        />
+
+        <input
+          type="password"
+          {...register("esic_password", {
+            required: true,
+          })}
+          disabled={isComponentDisabled}
+        />
+        {/* include validation with required or other standard HTML validation rules */}
+        {/* errors will return when field validation fails  */}
+        {/* {errors.exampleRequired && <p>This field is required</p>} */}
+        <input
+          type="submit"
+          value={isComponentDisabled ? "edit" : "lock"}
+          onClick={toggleDisabledStatus}
+        />
 
         <div className="form-row-new">
           <label></label>

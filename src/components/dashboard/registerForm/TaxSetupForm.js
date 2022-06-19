@@ -5,12 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setRegisterFormTabValue,
   setTaxSetupForm,
-} from "../../../../store/actions/registerForm";
+} from "../../../store/actions/registerForm";
 
-import { getDocumentFromTaxSetupFormDetails } from "../../../../helpers/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
-import { postRegisterFormData } from "../../../../services/user.services";
-import FormInput from "../../../common/FormInput";
+import { getDocumentFromTaxSetupFormDetails } from "../../../helpers/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../helpers/messageStrings";
+import { postRegisterFormData } from "../../../services/user.services";
+import FormInput from "../../common/FormInput";
 
 const TaxSetupForm = () => {
   const dispatch = useDispatch();
@@ -96,8 +96,8 @@ const TaxSetupForm = () => {
           }}
           errors={errors}
           field={"pan"}
-          icon={"id-number"}
           inputProps={{
+            icon: "id-number",
             label: "PAN",
             placeholder: "Please enter company's PAN number",
             errorMessage: "Please enter a valid PAN number with 10 characters",
@@ -113,8 +113,8 @@ const TaxSetupForm = () => {
           }}
           errors={errors}
           field={"tan"}
-          icon={"id-number"}
           inputProps={{
+            icon: "id-number",
             label: "TAN",
             placeholder: "Please enter company's TAN number",
             errorMessage: "Please enter a valid TAN number with 10 characters",
@@ -130,8 +130,8 @@ const TaxSetupForm = () => {
           }}
           errors={errors}
           field={"gstin"}
-          icon={"id-number"}
           inputProps={{
+            icon: "id-number",
             label: "GSTIN",
             placeholder: "Please enter company's GSTIN number",
             errorMessage:

@@ -6,7 +6,6 @@ export default function FormInput({
   register,
   errors,
   validations,
-  icon,
 }) {
   const { onChange, onBlur, name, ref } = register(field, validations);
   const fieldId = `${field}-input`;
@@ -26,6 +25,7 @@ export default function FormInput({
           )}
         </div>
       }
+      inline={inputProps.inline}
       label={inputProps.label}
       labelFor={fieldId}
       subLabel={inputProps.subLabel}
@@ -33,7 +33,7 @@ export default function FormInput({
       <InputGroup
         large={inputProps.large}
         id={fieldId}
-        leftIcon={icon}
+        leftIcon={inputProps.icon}
         type={inputProps.type}
         placeholder={inputProps.placeholder}
         onChange={onChange}

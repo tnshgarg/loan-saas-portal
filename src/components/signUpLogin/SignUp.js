@@ -101,8 +101,8 @@ export const SignUp = () => {
                   }}
                   errors={errors}
                   field={"email"}
-                  icon={"envelope"}
                   inputProps={{
+                    icon: "envelope",
                     type: "email",
                     label: "Email",
                     subLabel: "",
@@ -116,13 +116,13 @@ export const SignUp = () => {
                     required: true,
                     pattern: {
                       value:
-                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/i,
+                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
                     },
                   }}
                   errors={errors}
                   field={"password"}
-                  icon={"shield"}
                   inputProps={{
+                    icon: "shield",
                     type: "password",
                     label: "Password",
                     subLabel:
@@ -146,8 +146,8 @@ export const SignUp = () => {
                   }}
                   errors={errors}
                   field={"name"}
-                  icon={"user"}
                   inputProps={{
+                    icon: "user",
                     type: "text",
                     label: "Full Name",
                     subLabel: "",
@@ -165,8 +165,8 @@ export const SignUp = () => {
                   }}
                   errors={errors}
                   field={"phone_number"}
-                  icon={"phone"}
                   inputProps={{
+                    icon: "phone",
                     type: "text",
                     label: "Phone Number",
                     subLabel: "",
@@ -190,8 +190,8 @@ export const SignUp = () => {
                   }}
                   errors={errors}
                   field={"company_name"}
-                  icon={"office"}
                   inputProps={{
+                    icon: "office",
                     type: "text",
                     label: "Company Name",
                     subLabel: "",
@@ -206,8 +206,8 @@ export const SignUp = () => {
                   }}
                   errors={errors}
                   field={"title"}
-                  icon={"briefcase"}
                   inputProps={{
+                    icon: "briefcase",
                     type: "text",
                     label: "Title",
                     subLabel: "",

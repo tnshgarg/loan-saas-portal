@@ -5,8 +5,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Profile from "./components/dashboard/profile/Profile";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
-import { InvalidRoute } from "./components/errorDisplayComponents/InvalidRoute";
-import { LandingPageMainComponent } from "./components/landingPage/landingPageMainComponent";
+import { Invalid } from "./components/invalid";
+import { Landing } from "./components/landing";
 import { ConfirmForgotPassword } from "./components/signUpLogin/ConfirmForgotPassword";
 import { ForgotPassword } from "./components/signUpLogin/ForgotPassword";
 import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
@@ -31,7 +31,7 @@ const App = () => {
       <Router history={history}>
         <br></br>
         <Routes>
-          <Route path="/" element={<LandingPageMainComponent />} />
+          <Route path="/" element={<Landing />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/confirm-sign-up" element={<ConfirmSignUp />} />
           <Route path="/login" element={<Login />} />
@@ -44,7 +44,7 @@ const App = () => {
           <Route path="/register-form" element={<RegisterForm />} />
           <Route path="/upload" element={<CSVUpload />} />
           <Route path="/view" element={<TableView />} />
-          <Route path="*" element={<InvalidRoute />} />
+          <Route path="*" element={<Invalid />} />
         </Routes>
       </Router>
     </BaseLayout>

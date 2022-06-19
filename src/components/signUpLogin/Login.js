@@ -148,15 +148,14 @@ export const Login = () => {
                 register={register}
                 validations={{
                   required: true,
-                  minLength: 1,
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                   },
                 }}
                 errors={errors}
                 field={"email"}
-                icon={"envelope"}
                 inputProps={{
+                  icon: "envelope",
                   large: true,
                   type: "email",
                   subLabel: "",
@@ -167,17 +166,17 @@ export const Login = () => {
               <SPACE_REDUCER />
               <FormInput
                 register={register}
-                icon={"shield"}
                 validations={{
                   required: true,
                   pattern: {
                     value:
-                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,}$/i,
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
                   },
                 }}
                 errors={errors}
                 field={"password"}
                 inputProps={{
+                  icon: "shield",
                   large: true,
                   type: "password",
                   placeholder: "Enter your password",
