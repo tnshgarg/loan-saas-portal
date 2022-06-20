@@ -3,15 +3,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
+import CSVUpload from "./components/dashboard/dataUpload/CSVUpload";
 import Profile from "./components/dashboard/profile/Profile";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
+import { TabularView } from "./components/dashboard/tabularView/TabularView";
+import TableView from "./components/dashboard/tabularView/viewTables";
 import { Invalid } from "./components/invalid";
 import { Landing } from "./components/landing";
 import { ConfirmForgotPassword } from "./components/signUpLogin/ConfirmForgotPassword";
 import { ForgotPassword } from "./components/signUpLogin/ForgotPassword";
 import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
-import CSVUpload from "./components/dashboard/dataUpload/CSVUpload";
-import TableView from "./components/dashboard/tabularView/viewTables";
 import { history } from "./helpers/history";
 import BaseLayout from "./layout/base";
 
@@ -44,6 +45,7 @@ const App = () => {
           <Route path="/register-form" element={<RegisterForm />} />
           <Route path="/upload" element={<CSVUpload />} />
           <Route path="/view" element={<TableView />} />
+          <Route path="/view2" element={<TabularView />} />
           <Route path="*" element={<Invalid />} />
         </Routes>
       </Router>

@@ -1,27 +1,27 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DoneIcon from "@mui/icons-material/Done";
+import EditIcon from "@mui/icons-material/Edit";
 import {
-  Typography,
-  Table,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableContainer,
+  Box,
   IconButton,
   Input,
   Paper,
-  Tabs,
   Tab,
-  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tabs,
+  Typography,
 } from "@mui/material";
-import DoneIcon from "@mui/icons-material/Done";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
-import { headers } from "../dataUpload/headerData";
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { headers } from "../dataUpload/headerData";
 import Navbar from "../navbarMainComponent/Navbar";
 
 const classes = {
@@ -131,6 +131,7 @@ function TableView() {
           }
         )
         .then((res) => {
+          console.log(res);
           const tempData = res.data["body"];
           for (let i = 0; i < tempData.length; i++) {
             tempData[i].isEditMode = false;
