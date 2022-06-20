@@ -40,7 +40,7 @@ export const SignUp = () => {
         username,
         password,
         email,
-        `+91${phone_number}`,
+        phone_number,
         name,
         company_name,
         no_of_employees,
@@ -160,7 +160,7 @@ export const SignUp = () => {
                   validations={{
                     required: true,
                     pattern: {
-                      value: /(\+91)?\d{12}/,
+                      value: /^\+91\d{10}$/,
                     },
                   }}
                   errors={errors}
@@ -169,7 +169,6 @@ export const SignUp = () => {
                     icon: "phone",
                     type: "text",
                     label: "Phone Number",
-                    subLabel: "",
                     placeholder:
                       "Enter you 10-digit phone number with country code",
                     errorMessage: "Enter 10 digit number starting with +91",
