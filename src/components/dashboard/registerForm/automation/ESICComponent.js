@@ -132,7 +132,6 @@ const ESICStateComponent = ({
 
   return (
     <div>
-      <h5>ESIC Portal Credentials</h5>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
 
@@ -164,7 +163,7 @@ const ESICStateComponent = ({
             validations={{
               required: true,
               pattern: {
-                value: /^[0-9]+$/,
+                value: /^[A-Za-z]+$/,
               },
             }}
             errors={errors}
@@ -177,18 +176,43 @@ const ESICStateComponent = ({
           />
         )}
 
-        <input
-          {...register("esic_employer_code", {
+        <FormInput
+          register={register}
+          validations={{
             required: true,
-          })}
+            pattern: {
+              value: /^\d+$/,
+            },
+          }}
+          errors={errors}
+          field={"esic_employer_code"}
+          inputProps={{
+            icon: "user",
+            label: "Establishment Code",
+            placeholder:
+              "Please enter ESIC Establishment Code for selected state",
+            errorMessage:
+              "Please enter ESIC Establishment Code for selected state",
+          }}
         />
 
-        <input
-          type="password"
-          {...register("esic_password", {
+        <FormInput
+          register={register}
+          validations={{
             required: true,
-          })}
-          disabled={isComponentDisabled}
+          }}
+          errors={errors}
+          field={"esic_password"}
+          inputProps={{
+            icon: "shield",
+            type: "password",
+            disabled: { isComponentDisabled },
+            label: "Password",
+            placeholder:
+              "Please enter ESIC Portal Password for this Establishment Code",
+            errorMessage:
+              "Please enter ESIC Portal Password for this Establishment Code",
+          }}
         />
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
@@ -198,22 +222,6 @@ const ESICStateComponent = ({
           value={isComponentDisabled ? "edit" : "lock"}
           onClick={toggleDisabledStatus}
         />
-
-        <div className="form-row-new">
-          <label></label>
-          {showOtherIndianState && (
-            <label>
-              {errors.esic_state_other && <p>This field cannot be empty</p>}
-            </label>
-          )}
-          <label>
-            {errors.esic_employer_code && <p>Employer code cannot be empty</p>}
-          </label>
-          <label>
-            {errors.esic_password && <p>Password cannot be empty</p>}
-          </label>
-          <label></label>
-        </div>
       </form>
     </div>
   );
@@ -228,8 +236,7 @@ const ESICComponent = () => {
   console.log("rendering");
   return (
     <div>
-      <h1>Enter your ESIC details</h1>
-
+      <h5>ESIC Portal Credentials</h5>
       {Object.entries(initialEsicFormDetails).map(([key, value]) => {
         const {
           esic_state: esicStateInitial,

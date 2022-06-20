@@ -109,9 +109,6 @@ const EPFOComponent = () => {
           register={register}
           validations={{
             required: true,
-            pattern: {
-              value: /^([A-Z0-9])$/,
-            },
           }}
           errors={errors}
           field={"pf_password"}
