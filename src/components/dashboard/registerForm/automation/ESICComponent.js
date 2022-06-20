@@ -219,7 +219,7 @@ const ESICStateComponent = ({
         {/* {errors.exampleRequired && <p>This field is required</p>} */}
         <input
           type="submit"
-          value={isComponentDisabled ? "edit" : "lock"}
+          value={isComponentDisabled ? "Edit" : "Submit"}
           onClick={toggleDisabledStatus}
         />
       </form>
