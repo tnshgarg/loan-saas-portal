@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Profile from "./components/dashboard/profile/Profile";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
-import { Invalid } from "./components/invalid";
+import { Invalid } from "./components/Invalid";
 import { Landing } from "./components/Landing";
 import { ConfirmForgotPassword } from "./components/signUpLogin/ConfirmForgotPassword";
 import { ForgotPassword } from "./components/signUpLogin/ForgotPassword";
