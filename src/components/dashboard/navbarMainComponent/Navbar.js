@@ -23,7 +23,6 @@ import * as React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../../store/actions/auth";
-import { setRegisterFormLogout } from "../../../store/actions/registerForm";
 
 const drawerWidth = 240;
 
@@ -80,8 +79,7 @@ const Navbar = ({ child }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(logout());
-    dispatch(setRegisterFormLogout());
+    dispatch(logout);
     navigate("/login");
   };
 
@@ -166,7 +164,7 @@ const Navbar = ({ child }) => {
               </ListItemButton>
             </ListItem>
           </Link>
-          <ListItem key={"Logout"} disablePadding>
+          <ListItem key={"Logout"} disablePadding onClick={handleLogout}>
             <ListItemButton>
               <ListItemIcon>
                 <LogoutIcon />

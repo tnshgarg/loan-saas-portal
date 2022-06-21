@@ -8,7 +8,6 @@ import {
   setAddressForm,
   setEsicStateForm,
   setPfForm,
-  setRegisterFormLogout,
   setTaxSetupForm,
 } from "../../store/actions/registerForm";
 import { getRegisterFormData } from "../../services/user.services";
@@ -56,10 +55,6 @@ export const Login = () => {
   const navigate = useNavigate();
 
   const { message } = useSelector((state) => state.message);
-
-  useEffect(() => {
-    dispatch(setRegisterFormLogout());
-  }, [dispatch]);
 
   const handleForgotPasswordOnClick = () => {
     navigate("/forgot-password");

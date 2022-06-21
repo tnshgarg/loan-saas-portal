@@ -2,7 +2,6 @@ import {
   SET_ADDRESS_FORM,
   SET_ESIC_STATE_FORM,
   SET_PF_FORM,
-  SET_REGISTER_FORM_LOGOUT,
   SET_TAX_SETUP_FORM,
 } from "../actions/types";
 const initialState = {
@@ -38,16 +37,6 @@ export default function (state = initialState, action) {
           [payload.state]: payload,
         },
       };
-
-    case SET_REGISTER_FORM_LOGOUT:
-      return {
-        ...state,
-        addressFormDetails: null,
-        taxSetupFormDetails: null,
-        pfFormDetails: null,
-        esicForm: {},
-      };
-
     default:
       return state;
   }

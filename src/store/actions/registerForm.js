@@ -2,7 +2,6 @@ import {
   SET_ADDRESS_FORM,
   SET_ESIC_STATE_FORM,
   SET_PF_FORM,
-  SET_REGISTER_FORM_LOGOUT,
   SET_TAX_SETUP_FORM,
 } from "./types";
 
@@ -57,10 +56,3 @@ export const setEsicStateForm =
       payload: esicForm,
     });
   };
-
-export const setRegisterFormLogout = () => (dispatch) => {
-  // AuthService.logout();
-  dispatch({
-    type: SET_REGISTER_FORM_LOGOUT,
-  });
-};
