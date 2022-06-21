@@ -71,13 +71,13 @@ export const Login = () => {
     formState: { errors },
   } = useForm();
 
-  console.log({ errors });
   const onSubmit = (data) => {
     const { email: username, password } = data;
 
     dispatch(login(username, password))
       .then((loginData) => {
         setSuccessful(true);
+        navigate("/profile");
 
         const { authToken, employerId } = loginData;
 
@@ -108,23 +108,17 @@ export const Login = () => {
 
             Object.entries(registerFormObject?.credentials?.esic ?? {}).forEach(
               ([key, value]) => {
-                const esic_state_identifier = key;
+                const state = key;
                 const {
-                  username: esic_employer_code,
-                  password: esic_password,
+                  isOther: isOther,
+                  employerCode: employerCode,
+                  password: password,
                 } = value ?? "";
                 dispatch(
-                  setEsicStateForm(
-                    esic_state_identifier,
-                    esic_state_identifier,
-                    esic_employer_code,
-                    esic_password
-                  )
+                  setEsicStateForm(isOther, state, employerCode, password)
                 );
               }
             );
-
-            navigate("/profile");
           })
           .catch((error) => {
             console.log(error);

@@ -3,7 +3,6 @@ import {
   SET_ESIC_STATE_FORM,
   SET_PF_FORM,
   SET_REGISTER_FORM_LOGOUT,
-  SET_REGISTER_FORM_TAB_VALUE,
   SET_TAX_SETUP_FORM,
 } from "./types";
 
@@ -46,30 +45,18 @@ export const setPfForm = (pf_username, pf_password) => (dispatch) => {
 };
 
 export const setEsicStateForm =
-  (esic_state, esic_state_other, esic_employer_code, esic_password) =>
-  (dispatch) => {
-    const esicFormDetails = {
-      esic_state: esic_state,
-      esic_state_other: esic_state_other,
-      esic_state_identifier: esic_state_other ? esic_state_other : esic_state,
-      esic_employer_code: esic_employer_code,
-      esic_password: esic_password,
+  (isOther, state, employerCode, password) => (dispatch) => {
+    const esicForm = {
+      isOther: isOther,
+      state: state,
+      employerCode: employerCode,
+      password: password,
     };
     dispatch({
       type: SET_ESIC_STATE_FORM,
-      payload: esicFormDetails,
+      payload: esicForm,
     });
   };
-
-export const setRegisterFormTabValue = (tabValue) => (dispatch) => {
-  const tabValueDetails = {
-    tabValue: tabValue,
-  };
-  dispatch({
-    type: SET_REGISTER_FORM_TAB_VALUE,
-    payload: tabValueDetails,
-  });
-};
 
 export const setRegisterFormLogout = () => (dispatch) => {
   // AuthService.logout();

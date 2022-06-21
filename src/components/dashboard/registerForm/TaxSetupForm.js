@@ -2,10 +2,7 @@ import React, { useEffect } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setRegisterFormTabValue,
-  setTaxSetupForm,
-} from "../../../store/actions/registerForm";
+import { setTaxSetupForm } from "../../../store/actions/registerForm";
 
 import { getDocumentFromTaxSetupFormDetails } from "../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../helpers/messageStrings";
@@ -33,7 +30,7 @@ const TaxSetupForm = () => {
     handleSubmit,
     getValues,
     // watch,
-    formState: { errors, dirtyFields },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       pan: panInitial,
@@ -68,7 +65,6 @@ const TaxSetupForm = () => {
         .then((response) => {
           const message = response.data.body.message;
           alert.success(message);
-          dispatch(setRegisterFormTabValue(2));
         })
         .catch((error) => {
           const message = error.response?.data?.message ?? "Some error occured";
@@ -80,7 +76,6 @@ const TaxSetupForm = () => {
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
-  console.log({ dirtyFields, errors });
 
   return (
     <div>

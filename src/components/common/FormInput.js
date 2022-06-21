@@ -33,6 +33,7 @@ export default function FormInput({
       <InputGroup
         large={inputProps.large}
         id={fieldId}
+        disabled={inputProps.disabled}
         leftIcon={inputProps.icon}
         type={inputProps.type}
         placeholder={inputProps.placeholder}

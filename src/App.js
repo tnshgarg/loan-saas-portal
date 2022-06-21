@@ -29,7 +29,8 @@ const App = () => {
   return (
     <BaseLayout>
       <Router history={history}>
-        <br></br>
+        <br />
+        <br />
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/sign-up" element={<SignUp />} />
