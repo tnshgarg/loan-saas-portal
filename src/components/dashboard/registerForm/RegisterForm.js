@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
 import { Card, Elevation } from "@blueprintjs/core";
-import Navbar from "../navbarMainComponent/Navbar";
+import Navbar from "../Navbar";
 import { Tabs, Tab } from "@blueprintjs/core";
 import { AddressForm, AutomationForm, TaxSetupForm } from "./index";
 

@@ -1,5 +1,5 @@
 import { Card, Button, Elevation, Intent } from "@blueprintjs/core";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -104,11 +104,7 @@ export const Login = () => {
             Object.entries(registerFormObject?.credentials?.esic ?? {}).forEach(
               ([key, value]) => {
                 const state = key;
-                const {
-                  isOther: isOther,
-                  employerCode: employerCode,
-                  password: password,
-                } = value ?? "";
+                const { isOther, employerCode, password } = value ?? "";
                 dispatch(
                   setEsicStateForm(isOther, state, employerCode, password)
                 );

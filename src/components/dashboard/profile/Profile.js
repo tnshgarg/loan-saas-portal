@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../navbarMainComponent/Navbar";
+import Navbar from "../Navbar";
 
 const ProfileContent = () => {
   const auth = useSelector((state) => state.auth);

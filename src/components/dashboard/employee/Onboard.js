@@ -1,13 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { CSVLink } from "react-csv";
-import { FileDrop } from "react-file-drop";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Alert, Collapse, CircularProgress } from "@mui/material";
-import Navbar from "../navbarMainComponent/Navbar";
+import { Button, Card, Elevation, FileInput } from "@blueprintjs/core";
+import Navbar from "../Navbar";
 import { headers } from "./headerData";
+
+const CARD_STYLING = {
+  textAlign: "center",
+  marginLeft: "auto",
+  marginRight: "auto",
+  width: "50%",
+};
+
+const SUB_HEADING_STYLING = {
+  marginTop: "1%",
+  marginBottom: "2%",
+};
 
 const CSVUpload = () => {
   // AUTH LAYER
@@ -93,9 +105,8 @@ const CSVUpload = () => {
   };
 
   return (
-    <div className="container">
-      <Navbar />
-      <Collapse sx={{ marginTop: "-7vh" }} in={uploadStatus}>
+    <Card style={CARD_STYLING} interactive={true} elevation={Elevation.THREE}>
+      <Collapse in={uploadStatus}>
         <Alert
           onClose={() => {
             setUploadStatus(!uploadStatus);
@@ -105,52 +116,37 @@ const CSVUpload = () => {
           {file ? `File ${file.name} Uploaded Successfully` : null}
         </Alert>
       </Collapse>
-      <h1 className="uploadHeading">Upload Employee Details</h1>
-      <div className="">
-        <form>
-          <input
-            type="file"
-            className="inputFile"
-            id="file1"
-            accept=".csv"
-            onChange={handleChange}
-          />
-        </form>
-      </div>
-      <label>or</label>
-      <div className="dropArea">
-        <FileDrop
-          onDrop={(files) => {
-            setFile(files[0]);
-            setFileSize(files[0].size);
-          }}
-        >
-          <label style={{ fontSize: 24 }}>
-            {file ? file.name : "Drop CSV file here"}
-          </label>
-        </FileDrop>
-      </div>
-      <div className="buttonDiv">
-        <button
-          className="button"
-          disabled={disabled}
-          onClick={(e) => {
-            !file ? alert("Please select a file to upload") : handleOnSubmit(e);
-          }}
-        >
-          {loading ? <CircularProgress size={16} /> : "Upload"}
-        </button>
+      <h3>Upload Employee Details</h3>
 
-        <CSVLink
-          data={headers}
-          filename={"Employee_Details_Format.csv"}
-          style={{ textDecoration: "none" }}
-        >
-          <button className="button">Download Format</button>
-        </CSVLink>
-      </div>
-    </div>
+      <br />
+
+      <CSVLink data={headers} filename={"Employee_Details_Format.csv"}>
+        <Button>Download Format</Button>
+      </CSVLink>
+
+      <br />
+      <br />
+
+      <h5 style={SUB_HEADING_STYLING}>Choose Employee Details CSV</h5>
+      <FileInput text="Choose file..." onInputChange={handleChange} />
+
+      <br />
+      <br />
+
+      <Button
+        disabled={disabled}
+        onClick={(e) => {
+          !file ? alert("Please select a file to upload") : handleOnSubmit(e);
+        }}
+      >
+        {loading ? <CircularProgress size={16} /> : "Upload"}
+      </Button>
+    </Card>
   );
 };
 
-export default CSVUpload;
+const Onboard = () => {
+  return <Navbar child={<CSVUpload />} />;
+};
+
+export default Onboard;

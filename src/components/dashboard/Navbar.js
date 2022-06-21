@@ -22,7 +22,7 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { logout } from "../../../store/actions/auth";
+import { logout } from "../../store/actions/auth";
 
 const drawerWidth = 240;
 
@@ -144,7 +144,10 @@ const Navbar = ({ child }) => {
               </ListItemButton>
             </ListItem>
           </Link>
-          <Link to="/upload" style={{ textDecoration: "none", color: "black" }}>
+          <Link
+            to="/employees/onboard"
+            style={{ textDecoration: "none", color: "black" }}
+          >
             <ListItem key={"Upload Employee details"} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
@@ -154,7 +157,10 @@ const Navbar = ({ child }) => {
               </ListItemButton>
             </ListItem>
           </Link>
-          <Link to="/view" style={{ textDecoration: "none", color: "black" }}>
+          <Link
+            to="/employees/view"
+            style={{ textDecoration: "none", color: "black" }}
+          >
             <ListItem key={"Table View"} disablePadding>
               <ListItemButton>
                 <ListItemIcon>

@@ -6,12 +6,12 @@ import "./App.css";
 import Profile from "./components/dashboard/profile/Profile";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
 import { Invalid } from "./components/invalid";
-import { Landing } from "./components/landing";
+import { Landing } from "./components/Landing";
 import { ConfirmForgotPassword } from "./components/signUpLogin/ConfirmForgotPassword";
 import { ForgotPassword } from "./components/signUpLogin/ForgotPassword";
 import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
-import CSVUpload from "./components/dashboard/dataUpload/CSVUpload";
-import TableView from "./components/dashboard/tabularView/viewTables";
+import Onboard from "./components/dashboard/employee/Onboard";
+import TableView from "./components/dashboard/employee/viewTables";
 import { history } from "./helpers/history";
 import BaseLayout from "./layout/base";
 
@@ -43,8 +43,8 @@ const App = () => {
           />
           <Route path="/profile" element={<Profile />} />
           <Route path="/register-form" element={<RegisterForm />} />
-          <Route path="/upload" element={<CSVUpload />} />
-          <Route path="/view" element={<TableView />} />
+          <Route path="/employees/onboard" element={<Onboard />} />
+          <Route path="/employees/view" element={<TableView />} />
           <Route path="*" element={<Invalid />} />
         </Routes>
       </Router>
