@@ -1,9 +1,10 @@
 import { Card, Elevation, Tab, Tabs } from "@blueprintjs/core";
 import axios from "axios";
+import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { usePagination, useSortBy, useTable } from "react-table";
+import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 import styled from "styled-components";
 import { headers } from "../dataUpload/headerData";
 import Navbar from "../navbarMainComponent/Navbar";
@@ -51,6 +52,29 @@ const TABLE_CARD_STYLING = {
   overflow: "scroll",
 };
 
+// Define a default UI for filtering
+function DefaultColumnFilter({
+  column: { filterValue, preFilteredRows, setFilter },
+}) {
+  const count = preFilteredRows.length;
+
+  return (
+    <input
+      value={filterValue || ""}
+      onChange={(e) => {
+        setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
+      }}
+      placeholder={`Search ${count} records...`}
+    />
+  );
+}
+
+function fuzzyTextFilterFn(rows, id, filterValue) {
+  return matchSorter(rows, filterValue, { keys: [(row) => row.values[id]] });
+}
+
+fuzzyTextFilterFn.autoRemove = (val) => !val;
+
 const TabularViewTab = () => {
   const [fetchedRows, setFetchedRows] = useState([]);
   const auth = useSelector((state) => state.auth);
@@ -63,6 +87,34 @@ const TabularViewTab = () => {
           accessor: header,
         };
       }),
+    []
+  );
+
+  const filterTypes = useMemo(
+    () => ({
+      // Add a new fuzzyTextFilterFn filter type.
+      fuzzyText: fuzzyTextFilterFn,
+      // Or, override the default text filter to use
+      // "startWith"
+      text: (rows, id, filterValue) => {
+        return rows.filter((row) => {
+          const rowValue = row.values[id];
+          return rowValue !== undefined
+            ? String(rowValue)
+                .toLowerCase()
+                .startsWith(String(filterValue).toLowerCase())
+            : true;
+        });
+      },
+    }),
+    []
+  );
+
+  const defaultColumn = useMemo(
+    () => ({
+      // Let's set up our default Filter UI
+      Filter: DefaultColumnFilter,
+    }),
     []
   );
 
@@ -118,7 +170,11 @@ const TabularViewTab = () => {
       columns,
       data: fetchedRows,
       initialState: { pageIndex: 0, pageSize: 5 },
+      defaultColumn, // Be sure to pass the defaultColumn option
+      filterTypes,
     },
+
+    useFilters, // useFilters!
     useSortBy,
     usePagination
   );
@@ -146,6 +202,9 @@ const TabularViewTab = () => {
                           : " 🔼"
                         : ""}
                     </span>
+                    <div>
+                      {column.canFilter ? column.render("Filter") : null}
+                    </div>
                   </th>
                 ))}
               </tr>
