@@ -2,6 +2,7 @@ import { Card, Elevation, Tab, Tabs } from "@blueprintjs/core";
 import axios from "axios";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
+import { useAlert } from "react-alert";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFilters, usePagination, useSortBy, useTable } from "react-table";
@@ -75,6 +76,46 @@ function fuzzyTextFilterFn(rows, id, filterValue) {
 
 fuzzyTextFilterFn.autoRemove = (val) => !val;
 
+// Create an editable cell renderer
+const EditableCell = ({
+  value: initialValue,
+  row,
+  column: { id },
+  publishChange, // This is a custom function that we supplied to our table instance
+}) => {
+  // We need to keep and update the state of the cell normally
+  const [value, setValue] = useState(initialValue);
+  const alert = useAlert();
+
+  const onChange = (e) => {
+    setValue(e.target.value);
+  };
+
+  // We'll only update the external data when the input is blurred
+  const onBlur = () => {
+    const updatedRow = {
+      ...row.original,
+      [id]: value,
+    };
+    publishChange(updatedRow)
+      .then((response) => {
+        const message = response.data.body;
+        alert.success(message);
+      })
+      .catch((error) => {
+        const message = error.response?.data?.message ?? "Some error occured";
+        alert.error(message);
+      });
+  };
+
+  // If the initialValue is changed external, sync it up with our state
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  return <input value={value} onChange={onChange} onBlur={onBlur} />;
+};
+
 const TabularViewTab = () => {
   const [fetchedRows, setFetchedRows] = useState([]);
   const auth = useSelector((state) => state.auth);
@@ -114,6 +155,7 @@ const TabularViewTab = () => {
     () => ({
       // Let's set up our default Filter UI
       Filter: DefaultColumnFilter,
+      Cell: EditableCell,
     }),
     []
   );
@@ -147,6 +189,22 @@ const TabularViewTab = () => {
     fetchData();
   }, []);
 
+  const publishChange = (updatedRow) => {
+    const options = {
+      headers: {
+        Authorization: auth.user
+          ? auth.user.signInUserSession.idToken.jwtToken
+          : null,
+      },
+    };
+    const body = updatedRow;
+    return axios.put(
+      "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud",
+      body,
+      options
+    );
+  };
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -172,6 +230,7 @@ const TabularViewTab = () => {
       initialState: { pageIndex: 0, pageSize: 5 },
       defaultColumn, // Be sure to pass the defaultColumn option
       filterTypes,
+      publishChange,
     },
 
     useFilters, // useFilters!
