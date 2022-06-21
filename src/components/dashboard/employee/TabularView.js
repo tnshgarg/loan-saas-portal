@@ -7,8 +7,8 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 import styled from "styled-components";
-import { headers } from "../dataUpload/headerData";
-import Navbar from "../navbarMainComponent/Navbar";
+import { headers } from "./headerData";
+import Navbar from "../Navbar";
 
 const Styles = styled.div`
   padding: 1rem;
@@ -43,9 +43,8 @@ const Styles = styled.div`
 `;
 
 const REGISTER_FORM_CARD_STYLING = {
-  width: "80rem",
-  marginRight: "auto",
   marginLeft: "auto",
+  marginRight: "auto",
   overflow: "scroll",
 };
 

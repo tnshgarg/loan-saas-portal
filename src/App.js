@@ -2,17 +2,18 @@ import Amplify from "aws-amplify";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import "./App.css";
-import CSVUpload from "./components/dashboard/dataUpload/CSVUpload";
+
 import Profile from "./components/dashboard/profile/Profile";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
-import { TabularView } from "./components/dashboard/tabularView/TabularView";
-import TableView from "./components/dashboard/tabularView/viewTables";
-import { Invalid } from "./components/invalid";
-import { Landing } from "./components/landing";
+
+import { Invalid } from "./components/Invalid";
+import { Landing } from "./components/Landing";
 import { ConfirmForgotPassword } from "./components/signUpLogin/ConfirmForgotPassword";
 import { ForgotPassword } from "./components/signUpLogin/ForgotPassword";
 import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
+import Onboard from "./components/dashboard/employee/Onboard";
+import { TabularView } from "./components/dashboard/employee/TabularView";
+
 import { history } from "./helpers/history";
 import BaseLayout from "./layout/base";
 
@@ -30,7 +31,8 @@ const App = () => {
   return (
     <BaseLayout>
       <Router history={history}>
-        <br></br>
+        <br />
+        <br />
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/sign-up" element={<SignUp />} />
@@ -43,9 +45,8 @@ const App = () => {
           />
           <Route path="/profile" element={<Profile />} />
           <Route path="/register-form" element={<RegisterForm />} />
-          <Route path="/upload" element={<CSVUpload />} />
-          <Route path="/view" element={<TableView />} />
-          <Route path="/view2" element={<TabularView />} />
+          <Route path="/employees/onboard" element={<Onboard />} />
+          <Route path="/employees/view" element={<TabularView />} />
           <Route path="*" element={<Invalid />} />
         </Routes>
       </Router>

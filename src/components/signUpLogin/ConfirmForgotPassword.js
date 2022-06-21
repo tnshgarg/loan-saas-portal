@@ -58,13 +58,9 @@ export const ConfirmForgotPassword = () => {
         {errors.password && (
           <p>
             Password must contain atleast 8 letters, including numbers,
-            uppercase, lowercase and special characters{" "}
+            uppercase, lowercase and special characters
           </p>
         )}
-
-        {/* include validation with required or other standard HTML validation rules */}
-        {/* errors will return when field validation fails  */}
-        {/* {errors.exampleRequired && <p>This field is required</p>} */}
 
         <input type="submit" />
       </form>

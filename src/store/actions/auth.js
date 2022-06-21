@@ -89,14 +89,9 @@ export const login = (username, password) => (dispatch) => {
         authToken: data.signInUserSession.idToken.jwtToken,
         employerId: data.attributes.sub,
       };
-
       dispatch({
         type: LOGIN_SUCCESS,
         payload: { user: data },
-      });
-      dispatch({
-        type: SET_MESSAGE,
-        payload: data.signInUserSession.accessToken.jwtToken,
       });
       return Promise.resolve(loginData);
     },
@@ -114,7 +109,7 @@ export const login = (username, password) => (dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
-  // AuthService.logout();
+  AuthService.logout();
   dispatch({
     type: LOGOUT,
   });

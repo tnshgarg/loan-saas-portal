@@ -22,8 +22,7 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { logout } from "../../../store/actions/auth";
-import { setRegisterFormLogout } from "../../../store/actions/registerForm";
+import { logout } from "../../store/actions/auth";
 
 const drawerWidth = 240;
 
@@ -80,8 +79,7 @@ const Navbar = ({ child }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(logout());
-    dispatch(setRegisterFormLogout());
+    dispatch(logout);
     navigate("/login");
   };
 
@@ -146,7 +144,10 @@ const Navbar = ({ child }) => {
               </ListItemButton>
             </ListItem>
           </Link>
-          <Link to="/upload" style={{ textDecoration: "none", color: "black" }}>
+          <Link
+            to="/employees/onboard"
+            style={{ textDecoration: "none", color: "black" }}
+          >
             <ListItem key={"Upload Employee details"} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
@@ -156,7 +157,10 @@ const Navbar = ({ child }) => {
               </ListItemButton>
             </ListItem>
           </Link>
-          <Link to="/view" style={{ textDecoration: "none", color: "black" }}>
+          <Link
+            to="/employees/view"
+            style={{ textDecoration: "none", color: "black" }}
+          >
             <ListItem key={"Table View"} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
@@ -166,17 +170,7 @@ const Navbar = ({ child }) => {
               </ListItemButton>
             </ListItem>
           </Link>
-          <Link to="/view2" style={{ textDecoration: "none", color: "black" }}>
-            <ListItem key={"Table View New"} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <TableChartIcon />
-                </ListItemIcon>
-                <ListItemText primary={"Employee Tabular View New"} />
-              </ListItemButton>
-            </ListItem>
-          </Link>
-          <ListItem key={"Logout"} disablePadding>
+          <ListItem key={"Logout"} disablePadding onClick={handleLogout}>
             <ListItemButton>
               <ListItemIcon>
                 <LogoutIcon />

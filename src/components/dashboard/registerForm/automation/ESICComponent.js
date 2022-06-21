@@ -6,17 +6,18 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import { setEsicStateForm } from "../../../../store/actions/registerForm";
-import { getDocumentFromEsicFormDetails } from "../../../../helpers/getDocumentFromState";
+import { getDocumentFromEsicForm } from "../../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
 import statesAndUts from "../../../../helpers/statesAndUts";
 import { postRegisterFormData } from "../../../../services/user.services";
 import FormInput from "../../../common/FormInput";
 
 const ESICStateComponent = ({
-  esicStateInitial,
-  esicStateOtherInitial,
-  esicEmployerCodeInitial,
-  esicPasswordInitial,
+  disabledInitial = true,
+  isOtherInitial = false,
+  stateInitial = "Andaman and Nicobar",
+  employerCodeInitial = "",
+  passwordInitial = "",
 }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
@@ -33,89 +34,92 @@ const ESICStateComponent = ({
       label: indianState,
     };
   });
-
   const defaultIndianState = states[0].label;
-  const [showOtherIndianState, setShowOtherIndianState] = useState(
-    esicStateOtherInitial ? true : false
-  );
 
-  const [isComponentDisabled, setIsComponentDisabled] = useState(true);
+  const [isOther, setIsOther] = useState(isOtherInitial);
+  const [state, setState] = useState(stateInitial);
+  const [employerCode, setEmployerCode] = useState(employerCodeInitial);
+  const [password, setPassword] = useState(passwordInitial);
+
+  const [disabled, setDisabled] = useState(disabledInitial);
 
   const {
     register,
     getValues,
     handleSubmit,
     control,
-    // watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      esic_state: esicStateInitial ?? "",
-      esic_state_other: esicStateOtherInitial,
-      esic_employer_code: esicEmployerCodeInitial,
-      esic_password: esicPasswordInitial,
+      state: isOtherInitial ? "Other" : stateInitial,
+      stateOther: isOtherInitial ? stateInitial : "",
+      employerCode: employerCodeInitial,
+      password: passwordInitial,
     },
     mode: "all",
   });
 
-  useEffect(() => {
-    return () => {
-      const esicStateDataNew = getValues();
-      const {
-        esic_state,
-        esic_state_other,
-        esic_employer_code,
-        esic_password,
-      } = esicStateDataNew || "";
-      const isEqual =
-        ((esic_employer_code === esicEmployerCodeInitial ||
-          esic_employer_code === null ||
-          esic_employer_code === undefined) &&
-          (esic_password === esicPasswordInitial ||
-            esic_password === null ||
-            esic_password === undefined)) ||
-        esic_state === "";
-      if (!isEqual) {
-        dispatch(
-          setEsicStateForm(
-            esic_state,
-            esic_state_other,
-            esic_employer_code,
-            esic_password
-          )
-        );
-      }
-    };
-  }, [dispatch, esicEmployerCodeInitial, esicPasswordInitial, getValues]);
+  // useEffect(() => {
+  //   return () => {
+  //     const data = getValues();
+  //     console.log(`data: ${data}`);
+  //     const isEqual =
+  //       data.state === state &&
+  //       data.employerCode === employerCode &&
+  //       data.password === password;
+  //     console.log(`isEqual: ${isEqual}`);
+  //     if (!isEqual) {
+  //       dispatch(
+  //         setEsicStateForm(
+  //           data.state === "Other" ? true : false,
+  //           data.state === "Other" ? data.stateOther : state,
+  //           data.employerCode,
+  //           data.password
+  //         )
+  //       );
+  //     }
+  //   };
+  // }, [dispatch, state, employerCode, password, getValues]);
 
-  const toggleDisabledStatus = () => {
-    setIsComponentDisabled(!isComponentDisabled);
+  const toggleDisabled = () => {
+    setDisabled(!disabled);
   };
 
-  const onSubmit = (esicStateDataNew) => {
-    const { esic_state, esic_state_other, esic_employer_code, esic_password } =
-      esicStateDataNew || "";
-    const esic_state_identifier = esic_state_other
-      ? esic_state_other
-      : esic_state;
+  const onSubmit = (data) => {
+    console.log(`disabled: ${disabled}`);
+    if (!disabled) {
+      return;
+    }
+    console.log(data, state, employerCode, password);
     const isEqual =
-      (esic_employer_code === esicEmployerCodeInitial ||
-        esic_employer_code === null ||
-        esic_employer_code === undefined) &&
-      (esic_password === esicPasswordInitial ||
-        esic_password === null ||
-        esic_password === undefined);
+      data.state === state &&
+      data.employerCode === employerCode &&
+      data.password === password;
+    console.log(`isEqual : ${isEqual}`);
     if (!isEqual) {
+      setEmployerCode(data.employerCode);
+      setPassword(data.password);
+      setState(isOther ? data.stateOther : data.state);
+
       postRegisterFormData(
         jwtToken,
-        getDocumentFromEsicFormDetails(
+        getDocumentFromEsicForm(
           employerId,
-          esic_state_identifier,
-          esic_employer_code,
-          esic_password
+          isOther,
+          isOther ? data.stateOther : data.state,
+          data.employerCode,
+          data.password
         )
       )
         .then((response) => {
+          dispatch(
+            setEsicStateForm(
+              data.state === "Other" ? true : false,
+              data.state === "Other" ? data.stateOther : state,
+              data.employerCode,
+              data.password
+            )
+          );
           const message = response.data.body.message;
           alert.success(message);
         })
@@ -139,7 +143,7 @@ const ESICStateComponent = ({
         <Controller
           control={control}
           defaultValue={defaultIndianState}
-          name="esic_state"
+          name="state"
           render={({ field }) => (
             <Select
               inputRef={field.ref}
@@ -148,16 +152,15 @@ const ESICStateComponent = ({
               options={states}
               value={states.find((c) => c.value === field.value)}
               onChange={(val) => {
-                val.value === "Other"
-                  ? setShowOtherIndianState(true)
-                  : setShowOtherIndianState(false);
+                val.value === "Other" ? setIsOther(true) : setIsOther(false);
                 field.onChange(val.value);
               }}
-              isDisabled={isComponentDisabled}
+              isDisabled={disabled}
             />
           )}
         />
-        {showOtherIndianState && (
+        <br />
+        {isOther && (
           <FormInput
             register={register}
             validations={{
@@ -167,11 +170,12 @@ const ESICStateComponent = ({
               },
             }}
             errors={errors}
-            field={"esic_state_other"}
+            field={"stateOther"}
             inputProps={{
-              icon: "state",
+              icon: "",
               placeholder: "Please enter State Name",
               errorMessage: "Please enter State Name",
+              disabled: disabled,
             }}
           />
         )}
@@ -185,7 +189,7 @@ const ESICStateComponent = ({
             },
           }}
           errors={errors}
-          field={"esic_employer_code"}
+          field={"employerCode"}
           inputProps={{
             icon: "user",
             label: "Establishment Code",
@@ -193,6 +197,7 @@ const ESICStateComponent = ({
               "Please enter ESIC Establishment Code for selected state",
             errorMessage:
               "Please enter ESIC Establishment Code for selected state",
+            disabled: disabled,
           }}
         />
 
@@ -202,25 +207,23 @@ const ESICStateComponent = ({
             required: true,
           }}
           errors={errors}
-          field={"esic_password"}
+          field={"password"}
           inputProps={{
             icon: "shield",
             type: "password",
-            disabled: { isComponentDisabled },
             label: "Password",
             placeholder:
               "Please enter ESIC Portal Password for this Establishment Code",
             errorMessage:
               "Please enter ESIC Portal Password for this Establishment Code",
+            disabled: disabled,
           }}
         />
-        {/* include validation with required or other standard HTML validation rules */}
-        {/* errors will return when field validation fails  */}
-        {/* {errors.exampleRequired && <p>This field is required</p>} */}
+
         <input
           type="submit"
-          value={isComponentDisabled ? "Edit" : "Submit"}
-          onClick={toggleDisabledStatus}
+          value={disabled ? "Edit" : "Submit"}
+          onClick={toggleDisabled}
         />
       </form>
     </div>
@@ -230,44 +233,40 @@ const ESICStateComponent = ({
 const ESICComponent = () => {
   const [stateCount, setStateCount] = useState(0);
 
-  const { esicFormDetails: initialEsicFormDetails } =
+  const { esicForm: initialEsicForm } =
     useSelector((state) => state.registerForm) || {};
 
-  console.log("rendering");
+  console.log(`initialEsicForm: ${initialEsicForm}`);
+
   return (
     <div>
       <h5>ESIC Portal Credentials</h5>
-      {Object.entries(initialEsicFormDetails).map(([key, value]) => {
-        const {
-          esic_state: esicStateInitial,
-          esic_state_other: esicStateOtherInitial,
-          esic_employer_code: esicEmployerCodeInitial,
-          esic_password: esicPasswordInitial,
-        } = value;
+      {Object.entries(initialEsicForm).map(([key, value]) => {
         return (
           <div key={key}>
             <ESICStateComponent
-              esicStateInitial={esicStateInitial}
-              esicStateOtherInitial={esicStateOtherInitial}
-              esicEmployerCodeInitial={esicEmployerCodeInitial}
-              esicPasswordInitial={esicPasswordInitial}
+              isOtherInitial={value.isOther}
+              stateInitial={value.state}
+              employerCodeInitial={value.employerCode}
+              passwordInitial={value.password}
             />
             <br />
+            <hr />
           </div>
         );
       })}
 
       {[...Array(stateCount)].map((_, i) => (
-        <div key={`esic${i}`}>
-          <ESICStateComponent />
+        <div key={`${i}`}>
+          <ESICStateComponent disabledInitial={false} />
           <br />
+          <hr />
         </div>
       ))}
       <Button
         onClick={() => setStateCount(stateCount + 1)}
         variant="outlined"
         startIcon={<AddCircleIcon />}
-        style={{ marginLeft: "auto" }}
       >
         Add another State
       </Button>
