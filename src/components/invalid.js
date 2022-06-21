@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-export const InvalidRoute = () => {
+export const Invalid = () => {
   const navigate = useNavigate();
 
   const handleSubmit = () => {

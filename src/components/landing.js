@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-export const LandingPageMainComponent = () => {
+export const Landing = () => {
   const navigate = useNavigate();
 
   const handleSubmitLogin = () => {
@@ -11,9 +11,13 @@ export const LandingPageMainComponent = () => {
     navigate("/sign-up");
   };
 
+  const HEADLINE = {
+    textAlign: "center",
+  };
+
   return (
     <>
-      <h1>Welcome to Unipe</h1>
+      <h1 style={HEADLINE}>Welcome to Unipe</h1>
       <br />
       <form onSubmit={handleSubmitLogin}>
         <input type="submit" value="Login" />

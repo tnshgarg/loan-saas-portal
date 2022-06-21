@@ -29,7 +29,7 @@ const statesAndUts = [
   "Punjab",
   "Rajasthan",
   "Sikkim",
-  "Tamilnadu",
+  "Tamil Nadu",
   "Telangana",
   "Tripura",
   "Uttar Pradesh",

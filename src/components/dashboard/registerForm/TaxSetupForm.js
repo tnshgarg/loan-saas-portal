@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import {
-  setRegisterFormTabValue,
-  setTaxSetupForm,
-} from "../../../../actions/registerForm";
-import { getDocumentFromTaxSetupFormDetails } from "../../../../helpers/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
-import { postRegisterFormData } from "../../../../services/user.services";
-import "./styles.css";
+import { setTaxSetupForm } from "../../../store/actions/registerForm";
+
+import { getDocumentFromTaxSetupFormDetails } from "../../../helpers/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../helpers/messageStrings";
+import { postRegisterFormData } from "../../../services/user.services";
+import FormInput from "../../common/FormInput";
 
 const TaxSetupForm = () => {
-  const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const alert = useAlert();
 
   const {
@@ -70,7 +65,6 @@ const TaxSetupForm = () => {
         .then((response) => {
           const message = response.data.body.message;
           alert.success(message);
-          dispatch(setRegisterFormTabValue(2));
         })
         .catch((error) => {
           const message = error.response?.data?.message ?? "Some error occured";
@@ -87,43 +81,61 @@ const TaxSetupForm = () => {
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
-        <label>Company PAN</label>
-        <input
-          {...register("pan", {
+        <FormInput
+          register={register}
+          validations={{
             required: true,
             pattern: {
               value: /^([a-zA-Z0-9]{10})$/,
             },
-          })}
+          }}
+          errors={errors}
+          field={"pan"}
+          inputProps={{
+            icon: "id-number",
+            label: "PAN",
+            placeholder: "Please enter company's PAN number",
+            errorMessage: "Please enter a valid PAN number with 10 characters",
+          }}
         />
-        {errors.pan && <p>Enter a valid PAN Number having 10 characters</p>}
-
-        <label>Company TAN</label>
-        <input
-          {...register("tan", {
+        <FormInput
+          register={register}
+          validations={{
             required: true,
             pattern: {
               value: /^([a-zA-Z0-9]{10})$/,
             },
-          })}
+          }}
+          errors={errors}
+          field={"tan"}
+          inputProps={{
+            icon: "id-number",
+            label: "TAN",
+            placeholder: "Please enter company's TAN number",
+            errorMessage: "Please enter a valid TAN number with 10 characters",
+          }}
         />
-        {errors.tan && <p>Enter a valid TAN Number having 10 characters</p>}
-
-        <label>Company GSTIN</label>
-        <input
-          {...register("gstin", {
+        <FormInput
+          register={register}
+          validations={{
             required: true,
             pattern: {
               value: /^([a-zA-Z0-9]{15})$/,
             },
-          })}
+          }}
+          errors={errors}
+          field={"gstin"}
+          inputProps={{
+            icon: "id-number",
+            label: "GSTIN",
+            placeholder: "Please enter company's GSTIN number",
+            errorMessage:
+              "Please enter a valid GSTIN number with 15 characters",
+          }}
         />
-        {errors.gstin && <p>Enter a valid GSTIN Number having 15 characters</p>}
-
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}
-
         <input type="submit" value="Submit" />
       </form>
     </div>

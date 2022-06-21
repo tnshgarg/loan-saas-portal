@@ -90,19 +90,21 @@ export const getDocumentFromPfFormDetails = (employerId, pfFormDetails) => {
   return document;
 };
 
-export const getDocumentFromEsicFormDetails = (
+export const getDocumentFromEsicForm = (
   employerId,
-  esic_state_identifier,
-  esic_employer_code,
-  esic_password
+  isOther,
+  state,
+  employerCode,
+  password
 ) => {
   const document = {
     employerId: employerId ?? "",
     credentials: {
       esic: {
-        [esic_state_identifier]: {
-          username: esic_employer_code,
-          password: esic_password,
+        [state]: {
+          isOther: isOther,
+          employerCode: employerCode,
+          password: password,
         },
       },
     },
@@ -129,10 +131,10 @@ export const getDocumentFromEsicFormDetails = (
 //     );
 
 //   const esic = objectMap(esicFormDetails ?? {}, (value) => {
-//     const { esic_employer_code, esic_password } = value;
+//     const { employer_code, password } = value;
 //     return {
-//       username: esic_employer_code,
-//       password: esic_password,
+//       username: employer_code,
+//       password: password,
 //     };
 //   });
 

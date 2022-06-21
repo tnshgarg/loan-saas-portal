@@ -1,23 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useAlert } from "react-alert";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import Select from "react-select";
-import {
-  setAddressForm,
-  setRegisterFormTabValue,
-} from "../../../../actions/registerForm";
-import { getDocumentFromAddressFormDetails } from "../../../../helpers/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
-import statesAndUts from "../../../../helpers/statesAndUts";
-import { postRegisterFormData } from "../../../../services/user.services";
-import "./styles.css";
+import { setAddressForm } from "../../../store/actions/registerForm";
+import { getDocumentFromAddressFormDetails } from "../../../helpers/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../helpers/messageStrings";
+import statesAndUts from "../../../helpers/statesAndUts";
+import { postRegisterFormData } from "../../../services/user.services";
+import FormInput from "../../common/FormInput";
 
 const AddressForm = () => {
-  const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const alert = useAlert();
 
   const {
@@ -40,8 +33,6 @@ const AddressForm = () => {
       label: indianState,
     };
   });
-
-  const defaultIndianState = states[0].label;
 
   const {
     register,
@@ -102,7 +93,6 @@ const AddressForm = () => {
         .then((response) => {
           const message = response.data.body.message;
           alert.success(message);
-          dispatch(setRegisterFormTabValue(1));
         })
         .catch((error) => {
           const message = error.response?.data?.message ?? "Some error occured";
@@ -118,61 +108,93 @@ const AddressForm = () => {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* register your input into the hook by invoking the "register" function */}
-
-        <label>Company Name</label>
-        <input
-          {...register("company", {
-            required: true,
-          })}
-        />
-        {errors.company && <p>Company Name cannot be empty</p>}
-
-        <label>Brand Name</label>
-        <input
-          {...register("brand", {
-            required: true,
-          })}
-        />
-        {errors.brand && <p>Brand Name cannot be empty</p>}
-
-        <label>Registered Address</label>
-        <input
-          {...register("address", {
-            required: true,
-          })}
-        />
-        {errors.address && <p>Address cannot be empty</p>}
-
-        <label>State</label>
-        <Controller
-          control={control}
-          defaultValue={defaultIndianState}
-          name="state"
-          render={({ field }) => (
-            <Select
-              inputRef={field.ref}
-              classNamePrefix="addl-class"
-              options={states}
-              value={states.find((c) => c.value === field.value)}
-              onChange={(val) => {
-                field.onChange(val.value);
-              }}
-            />
-          )}
-        />
-
-        <label>Pincode</label>
-        <input
-          {...register("pincode", {
+        <FormInput
+          register={register}
+          validations={{
             required: true,
             pattern: {
-              value: /^[1-9][0-9]{5}$/,
+              value: /^[A-Z0-9a-z ]+$/,
             },
-          })}
+          }}
+          errors={errors}
+          field={"company"}
+          inputProps={{
+            icon: "office",
+            label: "Company Name",
+            placeholder: "Please enter your company name",
+            errorMessage: "Please enter your company name",
+          }}
         />
-        {errors.pincode && <p>Pincode must consist of 6 digits</p>}
-
+        <FormInput
+          register={register}
+          validations={{
+            required: false,
+          }}
+          errors={errors}
+          field={"brand"}
+          inputProps={{
+            icon: "tag",
+            label: "Brand Name",
+            placeholder: "Please enter your brand name",
+            errorMessage: "Please enter your brand name",
+          }}
+        />
+        <FormInput
+          register={register}
+          validations={{
+            required: true,
+            minLength: 1,
+            pattern: {
+              value: /^[A-Z0-9a-z, ]+$/,
+            },
+          }}
+          errors={errors}
+          field={"address"}
+          inputProps={{
+            icon: "home",
+            label: "Address",
+            placeholder: "Please enter your company address",
+            errorMessage: "Please enter your company address",
+          }}
+        />
+        <FormInput
+          register={register}
+          validations={{
+            required: true,
+            minLength: 1,
+            pattern: {
+              value: /^[A-Za-z ]+$/,
+            },
+          }}
+          errors={errors}
+          field={"state"}
+          inputProps={{
+            icon: "locate",
+            label: "State",
+            placeholder:
+              "Please enter the State in which your company office is located",
+            errorMessage:
+              "Please enter the State in which your company office is located",
+          }}
+        />
+        <FormInput
+          register={register}
+          validations={{
+            required: true,
+            minLength: 1,
+            pattern: {
+              value: /^\d{6}$/,
+            },
+          }}
+          errors={errors}
+          field={"pincode"}
+          inputProps={{
+            icon: "pin",
+            label: "Pincode",
+            placeholder: "Please enter company address pincode",
+            errorMessage: "Pincode must be 6 digits",
+          }}
+        />
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}

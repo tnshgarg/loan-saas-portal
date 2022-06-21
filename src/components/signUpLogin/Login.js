@@ -1,28 +1,60 @@
-import { useEffect, useState } from "react";
+import { Card, Button, Elevation, Intent } from "@blueprintjs/core";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../actions/auth";
+import { login } from "../../store/actions/auth";
 import {
   setAddressForm,
   setEsicStateForm,
   setPfForm,
-  setRegisterFormLogout,
   setTaxSetupForm,
-} from "../../actions/registerForm";
+} from "../../store/actions/registerForm";
 import { getRegisterFormData } from "../../services/user.services";
-import "./styles.css";
+import FormInput from "../common/FormInput";
 
+const LOGIN_CARD_STYLING = {
+  width: "20%",
+  minWidth: "500px",
+  marginRight: "auto",
+  marginLeft: "auto",
+  marginTop: "20vh",
+};
+
+const LOGIN_CONTAINER_STYLING = {
+  textAlign: "center",
+  padding: "2em",
+};
+
+const INPUT_CONTAINER_STYLING = {
+  padding: "2em",
+  paddingBottom: "0",
+};
+
+const SPACE_REDUCER = () => <div style={{ marginTop: "-10px" }}></div>;
+
+function ErrorDialog({ message, success }) {
+  if (message) {
+    return (
+      <div className="form-group">
+        <br />
+        <div
+          className={success ? "alert alert-success" : "alert alert-danger"}
+          role="alert"
+        >
+          {message}
+        </div>
+      </div>
+    );
+  }
+  return <></>;
+}
 export const Login = () => {
   const [successful, setSuccessful] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { message } = useSelector((state) => state.message);
-
-  useEffect(() => {
-    dispatch(setRegisterFormLogout());
-  }, [dispatch]);
 
   const handleForgotPasswordOnClick = () => {
     navigate("/forgot-password");
@@ -31,15 +63,16 @@ export const Login = () => {
   const {
     register,
     handleSubmit,
-    // watch,
-    // formState: { errors },
+    formState: { errors },
   } = useForm();
+
   const onSubmit = (data) => {
     const { email: username, password } = data;
 
     dispatch(login(username, password))
       .then((loginData) => {
         setSuccessful(true);
+        navigate("/profile");
 
         const { authToken, employerId } = loginData;
 
@@ -70,23 +103,13 @@ export const Login = () => {
 
             Object.entries(registerFormObject?.credentials?.esic ?? {}).forEach(
               ([key, value]) => {
-                const esic_state_identifier = key;
-                const {
-                  username: esic_employer_code,
-                  password: esic_password,
-                } = value ?? "";
+                const state = key;
+                const { isOther, employerCode, password } = value ?? "";
                 dispatch(
-                  setEsicStateForm(
-                    esic_state_identifier,
-                    esic_state_identifier,
-                    esic_employer_code,
-                    esic_password
-                  )
+                  setEsicStateForm(isOther, state, employerCode, password)
                 );
               }
             );
-
-            navigate("/profile");
           })
           .catch((error) => {
             console.log(error);
@@ -102,28 +125,69 @@ export const Login = () => {
 
   return (
     <div>
-      <h1>Login</h1>
-
       <form onSubmit={handleSubmit(onSubmit)}>
+        <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
+          <div style={LOGIN_CONTAINER_STYLING}>
+            <div style={INPUT_CONTAINER_STYLING}>
+              <FormInput
+                register={register}
+                validations={{
+                  required: true,
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  },
+                }}
+                errors={errors}
+                field={"email"}
+                inputProps={{
+                  icon: "envelope",
+                  large: true,
+                  type: "email",
+                  subLabel: "",
+                  placeholder: "Please enter your email",
+                  errorMessage: "Enter a valid email address",
+                }}
+              />
+              <SPACE_REDUCER />
+              <FormInput
+                register={register}
+                validations={{
+                  required: true,
+                  pattern: {
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                  },
+                }}
+                errors={errors}
+                field={"password"}
+                inputProps={{
+                  icon: "shield",
+                  large: true,
+                  type: "password",
+                  placeholder: "Enter your password",
+                  errorMessage: "Password cannot be less than 8 characters",
+                }}
+              />
+              <Button type="submit" large intent={Intent.PRIMARY}>
+                Sign In
+              </Button>
+
+              <ErrorDialog message={message} success={successful} />
+            </div>
+          </div>
+
+          <label onClick={handleForgotPasswordOnClick}>
+            Click here to reset password
+          </label>
+        </Card>
+
         {/* register your input into the hook by invoking the "register" function */}
-        <label>Email</label>
-        <input {...register("email")} />
-        <label>Password</label>
-        <input type="password" {...register("password")} />
 
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}
-
-        <label
-          className="forgot-password-label"
-          onClick={handleForgotPasswordOnClick}
-        >
-          Forgot Password? Click here to reset it
-        </label>
-
-        <input type="submit" />
       </form>
+
       {message && !successful && (
         <div className="form-group">
           <div

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import "./styles.css";
 import {
   Typography,
   Table,
@@ -20,10 +19,10 @@ import DoneIcon from "@mui/icons-material/Done";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
-import { headers } from "../dataUpload/headerData";
+import { headers } from "./headerData";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../navbarMainComponent/Navbar";
+import Navbar from "../Navbar";
 
 const classes = {
   root: {
