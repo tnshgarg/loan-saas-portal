@@ -1,4 +1,4 @@
-import { Card, Elevation, Tab, Tabs } from "@blueprintjs/core";
+import { Card, EditableText, Elevation, Tab, Tabs } from "@blueprintjs/core";
 import axios from "axios";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
@@ -7,8 +7,8 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 import styled from "styled-components";
-import { headers } from "./headerData";
 import Navbar from "../Navbar";
+import { headers } from "./headerData";
 
 const Styles = styled.div`
   padding: 1rem;
@@ -87,24 +87,27 @@ const EditableCell = ({
   const alert = useAlert();
 
   const onChange = (e) => {
-    setValue(e.target.value);
+    setValue(e);
   };
 
   // We'll only update the external data when the input is blurred
-  const onBlur = () => {
-    const updatedRow = {
-      ...row.original,
-      [id]: value,
-    };
-    publishChange(updatedRow)
-      .then((response) => {
-        const message = response.data.body;
-        alert.success(message);
-      })
-      .catch((error) => {
-        const message = error.response?.data?.message ?? "Some error occured";
-        alert.error(message);
-      });
+  const onConfirm = (e) => {
+    if (e !== initialValue) {
+      const updatedRow = {
+        ...row.original,
+        [id]: value,
+      };
+      publishChange(updatedRow)
+        .then((response) => {
+          console.log(response);
+          const message = response.data.body;
+          alert.success(message);
+        })
+        .catch((error) => {
+          const message = error.response?.data?.message ?? "Some error occured";
+          alert.error(message);
+        });
+    }
   };
 
   // If the initialValue is changed external, sync it up with our state
@@ -112,7 +115,11 @@ const EditableCell = ({
     setValue(initialValue);
   }, [initialValue]);
 
-  return <input value={value} onChange={onChange} onBlur={onBlur} />;
+  return (
+    <>
+      <EditableText value={value} onChange={onChange} onConfirm={onConfirm} />
+    </>
+  );
 };
 
 const TabularViewTab = () => {
@@ -175,9 +182,6 @@ const TabularViewTab = () => {
         .then((res) => {
           console.log(res);
           const tempData = res.data["body"];
-          for (let i = 0; i < tempData.length; i++) {
-            tempData[i].isEditMode = false;
-          }
           setFetchedRows(tempData);
         })
         .catch((err) => {
@@ -336,7 +340,7 @@ const TabularViewTab = () => {
   );
 };
 
-const RegisterFormContent = () => {
+const TabularTabsComponent = () => {
   const auth = useSelector((state) => state.auth);
 
   const navigate = useNavigate();
@@ -368,5 +372,5 @@ const RegisterFormContent = () => {
 };
 
 export const TabularView = () => {
-  return <Navbar child={<RegisterFormContent />} />;
+  return <Navbar child={<TabularTabsComponent />} />;
 };
