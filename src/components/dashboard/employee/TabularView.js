@@ -3,10 +3,11 @@ import axios from "axios";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
 import { useAlert } from "react-alert";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 import styled from "styled-components";
+import { setEmployeeData } from "../../../store/actions/employee";
 import Navbar from "../Navbar";
 import { headers } from "./headerData";
 
@@ -111,9 +112,9 @@ const EditableCell = ({
   };
 
   // If the initialValue is changed external, sync it up with our state
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
+  // useEffect(() => {
+  //   setValue(initialValue);
+  // }, [initialValue]);
 
   return (
     <>
@@ -123,8 +124,14 @@ const EditableCell = ({
 };
 
 const TabularViewTab = () => {
-  const [fetchedRows, setFetchedRows] = useState([]);
   const auth = useSelector((state) => state.auth);
+  const fetchedRows = useSelector((state) =>
+    Object.values(state.employee?.employeeData)
+  );
+
+  // const fetchedRows = useMemo(() => [], []);
+
+  const dispatch = useDispatch();
 
   const columns = useMemo(
     () =>
@@ -182,7 +189,11 @@ const TabularViewTab = () => {
         .then((res) => {
           console.log(res);
           const tempData = res.data["body"];
-          setFetchedRows(tempData);
+          const employeeData = Object.assign(
+            {},
+            ...tempData.map((x) => ({ [x._id]: x }))
+          );
+          dispatch(setEmployeeData(employeeData));
         })
         .catch((err) => {
           console.log(err);
