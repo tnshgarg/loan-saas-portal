@@ -96,10 +96,10 @@ export const Login = () => {
 
             dispatch(setTaxSetupForm(pan, tan, gstin));
 
-            const { username: pf_username, password: pf_password } =
+            const { username, password } =
               registerFormObject?.credentials?.epfo ?? "";
 
-            dispatch(setPfForm(pf_username, pf_password));
+            dispatch(setPfForm(username, password));
 
             Object.entries(registerFormObject?.credentials?.esic ?? {}).forEach(
               ([key, value]) => {

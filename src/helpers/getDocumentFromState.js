@@ -75,14 +75,14 @@ export const getDocumentFromTaxSetupFormDetails = (
   return document;
 };
 
-export const getDocumentFromPfFormDetails = (employerId, pfFormDetails) => {
-  const { pf_username, pf_password } = pfFormDetails ?? "";
+export const getDocumentFromPfForm = (employerId, pfForm) => {
+  const { username, password } = pfForm ?? "";
   const document = {
     employerId: employerId ?? "",
     credentials: {
       epfo: {
-        username: pf_username ?? "",
-        password: pf_password ?? "",
+        username: username ?? "",
+        password: password ?? "",
       },
     },
   };
@@ -117,13 +117,13 @@ export const getDocumentFromEsicForm = (
 //   jwtToken,
 //   addressFormDetails,
 //   taxSetupFormDetails,
-//   pfFormDetails,
+//   PfForm,
 //   esicFormDetails
 // ) => {
 //   const employerId = jwtToken ?? "";
 //   const { company, brand, address, state, pincode } = addressFormDetails ?? "";
 //   const { pan, tan, gstin } = taxSetupFormDetails ?? "";
-//   const { pf_username, pf_password } = pfFormDetails ?? "";
+//   const { username, password } = pfForm ?? "";
 
 //   const objectMap = (obj, fn) =>
 //     Object.fromEntries(
@@ -159,8 +159,8 @@ export const getDocumentFromEsicForm = (
 //     },
 //     credentials: {
 //       epfo: {
-//         username: pf_username ?? "",
-//         password: pf_password ?? "",
+//         username: username ?? "",
+//         password: password ?? "",
 //       },
 //       esic: esic ?? {},
 //     },
