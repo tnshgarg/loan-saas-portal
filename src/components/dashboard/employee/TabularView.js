@@ -1,13 +1,22 @@
-import { Card, EditableText, Elevation, Tab, Tabs } from "@blueprintjs/core";
+import {
+  Button,
+  Card,
+  EditableText,
+  Elevation,
+  Tab,
+  Tabs,
+} from "@blueprintjs/core";
 import axios from "axios";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
-import { useAlert } from "react-alert";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 import styled from "styled-components";
-import { setEmployeeData } from "../../../store/actions/employee";
+import {
+  setEmployeeData,
+  updateEmployeeDataAndSetEdits,
+} from "../../../store/actions/employee";
 import Navbar from "../Navbar";
 import { headers } from "./headerData";
 
@@ -47,6 +56,7 @@ const REGISTER_FORM_CARD_STYLING = {
   marginLeft: "auto",
   marginRight: "auto",
   overflow: "scroll",
+  width: "75rem",
 };
 
 const TABLE_CARD_STYLING = {
@@ -81,11 +91,13 @@ const EditableCell = ({
   value: initialValue,
   row,
   column: { id },
-  publishChange, // This is a custom function that we supplied to our table instance
+  isTableEditable, // This is a custom function that we supplied to our table instance
 }) => {
   // We need to keep and update the state of the cell normally
   const [value, setValue] = useState(initialValue);
-  const alert = useAlert();
+  const [isUpdated, setIsUpdate] = useState(false);
+
+  const dispatch = useDispatch();
 
   const onChange = (e) => {
     setValue(e);
@@ -94,20 +106,17 @@ const EditableCell = ({
   // We'll only update the external data when the input is blurred
   const onConfirm = (e) => {
     if (e !== initialValue) {
-      const updatedRow = {
-        ...row.original,
-        [id]: value,
-      };
-      publishChange(updatedRow)
-        .then((response) => {
-          console.log(response);
-          const message = response.data.body;
-          alert.success(message);
-        })
-        .catch((error) => {
-          const message = error.response?.data?.message ?? "Some error occured";
-          alert.error(message);
-        });
+      setIsUpdate(true);
+      const uniqueId = row.original["_id"];
+      const columnToChange = id;
+      const valueToChangeWith = e;
+      dispatch(
+        updateEmployeeDataAndSetEdits(
+          uniqueId,
+          columnToChange,
+          valueToChangeWith
+        )
+      );
     }
   };
 
@@ -117,16 +126,22 @@ const EditableCell = ({
   // }, [initialValue]);
 
   return (
-    <>
-      <EditableText value={value} onChange={onChange} onConfirm={onConfirm} />
-    </>
+    <div style={{ backgroundColor: isUpdated ? "#ffe5b4" : "" }}>
+      <EditableText
+        value={value}
+        onChange={onChange}
+        onConfirm={onConfirm}
+        disabled={!isTableEditable}
+      />
+    </div>
   );
 };
 
 const TabularViewTab = () => {
   const auth = useSelector((state) => state.auth);
-  const fetchedRows = useSelector((state) =>
-    Object.values(state.employee?.employeeData)
+  const fetchedRows = useSelector(
+    (state) => Object.values(state.employee?.employeeData),
+    shallowEqual
   );
 
   // const fetchedRows = useMemo(() => [], []);
@@ -219,6 +234,12 @@ const TabularViewTab = () => {
     );
   };
 
+  const [isTableEditable, setIsTableEditable] = useState(false);
+
+  const handleTableEditButton = () => {
+    setIsTableEditable(!isTableEditable);
+  };
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -244,7 +265,7 @@ const TabularViewTab = () => {
       initialState: { pageIndex: 0, pageSize: 5 },
       defaultColumn, // Be sure to pass the defaultColumn option
       filterTypes,
-      publishChange,
+      isTableEditable,
     },
 
     useFilters, // useFilters!
@@ -259,6 +280,9 @@ const TabularViewTab = () => {
       interactive={true}
       elevation={Elevation.THREE}
     >
+      <Button intent="primary" onClick={handleTableEditButton}>
+        {isTableEditable ? "Update Table" : "Edit Table"}
+      </Button>
       <Styles>
         <table {...getTableProps()}>
           <thead>
