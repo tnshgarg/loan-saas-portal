@@ -345,8 +345,7 @@ const TabularViewTab = () => {
             </strong>{" "}
           </span>
           <span>
-            {" "}
-            | Go to page:{" "}
+            {"  "} | Go to page:{" "}
             <input
               type="number"
               defaultValue={pageIndex + 1}

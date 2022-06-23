@@ -41,9 +41,9 @@ export const getDocumentFromAddressFormDetails = (
   const { company, brand, address, state, pincode } = addressFormDetails ?? "";
   const document = {
     employerId: employerId ?? "",
-    companyName: company ?? "",
-    brandName: brand ?? "",
-    registeredAddress: address ?? "",
+    company: company ?? "",
+    brand: brand ?? "",
+    address: address ?? "",
     state: state ?? "",
     pincode: pincode ?? "",
   };
@@ -58,18 +58,9 @@ export const getDocumentFromTaxSetupFormDetails = (
   const { pan, tan, gstin } = taxSetupFormDetails ?? "";
   const document = {
     employerId: employerId ?? "",
-    PAN: {
-      id: pan ?? "",
-      verification_status: "Done",
-    },
-    TAN: {
-      id: tan ?? "",
-      verification_status: "Done",
-    },
-    GSTIN: {
-      id: gstin ?? "",
-      verification_status: "Done",
-    },
+    pan: pan ?? "",
+    tan: tan ?? "",
+    gstin: gstin ?? "",
   };
 
   return document;

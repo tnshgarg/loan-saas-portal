@@ -41,6 +41,7 @@ const EPFOComponent = () => {
 
   useEffect(() => {
     const data = getValues();
+    console.log(`data: ${data}`);
     dispatch(setPfForm(data.username, data.password));
   }, [username, password]);
 
