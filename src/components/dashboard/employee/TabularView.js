@@ -18,7 +18,7 @@ import {
   updateEmployeeDataAndSetEdits,
 } from "../../../store/actions/employee";
 import Navbar from "../Navbar";
-import { headers } from "./headerData";
+import { tableColumns } from "./tableColumns";
 
 const Styles = styled.div`
   padding: 1rem;
@@ -150,7 +150,7 @@ const TabularViewTab = () => {
 
   const columns = useMemo(
     () =>
-      headers[0].map((header) => {
+      tableColumns.map((header) => {
         return {
           Header: header,
           accessor: header,
@@ -190,16 +190,20 @@ const TabularViewTab = () => {
 
   useEffect(() => {
     const fetchData = () => {
+      const options = {
+        headers: {
+          Authorization: auth.user
+            ? auth.user.signInUserSession.idToken.jwtToken
+            : null,
+        },
+        params: {
+          fields: tableColumns,
+        },
+      };
       axios
         .get(
           "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud",
-          {
-            headers: {
-              Authorization: auth.user
-                ? auth.user.signInUserSession.idToken.jwtToken
-                : null,
-            },
-          }
+          options
         )
         .then((res) => {
           console.log(res);
