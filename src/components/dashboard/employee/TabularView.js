@@ -197,7 +197,7 @@ const TabularViewTab = () => {
             : null,
         },
         params: {
-          fields: tableColumns,
+          fields: tableColumns.toString(),
         },
       };
       axios
