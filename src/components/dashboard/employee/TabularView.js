@@ -1,8 +1,10 @@
 import {
   Button,
   Card,
+  Dialog,
   EditableText,
   Elevation,
+  Spinner,
   Tab,
   Tabs,
 } from "@blueprintjs/core";
@@ -18,6 +20,7 @@ import {
   updateEmployeeDataAndSetEdits,
 } from "../../../store/actions/employee";
 import Navbar from "../Navbar";
+import { EmployeeModalForm } from "./EmployeeModalForm";
 import { tableColumns } from "./tableColumns";
 
 const Styles = styled.div`
@@ -61,6 +64,13 @@ const REGISTER_FORM_CARD_STYLING = {
 
 const TABLE_CARD_STYLING = {
   overflow: "scroll",
+};
+
+const MODAL_STYLING = {
+  // height: "25rem",
+  marginTop: "7.5rem",
+  marginBottom: "5rem",
+  width: "50rem",
 };
 
 // Define a default UI for filtering
@@ -244,6 +254,50 @@ const TabularViewTab = () => {
     setIsTableEditable(!isTableEditable);
   };
 
+  const [dialogContent, setDialogContent] = useState({});
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
+
+  const fetchDataForSingleEmployee = (uniqueId) => {
+    const options = {
+      headers: {
+        Authorization: auth.user
+          ? auth.user.signInUserSession.idToken.jwtToken
+          : null,
+      },
+      params: {
+        uniqueId: uniqueId,
+      },
+    };
+    axios
+      .get(
+        "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud",
+        options
+      )
+      .then((res) => {
+        console.log(res);
+        const tempData = res.data["body"];
+        const employeeData = tempData[0];
+        setDialogContent(employeeData);
+        setShowSpinner(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleRowClick = (currentRow) => {
+    const { _id: uniqueId } = currentRow;
+    setIsDialogOpen(true);
+    fetchDataForSingleEmployee(uniqueId);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+    setShowSpinner(true);
+    setDialogContent({});
+  };
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -315,7 +369,12 @@ const TabularViewTab = () => {
             {page.map((row, i) => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()}>
+                <tr
+                  {...row.getRowProps()}
+                  onClick={() => {
+                    handleRowClick(row.original);
+                  }}
+                >
                   {row.cells.map((cell) => {
                     return (
                       <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
@@ -373,6 +432,21 @@ const TabularViewTab = () => {
             ))}
           </select>
         </div>
+
+        <Dialog
+          isOpen={isDialogOpen}
+          onClose={handleDialogClose}
+          title="Employee Details"
+          style={MODAL_STYLING}
+        >
+          <Card interactive={true} elevation={Elevation.THREE}>
+            {showSpinner ? (
+              <Spinner />
+            ) : (
+              <EmployeeModalForm formDataInitial={dialogContent} />
+            )}
+          </Card>
+        </Dialog>
       </Styles>
     </Card>
   );
