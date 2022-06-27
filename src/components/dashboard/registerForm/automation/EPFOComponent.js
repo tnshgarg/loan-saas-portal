@@ -3,8 +3,8 @@ import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { setPfForm } from "../../../../store/actions/registerForm";
-import { getDocumentFromPfForm } from "../../../../helpers/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
+import { getDocumentFromPfForm } from "../../../../utils/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../../utils/messageStrings";
 import { postRegisterFormData } from "../../../../services/user.services";
 import FormInput from "../../../common/FormInput";
 

@@ -3,9 +3,9 @@ import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { setAddressForm } from "../../../store/actions/registerForm";
-import { getDocumentFromAddressFormDetails } from "../../../helpers/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../helpers/messageStrings";
-import statesAndUts from "../../../helpers/statesAndUts";
+import { getDocumentFromAddressFormDetails } from "../../../utils/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../utils/messageStrings";
+import statesAndUts from "../../../utils/statesAndUts";
 import { postRegisterFormData } from "../../../services/user.services";
 import FormInput from "../../common/FormInput";
 

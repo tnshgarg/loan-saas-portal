@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { setTaxSetupForm } from "../../../store/actions/registerForm";
 
-import { getDocumentFromTaxSetupFormDetails } from "../../../helpers/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../helpers/messageStrings";
+import { getDocumentFromTaxSetupFormDetails } from "../../../utils/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../utils/messageStrings";
 import { postRegisterFormData } from "../../../services/user.services";
 import FormInput from "../../common/FormInput";
 

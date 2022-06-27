@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { registerUser } from "../../store/actions/auth";
-import { numberOfEmployees } from "../../helpers/numberOfEmployees";
+import { numberOfEmployees } from "../../utils/numberOfEmployees";
 import FormInput from "../common/FormInput";
 
 export const SignUp = () => {

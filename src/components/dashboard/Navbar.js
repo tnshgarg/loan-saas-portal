@@ -170,6 +170,19 @@ const Navbar = ({ child }) => {
               </ListItemButton>
             </ListItem>
           </Link>
+          <Link
+            to="/calculator/salary"
+            style={{ textDecoration: "none", color: "black" }}
+          >
+            <ListItem key={"Table View"} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <TableChartIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Salary Calculator"} />
+              </ListItemButton>
+            </ListItem>
+          </Link>
           <ListItem key={"Logout"} disablePadding onClick={handleLogout}>
             <ListItemButton>
               <ListItemIcon>

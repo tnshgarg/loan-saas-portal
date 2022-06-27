@@ -2,7 +2,7 @@ import axios from "axios";
 import {
   REGISTER_FORM_GET_URL,
   REGISTER_FORM_POST_URL,
-} from "../helpers/apiUrls";
+} from "../utils/apiUrls";
 
 export const getRegisterFormData = (authToken, employerId) => {
   const options = {

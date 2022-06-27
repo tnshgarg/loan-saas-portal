@@ -1,4 +1,4 @@
-import { getMessageFromError } from "../../helpers/getMessageFromError";
+import { getMessageFromError } from "../../utils/getMessageFromError";
 import AuthService from "../../services/auth.service";
 import {
   CLEAR_MESSAGE,

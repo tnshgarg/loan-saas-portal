@@ -1,14 +1,14 @@
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Button from "@mui/material/Button";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAlert } from "react-alert";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import { setEsicStateForm } from "../../../../store/actions/registerForm";
-import { getDocumentFromEsicForm } from "../../../../helpers/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
-import statesAndUts from "../../../../helpers/statesAndUts";
+import { getDocumentFromEsicForm } from "../../../../utils/getDocumentFromState";
+import { NO_CHANGE_ERROR } from "../../../../utils/messageStrings";
+import statesAndUts from "../../../../utils/statesAndUts";
 import { postRegisterFormData } from "../../../../services/user.services";
 import FormInput from "../../../common/FormInput";
 
