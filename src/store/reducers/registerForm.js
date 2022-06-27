@@ -29,14 +29,21 @@ export default function (state = initialState, action) {
         ...state,
         pfForm: payload,
       };
-    case SET_ESIC_STATE_FORM:
+    case SET_ESIC_STATE_FORM: {
+      let oldEsicForm = {...state.esicForm};
+      if(oldEsicForm.hasOwnProperty(payload.state)){
+        delete oldEsicForm[payload.state];
+        oldEsicForm[payload.state] = payload;
+      }else{
+        oldEsicForm[payload.state] = payload;
+      }
       return {
         ...state,
         esicForm: {
-          ...state.esicForm,
-          [payload.state]: payload,
+          ...oldEsicForm,
         },
       };
+    }
     default:
       return state;
   }

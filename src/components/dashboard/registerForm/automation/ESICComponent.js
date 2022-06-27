@@ -18,6 +18,7 @@ const ESICStateComponent = ({
   stateInitial = "Andaman and Nicobar",
   employerCodeInitial = "",
   passwordInitial = "",
+  onSuccess = undefined,
 }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
@@ -42,6 +43,7 @@ const ESICStateComponent = ({
   const [password, setPassword] = useState(passwordInitial);
 
   const [disabled, setDisabled] = useState(disabledInitial);
+  const [stateFieldDisabled, setStateFieldDisabled] = useState(disabledInitial);
 
   const {
     register,
@@ -115,13 +117,15 @@ const ESICStateComponent = ({
           dispatch(
             setEsicStateForm(
               data.state === "Other" ? true : false,
-              data.state === "Other" ? data.stateOther : state,
+              data.state === "Other" ? data.stateOther : data.state,
               data.employerCode,
               data.password
             )
           );
           const message = response.data.body.message;
           alert.success(message);
+          setStateFieldDisabled(true);
+          onSuccess && onSuccess();
         })
         .catch((error) => {
           const message = error.response?.data?.message ?? "Some error occured";
@@ -155,7 +159,7 @@ const ESICStateComponent = ({
                 val.value === "Other" ? setIsOther(true) : setIsOther(false);
                 field.onChange(val.value);
               }}
-              isDisabled={disabled}
+              isDisabled={stateFieldDisabled}
             />
           )}
         />
@@ -233,15 +237,16 @@ const ESICStateComponent = ({
 const ESICComponent = () => {
   const [stateCount, setStateCount] = useState(0);
 
-  const { esicForm: initialEsicForm } =
-    useSelector((state) => state.registerForm) || {};
+  const esicForm = useSelector((state) => state.registerForm.esicForm) || {};
 
-  console.log(`initialEsicForm: ${initialEsicForm}`);
+  const successCallback = () => {
+    setStateCount(0);
+  };
 
   return (
     <div>
       <h5>ESIC Portal Credentials</h5>
-      {Object.entries(initialEsicForm).map(([key, value]) => {
+      {Object.entries(esicForm).map(([key, value]) => {
         return (
           <div key={key}>
             <ESICStateComponent
@@ -258,7 +263,10 @@ const ESICComponent = () => {
 
       {[...Array(stateCount)].map((_, i) => (
         <div key={`${i}`}>
-          <ESICStateComponent disabledInitial={false} />
+          <ESICStateComponent
+            onSuccess={successCallback}
+            disabledInitial={false}
+          />
           <br />
           <hr />
         </div>
