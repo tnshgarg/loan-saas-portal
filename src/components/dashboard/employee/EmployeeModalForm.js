@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import { postEmployeeData } from "../../../services/employee.services";
 import FormInput from "../../common/FormInput";
 
 export const EmployeeModalForm = ({ formDataInitial }) => {
@@ -10,6 +11,24 @@ export const EmployeeModalForm = ({ formDataInitial }) => {
   const { jwtToken } =
     useSelector((state) => state.auth.user?.signInUserSession.idToken) ?? "";
 
+  const formDataNewFieldsToInitialFieldsMap = Object.keys(
+    formDataInitial
+  ).reduce(
+    (acc, currentFormField) => ({
+      ...acc,
+      [currentFormField.replace(/\W/g, "")]: currentFormField,
+    }),
+    {}
+  );
+
+  const formDataNewFields = Object.entries(formDataInitial).reduce(
+    (acc, [key, value]) => ({
+      ...acc,
+      [key.replace(/\W/g, "")]: value,
+    }),
+    {}
+  );
+
   const [disabled, setDisabled] = useState(true);
 
   const {
@@ -17,7 +36,7 @@ export const EmployeeModalForm = ({ formDataInitial }) => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    defaultValues: formDataInitial ?? {},
+    defaultValues: formDataNewFields ?? {},
     mode: "all",
   });
 
@@ -30,7 +49,23 @@ export const EmployeeModalForm = ({ formDataInitial }) => {
     if (!disabled) {
       return;
     }
-    console.log(data);
+    const actualDataToUpdate = Object.entries(data).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [formDataNewFieldsToInitialFieldsMap[key]]: value,
+      }),
+      {}
+    );
+    console.log(actualDataToUpdate);
+    postEmployeeData(jwtToken, actualDataToUpdate)
+      .then((response) => {
+        const message = response.data.body;
+        alert.success(message);
+      })
+      .catch((error) => {
+        const message = error.response?.data?.message ?? "Some error occured";
+        alert.error(message);
+      });
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
@@ -39,17 +74,20 @@ export const EmployeeModalForm = ({ formDataInitial }) => {
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}
-        {Object.entries(formDataInitial).map(([key, value]) => {
+        {Object.entries(formDataNewFields).map(([key, value]) => {
+          if (key === "_id") {
+            return <></>;
+          }
           return (
             <FormInput
               register={register}
               errors={errors}
-              field={key.replace(/\W/g, "")}
+              field={key}
               inputProps={{
                 icon: "user",
-                label: key,
-                placeholder: `Please enter ${key} for selected employee`,
-                errorMessage: `Please enter ${key} for selected employee`,
+                label: formDataNewFieldsToInitialFieldsMap[key],
+                placeholder: `Please enter ${formDataNewFieldsToInitialFieldsMap[key]} for selected employee`,
+                errorMessage: `Please enter ${formDataNewFieldsToInitialFieldsMap[key]} for selected employee`,
                 disabled: disabled,
               }}
             />
