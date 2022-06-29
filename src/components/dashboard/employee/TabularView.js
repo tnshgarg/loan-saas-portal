@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   Dialog,
   EditableText,
@@ -15,10 +14,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 import styled from "styled-components";
-import {
-  setEmployeeData,
-  updateEmployeeDataAndSetEdits,
-} from "../../../store/actions/employee";
+import { setEmployeeData } from "../../../store/actions/employee";
 import Navbar from "../Navbar";
 import { EmployeeModalForm } from "./EmployeeModalForm";
 import { tableColumns } from "./tableColumns";
@@ -97,38 +93,9 @@ function fuzzyTextFilterFn(rows, id, filterValue) {
 fuzzyTextFilterFn.autoRemove = (val) => !val;
 
 // Create an editable cell renderer
-const EditableCell = ({
-  value: initialValue,
-  row,
-  column: { id },
-  isTableEditable, // This is a custom function that we supplied to our table instance
-}) => {
+const EditableCell = ({ value: initialValue, row, column: { id } }) => {
   // We need to keep and update the state of the cell normally
   const [value, setValue] = useState(initialValue);
-  const [isUpdated, setIsUpdate] = useState(false);
-
-  const dispatch = useDispatch();
-
-  const onChange = (e) => {
-    setValue(e);
-  };
-
-  // We'll only update the external data when the input is blurred
-  const onConfirm = (e) => {
-    if (e !== initialValue) {
-      setIsUpdate(true);
-      const uniqueId = row.original["_id"];
-      const columnToChange = id;
-      const valueToChangeWith = e;
-      dispatch(
-        updateEmployeeDataAndSetEdits(
-          uniqueId,
-          columnToChange,
-          valueToChangeWith
-        )
-      );
-    }
-  };
 
   // If the initialValue is changed external, sync it up with our state
   useEffect(() => {
@@ -136,13 +103,8 @@ const EditableCell = ({
   }, [initialValue]);
 
   return (
-    <div style={{ backgroundColor: isUpdated ? "#ffe5b4" : "" }}>
-      <EditableText
-        value={value}
-        onChange={onChange}
-        onConfirm={onConfirm}
-        disabled={!isTableEditable}
-      />
+    <div>
+      <EditableText value={value} disabled={true} />
     </div>
   );
 };
@@ -232,12 +194,6 @@ const TabularViewTab = () => {
     fetchData();
   }, []);
 
-  const [isTableEditable, setIsTableEditable] = useState(false);
-
-  const handleTableEditButton = () => {
-    setIsTableEditable(!isTableEditable);
-  };
-
   const [dialogContent, setDialogContent] = useState({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
@@ -311,7 +267,6 @@ const TabularViewTab = () => {
       initialState: { pageIndex: 0, pageSize: 5 },
       defaultColumn, // Be sure to pass the defaultColumn option
       filterTypes,
-      isTableEditable,
     },
 
     useFilters, // useFilters!
@@ -326,9 +281,6 @@ const TabularViewTab = () => {
       interactive={true}
       elevation={Elevation.THREE}
     >
-      <Button intent="primary" onClick={handleTableEditButton}>
-        {isTableEditable ? "Update Table" : "Edit Table"}
-      </Button>
       <Styles>
         <table {...getTableProps()}>
           <thead>
