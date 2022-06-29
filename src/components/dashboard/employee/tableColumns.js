@@ -3,8 +3,8 @@ export const tableColumns = [
   "Name",
   "Mobile Number",
   "Email",
-  "Aadhar Number",
-  "PAN Card Number",
-  "Date of Birth  (dd/mm/yyyy)",
+  "Aadhaar Number",
+  "PAN Number",
+  "Date of Birth (dd/mm/yyyy)",
   "Job Title",
 ];

@@ -21,7 +21,7 @@ export const headers = [
     "Employer Establishment Code (Username for ESIC Login)",
     "ESIC Number (aka IP Number) (Enter if available else leave blank)",
     "Father's / Husband's Name",
-    "Relation with Employee (Father / Husband)",
+    "Relation with Employee (Father/Husband)",
     "Marital Status (Married,Un-married,Widow/Widower,Divorcee)",
     "Employee Present Address",
     "Employee Present Address District",
