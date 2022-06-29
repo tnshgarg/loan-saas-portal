@@ -198,55 +198,39 @@ const TabularViewTab = () => {
     []
   );
 
-  useEffect(() => {
-    const fetchData = () => {
-      const options = {
-        headers: {
-          Authorization: auth.user
-            ? auth.user.signInUserSession.idToken.jwtToken
-            : null,
-        },
-        params: {
-          fields: tableColumns.toString(),
-        },
-      };
-      axios
-        .get(
-          "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud",
-          options
-        )
-        .then((res) => {
-          console.log(res);
-          const tempData = res.data["body"];
-          const employeeData = Object.assign(
-            {},
-            ...tempData.map((x) => ({ [x._id]: x }))
-          );
-          dispatch(setEmployeeData(employeeData));
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-
-    fetchData();
-  }, []);
-
-  const publishChange = (updatedRow) => {
+  const fetchData = () => {
     const options = {
       headers: {
         Authorization: auth.user
           ? auth.user.signInUserSession.idToken.jwtToken
           : null,
       },
+      params: {
+        fields: tableColumns.toString(),
+      },
     };
-    const body = updatedRow;
-    return axios.put(
-      "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud",
-      body,
-      options
-    );
+    axios
+      .get(
+        "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud",
+        options
+      )
+      .then((res) => {
+        console.log(res);
+        const tempData = res.data["body"];
+        const employeeData = Object.assign(
+          {},
+          ...tempData.map((x) => ({ [x._id]: x }))
+        );
+        dispatch(setEmployeeData(employeeData));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const [isTableEditable, setIsTableEditable] = useState(false);
 
@@ -257,6 +241,7 @@ const TabularViewTab = () => {
   const [dialogContent, setDialogContent] = useState({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
+  const [didDialogChange, setDidDialogChange] = useState(false);
 
   const fetchDataForSingleEmployee = (uniqueId) => {
     const options = {
@@ -275,7 +260,6 @@ const TabularViewTab = () => {
         options
       )
       .then((res) => {
-        console.log(res);
         const tempData = res.data["body"];
         const employeeData = tempData[0];
         setDialogContent(employeeData);
@@ -296,6 +280,10 @@ const TabularViewTab = () => {
     setIsDialogOpen(false);
     setShowSpinner(true);
     setDialogContent({});
+    if (didDialogChange) {
+      fetchData();
+    }
+    setDidDialogChange(false);
   };
 
   const {
@@ -443,7 +431,10 @@ const TabularViewTab = () => {
             {showSpinner ? (
               <Spinner />
             ) : (
-              <EmployeeModalForm formDataInitial={dialogContent} />
+              <EmployeeModalForm
+                formDataInitial={dialogContent}
+                setDidDialogChange={setDidDialogChange}
+              />
             )}
           </Card>
         </Dialog>

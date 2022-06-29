@@ -1,11 +1,13 @@
+import _ from "lodash";
 import { useState } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import { NO_CHANGE_ERROR } from "../../../helpers/messageStrings";
 import { postEmployeeData } from "../../../services/employee.services";
 import FormInput from "../../common/FormInput";
 
-export const EmployeeModalForm = ({ formDataInitial }) => {
+export const EmployeeModalForm = ({ formDataInitial, setDidDialogChange }) => {
   const alert = useAlert();
 
   const { jwtToken } =
@@ -57,15 +59,20 @@ export const EmployeeModalForm = ({ formDataInitial }) => {
       {}
     );
     console.log(actualDataToUpdate);
-    postEmployeeData(jwtToken, actualDataToUpdate)
-      .then((response) => {
-        const message = response.data.body;
-        alert.success(message);
-      })
-      .catch((error) => {
-        const message = error.response?.data?.message ?? "Some error occured";
-        alert.error(message);
-      });
+    if (!_.isEqual(formDataInitial, actualDataToUpdate)) {
+      setDidDialogChange(true);
+      postEmployeeData(jwtToken, actualDataToUpdate)
+        .then((response) => {
+          const message = response.data.body;
+          alert.success(message);
+        })
+        .catch((error) => {
+          const message = error.response?.data?.message ?? "Some error occured";
+          alert.error(message);
+        });
+    } else {
+      alert.error(NO_CHANGE_ERROR);
+    }
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
