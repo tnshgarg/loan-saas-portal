@@ -131,9 +131,9 @@ const EditableCell = ({
   };
 
   // If the initialValue is changed external, sync it up with our state
-  // useEffect(() => {
-  //   setValue(initialValue);
-  // }, [initialValue]);
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
 
   return (
     <div style={{ backgroundColor: isUpdated ? "#ffe5b4" : "" }}>
