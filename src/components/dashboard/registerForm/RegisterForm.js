@@ -7,7 +7,7 @@ import { Tabs, Tab } from "@blueprintjs/core";
 import { AddressForm, AutomationForm, TaxSetupForm } from "./index";
 
 const REGISTER_FORM_CARD_STYLING = {
-  width: "50%",
+  width: "80%",
   marginRight: "auto",
   marginLeft: "auto",
 };

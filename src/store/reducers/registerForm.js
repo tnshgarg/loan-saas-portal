@@ -30,13 +30,8 @@ export default function (state = initialState, action) {
         pfForm: payload,
       };
     case SET_ESIC_STATE_FORM: {
-      let oldEsicForm = {...state.esicForm};
-      if(oldEsicForm.hasOwnProperty(payload.state)){
-        delete oldEsicForm[payload.state];
+      let oldEsicForm = { ...state.esicForm };
         oldEsicForm[payload.state] = payload;
-      }else{
-        oldEsicForm[payload.state] = payload;
-      }
       return {
         ...state,
         esicForm: {
