@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { setAddressForm } from "../../../store/actions/registerForm";
 import { getDocumentFromAddressFormDetails } from "../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../helpers/messageStrings";
 import statesAndUts from "../../../helpers/statesAndUts";
 import { postRegisterFormData } from "../../../services/user.services";
+import { setAddressForm } from "../../../store/slices/registerFormSlice";
 import FormInput from "../../common/FormInput";
 
 const AddressForm = () => {

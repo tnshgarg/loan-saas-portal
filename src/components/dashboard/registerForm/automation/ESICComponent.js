@@ -9,7 +9,7 @@ import { getDocumentFromEsicForm } from "../../../../helpers/getDocumentFromStat
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
 import statesAndUts from "../../../../helpers/statesAndUts";
 import { postRegisterFormData } from "../../../../services/user.services";
-import { setEsicStateForm } from "../../../../store/actions/registerForm";
+import { setEsicStateForm } from "../../../../store/slices/registerFormSlice";
 import FormInput from "../../../common/FormInput";
 
 const ESICStateComponent = ({
