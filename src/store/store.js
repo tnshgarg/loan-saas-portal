@@ -11,4 +11,12 @@ export const store = configureStore({
     registerForm: registerFormReducer,
     employee: employeeReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore these action types
+        ignoredActions: ["auth/setLoggedInUser"],
+        ignoredPaths: ["auth.user"],
+      },
+    }),
 });
