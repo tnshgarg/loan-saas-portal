@@ -80,13 +80,8 @@ export const Login = () => {
           .then((response) => {
             const registerFormObject = response.data.body;
 
-            const {
-              companyName: company,
-              brandName: brand,
-              registeredAddress: address,
-              state,
-              pincode,
-            } = registerFormObject ?? "";
+            const { company, brand, address, state, pincode } =
+              registerFormObject ?? "";
 
             dispatch(setAddressForm(company, brand, address, state, pincode));
 
@@ -96,10 +91,10 @@ export const Login = () => {
 
             dispatch(setTaxSetupForm(pan, tan, gstin));
 
-            const { username: pf_username, password: pf_password } =
+            const { username, password } =
               registerFormObject?.credentials?.epfo ?? "";
 
-            dispatch(setPfForm(pf_username, pf_password));
+            dispatch(setPfForm(username, password));
 
             Object.entries(registerFormObject?.credentials?.esic ?? {}).forEach(
               ([key, value]) => {
@@ -180,12 +175,6 @@ export const Login = () => {
             Click here to reset password
           </label>
         </Card>
-
-        {/* register your input into the hook by invoking the "register" function */}
-
-        {/* include validation with required or other standard HTML validation rules */}
-        {/* errors will return when field validation fails  */}
-        {/* {errors.exampleRequired && <p>This field is required</p>} */}
       </form>
 
       {message && !successful && (

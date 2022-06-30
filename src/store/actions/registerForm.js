@@ -32,14 +32,14 @@ export const setTaxSetupForm = (pan, tan, gstin) => (dispatch) => {
   });
 };
 
-export const setPfForm = (pf_username, pf_password) => (dispatch) => {
-  const pfFormDetails = {
-    pf_username: pf_username,
-    pf_password: pf_password,
+export const setPfForm = (username, password) => (dispatch) => {
+  const pfForm = {
+    username: username,
+    password: password,
   };
   dispatch({
     type: SET_PF_FORM,
-    payload: pfFormDetails,
+    payload: pfForm,
   });
 };
 

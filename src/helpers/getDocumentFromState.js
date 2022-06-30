@@ -1,37 +1,29 @@
 /**
  * This is the document template, please follow the same
  * {
-   "employerId": "employerId", // UUID from Cognito [sub]
-   "companyName": "companyName",
-   "brandName": "brandName",
-   "registeredAddress": "registeredAddress",
-   "state": "state",
-   "pincode": "pincode",
-   "PAN":  {
-      "id": "id",
-      "verification_status": "verification_status",
-   },
-   "TAN": {
-      "id": "id",
-      "verification_status": "verification_status",
-   },
-   "GSTIN": {
-      "id": "id",
-      "verification_status": "verification_status",
-   },
-   "credentials": {
-      "epfo": {
-         "username": "username",
-         "password": "password",
+    id:, // UUID from Cognito [sub]
+    company:,
+    brand:,
+    address:,
+    state:,
+    pincode:,
+    pan:,
+    tan:,
+    gstin:,
+    credentials: {
+      epfo: {
+          username:,
+          password:,
       },
-      "esic": {
-         "state_name": {
-           "username": "username",
-           "password": "password",
-         },
+      esic: {
+          state_name: {
+            username:,
+            password:,
+          },
       },
-   }
+    }
 }
+
  */
 
 export const getDocumentFromAddressFormDetails = (
@@ -41,9 +33,9 @@ export const getDocumentFromAddressFormDetails = (
   const { company, brand, address, state, pincode } = addressFormDetails ?? "";
   const document = {
     employerId: employerId ?? "",
-    companyName: company ?? "",
-    brandName: brand ?? "",
-    registeredAddress: address ?? "",
+    company: company ?? "",
+    brand: brand ?? "",
+    address: address ?? "",
     state: state ?? "",
     pincode: pincode ?? "",
   };
@@ -58,31 +50,22 @@ export const getDocumentFromTaxSetupFormDetails = (
   const { pan, tan, gstin } = taxSetupFormDetails ?? "";
   const document = {
     employerId: employerId ?? "",
-    PAN: {
-      id: pan ?? "",
-      verification_status: "Done",
-    },
-    TAN: {
-      id: tan ?? "",
-      verification_status: "Done",
-    },
-    GSTIN: {
-      id: gstin ?? "",
-      verification_status: "Done",
-    },
+    pan: pan ?? "",
+    tan: tan ?? "",
+    gstin: gstin ?? "",
   };
 
   return document;
 };
 
-export const getDocumentFromPfFormDetails = (employerId, pfFormDetails) => {
-  const { pf_username, pf_password } = pfFormDetails ?? "";
+export const getDocumentFromPfForm = (employerId, pfForm) => {
+  const { username, password } = pfForm ?? "";
   const document = {
     employerId: employerId ?? "",
     credentials: {
       epfo: {
-        username: pf_username ?? "",
-        password: pf_password ?? "",
+        username: username ?? "",
+        password: password ?? "",
       },
     },
   };
@@ -112,59 +95,3 @@ export const getDocumentFromEsicForm = (
 
   return document;
 };
-
-// export const getDocumentFromState = (
-//   jwtToken,
-//   addressFormDetails,
-//   taxSetupFormDetails,
-//   pfFormDetails,
-//   esicFormDetails
-// ) => {
-//   const employerId = jwtToken ?? "";
-//   const { company, brand, address, state, pincode } = addressFormDetails ?? "";
-//   const { pan, tan, gstin } = taxSetupFormDetails ?? "";
-//   const { pf_username, pf_password } = pfFormDetails ?? "";
-
-//   const objectMap = (obj, fn) =>
-//     Object.fromEntries(
-//       Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)])
-//     );
-
-//   const esic = objectMap(esicFormDetails ?? {}, (value) => {
-//     const { employer_code, password } = value;
-//     return {
-//       username: employer_code,
-//       password: password,
-//     };
-//   });
-
-//   const document = {
-//     employerId: employerId ?? "",
-//     companyName: company ?? "",
-//     brandName: brand ?? "",
-//     registeredAddress: address ?? "",
-//     state: state ?? "",
-//     pincode: pincode ?? "",
-//     PAN: {
-//       id: pan ?? "",
-//       verification_status: "Done",
-//     },
-//     TAN: {
-//       id: tan ?? "",
-//       verification_status: "Done",
-//     },
-//     GSTIN: {
-//       id: gstin ?? "",
-//       verification_status: "Done",
-//     },
-//     credentials: {
-//       epfo: {
-//         username: pf_username ?? "",
-//         password: pf_password ?? "",
-//       },
-//       esic: esic ?? {},
-//     },
-//   };
-
-//   return document;
-// };

@@ -7,7 +7,7 @@ import {
 const initialState = {
   addressFormDetails: null,
   taxSetupFormDetails: null,
-  pfFormDetails: null,
+  pfForm: null,
   esicForm: {},
 };
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -27,7 +27,7 @@ export default function (state = initialState, action) {
     case SET_PF_FORM:
       return {
         ...state,
-        pfFormDetails: payload,
+        pfForm: payload,
       };
     case SET_ESIC_STATE_FORM:
       return {
