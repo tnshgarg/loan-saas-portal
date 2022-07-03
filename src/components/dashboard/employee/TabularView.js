@@ -1,12 +1,4 @@
-import {
-  Card,
-  Dialog,
-  EditableText,
-  Elevation,
-  Spinner,
-  Tab,
-  Tabs,
-} from "@blueprintjs/core";
+import { Card, Dialog, EditableText, Elevation, Spinner, Tab, Tabs } from "@blueprintjs/core";
 import axios from "axios";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
@@ -15,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 import styled from "styled-components";
 import { setEmployeeData } from "../../../store/actions/employee";
-import Navbar from "../Navbar";
 import { EmployeeModalForm } from "./EmployeeModalForm";
 import { tableColumns } from "./tableColumns";
 
@@ -55,24 +46,24 @@ const REGISTER_FORM_CARD_STYLING = {
   marginLeft: "auto",
   marginRight: "auto",
   overflow: "scroll",
-  width: "75rem",
+  width: "75rem"
 };
 
 const TABLE_CARD_STYLING = {
-  overflow: "scroll",
+  overflow: "scroll"
 };
 
 const MODAL_STYLING = {
   // height: "25rem",
   marginTop: "7.5rem",
   marginBottom: "5rem",
-  width: "50rem",
+  width: "50rem"
 };
 
 // Define a default UI for filtering
 function DefaultColumnFilter({
-  column: { filterValue, preFilteredRows, setFilter },
-}) {
+                               column: { filterValue, preFilteredRows, setFilter }
+                             }) {
   const count = preFilteredRows.length;
 
   return (
@@ -125,7 +116,7 @@ const TabularViewTab = () => {
       tableColumns.map((header) => {
         return {
           Header: header,
-          accessor: header,
+          accessor: header
         };
       }),
     []
@@ -142,11 +133,11 @@ const TabularViewTab = () => {
           const rowValue = row.values[id];
           return rowValue !== undefined
             ? String(rowValue)
-                .toLowerCase()
-                .startsWith(String(filterValue).toLowerCase())
+              .toLowerCase()
+              .startsWith(String(filterValue).toLowerCase())
             : true;
         });
-      },
+      }
     }),
     []
   );
@@ -155,7 +146,7 @@ const TabularViewTab = () => {
     () => ({
       // Let's set up our default Filter UI
       Filter: DefaultColumnFilter,
-      Cell: EditableCell,
+      Cell: EditableCell
     }),
     []
   );
@@ -165,11 +156,11 @@ const TabularViewTab = () => {
       headers: {
         Authorization: auth.user
           ? auth.user.signInUserSession.idToken.jwtToken
-          : null,
+          : null
       },
       params: {
-        fields: tableColumns.toString(),
-      },
+        fields: tableColumns.toString()
+      }
     };
     axios
       .get(
@@ -204,11 +195,11 @@ const TabularViewTab = () => {
       headers: {
         Authorization: auth.user
           ? auth.user.signInUserSession.idToken.jwtToken
-          : null,
+          : null
       },
       params: {
-        uniqueId: uniqueId,
-      },
+        uniqueId: uniqueId
+      }
     };
     axios
       .get(
@@ -259,14 +250,14 @@ const TabularViewTab = () => {
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize },
+    state: { pageIndex, pageSize }
   } = useTable(
     {
       columns,
       data: fetchedRows,
       initialState: { pageIndex: 0, pageSize: 5 },
       defaultColumn, // Be sure to pass the defaultColumn option
-      filterTypes,
+      filterTypes
     },
 
     useFilters, // useFilters!
@@ -284,63 +275,67 @@ const TabularViewTab = () => {
       <Styles>
         <table {...getTableProps()}>
           <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                    {column.render("Header")}
-                    {/* Add a sort direction indicator */}
-                    <span>
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => (
+                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {column.render("Header")}
+                  {/* Add a sort direction indicator */}
+                  <span>
                       {column.isSorted
                         ? column.isSortedDesc
                           ? " 🔽"
                           : " 🔼"
                         : ""}
                     </span>
-                    <div>
-                      {column.canFilter ? column.render("Filter") : null}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            ))}
+                  <div>
+                    {column.canFilter ? column.render("Filter") : null}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {page.map((row, i) => {
-              prepareRow(row);
-              return (
-                <tr
-                  {...row.getRowProps()}
-                  onClick={() => {
-                    handleRowClick(row.original);
-                  }}
-                >
-                  {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
+          {page.map((row, i) => {
+            prepareRow(row);
+            return (
+              <tr
+                {...row.getRowProps()}
+                onClick={() => {
+                  handleRowClick(row.original);
+                }}
+              >
+                {row.cells.map((cell) => {
+                  return (
+                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  );
+                })}
+              </tr>
+            );
+          })}
           </tbody>
         </table>
         <div className="pagination">
           <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
             {"<<"}
-          </button>{" "}
+          </button>
+          {" "}
           <button onClick={() => previousPage()} disabled={!canPreviousPage}>
             {"<"}
-          </button>{" "}
+          </button>
+          {" "}
           <button onClick={() => nextPage()} disabled={!canNextPage}>
             {">"}
-          </button>{" "}
+          </button>
+          {" "}
           <button
             onClick={() => gotoPage(pageCount - 1)}
             disabled={!canNextPage}
           >
             {">>"}
-          </button>{" "}
+          </button>
+          {" "}
           <span>
             Page{" "}
             <strong>
@@ -427,5 +422,5 @@ const TabularTabsComponent = () => {
 };
 
 export const TabularView = () => {
-  return <Navbar child={<TabularTabsComponent />} />;
+  <TabularTabsComponent />;
 };

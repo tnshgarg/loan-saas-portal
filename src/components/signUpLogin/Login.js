@@ -72,7 +72,7 @@ export const Login = () => {
     dispatch(login(username, password))
       .then((loginData) => {
         setSuccessful(true);
-        navigate("/profile");
+        navigate("/user/profile");
 
         const { authToken, employerId } = loginData;
 
