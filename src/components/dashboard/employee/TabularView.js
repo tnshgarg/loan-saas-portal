@@ -421,6 +421,4 @@ const TabularTabsComponent = () => {
   );
 };
 
-export const TabularView = () => {
-  <TabularTabsComponent />;
-};
+export const TabularView = TabularTabsComponent;
