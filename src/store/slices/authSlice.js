@@ -12,17 +12,13 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     setLoggedInUser: (state, action) => {
-      state.isLoggedIn = true;
-      state.user = action.payload.user;
-    },
-    removeLoggedInUser: (state) => {
-      state.isLoggedIn = false;
-      state.user = null;
+      state.isLoggedIn = action.payload ? true : false;
+      state.user = action.payload ? action.payload.user : null;
     },
   },
 });
 
-export const { setLoggedInUser, removeLoggedInUser } = authSlice.actions;
+export const { setLoggedInUser } = authSlice.actions;
 
 export const registerUser =
   (
@@ -47,12 +43,12 @@ export const registerUser =
       title
     ).then(
       (response) => {
-        dispatch(removeLoggedInUser());
+        dispatch(setLoggedInUser(null));
         dispatch(setMessage(response.user.username));
         return Promise.resolve();
       },
       (error) => {
-        dispatch(removeLoggedInUser());
+        dispatch(setLoggedInUser(null));
         dispatch(setMessage(getMessageFromError(error)));
         return Promise.reject();
       }
@@ -62,12 +58,12 @@ export const registerUser =
 export const confirmSignUp = (username, code) => (dispatch) => {
   return AuthService.confirmSignUp(username, code).then(
     (response) => {
-      dispatch(removeLoggedInUser());
+      dispatch(setLoggedInUser(null));
       dispatch(setMessage(response));
       return Promise.resolve();
     },
     (error) => {
-      dispatch(removeLoggedInUser());
+      dispatch(setLoggedInUser(null));
       dispatch(setMessage(getMessageFromError(error)));
       return Promise.reject();
     }
@@ -85,7 +81,7 @@ export const login = (username, password) => (dispatch) => {
       return Promise.resolve(loginData);
     },
     (error) => {
-      dispatch(removeLoggedInUser());
+      dispatch(setLoggedInUser(null));
       dispatch(setMessage(getMessageFromError(error)));
       return Promise.reject();
     }
@@ -93,20 +89,20 @@ export const login = (username, password) => (dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
-  AuthService.logout();
-  dispatch(removeLoggedInUser());
+  // AuthService.logout();
+  dispatch(setLoggedInUser(null));
   dispatch(clearMessage());
 };
 
 export const forgotPassword = (username) => (dispatch) => {
   return AuthService.forgotPassword(username).then(
     (response) => {
-      dispatch(removeLoggedInUser());
+      dispatch(setLoggedInUser(null));
       dispatch(setMessage(username));
       return Promise.resolve();
     },
     (error) => {
-      dispatch(removeLoggedInUser());
+      dispatch(setLoggedInUser(null));
       dispatch(setMessage(getMessageFromError(error)));
       return Promise.reject();
     }
@@ -117,12 +113,12 @@ export const confirmForgotPassword =
   (username, code, password) => (dispatch) => {
     return AuthService.confirmForgotPassword(username, code, password).then(
       (response) => {
-        dispatch(removeLoggedInUser());
+        dispatch(setLoggedInUser(null));
         dispatch(setMessage(getMessageFromError(response)));
         return Promise.resolve();
       },
       (error) => {
-        dispatch(removeLoggedInUser());
+        dispatch(setLoggedInUser(null));
         dispatch(setMessage(getMessageFromError(error)));
         return Promise.reject();
       }
