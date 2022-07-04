@@ -37,7 +37,7 @@ export default function EsicTable() {
     []
   );
   const dispatch = useDispatch();
-  
+
   const esicForm = useSelector((state) => state.registerForm.esicForm);
 
   const { jwtToken } =
@@ -59,11 +59,15 @@ export default function EsicTable() {
   };
 
   const inputTypes = {
-    employerCode: "text",
-    password: "password",
+    employerCode: {
+      type: "text",
+      pattern: "[0-9]+",
+    },
+    password: {
+      type: "password",
+    },
   };
 
-  console.log(data);
   const updateData = (rowIndex, columnId, value) => {
     setSkipPageReset(true);
     setData((old) =>
@@ -83,15 +87,27 @@ export default function EsicTable() {
     setData([...Object.values(esicForm)]);
   }, [esicForm]);
 
-  const handleSubmit = (updatedRow, row, storeData, setEditableRowIndex) => {
+  const handleSubmit = (
+    updatedRow,
+    row,
+    storeData,
+    setEditableRowIndex,
+    callback
+  ) => {
     setSkipPageReset(true);
     if (!updatedRow.state || !updatedRow.employerCode || !updatedRow.password) {
       alert.error("Please fill in all the fields");
       return;
     }
-    setEditableRowIndex(null);
+    var checkNumber = new RegExp(/^[0-9]+$/);
+    if (!checkNumber.test(updatedRow.employerCode)) {
+      alert.error("Please input valid Employer Code");
+      callback && callback();
+      return;
+    }
     let currRow = storeData[updatedRow.state];
     const isNew = row?.original?.isNew;
+    setEditableRowIndex(null);
     const isEqual =
       updatedRow.state === currRow?.state &&
       updatedRow.employerCode === currRow?.employerCode &&
@@ -110,6 +126,7 @@ export default function EsicTable() {
         )
       )
         .then((response) => {
+          callback && callback();
           dispatch(
             setEsicStateForm(
               updatedRow.isOther,

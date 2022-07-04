@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useRowSelect, useSortBy, useTable } from "react-table";
+import { Alert, Intent } from "@blueprintjs/core";
 import styled from "styled-components";
 
 //Components
@@ -18,9 +19,11 @@ const Table = ({
   addCallback,
   initialState,
   storeData,
-  inputTypes
+  inputTypes,
 }) => {
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [currRow, setCurrRow] = React.useState(null);
 
   const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
     useTable(
@@ -34,8 +37,9 @@ const Table = ({
         updateData,
         editableRowIndex,
         setEditableRowIndex,
+        setIsOpen,
         storeData,
-        inputTypes
+        inputTypes,
       },
       useSortBy,
       useRowSelect,
@@ -52,23 +56,37 @@ const Table = ({
                 row,
                 column,
                 setEditableRowIndex,
+                setIsOpen,
                 editableRowIndex,
                 storeData,
               }) => (
                 <Button
-                  className="action-button"
                   disabled={
-                    (editableRowIndex === null
+                    editableRowIndex === null
                       ? false
-                      : editableRowIndex !== row.index)
+                      : editableRowIndex !== row.index
                   }
                   onClick={() => {
                     const currentIndex = row.index;
                     if (editableRowIndex !== currentIndex) {
                       setEditableRowIndex(currentIndex);
                     } else {
+                      setCurrRow(row);
                       const updatedRow = row.values;
-                      handleSubmit(updatedRow, row, storeData, setEditableRowIndex);
+                      const isNew = row?.original?.isNew;
+                      const stateExist = Object.keys(storeData).findIndex(
+                        (state) => updatedRow.state === state
+                      );
+                      if (isNew && stateExist > -1 && !isOpen) {
+                        setIsOpen(true);
+                        return;
+                      }
+                      handleSubmit(
+                        updatedRow,
+                        row,
+                        storeData,
+                        setEditableRowIndex,
+                      );
                     }
                   }}
                 >
@@ -84,6 +102,10 @@ const Table = ({
   const addhandler = () => {
     setEditableRowIndex(0);
     addCallback();
+  };
+
+  const toggleAlert = () => {
+    setIsOpen(!isOpen);
   };
 
   return (
@@ -123,17 +145,40 @@ const Table = ({
             {rows.map((row, i) => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                    );
-                  })}
-                </tr>
+                <>
+                  <tr {...row.getRowProps()}>
+                    {row.cells.map((cell) => {
+                      return (
+                        <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                      );
+                    })}
+                  </tr>
+                </>
               );
             })}
           </tbody>
         </table>
+        <Alert
+          cancelButtonText="Cancel"
+          confirmButtonText={`Confirm`}
+          icon="trash"
+          intent={Intent.WARNING}
+          isOpen={isOpen}
+          onCancel={toggleAlert}
+          onConfirm={() =>
+            handleSubmit(
+              currRow.values,
+              currRow,
+              storeData,
+              setEditableRowIndex,
+              () => setIsOpen(false)
+            )
+          }
+        >
+          <p>
+            Are you sure you want to update <b>{currRow?.values?.state}</b>
+          </p>
+        </Alert>
       </Styles>
     </>
   );

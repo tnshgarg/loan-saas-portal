@@ -26,14 +26,15 @@ const EditableCell = ({
   return index === editableRowIndex ? (
     <input
       className="bp4-input"
-      type={inputTypes[id]}
+      type={inputTypes[id].type}
       value={value}
       onChange={onChange}
       onBlur={onBlur}
+      pattern={inputTypes[id].pattern}
     />
   ) : (
     <p>
-      {inputTypes[id] === "password" ? (
+      {inputTypes[id].type === "password" ? (
         <span>&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;</span>
       ) : (
         initialValue
@@ -56,4 +57,3 @@ EditableCell.defaultProps = {
   }),
   updateData: PropTypes.func.isRequired,
 };
-
