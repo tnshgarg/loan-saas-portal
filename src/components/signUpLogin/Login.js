@@ -1,16 +1,16 @@
-import { Card, Button, Elevation, Intent } from "@blueprintjs/core";
-import React, { useState } from "react";
+import { Button, Card, Elevation, Intent } from "@blueprintjs/core";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../store/actions/auth";
+import { getRegisterFormData } from "../../services/user.services";
+import { login } from "../../store/slices/authSlice";
 import {
   setAddressForm,
   setEsicStateForm,
   setPfForm,
   setTaxSetupForm,
-} from "../../store/actions/registerForm";
-import { getRegisterFormData } from "../../services/user.services";
+} from "../../store/slices/registerFormSlice";
 import FormInput from "../common/FormInput";
 
 const LOGIN_CARD_STYLING = {

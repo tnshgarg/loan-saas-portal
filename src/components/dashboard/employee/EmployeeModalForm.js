@@ -1,3 +1,4 @@
+import { Alert, Intent } from "@blueprintjs/core";
 import _ from "lodash";
 import { useState } from "react";
 import { useAlert } from "react-alert";
@@ -32,6 +33,8 @@ export const EmployeeModalForm = ({ formDataInitial, setDidDialogChange }) => {
   );
 
   const [disabled, setDisabled] = useState(true);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [changesInEmployeeDetails, setChangesInEmployeeDetails] = useState({});
 
   const {
     register,
@@ -46,6 +49,29 @@ export const EmployeeModalForm = ({ formDataInitial, setDidDialogChange }) => {
     setDisabled(!disabled);
   };
 
+  const updateEmployeeDetails = () => {
+    setDidDialogChange(true);
+    postEmployeeData(jwtToken, changesInEmployeeDetails)
+      .then((response) => {
+        console.log(response);
+        const message = response.data.body;
+        alert.success(message);
+      })
+      .catch((error) => {
+        const message = error.response?.data?.message ?? "Some error occured";
+        alert.error(message);
+      });
+  };
+
+  const handleAlertCancel = () => {
+    setIsAlertOpen(false);
+  };
+
+  const handleAlertConfirm = () => {
+    setIsAlertOpen(false);
+    updateEmployeeDetails();
+  };
+
   const onSubmit = (data) => {
     console.log(`disabled: ${disabled}`);
     if (!disabled) {
@@ -58,18 +84,27 @@ export const EmployeeModalForm = ({ formDataInitial, setDidDialogChange }) => {
       }),
       {}
     );
-    console.log(actualDataToUpdate);
     if (!_.isEqual(formDataInitial, actualDataToUpdate)) {
-      setDidDialogChange(true);
-      postEmployeeData(jwtToken, actualDataToUpdate)
-        .then((response) => {
-          const message = response.data.body;
-          alert.success(message);
-        })
-        .catch((error) => {
-          const message = error.response?.data?.message ?? "Some error occured";
-          alert.error(message);
-        });
+      const changedEmployeeDetails = Object.entries(actualDataToUpdate).reduce(
+        (acc, [key, value]) => {
+          if (
+            actualDataToUpdate[key] !== formDataInitial[key] ||
+            key === "_id"
+          ) {
+            return {
+              ...acc,
+              [key]: value,
+            };
+          }
+          return {
+            ...acc,
+          };
+        },
+        {}
+      );
+      console.log(changedEmployeeDetails);
+      setChangesInEmployeeDetails(changedEmployeeDetails);
+      setIsAlertOpen(true);
     } else {
       alert.error(NO_CHANGE_ERROR);
     }
@@ -107,6 +142,30 @@ export const EmployeeModalForm = ({ formDataInitial, setDidDialogChange }) => {
           onClick={toggleDisabled}
         />
       </form>
+      <Alert
+        cancelButtonText="Cancel"
+        confirmButtonText="Update the details"
+        icon="warning-sign"
+        intent={Intent.WARNING}
+        isOpen={isAlertOpen}
+        onCancel={handleAlertCancel}
+        onConfirm={handleAlertConfirm}
+      >
+        <p>
+          Are you sure you want to do the following changes? You will be able to
+          change this later.
+        </p>
+        {Object.entries(changesInEmployeeDetails).map(([key, value]) => {
+          if (key === "_id") {
+            return <></>;
+          }
+          return (
+            <p>
+              {key}:{value}
+            </p>
+          );
+        })}
+      </Alert>
     </div>
   );
 };

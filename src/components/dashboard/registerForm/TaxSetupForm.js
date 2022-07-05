@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { setTaxSetupForm } from "../../../store/actions/registerForm";
+import { setTaxSetupForm } from "../../../store/slices/registerFormSlice";
 
 import { getDocumentFromTaxSetupFormDetails } from "../../../helpers/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../helpers/messageStrings";

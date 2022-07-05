@@ -14,7 +14,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 import styled from "styled-components";
-import { setEmployeeData } from "../../../store/actions/employee";
+import { setEmployeeData } from "../../../store/slices/employeeSlice";
 import Navbar from "../Navbar";
 import { EmployeeModalForm } from "./EmployeeModalForm";
 import { tableColumns } from "./tableColumns";
