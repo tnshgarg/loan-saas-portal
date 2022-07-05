@@ -85,9 +85,7 @@ export const Login = () => {
 
             dispatch(setAddressForm(company, brand, address, state, pincode));
 
-            const { id: pan } = registerFormObject?.PAN ?? "";
-            const { id: tan } = registerFormObject?.TAN ?? "";
-            const { id: gstin } = registerFormObject?.GSTIN ?? "";
+            const { pan, tan, gstin } = registerFormObject;
 
             dispatch(setTaxSetupForm(pan, tan, gstin));
 

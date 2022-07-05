@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,10 @@ import { getDocumentFromPfForm } from "../../../../utils/getDocumentFromState";
 import { NO_CHANGE_ERROR } from "../../../../utils/messageStrings";
 import { postRegisterFormData } from "../../../../services/user.services";
 import FormInput from "../../../common/FormInput";
+import withUpdateAlert from "../../../../hoc/withUpdateAlert";
+import UpdateAlertContext from "../../../../contexts/updateAlertContext";
+import UpdateAlert from "../../../common/UpdateAlert";
+
 
 const EPFOComponent = () => {
   const dispatch = useDispatch();
@@ -24,7 +28,9 @@ const EPFOComponent = () => {
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
-  const [disabled, setDisabled] = useState(true);
+  const [disabled, setDisabled] = React.useState(true);
+  const { value, setValue } = useContext(UpdateAlertContext);
+
 
   const {
     register,
@@ -45,15 +51,8 @@ const EPFOComponent = () => {
     dispatch(setPfForm(data.username, data.password));
   }, [username, password]);
 
-  const toggleDisabled = () => {
-    setDisabled(!disabled);
-  };
-
   const onSubmit = (data) => {
     console.log(`disabled: ${disabled}`);
-    if (!disabled) {
-      return;
-    }
     const isEqual = data.username === username && data.password === password;
     if (!isEqual) {
       setUsername(data.username);
@@ -62,6 +61,8 @@ const EPFOComponent = () => {
         .then((response) => {
           const message = response.data.body.message;
           alert.success(message);
+          setDisabled(true)
+          setValue({ ...value, isOpen: false });
         })
         .catch((error) => {
           const message = error.response?.data?.message ?? "Some error occured";
@@ -73,6 +74,24 @@ const EPFOComponent = () => {
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
+
+  const toggleDisabled = () => {
+    setDisabled(!disabled);
+  };
+
+  const hydrateUpdateAlert = () => {
+    const taxFormDetails = {
+      username: usernameInitial,
+      password: passwordInitial,
+    };
+    setValue({
+      ...value,
+      isOpen: !value.isOpen,
+      newValues: { ...getValues() },
+      initialValues: taxFormDetails,
+      onConfirm: () => onSubmit({ ...getValues() }),
+    });
+  };
 
   return (
     <div>
@@ -110,13 +129,15 @@ const EPFOComponent = () => {
           }}
         />
         <input
-          type="submit"
+          disabled={errors.username || errors.password}
+          type="button"
           value={disabled ? "Edit" : "Submit"}
-          onClick={toggleDisabled}
+          onClick={disabled ? toggleDisabled : hydrateUpdateAlert}
         />
       </form>
+      <UpdateAlert/>
     </div>
   );
 };
 
-export default EPFOComponent;
+export default withUpdateAlert(EPFOComponent);

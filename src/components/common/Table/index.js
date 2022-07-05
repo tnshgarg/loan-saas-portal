@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import { useRowSelect, useSortBy, useTable } from "react-table";
 import { Alert, Intent } from "@blueprintjs/core";
@@ -8,6 +8,9 @@ import styled from "styled-components";
 import EditableCell from "./components/EditableCell";
 import { Button } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import UpdateAlert from "../UpdateAlert";
+import withUpdateAlert from "../../../hoc/withUpdateAlert";
+import UpdateAlertContext from "../../../contexts/updateAlertContext";
 
 const Table = ({
   columns,
@@ -24,6 +27,8 @@ const Table = ({
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
   const [currRow, setCurrRow] = React.useState(null);
+
+  const { value, setValue } = useContext(UpdateAlertContext);
 
   const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
     useTable(
@@ -73,12 +78,24 @@ const Table = ({
                     } else {
                       setCurrRow(row);
                       const updatedRow = row.values;
-                      const isNew = row?.original?.isNew;
-                      const stateExist = Object.keys(storeData).findIndex(
-                        (state) => updatedRow.state === state
-                      );
-                      if (isNew && stateExist > -1 && !isOpen) {
-                        setIsOpen(true);
+                      if (!value.isOpen) {
+                        const initialValues = storeData[updatedRow.state];
+                        const newValues = {...updatedRow};
+                        delete newValues.isOther;
+                        setValue({
+                          ...value,
+                          isOpen: !value.isOpen,
+                          newValues: newValues,
+                          initialValues: initialValues,
+                          onConfirm: () =>
+                            handleSubmit(
+                              updatedRow,
+                              row,
+                              storeData,
+                              setEditableRowIndex,
+                              () => setValue({ ...value, isOpen: false })
+                            ),
+                        });
                         return;
                       }
                       handleSubmit(
@@ -86,6 +103,7 @@ const Table = ({
                         row,
                         storeData,
                         setEditableRowIndex,
+                        () => setValue({ ...value, isOpen: false })
                       );
                     }
                   }}
@@ -158,10 +176,10 @@ const Table = ({
             })}
           </tbody>
         </table>
-        <Alert
+        {/* <Alert
           cancelButtonText="Cancel"
           confirmButtonText={`Confirm`}
-          icon="trash"
+          icon="warning-sign"
           intent={Intent.WARNING}
           isOpen={isOpen}
           onCancel={toggleAlert}
@@ -178,13 +196,14 @@ const Table = ({
           <p>
             Are you sure you want to update <b>{currRow?.values?.state}</b>
           </p>
-        </Alert>
+        </Alert> */}
+        <UpdateAlert />
       </Styles>
     </>
   );
 };
 
-export default Table;
+export default withUpdateAlert(Table);
 
 Table.defaultProps = {
   defaultColumn: {

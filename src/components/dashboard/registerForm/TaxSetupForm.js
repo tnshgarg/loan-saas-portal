@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,10 +8,17 @@ import { getDocumentFromTaxSetupFormDetails } from "../../../utils/getDocumentFr
 import { NO_CHANGE_ERROR } from "../../../utils/messageStrings";
 import { postRegisterFormData } from "../../../services/user.services";
 import FormInput from "../../common/FormInput";
+import withUpdateAlert from "../../../hoc/withUpdateAlert";
+import UpdateAlertContext from "../../../contexts/updateAlertContext";
+import UpdateAlert from "../../common/UpdateAlert";
 
 const TaxSetupForm = () => {
   const dispatch = useDispatch();
   const alert = useAlert();
+
+  const [disabled, setDisabled] = React.useState(true);
+  const { value, setValue } = useContext(UpdateAlertContext);
+
 
   const {
     pan: panInitial,
@@ -65,6 +72,8 @@ const TaxSetupForm = () => {
         .then((response) => {
           const message = response.data.body.message;
           alert.success(message);
+          setDisabled(true)
+          setValue({ ...value, isOpen: false });
         })
         .catch((error) => {
           const message = error.response?.data?.message ?? "Some error occured";
@@ -76,6 +85,25 @@ const TaxSetupForm = () => {
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
+
+  const toggleDisabled = () => {
+    setDisabled(!disabled);
+  };
+
+  const hydrateUpdateAlert = () => {
+    const taxFormDetails = {
+      pan: panInitial,
+      tan: tanInitial,
+      gstin: gstinInitial,
+    };
+    setValue({
+      ...value,
+      isOpen: !value.isOpen,
+      newValues: { ...getValues() },
+      initialValues: taxFormDetails,
+      onConfirm: () => onSubmit({ ...getValues() }),
+    });
+  };
 
   return (
     <div>
@@ -92,6 +120,7 @@ const TaxSetupForm = () => {
           errors={errors}
           field={"pan"}
           inputProps={{
+            disabled: disabled,
             icon: "id-number",
             label: "PAN",
             placeholder: "Please enter company's PAN number",
@@ -109,6 +138,7 @@ const TaxSetupForm = () => {
           errors={errors}
           field={"tan"}
           inputProps={{
+            disabled: disabled,
             icon: "id-number",
             label: "TAN",
             placeholder: "Please enter company's TAN number",
@@ -126,6 +156,7 @@ const TaxSetupForm = () => {
           errors={errors}
           field={"gstin"}
           inputProps={{
+            disabled: disabled,
             icon: "id-number",
             label: "GSTIN",
             placeholder: "Please enter company's GSTIN number",
@@ -136,10 +167,16 @@ const TaxSetupForm = () => {
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
         {/* {errors.exampleRequired && <p>This field is required</p>} */}
-        <input type="submit" value="Submit" />
+        <input
+          disabled={Object.values(errors).length}
+          type="button"
+          value={disabled ? "Edit" : "Submit"}
+          onClick={disabled ? toggleDisabled : hydrateUpdateAlert}
+        />
       </form>
+      <UpdateAlert/>
     </div>
   );
 };
 
-export default TaxSetupForm;
+export default withUpdateAlert(TaxSetupForm);

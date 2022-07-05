@@ -11,7 +11,7 @@ import { getDocumentFromEsicForm } from "../../../../../utils/getDocumentFromSta
 import { setEsicStateForm } from "../../../../../store/actions/registerForm";
 import { NO_CHANGE_ERROR } from "../../../../../utils/messageStrings";
 
-export default function EsicTable() {
+export default function ESICComponent() {
   const columns = React.useMemo(
     () => [
       {
