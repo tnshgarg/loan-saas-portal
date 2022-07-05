@@ -16,7 +16,7 @@ import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 import styled from "styled-components";
 import { setEmployeeData } from "../../../store/slices/employeeSlice";
 import Navbar from "../Navbar";
-import { EmployeeModalForm } from "./EmployeeModalForm";
+import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
 
 const Styles = styled.div`
@@ -383,7 +383,7 @@ const TabularViewTab = () => {
             {showSpinner ? (
               <Spinner />
             ) : (
-              <EmployeeModalForm
+              <EmployeeModal
                 formDataInitial={dialogContent}
                 setDidDialogChange={setDidDialogChange}
               />
