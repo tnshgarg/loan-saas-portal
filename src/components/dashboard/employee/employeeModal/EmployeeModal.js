@@ -1,5 +1,4 @@
 import { Card, Elevation, Tab, Tabs } from "@blueprintjs/core";
-import _ from "lodash";
 import { employeeFieldsToTabsMap } from "./employeeFieldsToTabsMap";
 import { EmployeeModalTab } from "./EmployeeModalTab";
 
@@ -19,7 +18,13 @@ export const EmployeeModal = ({ formDataInitial, setDidDialogChange }) => {
         <Tabs id="registerForm">
           {Object.entries(employeeFieldsToTabsMap).map(
             ([key, value], index) => {
-              const subsetFormData = _.pick(formDataInitial, [...value, "_id"]);
+              const valuesWithId = [...value, "_id"];
+              const subsetFormData = valuesWithId.reduce((acc, currField) => {
+                return {
+                  ...acc,
+                  [currField]: formDataInitial[currField] ?? "",
+                };
+              }, {});
               return (
                 <Tab
                   id={index + 1}
