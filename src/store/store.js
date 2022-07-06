@@ -1,4 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { employerAddressApi } from "./slices/apiSlices/employer/addressApiSlice";
 import authReducer from "./slices/authSlice";
 import employeeReducer from "./slices/employeeSlice";
 import messageReducer from "./slices/messageSlice";
@@ -10,6 +12,7 @@ export const store = configureStore({
     auth: authReducer,
     registerForm: registerFormReducer,
     employee: employeeReducer,
+    [employerAddressApi.reducerPath]: employerAddressApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -18,5 +21,9 @@ export const store = configureStore({
         ignoredActions: ["auth/setLoggedInUser"],
         ignoredPaths: ["auth.user"],
       },
-    }),
+    }).concat(employerAddressApi.middleware),
 });
+
+// optional, but required for refetchOnFocus/refetchOnReconnect behaviors
+// see `setupListeners` docs - takes an optional callback as the 2nd arg for customization
+setupListeners(store.dispatch);
