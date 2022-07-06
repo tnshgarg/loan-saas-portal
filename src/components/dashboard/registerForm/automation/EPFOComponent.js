@@ -2,22 +2,28 @@ import React, { useEffect, useState, useContext } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { setPfForm } from "../../../../store/actions/registerForm";
+import {
+  getCredentialsFormAction,
+  setPfForm,
+} from "../../../../store/actions/registerForm";
 import { getDocumentFromPfForm } from "../../../../utils/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../../utils/messageStrings";
-import { postRegisterFormData } from "../../../../services/user.services";
+import { NO_CHANGE_ERROR, VALUES_UPDATED } from "../../../../utils/messageStrings";
+import { postCredentialsForm, postRegisterFormData } from "../../../../services/user.services";
 import FormInput from "../../../common/FormInput";
 import withUpdateAlert from "../../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../../contexts/updateAlertContext";
 import UpdateAlert from "../../../common/UpdateAlert";
-
+import useFetchWithRedux from "../../../../hooks/useFetchWithRedux";
 
 const EPFOComponent = () => {
   const dispatch = useDispatch();
   const alert = useAlert();
 
   const { username: usernameInitial, password: passwordInitial } =
-    useSelector((state) => state.registerForm.pfForm) || "";
+    useFetchWithRedux(
+      () => getCredentialsFormAction("epfo"),
+      (state) => state.registerForm.pfForm
+    ) || "";
 
   const [username, setUsername] = useState(usernameInitial);
   const [password, setPassword] = useState(passwordInitial);
@@ -31,11 +37,11 @@ const EPFOComponent = () => {
   const [disabled, setDisabled] = React.useState(true);
   const { value, setValue } = useContext(UpdateAlertContext);
 
-
   const {
     register,
     getValues,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -46,23 +52,36 @@ const EPFOComponent = () => {
   });
 
   useEffect(() => {
-    const data = getValues();
-    console.log(`data: ${data}`);
-    dispatch(setPfForm(data.username, data.password));
-  }, [username, password]);
+    if (usernameInitial || passwordInitial) {
+      reset({
+        username: usernameInitial,
+        password: passwordInitial,
+      });
+    }
+    return () => {
+      const pfFormDetailsNew = getValues();
+      const { username, password } = pfFormDetailsNew;
+      const isEqual =
+        username === usernameInitial && password === passwordInitial;
+      if (!isEqual) {
+        dispatch(setPfForm(username, password));
+      }
+    };
+  }, [usernameInitial, passwordInitial, dispatch, getValues, reset]);
 
   const onSubmit = (data) => {
-    console.log(`disabled: ${disabled}`);
     const isEqual = data.username === username && data.password === password;
     if (!isEqual) {
       setUsername(data.username);
       setPassword(data.password);
-      postRegisterFormData(jwtToken, getDocumentFromPfForm(employerId, data))
+      postCredentialsForm(jwtToken, getDocumentFromPfForm(employerId, data))
         .then((response) => {
-          const message = response.data.body.message;
-          alert.success(message);
-          setDisabled(true)
-          setValue({ ...value, isOpen: false });
+          const status = response.data.status;
+          if(status === 200) {
+            alert.success(VALUES_UPDATED);
+            setDisabled(true);
+            setValue({ ...value, isOpen: false });
+          }
         })
         .catch((error) => {
           const message = error.response?.data?.message ?? "Some error occured";
@@ -135,7 +154,7 @@ const EPFOComponent = () => {
           onClick={disabled ? toggleDisabled : hydrateUpdateAlert}
         />
       </form>
-      <UpdateAlert/>
+      <UpdateAlert />
     </div>
   );
 };

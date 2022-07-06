@@ -2,18 +2,24 @@ import React, { useContext, useEffect } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { setAddressForm } from "../../../store/actions/registerForm";
+import {
+  getAddressFormAction,
+  setAddressForm,
+} from "../../../store/actions/registerForm";
 import { getDocumentFromAddressFormDetails } from "../../../utils/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../utils/messageStrings";
+import { NO_CHANGE_ERROR, VALUES_UPDATED } from "../../../utils/messageStrings";
 import statesAndUts from "../../../utils/statesAndUts";
-import { postRegisterFormData } from "../../../services/user.services";
+import {
+  postAddressForm,
+  postRegisterFormData,
+} from "../../../services/user.services";
 import FormInput from "../../common/FormInput";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import UpdateAlert from "../../common/UpdateAlert";
+import useFetchWithRedux from "../../../hooks/useFetchWithRedux";
 
 const AddressForm = (props) => {
-  console.log(props);
   const dispatch = useDispatch();
   const alert = useAlert();
 
@@ -24,10 +30,13 @@ const AddressForm = (props) => {
   const {
     company: companyInitial,
     brand: brandInitial,
-    address: addressInitial,
+    street: streetInitial,
     state: stateInitial,
-    pincode: pincodeInitial,
-  } = useSelector((state) => state.registerForm.addressFormDetails) || "";
+    pin: pinInitial,
+  } = useFetchWithRedux(
+    getAddressFormAction,
+    (state) => state.registerForm.addressFormDetails
+  ) || "";
 
   const { jwtToken } =
     useSelector((state) => state.auth.user?.signInUserSession.idToken) ?? "";
@@ -49,60 +58,76 @@ const AddressForm = (props) => {
     control,
     // watch,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
       company: companyInitial,
       brand: brandInitial,
-      address: addressInitial,
+      street: streetInitial,
       state: stateInitial,
-      pincode: pincodeInitial,
+      pin: pinInitial,
     },
     mode: "all",
   });
 
+
   useEffect(() => {
+    if (
+      (companyInitial || brandInitial || streetInitial || stateInitial || pinInitial)
+    ) {
+      reset({
+        company: companyInitial,
+        brand: brandInitial,
+        street: streetInitial,
+        state: stateInitial,
+        pin: pinInitial,
+      });
+    }
     return () => {
       const addressFormDetailsNew = getValues();
-      const { company, brand, address, state, pincode } = addressFormDetailsNew;
+      const { company, brand, street, state, pin } = addressFormDetailsNew;
       const isEqual =
         company === companyInitial &&
         brand === brandInitial &&
-        address === addressInitial &&
+        street === streetInitial &&
         state === stateInitial &&
-        pincode === pincodeInitial;
+        pin === pinInitial;
       if (!isEqual) {
-        dispatch(setAddressForm(company, brand, address, state, pincode));
+        dispatch(setAddressForm(company, brand, street, state, pin));
       }
     };
   }, [
-    addressInitial,
+    streetInitial,
     brandInitial,
     companyInitial,
     dispatch,
     getValues,
-    pincodeInitial,
+    pinInitial,
     stateInitial,
+    reset
   ]);
 
   const onSubmit = (addressFormDetailsNew) => {
-    const { company, brand, address, state, pincode } = addressFormDetailsNew;
+    const { company, brand, street, state, pin } = addressFormDetailsNew;
     const isEqual =
       company === companyInitial &&
       brand === brandInitial &&
-      address === addressInitial &&
+      street === streetInitial &&
       state === stateInitial &&
-      pincode === pincodeInitial;
+      pin === pinInitial;
     if (!isEqual) {
-      dispatch(setAddressForm(company, brand, address, state, pincode));
-      postRegisterFormData(
+      dispatch(setAddressForm(company, brand, street, state, pin));
+      postAddressForm(
         jwtToken,
         getDocumentFromAddressFormDetails(employerId, addressFormDetailsNew)
       )
         .then((response) => {
-          const message = response.data.body.message;
-          alert.success(message);
-          setDisabled(true)
-          setValue({ ...value, isOpen: false });
+          const status = response.data.status;
+          if (status === 200) {
+            alert.success(VALUES_UPDATED);
+            setDisabled(true);
+            setValue({ ...value, isOpen: false });
+          }
         })
         .catch((error) => {
           const message = error.response?.data?.message ?? "Some error occured";
@@ -123,9 +148,9 @@ const AddressForm = (props) => {
     const addressFormDetails = {
       company: companyInitial,
       brand: brandInitial,
-      address: addressInitial,
+      street: streetInitial,
       state: stateInitial,
-      pincode: pincodeInitial,
+      pin: pinInitial,
     };
     setValue({
       ...value,
@@ -182,7 +207,7 @@ const AddressForm = (props) => {
             },
           }}
           errors={errors}
-          field={"address"}
+          field={"street"}
           inputProps={{
             disabled: disabled,
             icon: "home",
@@ -222,7 +247,7 @@ const AddressForm = (props) => {
             },
           }}
           errors={errors}
-          field={"pincode"}
+          field={"pin"}
           inputProps={{
             disabled: disabled,
             icon: "pin",

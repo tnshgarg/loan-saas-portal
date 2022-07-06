@@ -6,10 +6,14 @@ import { useAlert } from "react-alert";
 import Table from "../../../../common/Table";
 
 import EditableDropdown from "./components/EditableDropdown";
-import { postRegisterFormData } from "../../../../../services/user.services";
+import { postCredentialsForm, postRegisterFormData } from "../../../../../services/user.services";
 import { getDocumentFromEsicForm } from "../../../../../utils/getDocumentFromState";
-import { setEsicStateForm } from "../../../../../store/actions/registerForm";
-import { NO_CHANGE_ERROR } from "../../../../../utils/messageStrings";
+import {
+  getCredentialsFormAction,
+  setEsicStateForm,
+} from "../../../../../store/actions/registerForm";
+import { NO_CHANGE_ERROR, VALUES_UPDATED } from "../../../../../utils/messageStrings";
+import useFetchWithRedux from "../../../../../hooks/useFetchWithRedux";
 
 export default function ESICComponent() {
   const columns = React.useMemo(
@@ -38,7 +42,10 @@ export default function ESICComponent() {
   );
   const dispatch = useDispatch();
 
-  const esicForm = useSelector((state) => state.registerForm.esicForm);
+  const esicForm = useFetchWithRedux(
+    () => getCredentialsFormAction("esic"),
+    (state) => state.registerForm.esicForm
+  );
 
   const { jwtToken } =
     useSelector((state) => state.auth.user?.signInUserSession.idToken) ?? "";
@@ -115,7 +122,7 @@ export default function ESICComponent() {
     if (!isEqual || isNew) {
       updateData(row.index, "isDisabled", true);
       updateData(row.index, "isNew", false);
-      postRegisterFormData(
+      postCredentialsForm(
         jwtToken,
         getDocumentFromEsicForm(
           employerId,
@@ -135,8 +142,7 @@ export default function ESICComponent() {
               updatedRow.password
             )
           );
-          const message = response.data.body.message;
-          alert.success(message);
+          alert.success(VALUES_UPDATED);
         })
         .catch((error) => {
           console.log(error);

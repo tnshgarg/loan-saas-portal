@@ -38,14 +38,14 @@ export const getDocumentFromAddressFormDetails = (
   employerId,
   addressFormDetails
 ) => {
-  const { company, brand, address, state, pincode } = addressFormDetails ?? "";
+  const { company, brand, street, state, pin } = addressFormDetails ?? "";
   const document = {
-    employerId: employerId ?? "",
+    id: employerId ?? "",
     company: company ?? "",
     brand: brand ?? "",
-    address: address ?? "",
+    street: street ?? "",
     state: state ?? "",
-    pincode: pincode ?? "",
+    pin: pin ?? "",
   };
 
   return document;
@@ -57,7 +57,7 @@ export const getDocumentFromTaxSetupFormDetails = (
 ) => {
   const { pan, tan, gstin } = taxSetupFormDetails ?? "";
   const document = {
-    employerId: employerId ?? "",
+    id: employerId ?? "",
     pan: pan ?? "",
     tan: tan ?? "",
     gstin: gstin ?? "",
@@ -67,15 +67,12 @@ export const getDocumentFromTaxSetupFormDetails = (
 };
 
 export const getDocumentFromPfForm = (employerId, pfForm) => {
-  const { username, password } = pfForm ?? "";
+  const { username, password, portal } = pfForm ?? "";
   const document = {
-    employerId: employerId ?? "",
-    credentials: {
-      epfo: {
-        username: username ?? "",
-        password: password ?? "",
-      },
-    },
+    id: employerId ?? "",
+    portal: "epfo",
+    username: username ?? "",
+    password: password ?? "",
   };
 
   return document;
@@ -89,16 +86,12 @@ export const getDocumentFromEsicForm = (
   password
 ) => {
   const document = {
-    employerId: employerId ?? "",
-    credentials: {
-      esic: {
-        [state]: {
-          isOther: isOther,
-          employerCode: employerCode,
-          password: password,
-        },
-      },
-    },
+    other: isOther,
+    id: employerId,
+    username: employerCode,
+    password: password,
+    state: state,
+    portal: 'esic',
   };
 
   return document;

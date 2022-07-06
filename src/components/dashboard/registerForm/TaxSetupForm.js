@@ -2,15 +2,22 @@ import React, { useContext, useEffect } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { setTaxSetupForm } from "../../../store/actions/registerForm";
+import {
+  getTaxFormAction,
+  setTaxSetupForm,
+} from "../../../store/actions/registerForm";
 
 import { getDocumentFromTaxSetupFormDetails } from "../../../utils/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../utils/messageStrings";
-import { postRegisterFormData } from "../../../services/user.services";
+import { NO_CHANGE_ERROR, VALUES_UPDATED } from "../../../utils/messageStrings";
+import {
+  postRegisterFormData,
+  postTaxForm,
+} from "../../../services/user.services";
 import FormInput from "../../common/FormInput";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import UpdateAlert from "../../common/UpdateAlert";
+import useFetchWithRedux from "../../../hooks/useFetchWithRedux";
 
 const TaxSetupForm = () => {
   const dispatch = useDispatch();
@@ -19,12 +26,17 @@ const TaxSetupForm = () => {
   const [disabled, setDisabled] = React.useState(true);
   const { value, setValue } = useContext(UpdateAlertContext);
 
+  const taxSetupForm =
+    useFetchWithRedux(
+      getTaxFormAction,
+      (state) => state.registerForm.taxSetupFormDetails
+    ) || "";
 
   const {
-    pan: panInitial,
-    tan: tanInitial,
-    gstin: gstinInitial,
-  } = useSelector((state) => state.registerForm.taxSetupFormDetails) || "";
+    pan: { number: panInitial } = '',
+    tan: { number: tanInitial } = '',
+    gstin: { number: gstinInitial } = '',
+  } = taxSetupForm;
 
   const { jwtToken } =
     useSelector((state) => state.auth.user?.signInUserSession.idToken) ?? "";
@@ -36,6 +48,7 @@ const TaxSetupForm = () => {
     register,
     handleSubmit,
     getValues,
+    reset,
     // watch,
     formState: { errors },
   } = useForm({
@@ -48,6 +61,13 @@ const TaxSetupForm = () => {
   });
 
   useEffect(() => {
+    if (panInitial || tanInitial || gstinInitial) {
+      reset({
+        pan: panInitial,
+        tan: tanInitial,
+        gstin: gstinInitial,
+      });
+    }
     return () => {
       const taxSetupFormDetailsNew = getValues();
       const { pan, tan, gstin } = taxSetupFormDetailsNew;
@@ -57,7 +77,7 @@ const TaxSetupForm = () => {
         dispatch(setTaxSetupForm(pan, tan, gstin));
       }
     };
-  }, [dispatch, getValues, gstinInitial, panInitial, tanInitial]);
+  }, [dispatch, getValues, gstinInitial, panInitial, tanInitial, reset]);
 
   const onSubmit = (taxSetupFormDetailsNew) => {
     const { pan, tan, gstin } = taxSetupFormDetailsNew;
@@ -65,15 +85,17 @@ const TaxSetupForm = () => {
       pan === panInitial && tan === tanInitial && gstin === gstinInitial;
     if (!isEqual) {
       dispatch(setTaxSetupForm(pan, tan, gstin));
-      postRegisterFormData(
+      postTaxForm(
         jwtToken,
         getDocumentFromTaxSetupFormDetails(employerId, taxSetupFormDetailsNew)
       )
         .then((response) => {
-          const message = response.data.body.message;
-          alert.success(message);
-          setDisabled(true)
-          setValue({ ...value, isOpen: false });
+          const status = response.data.status;
+          if (status === 200) {
+            alert.success(VALUES_UPDATED);
+            setDisabled(true);
+            setValue({ ...value, isOpen: false });
+          }
         })
         .catch((error) => {
           const message = error.response?.data?.message ?? "Some error occured";
@@ -174,7 +196,7 @@ const TaxSetupForm = () => {
           onClick={disabled ? toggleDisabled : hydrateUpdateAlert}
         />
       </form>
-      <UpdateAlert/>
+      <UpdateAlert />
     </div>
   );
 };

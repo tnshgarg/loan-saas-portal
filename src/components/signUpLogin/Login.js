@@ -76,38 +76,38 @@ export const Login = () => {
 
         const { authToken, employerId } = loginData;
 
-        getRegisterFormData(authToken, employerId)
-          .then((response) => {
-            const registerFormObject = response.data.body;
+        // getRegisterFormData(authToken, employerId)
+        //   .then((response) => {
+        //     const registerFormObject = response.data.body;
 
-            const { company, brand, address, state, pincode } =
-              registerFormObject ?? "";
+        //     const { company, brand, address, state, pincode } =
+        //       registerFormObject ?? "";
 
-            dispatch(setAddressForm(company, brand, address, state, pincode));
+        //     // dispatch(setAddressForm(company, brand, address, state, pincode));
 
-            const { pan, tan, gstin } = registerFormObject;
+        //     const { pan, tan, gstin } = registerFormObject;
 
-            dispatch(setTaxSetupForm(pan, tan, gstin));
+        //     dispatch(setTaxSetupForm(pan, tan, gstin));
 
-            const { username, password } =
-              registerFormObject?.credentials?.epfo ?? "";
+        //     const { username, password } =
+        //       registerFormObject?.credentials?.epfo ?? "";
 
-            dispatch(setPfForm(username, password));
+        //     dispatch(setPfForm(username, password));
 
-            Object.entries(registerFormObject?.credentials?.esic ?? {}).forEach(
-              ([key, value]) => {
-                const state = key;
-                const { isOther, employerCode, password } = value ?? "";
-                dispatch(
-                  setEsicStateForm(isOther, state, employerCode, password)
-                );
-              }
-            );
-          })
-          .catch((error) => {
-            console.log(error);
-            setSuccessful(false);
-          });
+        //     Object.entries(registerFormObject?.credentials?.esic ?? {}).forEach(
+        //       ([key, value]) => {
+        //         const state = key;
+        //         const { isOther, employerCode, password } = value ?? "";
+        //         dispatch(
+        //           setEsicStateForm(isOther, state, employerCode, password)
+        //         );
+        //       }
+        //     );
+        //   })
+        //   .catch((error) => {
+        //     console.log(error);
+        //     setSuccessful(false);
+        //   });
       })
       .catch(() => {
         setSuccessful(false);
