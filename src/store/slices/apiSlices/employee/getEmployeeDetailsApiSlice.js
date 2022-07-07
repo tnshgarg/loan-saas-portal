@@ -18,12 +18,14 @@ export const employeeDetails = createApi({
       return headers;
     },
   }),
+  tagTypes: ["EmployeeDetails"],
   endpoints: (builder) => ({
     // Define endpoints here
     getEmployeeDetailsByEmployeeId: builder.query({
       query: ({ id, category }) => {
         return `/employer/employee?id=${id}&category=${category}`;
       },
+      providesTags: ["EmployeeDetails"],
     }),
     updateEmployeeDetails: builder.mutation({
       query: (body) => ({
@@ -31,6 +33,7 @@ export const employeeDetails = createApi({
         method: "POST",
         body: body, // fetchBaseQuery automatically adds `content-type: application/json` to the Headers and calls `JSON.stringify(patch)`
       }),
+      invalidatesTags: ["EmployeeDetails"],
     }),
   }),
 });
