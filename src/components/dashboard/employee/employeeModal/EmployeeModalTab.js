@@ -1,49 +1,86 @@
 import { Alert, Intent } from "@blueprintjs/core";
 import _ from "lodash";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
-import { postEmployeeData } from "../../../../services/employee.services";
+import { useGetEmployeeDetailsByEmployeeIdQuery } from "../../../../store/slices/apiSlices/employee/getEmployeeDetailsApiSlice";
 import FormInput from "../../../common/FormInput";
 
-export const EmployeeModalTab = ({ formDataInitial, setDidDialogChange }) => {
+export const EmployeeModalTab = ({
+  category,
+  fields,
+  currEmployeeId,
+  setDidDialogChange,
+}) => {
   const alert = useAlert();
 
-  const { jwtToken } =
-    useSelector((state) => state.auth.user?.signInUserSession.idToken) ?? "";
+  const responseFromQuery = useGetEmployeeDetailsByEmployeeIdQuery({
+    id: currEmployeeId,
+    category,
+  });
+  const { data, isLoading, error } = responseFromQuery;
 
-  const formDataNewFieldsToInitialFieldsMap = Object.keys(
-    formDataInitial
-  ).reduce(
-    (acc, currentFormField) => ({
-      ...acc,
-      [currentFormField.replace(/\W/g, "")]: currentFormField,
-    }),
-    {}
-  );
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    mode: "all",
+  });
 
-  const formDataNewFields = Object.entries(formDataInitial).reduce(
-    (acc, [key, value]) => ({
-      ...acc,
-      [key.replace(/\W/g, "")]: value,
-    }),
-    {}
-  );
+  const [formDataInitial, setFormDataInitial] = useState({});
+  const [
+    formDataNewFieldsToInitialFieldsMap,
+    setFormDataNewFieldsToInitialFieldsmap,
+  ] = useState({});
+  const [formDataNewFields, setFormDataNewFields] = useState({});
 
   const [disabled, setDisabled] = useState(true);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [changesInEmployeeDetails, setChangesInEmployeeDetails] = useState({});
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: formDataNewFields ?? {},
-    mode: "all",
-  });
+  useEffect(() => {
+    if (data) {
+      const body = data.body ?? {};
+      const formDataInitialFetched = Object.entries(body).reduce(
+        (acc, [key, value]) => ({
+          ...acc,
+          [fields[key]]: value,
+        }),
+        {}
+      );
+
+      const formDataNewFieldsToInitialFieldsMapFetched = Object.keys(
+        formDataInitialFetched
+      ).reduce(
+        (acc, currentFormField) => ({
+          ...acc,
+          [currentFormField.replace(/\W/g, "")]: currentFormField,
+        }),
+        {}
+      );
+
+      const formDataNewFieldsFetched = Object.entries(
+        formDataInitialFetched
+      ).reduce(
+        (acc, [key, value]) => ({
+          ...acc,
+          [key.replace(/\W/g, "")]: value,
+        }),
+        {}
+      );
+
+      setFormDataInitial(formDataInitialFetched);
+      setFormDataNewFieldsToInitialFieldsmap(
+        formDataNewFieldsToInitialFieldsMapFetched
+      );
+      setFormDataNewFields(formDataNewFieldsFetched);
+
+      reset(formDataNewFieldsFetched);
+    }
+  }, [data, fields, reset]);
 
   const toggleDisabled = () => {
     setDisabled(!disabled);
@@ -51,16 +88,7 @@ export const EmployeeModalTab = ({ formDataInitial, setDidDialogChange }) => {
 
   const updateEmployeeDetails = () => {
     setDidDialogChange(true);
-    postEmployeeData(jwtToken, changesInEmployeeDetails)
-      .then((response) => {
-        console.log(response);
-        const message = response.data.body;
-        alert.success(message);
-      })
-      .catch((error) => {
-        const message = error.response?.data?.message ?? "Some error occured";
-        alert.error(message);
-      });
+    // add new update logic using mutations
   };
 
   const handleAlertCancel = () => {
@@ -69,7 +97,7 @@ export const EmployeeModalTab = ({ formDataInitial, setDidDialogChange }) => {
 
   const handleAlertConfirm = () => {
     setIsAlertOpen(false);
-    updateEmployeeDetails();
+    // updateEmployeeDetails();
   };
 
   const onSubmit = (data) => {
@@ -114,59 +142,67 @@ export const EmployeeModalTab = ({ formDataInitial, setDidDialogChange }) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {/* register your input into the hook by invoking the "register" function */}
-        {Object.entries(formDataNewFields).map(([key, value]) => {
-          if (key === "_id") {
-            return <></>;
-          }
-          return (
-            <FormInput
-              key={key}
-              register={register}
-              errors={errors}
-              field={key}
-              inputProps={{
-                icon: "user",
-                label: formDataNewFieldsToInitialFieldsMap[key],
-                placeholder: `Please enter ${formDataNewFieldsToInitialFieldsMap[key]} for selected employee`,
-                errorMessage: `Please enter ${formDataNewFieldsToInitialFieldsMap[key]} for selected employee`,
-                disabled: disabled,
-              }}
-            />
-          );
-        })}
+      {error ? (
+        <>Oh no, there was an error</>
+      ) : isLoading ? (
+        <>Loading...</>
+      ) : data ? (
+        <div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* register your input into the hook by invoking the "register" function */}
+            {Object.entries(formDataNewFields).map(([key, value]) => {
+              if (key === "_id") {
+                return <></>;
+              }
+              return (
+                <FormInput
+                  key={key}
+                  register={register}
+                  errors={errors}
+                  field={key}
+                  inputProps={{
+                    icon: "user",
+                    label: formDataNewFieldsToInitialFieldsMap[key],
+                    placeholder: `Please enter ${formDataNewFieldsToInitialFieldsMap[key]} for selected employee`,
+                    errorMessage: `Please enter ${formDataNewFieldsToInitialFieldsMap[key]} for selected employee`,
+                    disabled: disabled,
+                  }}
+                />
+              );
+            })}
 
-        <input
-          type="submit"
-          value={disabled ? "Edit" : "Submit"}
-          onClick={toggleDisabled}
-        />
-      </form>
-      <Alert
-        cancelButtonText="Cancel"
-        confirmButtonText="Update the details"
-        icon="warning-sign"
-        intent={Intent.WARNING}
-        isOpen={isAlertOpen}
-        onCancel={handleAlertCancel}
-        onConfirm={handleAlertConfirm}
-      >
-        <p>
-          Are you sure you want to do the following changes? You will be able to
-          change this later.
-        </p>
-        {Object.entries(changesInEmployeeDetails).map(([key, value]) => {
-          if (key === "_id") {
-            return <></>;
-          }
-          return (
+            <input
+              type="submit"
+              value={disabled ? "Edit" : "Submit"}
+              onClick={toggleDisabled}
+            />
+          </form>
+          <Alert
+            cancelButtonText="Cancel"
+            confirmButtonText="Update the details"
+            icon="warning-sign"
+            intent={Intent.WARNING}
+            isOpen={isAlertOpen}
+            onCancel={handleAlertCancel}
+            onConfirm={handleAlertConfirm}
+          >
             <p>
-              {key}:{value}
+              Are you sure you want to do the following changes? You will be
+              able to change this later.
             </p>
-          );
-        })}
-      </Alert>
+            {Object.entries(changesInEmployeeDetails).map(([key, value]) => {
+              if (key === "_id") {
+                return <></>;
+              }
+              return (
+                <p>
+                  {key}:{value}
+                </p>
+              );
+            })}
+          </Alert>
+        </div>
+      ) : null}
     </div>
   );
 };

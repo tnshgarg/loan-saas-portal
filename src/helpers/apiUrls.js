@@ -5,3 +5,6 @@ export const REGISTER_FORM_POST_URL =
 
 export const TABULAR_CRUD_API_URL =
   "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud";
+
+export const EMPLOYEES_AND_EMPLOYEE_BASE_API_URL =
+  "https://ifzbkxzmke.execute-api.ap-south-1.amazonaws.com/dev";

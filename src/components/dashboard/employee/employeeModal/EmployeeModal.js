@@ -7,7 +7,7 @@ const EMPLOYEE_MODAL_STYLING = {
   marginLeft: "auto",
   overflowX: "scroll",
 };
-export const EmployeeModal = ({ formDataInitial, setDidDialogChange }) => {
+export const EmployeeModal = ({ currEmployeeId, setDidDialogChange }) => {
   return (
     <>
       <Card
@@ -18,13 +18,7 @@ export const EmployeeModal = ({ formDataInitial, setDidDialogChange }) => {
         <Tabs id="registerForm">
           {Object.entries(employeeFieldsToTabsMap).map(
             ([key, value], index) => {
-              const valuesWithId = [...value, "_id"];
-              const subsetFormData = valuesWithId.reduce((acc, currField) => {
-                return {
-                  ...acc,
-                  [currField]: formDataInitial[currField] ?? "",
-                };
-              }, {});
+              const { category, fields } = value;
               return (
                 <Tab
                   id={index + 1}
@@ -32,7 +26,9 @@ export const EmployeeModal = ({ formDataInitial, setDidDialogChange }) => {
                   panel={
                     <EmployeeModalTab
                       key={index + 1}
-                      formDataInitial={subsetFormData}
+                      category={category}
+                      fields={fields}
+                      currEmployeeId={currEmployeeId}
                       setDidDialogChange={setDidDialogChange}
                     />
                   }
