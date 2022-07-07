@@ -26,4 +26,7 @@ export const allEmployeesBasicDetails = createApi({
   }),
 });
 
-export const { useGetAllEmployeesByEmployerIdQuery } = allEmployeesBasicDetails;
+export const {
+  useGetAllEmployeesByEmployerIdQuery,
+  useLazyGetAllEmployeesByEmployerIdQuery,
+} = allEmployeesBasicDetails;

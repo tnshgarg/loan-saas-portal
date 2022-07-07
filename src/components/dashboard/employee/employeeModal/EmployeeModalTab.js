@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
-import { useGetEmployeeDetailsByEmployeeIdQuery } from "../../../../store/slices/apiSlices/employee/getEmployeeDetailsApiSlice";
+import {
+  useGetEmployeeDetailsByEmployeeIdQuery,
+  useUpdateEmployeeDetailsMutation,
+} from "../../../../store/slices/apiSlices/employee/getEmployeeDetailsApiSlice";
 import FormInput from "../../../common/FormInput";
 
 export const EmployeeModalTab = ({
@@ -21,6 +24,9 @@ export const EmployeeModalTab = ({
   });
   const { data, isLoading, error } = responseFromQuery;
 
+  const [updateEmployeeDetails, { data: updateEmployeeMutationResponse }] =
+    useUpdateEmployeeDetailsMutation();
+
   const {
     register,
     handleSubmit,
@@ -30,6 +36,7 @@ export const EmployeeModalTab = ({
     mode: "all",
   });
 
+  const fieldsInverted = _.invert(fields);
   const [formDataInitial, setFormDataInitial] = useState({});
   const [
     formDataNewFieldsToInitialFieldsMap,
@@ -82,13 +89,18 @@ export const EmployeeModalTab = ({
     }
   }, [data, fields, reset]);
 
+  useEffect(() => {
+    if (updateEmployeeMutationResponse) {
+      const { status, message } = updateEmployeeMutationResponse ?? null;
+      if (status === 200) {
+        alert.success(message);
+        setDidDialogChange(true);
+      }
+    }
+  }, [alert, setDidDialogChange, updateEmployeeMutationResponse]);
+
   const toggleDisabled = () => {
     setDisabled(!disabled);
-  };
-
-  const updateEmployeeDetails = () => {
-    setDidDialogChange(true);
-    // add new update logic using mutations
   };
 
   const handleAlertCancel = () => {
@@ -96,8 +108,24 @@ export const EmployeeModalTab = ({
   };
 
   const handleAlertConfirm = () => {
+    const employeeUpdateObjectToSend = Object.entries(
+      changesInEmployeeDetails
+    ).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [fieldsInverted[key]]: value,
+      }),
+      {}
+    );
+
+    const finalEmployeeUpdateObjectToSend = {
+      ...employeeUpdateObjectToSend,
+      id: currEmployeeId,
+      category: category,
+    };
+
     setIsAlertOpen(false);
-    // updateEmployeeDetails();
+    updateEmployeeDetails(finalEmployeeUpdateObjectToSend);
   };
 
   const onSubmit = (data) => {

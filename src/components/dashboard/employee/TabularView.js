@@ -12,7 +12,10 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 import styled from "styled-components";
-import { useGetAllEmployeesByEmployerIdQuery } from "../../../store/slices/apiSlices/employees/getEmployeesApiSlice";
+import {
+  useGetAllEmployeesByEmployerIdQuery,
+  useLazyGetAllEmployeesByEmployerIdQuery,
+} from "../../../store/slices/apiSlices/employees/getEmployeesApiSlice";
 import Navbar from "../Navbar";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
@@ -114,28 +117,45 @@ const TabularViewTab = () => {
   const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
   const { data, isLoading, error } = responseFromQuery;
 
+  const responseFromLazyQuery = useLazyGetAllEmployeesByEmployerIdQuery();
+  const [
+    trigger,
+    { data: lazyData, isLoading: lazyIsLoading, error: lazyError },
+  ] = responseFromLazyQuery;
+
   const [fetchedRows, setFetchedRows] = useState([]);
+
+  const setFetchedRowsFromBody = (body) => {
+    const fetchedRowsData = body.map((employee) => {
+      const { employeeId, name, mobile, email, aadhaar, dob, title, _id } =
+        employee;
+      return {
+        "Employee ID": employeeId,
+        Name: name,
+        "Mobile Number": mobile,
+        Email: email,
+        "Aadhaar Number": aadhaar,
+        "Date of Birth (dd/mm/yyyy)": dob,
+        "Job Title": title,
+        _id: _id,
+      };
+    });
+    setFetchedRows(fetchedRowsData);
+  };
 
   useEffect(() => {
     if (data) {
       const body = data.body ?? [];
-      const fetchedRowsData = body.map((employee) => {
-        const { employeeId, name, mobile, email, aadhaar, dob, title, _id } =
-          employee;
-        return {
-          "Employee ID": employeeId,
-          Name: name,
-          "Mobile Number": mobile,
-          Email: email,
-          "Aadhaar Number": aadhaar,
-          "Date of Birth (dd/mm/yyyy)": dob,
-          "Job Title": title,
-          _id: _id,
-        };
-      });
-      setFetchedRows(fetchedRowsData);
+      setFetchedRowsFromBody(body);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (lazyData) {
+      const body = lazyData.body ?? [];
+      setFetchedRowsFromBody(body);
+    }
+  }, [lazyData]);
 
   const columns = useMemo(
     () =>
@@ -190,7 +210,7 @@ const TabularViewTab = () => {
   const handleDialogClose = () => {
     setIsDialogOpen(false);
     if (didDialogChange) {
-      // fetchData();
+      trigger(employerId);
     }
     setDidDialogChange(false);
   };

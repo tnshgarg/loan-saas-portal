@@ -25,7 +25,18 @@ export const employeeDetails = createApi({
         return `/employer/employee?id=${id}&category=${category}`;
       },
     }),
+    updateEmployeeDetails: builder.mutation({
+      query: (body) => ({
+        url: `/employer/employee`,
+        method: "POST",
+        body: body, // fetchBaseQuery automatically adds `content-type: application/json` to the Headers and calls `JSON.stringify(patch)`
+      }),
+    }),
   }),
 });
 
-export const { useGetEmployeeDetailsByEmployeeIdQuery } = employeeDetails;
+export const {
+  useGetEmployeeDetailsByEmployeeIdQuery,
+  useLazyGetEmployeeDetailsByEmployeeIdQuery,
+  useUpdateEmployeeDetailsMutation,
+} = employeeDetails;
