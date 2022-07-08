@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTable } from "react-table";
 import Select from "react-select";
-import { setSimplianceMinimumWages } from "../../../../store/actions/simpliance";
 import Navbar from "../../Navbar";
 import statesList from "../../../../utils/states";
+import { setSimplianceMinimumWages } from "../../../../store/slices/simpliance";
 
 const TabularViewTab = ({ columns, data }) => {
   console.log(columns, data);

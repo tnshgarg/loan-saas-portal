@@ -3,27 +3,35 @@ import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getCredentialsFormAction,
-  setPfForm,
-} from "../../../../store/actions/registerForm";
-import { getDocumentFromPfForm } from "../../../../utils/getDocumentFromState";
-import { NO_CHANGE_ERROR, VALUES_UPDATED } from "../../../../utils/messageStrings";
-import { postCredentialsForm, postRegisterFormData } from "../../../../services/user.services";
+  NO_CHANGE_ERROR,
+  VALUES_UPDATED,
+} from "../../../../utils/messageStrings";
+import { setPfForm } from "../../../../store/slices/registerFormSlice";
 import FormInput from "../../../common/FormInput";
 import withUpdateAlert from "../../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../../contexts/updateAlertContext";
 import UpdateAlert from "../../../common/UpdateAlert";
-import useFetchWithRedux from "../../../../hooks/useFetchWithRedux";
+import {
+  useGetEmployerCredentialsByIdQuery,
+  useUpdateEmployerCredentialsMutation,
+} from "../../../../store/slices/apiSlices/employer/credentialsApiSlice";
 
 const EPFOComponent = () => {
   const dispatch = useDispatch();
   const alert = useAlert();
 
-  const { username: usernameInitial, password: passwordInitial } =
-    useFetchWithRedux(
-      () => getCredentialsFormAction("epfo"),
-      (state) => state.registerForm.pfForm
-    ) || "";
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
+
+  const responseFromQuery = useGetEmployerCredentialsByIdQuery({
+    employerId,
+    portal: "epfo",
+  });
+  const { data, isLoading, error } = responseFromQuery;
+
+  const {
+    body: { username: usernameInitial, password: passwordInitial } = {},
+  } = data ?? {};
 
   const [username, setUsername] = useState(usernameInitial);
   const [password, setPassword] = useState(passwordInitial);
@@ -31,8 +39,7 @@ const EPFOComponent = () => {
   const { jwtToken } =
     useSelector((state) => state.auth.user?.signInUserSession.idToken) ?? "";
 
-  const employerId =
-    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
+  const [updateEmployerCredentials] = useUpdateEmployerCredentialsMutation();
 
   const [disabled, setDisabled] = React.useState(true);
   const { value, setValue } = useContext(UpdateAlertContext);
@@ -44,15 +51,11 @@ const EPFOComponent = () => {
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      username,
-      password,
-    },
     mode: "all",
   });
 
   useEffect(() => {
-    if (usernameInitial || passwordInitial) {
+    if (data) {
       reset({
         username: usernameInitial,
         password: passwordInitial,
@@ -67,17 +70,21 @@ const EPFOComponent = () => {
         dispatch(setPfForm(username, password));
       }
     };
-  }, [usernameInitial, passwordInitial, dispatch, getValues, reset]);
+  }, [usernameInitial, passwordInitial, data, dispatch, getValues, reset]);
 
   const onSubmit = (data) => {
     const isEqual = data.username === username && data.password === password;
     if (!isEqual) {
       setUsername(data.username);
       setPassword(data.password);
-      postCredentialsForm(jwtToken, getDocumentFromPfForm(employerId, data))
+      updateEmployerCredentials({
+        ...data,
+        id: employerId,
+        portal: "epfo",
+      })
         .then((response) => {
           const status = response.data.status;
-          if(status === 200) {
+          if (status === 200) {
             alert.success(VALUES_UPDATED);
             setDisabled(true);
             setValue({ ...value, isOpen: false });
@@ -88,6 +95,8 @@ const EPFOComponent = () => {
           alert.error(message);
         });
     } else {
+      setValue({ ...value, isOpen: false });
+      setDisabled(true);
       alert.error(NO_CHANGE_ERROR);
     }
   }; // your form submit function which will invoke after successful validation
@@ -96,6 +105,11 @@ const EPFOComponent = () => {
 
   const toggleDisabled = () => {
     setDisabled(!disabled);
+  };
+
+  const cancelCallback = () => {
+    setDisabled(true);
+    reset();
   };
 
   const hydrateUpdateAlert = () => {
@@ -108,6 +122,7 @@ const EPFOComponent = () => {
       isOpen: !value.isOpen,
       newValues: { ...getValues() },
       initialValues: taxFormDetails,
+      cancelCallback,
       onConfirm: () => onSubmit({ ...getValues() }),
     });
   };

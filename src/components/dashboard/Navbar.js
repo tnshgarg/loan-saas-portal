@@ -22,7 +22,7 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { logout } from "../../store/actions/auth";
+import { logout } from "../../store/slices/authSlice";
 
 const drawerWidth = 240;
 
@@ -79,7 +79,7 @@ const Navbar = ({ child }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(logout);
+    dispatch(logout());
     navigate("/login");
   };
 

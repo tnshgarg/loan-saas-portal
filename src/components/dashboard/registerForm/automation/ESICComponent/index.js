@@ -6,14 +6,14 @@ import { useAlert } from "react-alert";
 import Table from "../../../../common/Table";
 
 import EditableDropdown from "./components/EditableDropdown";
-import { postCredentialsForm, postRegisterFormData } from "../../../../../services/user.services";
-import { getDocumentFromEsicForm } from "../../../../../utils/getDocumentFromState";
 import {
-  getCredentialsFormAction,
-  setEsicStateForm,
-} from "../../../../../store/actions/registerForm";
-import { NO_CHANGE_ERROR, VALUES_UPDATED } from "../../../../../utils/messageStrings";
-import useFetchWithRedux from "../../../../../hooks/useFetchWithRedux";
+  NO_CHANGE_ERROR,
+  VALUES_UPDATED,
+} from "../../../../../utils/messageStrings";
+import {
+  useGetEmployerCredentialsByIdQuery,
+  useUpdateEmployerCredentialsMutation,
+} from "../../../../../store/slices/apiSlices/employer/credentialsApiSlice";
 
 export default function ESICComponent() {
   const columns = React.useMemo(
@@ -40,19 +40,18 @@ export default function ESICComponent() {
     ],
     []
   );
-  const dispatch = useDispatch();
-
-  const esicForm = useFetchWithRedux(
-    () => getCredentialsFormAction("esic"),
-    (state) => state.registerForm.esicForm
-  );
-
-  const { jwtToken } =
-    useSelector((state) => state.auth.user?.signInUserSession.idToken) ?? "";
 
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
+  const responseFromQuery = useGetEmployerCredentialsByIdQuery({
+    employerId,
+    portal: "esic",
+  });
+  const { data: responseData } = responseFromQuery;
+
+  const [updateEmployerCredentials] = useUpdateEmployerCredentialsMutation();
+  const [esicForm, setEsicForm] = React.useState({});
   const [data, setData] = React.useState(Object.values(esicForm));
   const [skipPageReset, setSkipPageReset] = React.useState(false);
 
@@ -75,6 +74,35 @@ export default function ESICComponent() {
     },
   };
 
+  React.useEffect(() => {
+    setData([...Object.values(esicForm)]);
+  }, [esicForm]);
+
+  React.useEffect(() => {
+    generateEsicFormData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [responseData]);
+
+  const generateEsicFormData = () => {
+    console.log(responseData)
+    if(!responseData) return;
+    const {
+      body
+    } = responseData;
+    let esicData = {};
+    body.forEach((value, index) => {
+      esicData = {
+        ...esicData,
+        [value.state]: {
+          ...value,
+          isOther: value.other,
+          employerCode: value.username
+        },
+      };
+    });
+    setEsicForm(esicData);
+  };
+
   const updateData = (rowIndex, columnId, value) => {
     setSkipPageReset(true);
     setData((old) =>
@@ -89,10 +117,6 @@ export default function ESICComponent() {
       })
     );
   };
-
-  React.useEffect(() => {
-    setData([...Object.values(esicForm)]);
-  }, [esicForm]);
 
   const handleSubmit = (
     updatedRow,
@@ -122,26 +146,16 @@ export default function ESICComponent() {
     if (!isEqual || isNew) {
       updateData(row.index, "isDisabled", true);
       updateData(row.index, "isNew", false);
-      postCredentialsForm(
-        jwtToken,
-        getDocumentFromEsicForm(
-          employerId,
-          updatedRow.isOther,
-          updatedRow.state,
-          updatedRow.employerCode,
-          updatedRow.password
-        )
-      )
-        .then((response) => {
+      updateEmployerCredentials({
+        id: employerId,
+        other: updatedRow.isOther,
+        state: updatedRow.state,
+        username: updatedRow.employerCode,
+        password: updatedRow.password,
+        portal: 'esic'
+      })
+        .then(() => {
           callback && callback();
-          dispatch(
-            setEsicStateForm(
-              updatedRow.isOther,
-              updatedRow.state,
-              updatedRow.employerCode,
-              updatedRow.password
-            )
-          );
           alert.success(VALUES_UPDATED);
         })
         .catch((error) => {
@@ -150,6 +164,8 @@ export default function ESICComponent() {
           alert.error(message);
         });
     } else {
+      callback && callback()
+      setEditableRowIndex(null);
       alert.error(NO_CHANGE_ERROR);
     }
   };

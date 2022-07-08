@@ -55,7 +55,7 @@ const EditableDropdown = ({
         isDisabled={disabled ?? true}
       />
       {isOther && (
-        <input className="bp4-input other-form-input" value={value} onChange={onChange} />
+        <input disabled={disabled ?? true} className="bp4-input other-form-input" value={value} onChange={onChange} />
       )}
     </>
   ) : (

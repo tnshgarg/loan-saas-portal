@@ -23,12 +23,18 @@ const Table = ({
   initialState,
   storeData,
   inputTypes,
+  setData
 }) => {
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
   const [currRow, setCurrRow] = React.useState(null);
 
   const { value, setValue } = useContext(UpdateAlertContext);
+
+  const cancelCallback = () => {
+    setEditableRowIndex(null);
+    setData([...data]);
+  }
 
   const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
     useTable(
@@ -43,6 +49,7 @@ const Table = ({
         editableRowIndex,
         setEditableRowIndex,
         setIsOpen,
+        setValue,
         storeData,
         inputTypes,
       },
@@ -64,6 +71,7 @@ const Table = ({
                 setIsOpen,
                 editableRowIndex,
                 storeData,
+                setValue,
               }) => (
                 <Button
                   disabled={
@@ -87,13 +95,14 @@ const Table = ({
                           isOpen: !value.isOpen,
                           newValues: newValues,
                           initialValues: initialValues,
+                          cancelCallback,
                           onConfirm: () =>
                             handleSubmit(
                               updatedRow,
                               row,
                               storeData,
                               setEditableRowIndex,
-                              () => setValue({ ...value, isOpen: false })
+                              () => setValue({ ...value, isOpen: false})
                             ),
                         });
                         return;
@@ -103,7 +112,7 @@ const Table = ({
                         row,
                         storeData,
                         setEditableRowIndex,
-                        () => setValue({ ...value, isOpen: false })
+                        () => setValue({ ...value, isOpen: false})
                       );
                     }
                   }}
@@ -176,27 +185,6 @@ const Table = ({
             })}
           </tbody>
         </table>
-        {/* <Alert
-          cancelButtonText="Cancel"
-          confirmButtonText={`Confirm`}
-          icon="warning-sign"
-          intent={Intent.WARNING}
-          isOpen={isOpen}
-          onCancel={toggleAlert}
-          onConfirm={() =>
-            handleSubmit(
-              currRow.values,
-              currRow,
-              storeData,
-              setEditableRowIndex,
-              () => setIsOpen(false)
-            )
-          }
-        >
-          <p>
-            Are you sure you want to update <b>{currRow?.values?.state}</b>
-          </p>
-        </Alert> */}
         <UpdateAlert />
       </Styles>
     </>

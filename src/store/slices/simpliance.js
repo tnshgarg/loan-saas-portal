@@ -1,4 +1,4 @@
-import { SET_SIMPLIANCE_MINIMUM_WAGES } from "./types";
+import { SET_SIMPLIANCE_MINIMUM_WAGES } from "../actions/types";
 
 export const setSimplianceMinimumWages = (stateName, data) => (dispatch) => {
   dispatch({

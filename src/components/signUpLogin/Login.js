@@ -1,16 +1,16 @@
-import { Card, Button, Elevation, Intent } from "@blueprintjs/core";
-import React, { useState } from "react";
+import { Button, Card, Elevation, Intent } from "@blueprintjs/core";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../store/actions/auth";
+import { getRegisterFormData } from "../../services/user.services";
+import { login } from "../../store/slices/authSlice";
 import {
   setAddressForm,
   setEsicStateForm,
   setPfForm,
   setTaxSetupForm,
-} from "../../store/actions/registerForm";
-import { getRegisterFormData } from "../../services/user.services";
+} from "../../store/slices/registerFormSlice";
 import FormInput from "../common/FormInput";
 
 const LOGIN_CARD_STYLING = {
@@ -70,44 +70,9 @@ export const Login = () => {
     const { email: username, password } = data;
 
     dispatch(login(username, password))
-      .then((loginData) => {
+      .then(() => {
         setSuccessful(true);
         navigate("/profile");
-
-        const { authToken, employerId } = loginData;
-
-        // getRegisterFormData(authToken, employerId)
-        //   .then((response) => {
-        //     const registerFormObject = response.data.body;
-
-        //     const { company, brand, address, state, pincode } =
-        //       registerFormObject ?? "";
-
-        //     // dispatch(setAddressForm(company, brand, address, state, pincode));
-
-        //     const { pan, tan, gstin } = registerFormObject;
-
-        //     dispatch(setTaxSetupForm(pan, tan, gstin));
-
-        //     const { username, password } =
-        //       registerFormObject?.credentials?.epfo ?? "";
-
-        //     dispatch(setPfForm(username, password));
-
-        //     Object.entries(registerFormObject?.credentials?.esic ?? {}).forEach(
-        //       ([key, value]) => {
-        //         const state = key;
-        //         const { isOther, employerCode, password } = value ?? "";
-        //         dispatch(
-        //           setEsicStateForm(isOther, state, employerCode, password)
-        //         );
-        //       }
-        //     );
-        //   })
-        //   .catch((error) => {
-        //     console.log(error);
-        //     setSuccessful(false);
-        //   });
       })
       .catch(() => {
         setSuccessful(false);

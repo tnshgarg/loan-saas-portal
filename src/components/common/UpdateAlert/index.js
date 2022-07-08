@@ -5,9 +5,10 @@ import { capitalize, pickBy, isEqual } from "lodash";
 
 export const UpdateAlert = () => {
   const { value, setValue } = useContext(UpdateAlertContext);
-  const { isOpen, updatedObj, newValues, initialValues, onConfirm } = value;
+  const { isOpen, updatedObj, newValues, initialValues, onConfirm, cancelCallback } = value;
 
   const handleClose = () => {
+    cancelCallback && cancelCallback();
     setValue({ ...value, isOpen: !value.isOpen });
   };
 

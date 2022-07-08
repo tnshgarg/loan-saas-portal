@@ -1,130 +1,86 @@
-import React, { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
-  getAddressFormAction,
-  setAddressForm,
-} from "../../../store/actions/registerForm";
-import { getDocumentFromAddressFormDetails } from "../../../utils/getDocumentFromState";
-import { NO_CHANGE_ERROR, VALUES_UPDATED } from "../../../utils/messageStrings";
-import statesAndUts from "../../../utils/statesAndUts";
-import {
-  postAddressForm,
-  postRegisterFormData,
-} from "../../../services/user.services";
+  useGetEmployerAddressByIdQuery,
+  useUpdateEmployerAddressMutation,
+} from "../../../store/slices/apiSlices/employer/addressApiSlice";
 import FormInput from "../../common/FormInput";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import UpdateAlert from "../../common/UpdateAlert";
-import useFetchWithRedux from "../../../hooks/useFetchWithRedux";
+import { NO_CHANGE_ERROR } from "../../../utils/messageStrings";
 
-const AddressForm = (props) => {
-  const dispatch = useDispatch();
+const AddressForm = () => {
   const alert = useAlert();
 
-  const [disabled, setDisabled] = React.useState(true);
+  const [disabled, setDisabled] = useState(true);
 
   const { value, setValue } = useContext(UpdateAlertContext);
 
-  const {
-    company: companyInitial,
-    brand: brandInitial,
-    street: streetInitial,
-    state: stateInitial,
-    pin: pinInitial,
-  } = useFetchWithRedux(
-    getAddressFormAction,
-    (state) => state.registerForm.addressFormDetails
-  ) || "";
-
-  const { jwtToken } =
-    useSelector((state) => state.auth.user?.signInUserSession.idToken) ?? "";
+  const [updateEmployerAddress] = useUpdateEmployerAddressMutation();
 
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
-  const states = statesAndUts.map((indianState) => {
-    return {
-      value: indianState,
-      label: indianState,
-    };
-  });
+  const responseFromQuery = useGetEmployerAddressByIdQuery(employerId);
+  const { data, isLoading, error } = responseFromQuery;
+
+  const {
+    body: {
+      pin: pincodeInitial,
+      state: stateInitial,
+      street: addressInitial,
+      company: companyInitial,
+      brand: brandInitial,
+    } = {},
+  } = data ?? {};
 
   const {
     register,
     getValues,
-    handleSubmit,
-    control,
-    // watch,
-    formState: { errors },
     reset,
+    handleSubmit,
+    formState: { errors },
   } = useForm({
-    defaultValues: {
-      company: companyInitial,
-      brand: brandInitial,
-      street: streetInitial,
-      state: stateInitial,
-      pin: pinInitial,
-    },
     mode: "all",
   });
 
-
   useEffect(() => {
-    if (
-      (companyInitial || brandInitial || streetInitial || stateInitial || pinInitial)
-    ) {
+    if (data) {
       reset({
         company: companyInitial,
         brand: brandInitial,
-        street: streetInitial,
+        address: addressInitial,
         state: stateInitial,
-        pin: pinInitial,
+        pincode: pincodeInitial,
       });
     }
-    return () => {
-      const addressFormDetailsNew = getValues();
-      const { company, brand, street, state, pin } = addressFormDetailsNew;
-      const isEqual =
-        company === companyInitial &&
-        brand === brandInitial &&
-        street === streetInitial &&
-        state === stateInitial &&
-        pin === pinInitial;
-      if (!isEqual) {
-        dispatch(setAddressForm(company, brand, street, state, pin));
-      }
-    };
-  }, [
-    streetInitial,
-    brandInitial,
-    companyInitial,
-    dispatch,
-    getValues,
-    pinInitial,
-    stateInitial,
-    reset
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, reset]);
 
   const onSubmit = (addressFormDetailsNew) => {
-    const { company, brand, street, state, pin } = addressFormDetailsNew;
+    const { company, brand, address, state, pincode } = addressFormDetailsNew;
+
     const isEqual =
       company === companyInitial &&
       brand === brandInitial &&
-      street === streetInitial &&
+      address === addressInitial &&
       state === stateInitial &&
-      pin === pinInitial;
+      pincode === pincodeInitial;
     if (!isEqual) {
-      dispatch(setAddressForm(company, brand, street, state, pin));
-      postAddressForm(
-        jwtToken,
-        getDocumentFromAddressFormDetails(employerId, addressFormDetailsNew)
-      )
-        .then((response) => {
-          const status = response.data.status;
+      updateEmployerAddress({
+        ...addressFormDetailsNew,
+        id: employerId,
+        street: address,
+        pin: pincode,
+      })
+        .then(({ data }) => {
+          const status = data.status;
           if (status === 200) {
-            alert.success(VALUES_UPDATED);
+            const message = data.message;
+            alert.success(message);
             setDisabled(true);
             setValue({ ...value, isOpen: false });
           }
@@ -134,140 +90,151 @@ const AddressForm = (props) => {
           alert.error(message);
         });
     } else {
+      setValue({ ...value, isOpen: false });
+      setDisabled(true);
       alert.error(NO_CHANGE_ERROR);
     }
-  }; // your form submit function which will invoke after successful validation
-
-  // console.log(watch("example")); // you can watch individual input by pass the name of the input
+  };
 
   const toggleDisabled = () => {
     setDisabled(!disabled);
   };
 
+  const cancelCallback = () => {
+    setDisabled(true);
+    reset();
+  }
+
   const hydrateUpdateAlert = () => {
     const addressFormDetails = {
       company: companyInitial,
       brand: brandInitial,
-      street: streetInitial,
+      address: addressInitial,
       state: stateInitial,
-      pin: pinInitial,
+      pincode: pincodeInitial,
     };
     setValue({
       ...value,
       isOpen: !value.isOpen,
       newValues: { ...getValues() },
       initialValues: addressFormDetails,
+      cancelCallback: cancelCallback,
       onConfirm: () => onSubmit({ ...getValues() }),
     });
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit(value.toggleAlert)}>
-        <FormInput
-          register={register}
-          validations={{
-            required: true,
-            pattern: {
-              value: /^[A-Z0-9a-z ]+$/,
-            },
-          }}
-          errors={errors}
-          field={"company"}
-          inputProps={{
-            disabled: disabled,
-            icon: "office",
-            label: "Company Name",
-            placeholder: "Please enter your company name",
-            errorMessage: "Please enter your company name",
-          }}
-        />
-        <FormInput
-          register={register}
-          validations={{
-            required: false,
-          }}
-          errors={errors}
-          field={"brand"}
-          inputProps={{
-            disabled: disabled,
-            icon: "tag",
-            label: "Brand Name",
-            placeholder: "Please enter your brand name",
-            errorMessage: "Please enter your brand name",
-          }}
-        />
-        <FormInput
-          register={register}
-          validations={{
-            required: true,
-            minLength: 1,
-            pattern: {
-              value: /^[A-Z0-9a-z, ]+$/,
-            },
-          }}
-          errors={errors}
-          field={"street"}
-          inputProps={{
-            disabled: disabled,
-            icon: "home",
-            label: "Address",
-            placeholder: "Please enter your company address",
-            errorMessage: "Please enter your company address",
-          }}
-        />
-        <FormInput
-          register={register}
-          validations={{
-            required: true,
-            minLength: 1,
-            pattern: {
-              value: /^[A-Za-z ]+$/,
-            },
-          }}
-          errors={errors}
-          field={"state"}
-          inputProps={{
-            disabled: disabled,
-            icon: "locate",
-            label: "State",
-            placeholder:
-              "Please enter the State in which your company office is located",
-            errorMessage:
-              "Please enter the State in which your company office is located",
-          }}
-        />
-        <FormInput
-          register={register}
-          validations={{
-            required: true,
-            minLength: 1,
-            pattern: {
-              value: /^\d{6}$/,
-            },
-          }}
-          errors={errors}
-          field={"pin"}
-          inputProps={{
-            disabled: disabled,
-            icon: "pin",
-            label: "Pincode",
-            placeholder: "Please enter company address pincode",
-            errorMessage: "Pincode must be 6 digits",
-          }}
-        />
-        {/* include validation with required or other standard HTML validation rules */}
-        {/* errors will return when field validation fails  */}
-        {/* {errors.exampleRequired && <p>This field is required</p>} */}
+      {error ? (
+        <>Oh no, there was an error</>
+      ) : isLoading ? (
+        <>Loading...</>
+      ) : data ? (
+        <div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <FormInput
+              register={register}
+              validations={{
+                required: true,
+                pattern: {
+                  value: /^[A-Z0-9a-z ]+$/,
+                },
+              }}
+              errors={errors}
+              field={"company"}
+              inputProps={{
+                disabled: disabled,
+                icon: "office",
+                label: "Company Name",
+                placeholder: "Please enter your company name",
+                errorMessage: "Please enter your company name",
+              }}
+            />
+            <FormInput
+              register={register}
+              validations={{
+                required: false,
+              }}
+              errors={errors}
+              field={"brand"}
+              inputProps={{
+                disabled: disabled,
+                icon: "tag",
+                label: "Brand Name",
+                placeholder: "Please enter your brand name",
+                errorMessage: "Please enter your brand name",
+              }}
+            />
+            <FormInput
+              register={register}
+              validations={{
+                required: true,
+                minLength: 1,
+                pattern: {
+                  value: /^[A-Z0-9a-z, ]+$/,
+                },
+              }}
+              errors={errors}
+              field={"address"}
+              inputProps={{
+                disabled: disabled,
+                icon: "home",
+                label: "Address",
+                placeholder: "Please enter your company address",
+                errorMessage: "Please enter your company address",
+              }}
+            />
+            <FormInput
+              register={register}
+              validations={{
+                required: true,
+                minLength: 1,
+                pattern: {
+                  value: /^[A-Za-z ]+$/,
+                },
+              }}
+              errors={errors}
+              field={"state"}
+              inputProps={{
+                disabled: disabled,
+                icon: "locate",
+                label: "State",
+                placeholder:
+                  "Please enter the State in which your company office is located",
+                errorMessage:
+                  "Please enter the State in which your company office is located",
+              }}
+            />
+            <FormInput
+              register={register}
+              validations={{
+                required: true,
+                minLength: 1,
+                pattern: {
+                  value: /^\d{6}$/,
+                },
+              }}
+              errors={errors}
+              field={"pincode"}
+              inputProps={{
+                disabled: disabled,
+                icon: "pin",
+                label: "Pincode",
+                placeholder: "Please enter company address pincode",
+                errorMessage: "Pincode must be 6 digits",
+              }}
+            />
 
-        <input
-          disabled={Object.values(errors).length}
-          type="button"
-          value={disabled ? "Edit" : "Submit"}
-          onClick={disabled ? toggleDisabled : hydrateUpdateAlert}
-        />
-      </form>
-      <UpdateAlert />
+            <input
+              disabled={Object.values(errors).length}
+              type="button"
+              value={disabled ? "Edit" : "Submit"}
+              onClick={disabled ? toggleDisabled : hydrateUpdateAlert}
+            />
+          </form>
+          <UpdateAlert />
+        </div>
+      ) : null}
     </div>
   );
 };

@@ -1,24 +1,24 @@
 import {
-  Button,
   Card,
+  Dialog,
   EditableText,
   Elevation,
   Tab,
   Tabs,
 } from "@blueprintjs/core";
-import axios from "axios";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 import styled from "styled-components";
 import {
-  setEmployeeData,
-  updateEmployeeDataAndSetEdits,
-} from "../../../store/actions/employee";
+  useGetAllEmployeesByEmployerIdQuery,
+  useLazyGetAllEmployeesByEmployerIdQuery,
+} from "../../../store/slices/apiSlices/employees/getEmployeesApiSlice";
 import Navbar from "../Navbar";
-import { headers } from "./headerData";
+import { EmployeeModal } from "./employeeModal/EmployeeModal";
+import { tableColumns } from "./tableColumns";
 
 const Styles = styled.div`
   padding: 1rem;
@@ -63,6 +63,13 @@ const TABLE_CARD_STYLING = {
   overflow: "scroll",
 };
 
+const MODAL_STYLING = {
+  // height: "25rem",
+  marginTop: "7.5rem",
+  marginBottom: "5rem",
+  width: "50rem",
+};
+
 // Define a default UI for filtering
 function DefaultColumnFilter({
   column: { filterValue, preFilteredRows, setFilter },
@@ -87,70 +94,72 @@ function fuzzyTextFilterFn(rows, id, filterValue) {
 fuzzyTextFilterFn.autoRemove = (val) => !val;
 
 // Create an editable cell renderer
-const EditableCell = ({
-  value: initialValue,
-  row,
-  column: { id },
-  isTableEditable, // This is a custom function that we supplied to our table instance
-}) => {
+const EditableCell = ({ value: initialValue, row, column: { id } }) => {
   // We need to keep and update the state of the cell normally
   const [value, setValue] = useState(initialValue);
-  const [isUpdated, setIsUpdate] = useState(false);
-
-  const dispatch = useDispatch();
-
-  const onChange = (e) => {
-    setValue(e);
-  };
-
-  // We'll only update the external data when the input is blurred
-  const onConfirm = (e) => {
-    if (e !== initialValue) {
-      setIsUpdate(true);
-      const uniqueId = row.original["_id"];
-      const columnToChange = id;
-      const valueToChangeWith = e;
-      dispatch(
-        updateEmployeeDataAndSetEdits(
-          uniqueId,
-          columnToChange,
-          valueToChangeWith
-        )
-      );
-    }
-  };
 
   // If the initialValue is changed external, sync it up with our state
-  // useEffect(() => {
-  //   setValue(initialValue);
-  // }, [initialValue]);
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
 
   return (
-    <div style={{ backgroundColor: isUpdated ? "#ffe5b4" : "" }}>
-      <EditableText
-        value={value}
-        onChange={onChange}
-        onConfirm={onConfirm}
-        disabled={!isTableEditable}
-      />
+    <div>
+      <EditableText value={value} disabled={true} />
     </div>
   );
 };
 
 const TabularViewTab = () => {
-  const auth = useSelector((state) => state.auth);
-  const fetchedRows = useSelector(
-    (state) => Object.values(state.employee?.employeeData),
-    shallowEqual
-  );
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
-  // const fetchedRows = useMemo(() => [], []);
+  const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
+  const { data, isLoading, error } = responseFromQuery;
 
-  const dispatch = useDispatch();
+  const responseFromLazyQuery = useLazyGetAllEmployeesByEmployerIdQuery();
+  const [
+    trigger,
+    { data: lazyData, isLoading: lazyIsLoading, error: lazyError },
+  ] = responseFromLazyQuery;
+
+  const [fetchedRows, setFetchedRows] = useState([]);
+
+  const setFetchedRowsFromBody = (body) => {
+    const fetchedRowsData = body.map((employee) => {
+      const { employeeId, name, mobile, email, aadhaar, dob, title, _id } =
+        employee;
+      return {
+        "Employee ID": employeeId,
+        Name: name,
+        "Mobile Number": mobile,
+        Email: email,
+        "Aadhaar Number": aadhaar,
+        "Date of Birth (dd/mm/yyyy)": dob,
+        "Job Title": title,
+        _id: _id,
+      };
+    });
+    setFetchedRows(fetchedRowsData);
+  };
+
+  useEffect(() => {
+    if (data) {
+      const body = data.body ?? [];
+      setFetchedRowsFromBody(body);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (lazyData) {
+      const body = lazyData.body ?? [];
+      setFetchedRowsFromBody(body);
+    }
+  }, [lazyData]);
 
   const columns = useMemo(
     () =>
-      headers[0].map((header) => {
+      tableColumns.map((header) => {
         return {
           Header: header,
           accessor: header,
@@ -188,56 +197,22 @@ const TabularViewTab = () => {
     []
   );
 
-  useEffect(() => {
-    const fetchData = () => {
-      axios
-        .get(
-          "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud",
-          {
-            headers: {
-              Authorization: auth.user
-                ? auth.user.signInUserSession.idToken.jwtToken
-                : null,
-            },
-          }
-        )
-        .then((res) => {
-          console.log(res);
-          const tempData = res.data["body"];
-          const employeeData = Object.assign(
-            {},
-            ...tempData.map((x) => ({ [x._id]: x }))
-          );
-          dispatch(setEmployeeData(employeeData));
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [didDialogChange, setDidDialogChange] = useState(false);
+  const [currEmployeeId, setCurrEmployeeId] = useState(null);
 
-    fetchData();
-  }, []);
-
-  const publishChange = (updatedRow) => {
-    const options = {
-      headers: {
-        Authorization: auth.user
-          ? auth.user.signInUserSession.idToken.jwtToken
-          : null,
-      },
-    };
-    const body = updatedRow;
-    return axios.put(
-      "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud",
-      body,
-      options
-    );
+  const handleRowClick = (currentRow) => {
+    const { _id } = currentRow;
+    setIsDialogOpen(true);
+    setCurrEmployeeId(_id);
   };
 
-  const [isTableEditable, setIsTableEditable] = useState(false);
-
-  const handleTableEditButton = () => {
-    setIsTableEditable(!isTableEditable);
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+    if (didDialogChange) {
+      trigger(employerId);
+    }
+    setDidDialogChange(false);
   };
 
   const {
@@ -265,7 +240,6 @@ const TabularViewTab = () => {
       initialState: { pageIndex: 0, pageSize: 5 },
       defaultColumn, // Be sure to pass the defaultColumn option
       filterTypes,
-      isTableEditable,
     },
 
     useFilters, // useFilters!
@@ -275,102 +249,137 @@ const TabularViewTab = () => {
 
   // Render the UI for your table
   return (
-    <Card
-      style={TABLE_CARD_STYLING}
-      interactive={true}
-      elevation={Elevation.THREE}
-    >
-      <Button intent="primary" onClick={handleTableEditButton}>
-        {isTableEditable ? "Update Table" : "Edit Table"}
-      </Button>
-      <Styles>
-        <table {...getTableProps()}>
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                    {column.render("Header")}
-                    {/* Add a sort direction indicator */}
-                    <span>
-                      {column.isSorted
-                        ? column.isSortedDesc
-                          ? " 🔽"
-                          : " 🔼"
-                        : ""}
-                    </span>
-                    <div>
-                      {column.canFilter ? column.render("Filter") : null}
-                    </div>
-                  </th>
+    <div>
+      {error ? (
+        <>Oh no, there was an error</>
+      ) : isLoading ? (
+        <>Loading...</>
+      ) : data ? (
+        <Card
+          style={TABLE_CARD_STYLING}
+          interactive={true}
+          elevation={Elevation.THREE}
+        >
+          <Styles>
+            <table {...getTableProps()}>
+              <thead>
+                {headerGroups.map((headerGroup) => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column) => (
+                      <th
+                        {...column.getHeaderProps(
+                          column.getSortByToggleProps()
+                        )}
+                      >
+                        {column.render("Header")}
+                        {/* Add a sort direction indicator */}
+                        <span>
+                          {column.isSorted
+                            ? column.isSortedDesc
+                              ? " 🔽"
+                              : " 🔼"
+                            : ""}
+                        </span>
+                        <div>
+                          {column.canFilter ? column.render("Filter") : null}
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {page.map((row, i) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        <div className="pagination">
-          <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-            {"<<"}
-          </button>{" "}
-          <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-            {"<"}
-          </button>{" "}
-          <button onClick={() => nextPage()} disabled={!canNextPage}>
-            {">"}
-          </button>{" "}
-          <button
-            onClick={() => gotoPage(pageCount - 1)}
-            disabled={!canNextPage}
-          >
-            {">>"}
-          </button>{" "}
-          <span>
-            Page{" "}
-            <strong>
-              {pageIndex + 1} of {pageOptions.length}
-            </strong>{" "}
-          </span>
-          <span>
-            {"  "} | Go to page:{" "}
-            <input
-              type="number"
-              defaultValue={pageIndex + 1}
-              onChange={(e) => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                gotoPage(page);
-              }}
-              style={{ width: "100px" }}
-            />
-          </span>{" "}
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-            }}
-          >
-            {[5, 10, 20, 30, 40, 50].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select>
-        </div>
-      </Styles>
-    </Card>
+              </thead>
+              <tbody {...getTableBodyProps()}>
+                {page.map((row, i) => {
+                  prepareRow(row);
+                  return (
+                    <tr
+                      {...row.getRowProps()}
+                      onClick={() => {
+                        handleRowClick(row.original);
+                      }}
+                    >
+                      {row.cells.map((cell) => {
+                        return (
+                          <td {...cell.getCellProps()}>
+                            {cell.render("Cell")}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            <div className="pagination">
+              <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                {"<<"}
+              </button>{" "}
+              <button
+                onClick={() => previousPage()}
+                disabled={!canPreviousPage}
+              >
+                {"<"}
+              </button>{" "}
+              <button onClick={() => nextPage()} disabled={!canNextPage}>
+                {">"}
+              </button>{" "}
+              <button
+                onClick={() => gotoPage(pageCount - 1)}
+                disabled={!canNextPage}
+              >
+                {">>"}
+              </button>{" "}
+              <span>
+                Page{" "}
+                <strong>
+                  {pageIndex + 1} of {pageOptions.length}
+                </strong>{" "}
+              </span>
+              <span>
+                {"  "} | Go to page:{" "}
+                <input
+                  type="number"
+                  defaultValue={pageIndex + 1}
+                  onChange={(e) => {
+                    const page = e.target.value
+                      ? Number(e.target.value) - 1
+                      : 0;
+                    gotoPage(page);
+                  }}
+                  style={{ width: "100px" }}
+                />
+              </span>{" "}
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                }}
+              >
+                {[5, 10, 20, 30, 40, 50].map((pageSize) => (
+                  <option key={pageSize} value={pageSize}>
+                    Show {pageSize}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <Dialog
+              isOpen={isDialogOpen}
+              onClose={handleDialogClose}
+              title="Employee Details"
+              style={MODAL_STYLING}
+            >
+              <Card interactive={true} elevation={Elevation.THREE}>
+                <EmployeeModal
+                  currEmployeeId={currEmployeeId}
+                  setDidDialogChange={setDidDialogChange}
+                />
+              </Card>
+            </Dialog>
+          </Styles>
+        </Card>
+      ) : null}
+    </div>
   );
 };
 
