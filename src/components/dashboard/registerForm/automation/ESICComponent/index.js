@@ -90,7 +90,7 @@ export default function ESICComponent() {
       body
     } = responseData;
     let esicData = {};
-    body.forEach((value, index) => {
+    body?.forEach((value, index) => {
       esicData = {
         ...esicData,
         [value.state]: {
