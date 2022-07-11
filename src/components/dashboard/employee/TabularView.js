@@ -15,7 +15,7 @@ import styled from "styled-components";
 import {
   useGetAllEmployeesByEmployerIdQuery,
   useLazyGetAllEmployeesByEmployerIdQuery,
-} from "../../../store/slices/apiSlices/employees/getEmployeesApiSlice";
+} from "../../../store/slices/apiSlices/employees/employeesApiSlice";
 import Navbar from "../Navbar";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";

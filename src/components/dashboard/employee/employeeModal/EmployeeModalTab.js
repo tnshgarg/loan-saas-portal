@@ -7,7 +7,7 @@ import { NO_CHANGE_ERROR } from "../../../../utils/messageStrings";
 import {
   useGetEmployeeDetailsByEmployeeIdQuery,
   useUpdateEmployeeDetailsMutation,
-} from "../../../../store/slices/apiSlices/employee/getEmployeeDetailsApiSlice";
+} from "../../../../store/slices/apiSlices/employee/employeeDetailsApiSlice";
 import FormInput from "../../../common/FormInput";
 
 export const EmployeeModalTab = ({

@@ -25,7 +25,7 @@ export const employeeDetails = createApi({
       query: ({ id, category }) => {
         return `/employee?id=${id}&category=${category}`;
       },
-      providesTags: ["EmployeeDetails"],
+      providesTags: (id) => [{ type: "EmployeeDetails", id }],
     }),
     updateEmployeeDetails: builder.mutation({
       query: (body) => ({

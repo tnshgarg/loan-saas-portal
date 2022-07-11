@@ -65,7 +65,7 @@ export const Login = () => {
     dispatch(login(username, password))
       .then(() => {
         setSuccessful(true);
-        navigate("/profile");
+        navigate("/register-form");
       })
       .catch(() => {
         setSuccessful(false);
