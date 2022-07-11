@@ -4,16 +4,15 @@ export const Invalid = () => {
   const navigate = useNavigate();
 
   const handleSubmit = () => {
-    navigate("/");
+    navigate("/employer/register-form");
   };
 
   return (
-    <>
-      <h1>404 Error</h1>
-      <h1>Page not found</h1>
+    <div style={{ textAlign: "center" }}>
+      <h1>Coming soon ... </h1>
       <form onSubmit={handleSubmit}>
         <input type="submit" value="Return to Main Page" />
       </form>
-    </>
+    </div>
   );
 };

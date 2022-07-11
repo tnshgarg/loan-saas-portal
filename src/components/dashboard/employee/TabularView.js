@@ -1,13 +1,22 @@
-import { Card, Dialog, EditableText, Elevation, Spinner, Tab, Tabs } from "@blueprintjs/core";
-import axios from "axios";
+import {
+  Card,
+  Dialog,
+  EditableText,
+  Elevation,
+  Tab,
+  Tabs,
+} from "@blueprintjs/core";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 import styled from "styled-components";
-import { setEmployeeData } from "../../../store/actions/employee";
-import { EmployeeModalForm } from "./EmployeeModalForm";
+import {
+  useGetAllEmployeesByEmployerIdQuery,
+  useLazyGetAllEmployeesByEmployerIdQuery,
+} from "../../../store/slices/apiSlices/employees/employeesApiSlice";
+import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
 
 const Styles = styled.div`
@@ -46,24 +55,24 @@ const REGISTER_FORM_CARD_STYLING = {
   marginLeft: "auto",
   marginRight: "auto",
   overflow: "scroll",
-  width: "75rem"
+  width: "75rem",
 };
 
 const TABLE_CARD_STYLING = {
-  overflow: "scroll"
+  overflow: "scroll",
 };
 
 const MODAL_STYLING = {
   // height: "25rem",
   marginTop: "7.5rem",
   marginBottom: "5rem",
-  width: "50rem"
+  width: "50rem",
 };
 
 // Define a default UI for filtering
 function DefaultColumnFilter({
-                               column: { filterValue, preFilteredRows, setFilter }
-                             }) {
+  column: { filterValue, preFilteredRows, setFilter },
+}) {
   const count = preFilteredRows.length;
 
   return (
@@ -101,22 +110,58 @@ const EditableCell = ({ value: initialValue, row, column: { id } }) => {
 };
 
 const TabularViewTab = () => {
-  const auth = useSelector((state) => state.auth);
-  const fetchedRows = useSelector(
-    (state) => Object.values(state.employee?.employeeData),
-    shallowEqual
-  );
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
-  // const fetchedRows = useMemo(() => [], []);
+  const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
+  const { data, isLoading, error } = responseFromQuery;
 
-  const dispatch = useDispatch();
+  const responseFromLazyQuery = useLazyGetAllEmployeesByEmployerIdQuery();
+  const [
+    trigger,
+    { data: lazyData, isLoading: lazyIsLoading, error: lazyError },
+  ] = responseFromLazyQuery;
+
+  const [fetchedRows, setFetchedRows] = useState([]);
+
+  const setFetchedRowsFromBody = (body) => {
+    const fetchedRowsData = body.map((employee) => {
+      const { employeeId, name, mobile, email, aadhaar, dob, title, _id } =
+        employee;
+      return {
+        "Employee ID": employeeId,
+        Name: name,
+        "Mobile Number": mobile,
+        Email: email,
+        "Aadhaar Number": aadhaar,
+        "Date of Birth (dd/mm/yyyy)": dob,
+        "Job Title": title,
+        _id: _id,
+      };
+    });
+    setFetchedRows(fetchedRowsData);
+  };
+
+  useEffect(() => {
+    if (data) {
+      const body = data.body ?? [];
+      setFetchedRowsFromBody(body);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (lazyData) {
+      const body = lazyData.body ?? [];
+      setFetchedRowsFromBody(body);
+    }
+  }, [lazyData]);
 
   const columns = useMemo(
     () =>
       tableColumns.map((header) => {
         return {
           Header: header,
-          accessor: header
+          accessor: header,
         };
       }),
     []
@@ -133,11 +178,11 @@ const TabularViewTab = () => {
           const rowValue = row.values[id];
           return rowValue !== undefined
             ? String(rowValue)
-              .toLowerCase()
-              .startsWith(String(filterValue).toLowerCase())
+                .toLowerCase()
+                .startsWith(String(filterValue).toLowerCase())
             : true;
         });
-      }
+      },
     }),
     []
   );
@@ -146,89 +191,26 @@ const TabularViewTab = () => {
     () => ({
       // Let's set up our default Filter UI
       Filter: DefaultColumnFilter,
-      Cell: EditableCell
+      Cell: EditableCell,
     }),
     []
   );
 
-  const fetchData = () => {
-    const options = {
-      headers: {
-        Authorization: auth.user
-          ? auth.user.signInUserSession.idToken.jwtToken
-          : null
-      },
-      params: {
-        fields: tableColumns.toString()
-      }
-    };
-    axios
-      .get(
-        "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud",
-        options
-      )
-      .then((res) => {
-        console.log(res);
-        const tempData = res.data["body"];
-        const employeeData = Object.assign(
-          {},
-          ...tempData.map((x) => ({ [x._id]: x }))
-        );
-        dispatch(setEmployeeData(employeeData));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const [dialogContent, setDialogContent] = useState({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [showSpinner, setShowSpinner] = useState(true);
   const [didDialogChange, setDidDialogChange] = useState(false);
 
-  const fetchDataForSingleEmployee = (uniqueId) => {
-    const options = {
-      headers: {
-        Authorization: auth.user
-          ? auth.user.signInUserSession.idToken.jwtToken
-          : null
-      },
-      params: {
-        uniqueId: uniqueId
-      }
-    };
-    axios
-      .get(
-        "https://riz6m4w4r9.execute-api.ap-south-1.amazonaws.com/cognito_auth/employer/account/tabular-crud",
-        options
-      )
-      .then((res) => {
-        const tempData = res.data["body"];
-        const employeeData = tempData[0];
-        setDialogContent(employeeData);
-        setShowSpinner(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  const [currEmployeeId, setCurrEmployeeId] = useState(null);
 
   const handleRowClick = (currentRow) => {
-    const { _id: uniqueId } = currentRow;
+    const { _id } = currentRow;
     setIsDialogOpen(true);
-    fetchDataForSingleEmployee(uniqueId);
+    setCurrEmployeeId(_id);
   };
 
   const handleDialogClose = () => {
     setIsDialogOpen(false);
-    setShowSpinner(true);
-    setDialogContent({});
     if (didDialogChange) {
-      fetchData();
+      trigger(employerId);
     }
     setDidDialogChange(false);
   };
@@ -250,14 +232,14 @@ const TabularViewTab = () => {
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize }
+    state: { pageIndex, pageSize },
   } = useTable(
     {
       columns,
       data: fetchedRows,
       initialState: { pageIndex: 0, pageSize: 5 },
       defaultColumn, // Be sure to pass the defaultColumn option
-      filterTypes
+      filterTypes,
     },
 
     useFilters, // useFilters!
@@ -267,126 +249,137 @@ const TabularViewTab = () => {
 
   // Render the UI for your table
   return (
-    <Card
-      style={TABLE_CARD_STYLING}
-      interactive={true}
-      elevation={Elevation.THREE}
-    >
-      <Styles>
-        <table {...getTableProps()}>
-          <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  {column.render("Header")}
-                  {/* Add a sort direction indicator */}
-                  <span>
-                      {column.isSorted
-                        ? column.isSortedDesc
-                          ? " 🔽"
-                          : " 🔼"
-                        : ""}
-                    </span>
-                  <div>
-                    {column.canFilter ? column.render("Filter") : null}
-                  </div>
-                </th>
-              ))}
-            </tr>
-          ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-          {page.map((row, i) => {
-            prepareRow(row);
-            return (
-              <tr
-                {...row.getRowProps()}
-                onClick={() => {
-                  handleRowClick(row.original);
-                }}
-              >
-                {row.cells.map((cell) => {
+    <div>
+      {error ? (
+        <>Oh no, there was an error</>
+      ) : isLoading ? (
+        <>Loading...</>
+      ) : data ? (
+        <Card
+          style={TABLE_CARD_STYLING}
+          interactive={true}
+          elevation={Elevation.THREE}
+        >
+          <Styles>
+            <table {...getTableProps()}>
+              <thead>
+                {headerGroups.map((headerGroup) => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column) => (
+                      <th
+                        {...column.getHeaderProps(
+                          column.getSortByToggleProps()
+                        )}
+                      >
+                        {column.render("Header")}
+                        {/* Add a sort direction indicator */}
+                        <span>
+                          {column.isSorted
+                            ? column.isSortedDesc
+                              ? " 🔽"
+                              : " 🔼"
+                            : ""}
+                        </span>
+                        <div>
+                          {column.canFilter ? column.render("Filter") : null}
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody {...getTableBodyProps()}>
+                {page.map((row, i) => {
+                  prepareRow(row);
                   return (
-                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                    <tr
+                      {...row.getRowProps()}
+                      onClick={() => {
+                        handleRowClick(row.original);
+                      }}
+                    >
+                      {row.cells.map((cell) => {
+                        return (
+                          <td {...cell.getCellProps()}>
+                            {cell.render("Cell")}
+                          </td>
+                        );
+                      })}
+                    </tr>
                   );
                 })}
-              </tr>
-            );
-          })}
-          </tbody>
-        </table>
-        <div className="pagination">
-          <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-            {"<<"}
-          </button>
-          {" "}
-          <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-            {"<"}
-          </button>
-          {" "}
-          <button onClick={() => nextPage()} disabled={!canNextPage}>
-            {">"}
-          </button>
-          {" "}
-          <button
-            onClick={() => gotoPage(pageCount - 1)}
-            disabled={!canNextPage}
-          >
-            {">>"}
-          </button>
-          {" "}
-          <span>
-            Page{" "}
-            <strong>
-              {pageIndex + 1} of {pageOptions.length}
-            </strong>{" "}
-          </span>
-          <span>
-            {"  "} | Go to page:{" "}
-            <input
-              type="number"
-              defaultValue={pageIndex + 1}
-              onChange={(e) => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                gotoPage(page);
-              }}
-              style={{ width: "100px" }}
-            />
-          </span>{" "}
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-            }}
-          >
-            {[5, 10, 20, 30, 40, 50].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select>
-        </div>
+              </tbody>
+            </table>
+            <div className="pagination">
+              <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                {"<<"}
+              </button>{" "}
+              <button
+                onClick={() => previousPage()}
+                disabled={!canPreviousPage}
+              >
+                {"<"}
+              </button>{" "}
+              <button onClick={() => nextPage()} disabled={!canNextPage}>
+                {">"}
+              </button>{" "}
+              <button
+                onClick={() => gotoPage(pageCount - 1)}
+                disabled={!canNextPage}
+              >
+                {">>"}
+              </button>{" "}
+              <span>
+                Page{" "}
+                <strong>
+                  {pageIndex + 1} of {pageOptions.length}
+                </strong>{" "}
+              </span>
+              <span>
+                {"  "} | Go to page:{" "}
+                <input
+                  type="number"
+                  defaultValue={pageIndex + 1}
+                  onChange={(e) => {
+                    const page = e.target.value
+                      ? Number(e.target.value) - 1
+                      : 0;
+                    gotoPage(page);
+                  }}
+                  style={{ width: "100px" }}
+                />
+              </span>{" "}
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                }}
+              >
+                {[5, 10, 20, 30, 40, 50].map((pageSize) => (
+                  <option key={pageSize} value={pageSize}>
+                    Show {pageSize}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <Dialog
-          isOpen={isDialogOpen}
-          onClose={handleDialogClose}
-          title="Employee Details"
-          style={MODAL_STYLING}
-        >
-          <Card interactive={true} elevation={Elevation.THREE}>
-            {showSpinner ? (
-              <Spinner />
-            ) : (
-              <EmployeeModalForm
-                formDataInitial={dialogContent}
-                setDidDialogChange={setDidDialogChange}
-              />
-            )}
-          </Card>
-        </Dialog>
-      </Styles>
-    </Card>
+            <Dialog
+              isOpen={isDialogOpen}
+              onClose={handleDialogClose}
+              title="Employee Details"
+              style={MODAL_STYLING}
+            >
+              <Card interactive={true} elevation={Elevation.THREE}>
+                <EmployeeModal
+                  currEmployeeId={currEmployeeId}
+                  setDidDialogChange={setDidDialogChange}
+                />
+              </Card>
+            </Dialog>
+          </Styles>
+        </Card>
+      ) : null}
+    </div>
   );
 };
 

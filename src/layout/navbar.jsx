@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { BREAD_CRUMBS } from "./navigation";
 import { connect } from "react-redux";
 import { Popover2 } from "@blueprintjs/popover2";
-import { logout } from "../store/actions/auth";
+import { logout } from "../store/slices/authSlice";
 
 function _UserMenuItem(props) {
   const { isLoggedIn, user, dispatch } = props;

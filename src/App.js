@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import Profile from "./components/dashboard/profile/Profile";
+import Overview from "./components/dashboard/overview/Overview";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
 
 import { Invalid } from "./components/invalid";
@@ -14,9 +14,8 @@ import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
 import Onboard from "./components/dashboard/employee/Onboard";
 import { TabularView } from "./components/dashboard/employee/TabularView";
 
-import { history } from "./helpers/history";
+import { history } from "./utils/history";
 import BaseLayout from "./layout/base";
-
 
 const App = () => {
   useEffect(() => {
@@ -24,8 +23,8 @@ const App = () => {
       Auth: {
         region: process.env.REACT_APP_REGION,
         userPoolId: process.env.REACT_APP_USER_POOL_ID,
-        userPoolWebClientId: process.env.REACT_APP_USER_POOL_WEB_CLIENT_ID
-      }
+        userPoolWebClientId: process.env.REACT_APP_USER_POOL_WEB_CLIENT_ID,
+      },
     });
   });
 
@@ -44,15 +43,14 @@ const App = () => {
             path="/confirm-forgot-password"
             element={<ConfirmForgotPassword />}
           />
-          <Route path="/user/profile" element={<Profile />} />
-          <Route path="/user/register-form" element={<RegisterForm />} />
+          <Route path="/employer/overview" element={<Overview />} />
+          <Route path="/employer/register-form" element={<RegisterForm />} />
           <Route path="/employees/onboard" element={<Onboard />} />
-          <Route path="/employees/dashboard" element={<TabularView />} />
+          <Route path="/employees/panel" element={<TabularView />} />
           <Route path="*" element={<Invalid />} />
         </Routes>
       </BaseLayout>
     </Router>
-
   );
 };
 

@@ -1,55 +1,51 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMoneyBillWave, faMoneyBill1Wave, faMoneyCheck } from "@fortawesome/free-solid-svg-icons";
+import { faAddressBook, faBuildingColumns, faCalendarDays, faChartLine, faMoneyBillWave, faMoneyBill1Wave, faMoneyCheck, faUsers, faListCheck, faFileArrowUp, faCalculator, faMoneyBill } from "@fortawesome/free-solid-svg-icons";
 import { THEME } from "../theme/base";
 
 
-const { sidebar: { iconSize } } = THEME;
+const { sidebar: { iconSize, iconPadding } } = THEME;
 
 function SidebarIcon(props) {
   const { icon } = props;
-  return <FontAwesomeIcon icon={icon} style={{ fontSize: iconSize }} />;
+  return <FontAwesomeIcon icon={icon} style={{ fontSize: iconSize, padding: iconPadding}} />;
 }
 
 function MenuIcon(props) {
   const { icon } = props;
-  return <FontAwesomeIcon icon={icon} style={{ fontSize: "1.2em" }} />;
+  return <FontAwesomeIcon icon={icon} style={{ fontSize: iconSize, padding: iconPadding}} />;
 }
 
 const NAV_MENU = [
   {
     name: "Employer",
-    icon: "person",
-    route: "/user",
+    icon: <SidebarIcon icon={faBuildingColumns} />,
+    route: "/employer",
     children: [
       {
-        name: "Profile",
-        icon: "id-number",
-        route: "/profile"
+        name: "Overview",
+        icon: <MenuIcon icon={faChartLine} />,
+        route: "/overview"
       },
       {
         name: "Registration",
-        icon: "form",
+        icon: <MenuIcon icon={faListCheck} />,
         route: "/register-form"
       }
     ]
 
   }, {
     name: "Employees",
-    icon: "people",
+    icon: <SidebarIcon icon={faUsers} />,
     route: "/employees",
     children: [
       {
         name: "Onboard",
-        icon: "new-person",
+        icon: <MenuIcon icon={faFileArrowUp} />,
         route: "/onboard"
       }, {
-        name: "Dashboard",
-        icon: "office",
-        route: "/dashboard"
-      }, {
-        name: "Data Import",
-        icon: "cloud-upload",
-        route: "/import"
+        name: "Panel",
+        icon: <MenuIcon icon={faAddressBook} />,
+        route: "/panel"
       }
     ]
   }, {
@@ -70,23 +66,23 @@ const NAV_MENU = [
     ]
   }, {
     name: "Attendance",
-    icon: "timeline-events",
+    icon: <SidebarIcon icon={faCalendarDays} />,
     route: "/attendance",
     children: [
       {
         name: "Data Import",
-        icon: "cloud-upload",
+        icon: <MenuIcon icon={faFileArrowUp} />,
         route: "/import"
       }
     ]
   }, {
     name: "Calculator",
-    icon: "calculator",
+    icon: <SidebarIcon icon={faCalculator} />,
     route: "/calculator",
     children: [
       {
         name: "Salary",
-        icon: "cloud-upload",
+        icon: <MenuIcon icon={faMoneyBill} />,
         route: "/salary"
       }
     ]

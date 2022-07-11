@@ -1,19 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useAlert } from "react-alert";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { setPfForm } from "../../../../store/actions/registerForm";
-import { getDocumentFromPfForm } from "../../../../helpers/getDocumentFromState";
-import { NO_CHANGE_ERROR } from "../../../../helpers/messageStrings";
-import { postRegisterFormData } from "../../../../services/user.services";
+import {
+  NO_CHANGE_ERROR,
+  VALUES_UPDATED,
+} from "../../../../utils/messageStrings";
+import { setPfForm } from "../../../../store/slices/registerFormSlice";
 import FormInput from "../../../common/FormInput";
+import withUpdateAlert from "../../../../hoc/withUpdateAlert";
+import UpdateAlertContext from "../../../../contexts/updateAlertContext";
+import UpdateAlert from "../../../common/UpdateAlert";
+import {
+  useGetEmployerCredentialsByIdQuery,
+  useUpdateEmployerCredentialsMutation,
+} from "../../../../store/slices/apiSlices/employer/credentialsApiSlice";
 
 const EPFOComponent = () => {
   const dispatch = useDispatch();
   const alert = useAlert();
 
-  const { username: usernameInitial, password: passwordInitial } =
-    useSelector((state) => state.registerForm.pfForm) || "";
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
+
+  const responseFromQuery = useGetEmployerCredentialsByIdQuery({
+    employerId,
+    portal: "epfo",
+  });
+  const { data, isLoading, error } = responseFromQuery;
+
+  const {
+    body: { username: usernameInitial, password: passwordInitial } = {},
+  } = data ?? {};
 
   const [username, setUsername] = useState(usernameInitial);
   const [password, setPassword] = useState(passwordInitial);
@@ -21,58 +39,93 @@ const EPFOComponent = () => {
   const { jwtToken } =
     useSelector((state) => state.auth.user?.signInUserSession.idToken) ?? "";
 
-  const employerId =
-    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
+  const [updateEmployerCredentials] = useUpdateEmployerCredentialsMutation();
 
-  const [disabled, setDisabled] = useState(true);
+  const [disabled, setDisabled] = React.useState(true);
+  const { value, setValue } = useContext(UpdateAlertContext);
 
   const {
     register,
     getValues,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      username,
-      password,
-    },
     mode: "all",
   });
 
   useEffect(() => {
-    const data = getValues();
-    console.log(`data: ${data}`);
-    dispatch(setPfForm(data.username, data.password));
-  }, [username, password]);
-
-  const toggleDisabled = () => {
-    setDisabled(!disabled);
-  };
+    if (data) {
+      reset({
+        username: usernameInitial,
+        password: passwordInitial,
+      });
+    }
+    return () => {
+      const pfFormDetailsNew = getValues();
+      const { username, password } = pfFormDetailsNew;
+      const isEqual =
+        username === usernameInitial && password === passwordInitial;
+      if (!isEqual) {
+        dispatch(setPfForm(username, password));
+      }
+    };
+  }, [usernameInitial, passwordInitial, data, dispatch, getValues, reset]);
 
   const onSubmit = (data) => {
-    console.log(`disabled: ${disabled}`);
-    if (!disabled) {
-      return;
-    }
     const isEqual = data.username === username && data.password === password;
     if (!isEqual) {
       setUsername(data.username);
       setPassword(data.password);
-      postRegisterFormData(jwtToken, getDocumentFromPfForm(employerId, data))
+      updateEmployerCredentials({
+        ...data,
+        id: employerId,
+        portal: "epfo",
+      })
         .then((response) => {
-          const message = response.data.body.message;
-          alert.success(message);
+          const status = response.data.status;
+          if (status === 200) {
+            alert.success(VALUES_UPDATED);
+            setDisabled(true);
+            setValue({ ...value, isOpen: false });
+          }
         })
         .catch((error) => {
           const message = error.response?.data?.message ?? "Some error occured";
           alert.error(message);
         });
     } else {
+      setValue({ ...value, isOpen: false });
+      setDisabled(true);
       alert.error(NO_CHANGE_ERROR);
     }
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
+
+  const toggleDisabled = () => {
+    setDisabled(!disabled);
+  };
+
+  const cancelCallback = () => {
+    setDisabled(true);
+    reset();
+  };
+
+  const hydrateUpdateAlert = () => {
+    const taxFormDetails = {
+      username: usernameInitial,
+      password: passwordInitial,
+    };
+    setValue({
+      ...value,
+      isOpen: !value.isOpen,
+      newValues: { ...getValues() },
+      initialValues: taxFormDetails,
+      cancelCallback,
+      onConfirm: () => onSubmit({ ...getValues() }),
+    });
+  };
 
   return (
     <div>
@@ -110,13 +163,15 @@ const EPFOComponent = () => {
           }}
         />
         <input
-          type="submit"
+          disabled={errors.username || errors.password}
+          type="button"
           value={disabled ? "Edit" : "Submit"}
-          onClick={toggleDisabled}
+          onClick={disabled ? toggleDisabled : hydrateUpdateAlert}
         />
       </form>
+      <UpdateAlert />
     </div>
   );
 };
 
-export default EPFOComponent;
+export default withUpdateAlert(EPFOComponent);

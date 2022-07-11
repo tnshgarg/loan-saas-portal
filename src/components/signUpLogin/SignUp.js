@@ -1,11 +1,11 @@
 import { Card, DialogStep, MultistepDialog } from "@blueprintjs/core";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
-import { registerUser } from "../../store/actions/auth";
-import { numberOfEmployees } from "../../helpers/numberOfEmployees";
+import { numberOfEmployees } from "../../utils/numberOfEmployees";
+import { registerUser } from "../../store/slices/authSlice";
 import FormInput from "../common/FormInput";
 
 export const SignUp = () => {
