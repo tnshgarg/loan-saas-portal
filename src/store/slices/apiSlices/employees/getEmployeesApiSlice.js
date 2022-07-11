@@ -18,10 +18,12 @@ export const allEmployeesBasicDetails = createApi({
       return headers;
     },
   }),
+  tagTypes: ["AllEmployeesBasicDetails"],
   endpoints: (builder) => ({
     // Define endpoints here
     getAllEmployeesByEmployerId: builder.query({
       query: (id) => `/employees?id=${id}`,
+      providesTags: ["AllEmployeesBasicDetails"],
     }),
   }),
 });
