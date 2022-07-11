@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { EMPLOYEES_AND_EMPLOYEE_BASE_API_URL } from "../../../../helpers/apiUrls";
+import { EMPLOYER_BASE_API_URL } from "../../../../utils/apiUrls";
 
 // Define a service using a base URL and expected endpoints
 export const allEmployeesBasicDetails = createApi({
   reducerPath: "allEmployeesBasicDetails",
   baseQuery: fetchBaseQuery({
-    baseUrl: EMPLOYEES_AND_EMPLOYEE_BASE_API_URL,
+    baseUrl: EMPLOYER_BASE_API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token =
         getState().auth.user.signInUserSession.idToken.jwtToken ?? "";
@@ -21,7 +21,7 @@ export const allEmployeesBasicDetails = createApi({
   endpoints: (builder) => ({
     // Define endpoints here
     getAllEmployeesByEmployerId: builder.query({
-      query: (id) => `/employer/employees?id=${id}`,
+      query: (id) => `/employees?id=${id}`,
     }),
   }),
 });

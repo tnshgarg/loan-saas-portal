@@ -14,8 +14,6 @@ import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
 import Onboard from "./components/dashboard/employee/Onboard";
 import { TabularView } from "./components/dashboard/employee/TabularView";
 
-import { MinimumWages } from "./components/dashboard/calculator/salary/MinimumWages";
-
 import { history } from "./utils/history";
 import BaseLayout from "./layout/base";
 
@@ -49,7 +47,6 @@ const App = () => {
           <Route path="/register-form" element={<RegisterForm />} />
           <Route path="/employees/onboard" element={<Onboard />} />
           <Route path="/employees/view" element={<TabularView />} />
-          <Route path="/calculator/salary" element={<MinimumWages />} />
           <Route path="*" element={<Invalid />} />
         </Routes>
       </Router>

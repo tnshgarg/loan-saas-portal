@@ -1,11 +1,10 @@
 import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import { useRowSelect, useSortBy, useTable } from "react-table";
-import { Alert, Intent } from "@blueprintjs/core";
 import styled from "styled-components";
 
 //Components
-import EditableCell from "./components/EditableCell";
+import EditableCell from "./EditableCell";
 import { Button } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import UpdateAlert from "../UpdateAlert";
@@ -23,7 +22,7 @@ const Table = ({
   initialState,
   storeData,
   inputTypes,
-  setData
+  setData,
 }) => {
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -34,7 +33,7 @@ const Table = ({
   const cancelCallback = () => {
     setEditableRowIndex(null);
     setData([...data]);
-  }
+  };
 
   const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
     useTable(
@@ -88,7 +87,7 @@ const Table = ({
                       const updatedRow = row.values;
                       if (!value.isOpen) {
                         const initialValues = storeData[updatedRow.state];
-                        const newValues = {...updatedRow};
+                        const newValues = { ...updatedRow };
                         delete newValues.isOther;
                         setValue({
                           ...value,
@@ -102,7 +101,7 @@ const Table = ({
                               row,
                               storeData,
                               setEditableRowIndex,
-                              () => setValue({ ...value, isOpen: false})
+                              () => setValue({ ...value, isOpen: false })
                             ),
                         });
                         return;
@@ -112,7 +111,7 @@ const Table = ({
                         row,
                         storeData,
                         setEditableRowIndex,
-                        () => setValue({ ...value, isOpen: false})
+                        () => setValue({ ...value, isOpen: false })
                       );
                     }
                   }}

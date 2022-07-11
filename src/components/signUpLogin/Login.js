@@ -3,14 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getRegisterFormData } from "../../services/user.services";
 import { login } from "../../store/slices/authSlice";
-import {
-  setAddressForm,
-  setEsicStateForm,
-  setPfForm,
-  setTaxSetupForm,
-} from "../../store/slices/registerFormSlice";
 import FormInput from "../common/FormInput";
 
 const LOGIN_CARD_STYLING = {

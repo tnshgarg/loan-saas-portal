@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { EMPLOYER_BASE_API_URL } from "../../../../utils/apiUrls";
 
 // Define a service using a base URL and expected endpoints
 export const employerCredentialsApi = createApi({
   reducerPath: "employerCredentials",
   baseQuery: fetchBaseQuery({
-    baseUrl:
-      "https://ifzbkxzmke.execute-api.ap-south-1.amazonaws.com/dev/employer",
+    baseUrl: EMPLOYER_BASE_API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token =
         getState().auth.user.signInUserSession.idToken.jwtToken ?? "";
@@ -22,7 +22,8 @@ export const employerCredentialsApi = createApi({
   endpoints: (builder) => ({
     // Define endpoints here
     getEmployerCredentialsById: builder.query({
-      query: ({employerId, portal}) => `/credentials?id=${employerId}&portal=${portal}`,
+      query: ({ employerId, portal }) =>
+        `/credentials?id=${employerId}&portal=${portal}`,
       providesTags: ["EmployerCredentials"],
     }),
     updateEmployerCredentials: builder.mutation({
@@ -36,4 +37,7 @@ export const employerCredentialsApi = createApi({
   }),
 });
 
-export const { useGetEmployerCredentialsByIdQuery, useUpdateEmployerCredentialsMutation } = employerCredentialsApi;
+export const {
+  useGetEmployerCredentialsByIdQuery,
+  useUpdateEmployerCredentialsMutation,
+} = employerCredentialsApi;
