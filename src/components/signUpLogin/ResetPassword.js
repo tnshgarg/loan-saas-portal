@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import FormInput from "../common/FormInput";
-import { confirmSignUp } from "../../store/slices/authSlice";
+import { forgotPassword } from "../../store/slices/authSlice";
 
 const LOGIN_CARD_STYLING = {
   width: "20%",
@@ -25,8 +25,8 @@ const INPUT_CONTAINER_STYLING = {
   paddingBottom: "0",
 };
 
-export const ConfirmSignUp = () => {
-  const [successful, setSuccessful] = useState(true);
+export const ResetPassword = () => {
+  const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -35,18 +35,17 @@ export const ConfirmSignUp = () => {
   const {
     register,
     handleSubmit,
+    // watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({ mode: "all" });
   const onSubmit = (data) => {
     console.log(data);
-    const { code } = data;
-    const username = message;
-    console.log(username, code);
+    const { email: username } = data;
 
-    dispatch(confirmSignUp(username, code))
+    dispatch(forgotPassword(username))
       .then(() => {
         setSuccessful(true);
-        navigate("/login");
+        navigate("/confirm-reset-password");
       })
       .catch(() => {
         setSuccessful(false);
@@ -60,22 +59,28 @@ export const ConfirmSignUp = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
           <div style={LOGIN_CONTAINER_STYLING}>
-            <h5>Confirm Sign Up</h5>
+            <h5>Reset Password</h5>
             <div style={INPUT_CONTAINER_STYLING}>
               <FormInput
                 register={register}
+                validations={{
+                  required: true,
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  },
+                }}
                 errors={errors}
-                field={"code"}
+                field={"email"}
                 inputProps={{
-                  icon: "id-number",
-                  type: "code",
-                  label: "Verification Code",
-                  placeholder: "Enter verification code received in email",
-                  errorMessage: "Verification Code cannot be empty",
+                  icon: "envelope",
+                  type: "email",
+                  label: "Email",
+                  placeholder: "Email",
+                  errorMessage: "Enter a valid email address",
                 }}
               />
 
-              {message && (
+              {message && !successful && (
                 <div className="form-group">
                   <div
                     className={

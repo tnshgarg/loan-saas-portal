@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Select from "react-select";
 
 //Data
-import statesAndUts from "../../../../../../utils/statesAndUts";
+import statesAndUts from "../../../../../utils/statesAndUts";
 
 const EditableDropdown = ({
   value: initialValue,
@@ -55,7 +55,12 @@ const EditableDropdown = ({
         isDisabled={disabled ?? true}
       />
       {isOther && (
-        <input disabled={disabled ?? true} className="bp4-input other-form-input" value={value} onChange={onChange} />
+        <input
+          disabled={disabled ?? true}
+          className="bp4-input other-form-input"
+          value={value}
+          onChange={onChange}
+        />
       )}
     </>
   ) : (

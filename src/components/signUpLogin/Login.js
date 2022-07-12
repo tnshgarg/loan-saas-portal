@@ -3,14 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getRegisterFormData } from "../../services/user.services";
 import { login } from "../../store/slices/authSlice";
-import {
-  setAddressForm,
-  setEsicStateForm,
-  setPfForm,
-  setTaxSetupForm,
-} from "../../store/slices/registerFormSlice";
 import FormInput from "../common/FormInput";
 
 const LOGIN_CARD_STYLING = {
@@ -56,8 +49,12 @@ export const Login = () => {
 
   const { message } = useSelector((state) => state.message);
 
-  const handleForgotPasswordOnClick = () => {
-    navigate("/forgot-password");
+  const handleResetPasswordOnClick = () => {
+    navigate("/reset-password");
+  };
+
+  const handleSignUpOnClick = () => {
+    navigate("/sign-up");
   };
 
   const {
@@ -72,7 +69,7 @@ export const Login = () => {
     dispatch(login(username, password))
       .then(() => {
         setSuccessful(true);
-        navigate("/profile");
+        navigate("/employer/register-form");
       })
       .catch(() => {
         setSuccessful(false);
@@ -83,10 +80,11 @@ export const Login = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
-          <div style={LOGIN_CONTAINER_STYLING}>
-            <div style={INPUT_CONTAINER_STYLING}>
+      <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
+        <div style={LOGIN_CONTAINER_STYLING}>
+          <h5>Welcome</h5>
+          <div style={INPUT_CONTAINER_STYLING}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <FormInput
                 register={register}
                 validations={{
@@ -101,8 +99,7 @@ export const Login = () => {
                   icon: "envelope",
                   large: true,
                   type: "email",
-                  subLabel: "",
-                  placeholder: "Please enter your email",
+                  placeholder: "Email",
                   errorMessage: "Enter a valid email address",
                 }}
               />
@@ -122,36 +119,45 @@ export const Login = () => {
                   icon: "shield",
                   large: true,
                   type: "password",
-                  placeholder: "Enter your password",
-                  errorMessage: "Password cannot be less than 8 characters",
+                  placeholder: "Password",
+                  errorMessage:
+                    "Password must contain atleast 8 characters with a special character, a number, a lowercase and an uppercase alphabet",
                 }}
               />
-              <Button type="submit" large intent={Intent.PRIMARY}>
+              <Button
+                type="submit"
+                large
+                intent={Intent.PRIMARY}
+                style={{ float: "left" }}
+              >
                 Sign In
               </Button>
+            </form>
 
-              <ErrorDialog message={message} success={successful} />
-            </div>
-          </div>
+            <Button
+              type="button"
+              onClick={handleSignUpOnClick}
+              large
+              intent={Intent.PRIMARY}
+              // style={{ float: "center" }}
+            >
+              Sign Up
+            </Button>
 
-          <label onClick={handleForgotPasswordOnClick}>
-            Click here to reset password
-          </label>
-        </Card>
-      </form>
+            <Button
+              type="button"
+              onClick={handleResetPasswordOnClick}
+              large
+              intent={Intent.PRIMARY}
+              style={{ float: "right" }}
+            >
+              Reset Password
+            </Button>
 
-      {message && !successful && (
-        <div className="form-group">
-          <div
-            className={
-              successful ? "alert alert-success" : "alert alert-danger"
-            }
-            role="alert"
-          >
-            {message}
+            <ErrorDialog message={message} success={successful} />
           </div>
         </div>
-      )}
+      </Card>
     </div>
   );
 };

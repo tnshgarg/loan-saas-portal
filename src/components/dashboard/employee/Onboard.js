@@ -4,21 +4,20 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
-import { Alert, Collapse, CircularProgress } from "@mui/material";
+import { Alert, CircularProgress, Collapse } from "@mui/material";
 import { Button, Card, Elevation, FileInput } from "@blueprintjs/core";
-import Navbar from "../Navbar";
 import { headers } from "./headerData";
 
 const CARD_STYLING = {
   textAlign: "center",
   marginLeft: "auto",
   marginRight: "auto",
-  width: "50%",
+  width: "50%"
 };
 
 const SUB_HEADING_STYLING = {
   marginTop: "1%",
-  marginBottom: "2%",
+  marginBottom: "2%"
 };
 
 const CSVUpload = () => {
@@ -52,14 +51,14 @@ const CSVUpload = () => {
 
   const credentials = {
     accessKeyId: process.env.REACT_APP_ACCESS_KEY,
-    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY
   };
 
   const handleFileUpload = async (e) => {
     const params = {
       Body: file,
       Bucket: S3_BUCKET,
-      Key: `test/data/${file.name}`,
+      Key: `test/data/${file.name}`
     };
 
     try {
@@ -67,7 +66,7 @@ const CSVUpload = () => {
         client: new S3Client({ region: REGION, credentials: credentials }),
         params: params,
         partSize: 1024 * 1024 * 5,
-        leavePartsOnError: false,
+        leavePartsOnError: false
       });
 
       if (fileSize > maxSize) {
@@ -146,7 +145,7 @@ const CSVUpload = () => {
 };
 
 const Onboard = () => {
-  return <Navbar child={<CSVUpload />} />;
+  return <CSVUpload />;
 };
 
 export default Onboard;

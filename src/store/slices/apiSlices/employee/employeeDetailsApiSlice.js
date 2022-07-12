@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { EMPLOYEES_AND_EMPLOYEE_BASE_API_URL } from "../../../../helpers/apiUrls";
+import { EMPLOYER_BASE_API_URL } from "../../../../utils/apiUrls";
 
 // Define a service using a base URL and expected endpoints
 export const employeeDetails = createApi({
   reducerPath: "employeeDetails",
   baseQuery: fetchBaseQuery({
-    baseUrl: EMPLOYEES_AND_EMPLOYEE_BASE_API_URL,
+    baseUrl: EMPLOYER_BASE_API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token =
         getState().auth.user.signInUserSession.idToken.jwtToken ?? "";
@@ -23,13 +23,13 @@ export const employeeDetails = createApi({
     // Define endpoints here
     getEmployeeDetailsByEmployeeId: builder.query({
       query: ({ id, category }) => {
-        return `/employer/employee?id=${id}&category=${category}`;
+        return `/employee?id=${id}&category=${category}`;
       },
-      providesTags: ["EmployeeDetails"],
+      providesTags: (id) => [{ type: "EmployeeDetails", id }],
     }),
     updateEmployeeDetails: builder.mutation({
       query: (body) => ({
-        url: `/employer/employee`,
+        url: `/employee`,
         method: "POST",
         body: body, // fetchBaseQuery automatically adds `content-type: application/json` to the Headers and calls `JSON.stringify(patch)`
       }),

@@ -5,7 +5,7 @@ import { useAlert } from "react-alert";
 //Components
 import Table from "../../../../common/Table";
 
-import EditableDropdown from "./components/EditableDropdown";
+import EditableDropdown from "./EditableDropdown";
 import {
   NO_CHANGE_ERROR,
   VALUES_UPDATED,
@@ -84,11 +84,9 @@ export default function ESICComponent() {
   }, [responseData]);
 
   const generateEsicFormData = () => {
-    console.log(responseData)
-    if(!responseData) return;
-    const {
-      body
-    } = responseData;
+    console.log(responseData);
+    if (!responseData) return;
+    const { body } = responseData;
     let esicData = {};
     body?.forEach((value, index) => {
       esicData = {
@@ -96,7 +94,7 @@ export default function ESICComponent() {
         [value.state]: {
           ...value,
           isOther: value.other,
-          employerCode: value.username
+          employerCode: value.username,
         },
       };
     });
@@ -152,7 +150,7 @@ export default function ESICComponent() {
         state: updatedRow.state,
         username: updatedRow.employerCode,
         password: updatedRow.password,
-        portal: 'esic'
+        portal: "esic",
       })
         .then(() => {
           callback && callback();
@@ -164,7 +162,7 @@ export default function ESICComponent() {
           alert.error(message);
         });
     } else {
-      callback && callback()
+      callback && callback();
       setEditableRowIndex(null);
       alert.error(NO_CHANGE_ERROR);
     }

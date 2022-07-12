@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import FormInput from "../common/FormInput";
-import { confirmSignUp } from "../../store/slices/authSlice";
+import { confirmForgotPassword } from "../../store/slices/authSlice";
 
 const LOGIN_CARD_STYLING = {
   width: "20%",
@@ -25,7 +25,7 @@ const INPUT_CONTAINER_STYLING = {
   paddingBottom: "0",
 };
 
-export const ConfirmSignUp = () => {
+export const ConfirmResetPassword = () => {
   const [successful, setSuccessful] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,14 +36,14 @@ export const ConfirmSignUp = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({ mode: "all" });
   const onSubmit = (data) => {
     console.log(data);
-    const { code } = data;
+    const { code, password } = data;
     const username = message;
-    console.log(username, code);
+    console.log(username, code, password);
 
-    dispatch(confirmSignUp(username, code))
+    dispatch(confirmForgotPassword(username, code, password))
       .then(() => {
         setSuccessful(true);
         navigate("/login");
@@ -60,7 +60,7 @@ export const ConfirmSignUp = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
           <div style={LOGIN_CONTAINER_STYLING}>
-            <h5>Confirm Sign Up</h5>
+            <h5>Confirm New Password</h5>
             <div style={INPUT_CONTAINER_STYLING}>
               <FormInput
                 register={register}
@@ -74,8 +74,29 @@ export const ConfirmSignUp = () => {
                   errorMessage: "Verification Code cannot be empty",
                 }}
               />
+              <FormInput
+                register={register}
+                validations={{
+                  required: true,
+                  pattern: {
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                  },
+                }}
+                errors={errors}
+                field={"password"}
+                inputProps={{
+                  icon: "shield",
+                  type: "password",
+                  label: "New Password",
+                  subLabel:
+                    "Enter a strong atleast 8 lettered password with a special character, a number, a lowercase and an uppercase alphabet",
+                  placeholder: "Enter your new password",
+                  errorMessage: "Password cannot be empty",
+                }}
+              />
 
-              {message && (
+              {message && !successful && (
                 <div className="form-group">
                   <div
                     className={

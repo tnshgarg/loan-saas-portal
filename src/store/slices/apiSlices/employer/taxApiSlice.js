@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { EMPLOYER_BASE_API_URL } from "../../../../utils/apiUrls";
 
 // Define a service using a base URL and expected endpoints
 export const employerTaxApi = createApi({
   reducerPath: "employerTax",
   baseQuery: fetchBaseQuery({
-    baseUrl:
-      "https://ifzbkxzmke.execute-api.ap-south-1.amazonaws.com/dev/employer",
+    baseUrl: EMPLOYER_BASE_API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token =
         getState().auth.user.signInUserSession.idToken.jwtToken ?? "";
@@ -36,4 +36,5 @@ export const employerTaxApi = createApi({
   }),
 });
 
-export const { useGetEmployerTaxByIdQuery, useUpdateEmployerTaxMutation } = employerTaxApi;
+export const { useGetEmployerTaxByIdQuery, useUpdateEmployerTaxMutation } =
+  employerTaxApi;

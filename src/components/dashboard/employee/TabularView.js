@@ -15,8 +15,7 @@ import styled from "styled-components";
 import {
   useGetAllEmployeesByEmployerIdQuery,
   useLazyGetAllEmployeesByEmployerIdQuery,
-} from "../../../store/slices/apiSlices/employees/getEmployeesApiSlice";
-import Navbar from "../Navbar";
+} from "../../../store/slices/apiSlices/employees/employeesApiSlice";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
 
@@ -27,10 +26,17 @@ const Styles = styled.div`
     border-spacing: 0;
     border: 1px solid black;
 
-    tr {
-      :last-child {
-        td {
-          border-bottom: 0;
+    tbody {
+      tr {
+        :last-child {
+          td {
+            border-bottom: 0;
+          }
+        }
+
+        :hover {
+          background-color: #72ca9b;
+          cursor: pointer;
         }
       }
     }
@@ -53,10 +59,10 @@ const Styles = styled.div`
 `;
 
 const REGISTER_FORM_CARD_STYLING = {
-  marginLeft: "auto",
+  width: "80%",
   marginRight: "auto",
+  marginLeft: "auto",
   overflow: "scroll",
-  width: "75rem",
 };
 
 const TABLE_CARD_STYLING = {
@@ -199,6 +205,7 @@ const TabularViewTab = () => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [didDialogChange, setDidDialogChange] = useState(false);
+
   const [currEmployeeId, setCurrEmployeeId] = useState(null);
 
   const handleRowClick = (currentRow) => {
@@ -257,7 +264,7 @@ const TabularViewTab = () => {
       ) : data ? (
         <Card
           style={TABLE_CARD_STYLING}
-          interactive={true}
+          interactive={false}
           elevation={Elevation.THREE}
         >
           <Styles>
@@ -329,14 +336,25 @@ const TabularViewTab = () => {
               >
                 {">>"}
               </button>{" "}
-              <span>
+              <span
+                style={{
+                  marginLeft: "1%",
+                  marginRight: "0.5%",
+                  marginTop: "0.2%",
+                }}
+              >
                 Page{" "}
                 <strong>
                   {pageIndex + 1} of {pageOptions.length}
                 </strong>{" "}
               </span>
-              <span>
-                {"  "} | Go to page:{" "}
+              <span
+                style={{
+                  marginLeft: "0.5%",
+                  marginRight: "0.5%",
+                }}
+              >
+                Go to page:{" "}
                 <input
                   type="number"
                   defaultValue={pageIndex + 1}
@@ -346,7 +364,7 @@ const TabularViewTab = () => {
                       : 0;
                     gotoPage(page);
                   }}
-                  style={{ width: "100px" }}
+                  style={{ width: "50px" }}
                 />
               </span>{" "}
               <select
@@ -402,18 +420,16 @@ const TabularTabsComponent = () => {
     <>
       <Card
         style={REGISTER_FORM_CARD_STYLING}
-        interactive={true}
+        interactive={false}
         elevation={Elevation.THREE}
       >
         <Tabs id="tabularView" defaultSelectedTabId="1">
-          <Tab id="1" title="Checks Failed " panel={<TabularViewTab />} />
-          <Tab id="2" title="Checks Passed" panel={<TabularViewTab />} />
+          <Tab id="1" title="Correct" panel={<TabularViewTab />} />
+          <Tab id="2" title="Errors" panel={<TabularViewTab />} />
         </Tabs>
       </Card>
     </>
   );
 };
 
-export const TabularView = () => {
-  return <Navbar child={<TabularTabsComponent />} />;
-};
+export const TabularView = TabularTabsComponent;
