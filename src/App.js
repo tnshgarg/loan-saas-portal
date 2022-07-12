@@ -7,10 +7,15 @@ import Overview from "./components/dashboard/overview/Overview";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
 
 import { Invalid } from "./components/invalid";
-import { Landing } from "./components/landing";
-import { ConfirmForgotPassword } from "./components/signUpLogin/ConfirmForgotPassword";
-import { ForgotPassword } from "./components/signUpLogin/ForgotPassword";
-import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
+
+import {
+  ConfirmResetPassword,
+  ConfirmSignUp,
+  Login,
+  ResetPassword,
+  SignUp,
+} from "./components/signUpLogin/index";
+
 import Onboard from "./components/dashboard/employee/Onboard";
 import { TabularView } from "./components/dashboard/employee/TabularView";
 
@@ -34,14 +39,14 @@ const App = () => {
         <br />
         <br />
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/confirm-sign-up" element={<ConfirmSignUp />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route
-            path="/confirm-forgot-password"
-            element={<ConfirmForgotPassword />}
+            path="/confirm-reset-password"
+            element={<ConfirmResetPassword />}
           />
           <Route path="/employer/overview" element={<Overview />} />
           <Route path="/employer/register-form" element={<RegisterForm />} />

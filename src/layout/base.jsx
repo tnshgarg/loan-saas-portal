@@ -10,8 +10,8 @@ const NON_LAYOUT_ROUTES = [
   "/sign-up",
   "/confirm-sign-up",
   "/login",
-  "/forgot-password",
-  "/confirm-forgot-password"
+  "/reset-password",
+  "/confirm-reset-password"
 ];
 export default function BaseLayout(props) {
   const location = useLocation();
