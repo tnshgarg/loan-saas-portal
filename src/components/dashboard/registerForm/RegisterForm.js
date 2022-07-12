@@ -7,7 +7,7 @@ import { AddressForm, AutomationForm, TaxSetupForm } from "./index";
 const REGISTER_FORM_CARD_STYLING = {
   width: "80%",
   marginRight: "auto",
-  marginLeft: "auto"
+  marginLeft: "auto",
 };
 
 const RegisterFormContent = () => {
@@ -29,7 +29,7 @@ const RegisterFormContent = () => {
     <>
       <Card
         style={REGISTER_FORM_CARD_STYLING}
-        interactive={true}
+        interactive={false}
         elevation={Elevation.THREE}
       >
         <Tabs id="registerForm" defaultSelectedTabId="1">
