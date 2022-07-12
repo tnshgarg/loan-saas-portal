@@ -105,8 +105,7 @@ export const SignUp = () => {
                     icon: "envelope",
                     type: "email",
                     label: "Email",
-                    subLabel: "",
-                    placeholder: "Please enter your email",
+                    placeholder: "Email",
                     errorMessage: "Enter a valid email address",
                   }}
                 />
@@ -126,9 +125,10 @@ export const SignUp = () => {
                     type: "password",
                     label: "Password",
                     subLabel:
-                      "Enter a strong atleast 8 lettered password with a special character, a number, a lowercase and an uppercase alphabet",
-                    placeholder: "Enter your password",
-                    errorMessage: "Password cannot be empty",
+                      "Password must contain atleast 8 characters with a special character, a number, a lowercase and an uppercase alphabet",
+                    placeholder: "Password",
+                    errorMessage:
+                      "Password must contain atleast 8 characters with a special character, a number, a lowercase and an uppercase alphabet",
                   }}
                 />
               </Card>
@@ -150,8 +150,7 @@ export const SignUp = () => {
                     icon: "user",
                     type: "text",
                     label: "Full Name",
-                    subLabel: "",
-                    placeholder: "Enter your First Name and Last Name",
+                    placeholder: "Full Name",
                     errorMessage: "Full Name cannot be empty",
                   }}
                 />
@@ -193,8 +192,7 @@ export const SignUp = () => {
                     icon: "office",
                     type: "text",
                     label: "Company Name",
-                    subLabel: "",
-                    placeholder: "Enter the name of you Organization",
+                    placeholder: "Company Name",
                     errorMessage: "Company Name cannot be empty",
                   }}
                 />
@@ -208,10 +206,9 @@ export const SignUp = () => {
                   inputProps={{
                     icon: "briefcase",
                     type: "text",
-                    label: "Title",
-                    subLabel: "",
-                    placeholder: "Your Position in the organization",
-                    errorMessage: "Title cannot be empty",
+                    label: "Designation",
+                    placeholder: "Your designation in the organization",
+                    errorMessage: "Designation cannot be empty",
                   }}
                 />
                 <label>Number of Employees</label>
@@ -237,11 +234,6 @@ export const SignUp = () => {
             }
           />
         </MultistepDialog>
-
-        {/* include validation with required or other standard HTML validation rules */}
-        {/* errors will return when field validation fails  */}
-
-        <input type="submit" />
       </form>
       {message && (
         <div className="form-group">
