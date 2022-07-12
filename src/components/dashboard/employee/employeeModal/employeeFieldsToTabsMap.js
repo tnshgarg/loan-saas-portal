@@ -77,16 +77,8 @@ export const employeeFieldsToTabsMap = {
         "Relation with Employee (Father/Husband)": {
           type: "dropdown",
           options: [
-            "Spouse",
-            "Minor dependant son",
-            "Dependant unmarried daughter",
-            "Dependant son receiving education",
-            "Dependant infirm son",
-            "Dependant infirm unmarried daughter",
-            "Dependant father",
-            "Dependant mother",
-            "Brother",
-            "Sister",
+            "Fahter",
+            "Husband"
           ],
         },
       },
@@ -104,6 +96,7 @@ export const employeeFieldsToTabsMap = {
             "Dependant mother",
             "Brother",
             "Sister",
+            "Others"
           ],
         },
       },
@@ -133,33 +126,51 @@ export const employeeFieldsToTabsMap = {
           type: "dropdown",
           options: [...Object.keys(STATES_DISTRICTS)],
         },
+        "Employee Permanent Address District": {
+          type: "dropdown",
+          dependentOn: 'EmployeePermanentAddressState',
+          options: STATES_DISTRICTS
+        }
       },
       Present: {
         "Employee Present Address State": {
           type: "dropdown",
           options: [...Object.keys(STATES_DISTRICTS)],
         },
+        "Employee Present Address District": {
+          type: "dropdown",
+          dependentOn: 'EmployeePresentAddressState',
+          options: STATES_DISTRICTS
+        }
       },
       Nominee: {
         "Employee Nominee Address State": {
           type: "dropdown",
           options: [...Object.keys(STATES_DISTRICTS)],
         },
+        "Employee Nominee Address District": {
+          type: "dropdown",
+          dependentOn: 'EmployeeNomineeAddressState',
+          options: STATES_DISTRICTS
+        }
       },
     },
     fields: {
       Permanent: {
         state: "Employee Permanent Address State",
+        district: "Employee Permanent Address District",
         street: "Employee Permanent Address",
         pin: "Employee Permanent Address Pincode",
       },
       Present: {
         state: "Employee Present Address State",
+        district: "Employee Present Address District",
         street: "Employee Present Address",
         pin: "Employee Present Address Pincode",
       },
       Nominee: {
         state: "Employee Nominee Address State",
+        district: "Employee Nominee Address District",
         street: "Employee Nominee Address",
         pin: "Employee Nominee Address Pincode",
       },

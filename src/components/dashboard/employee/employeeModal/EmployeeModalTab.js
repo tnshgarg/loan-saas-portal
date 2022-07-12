@@ -23,7 +23,7 @@ export const EmployeeModalTab = ({
   const responseFromQuery = useGetEmployeeDetailsByEmployeeIdQuery({
     id: currEmployeeId,
     category,
-    subCategory,
+    subCategory: type
   });
   const { data, isLoading, error } = responseFromQuery;
 
@@ -35,6 +35,8 @@ export const EmployeeModalTab = ({
     handleSubmit,
     reset,
     control,
+    getValues,
+    watch,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -55,19 +57,11 @@ export const EmployeeModalTab = ({
   useEffect(() => {
     if (data) {
       let body = data.body ?? {};
-
-      if (_.isArray(body)) {
-        console.log({ type });
-        const filteredType = body.filter(
-          (b) => b.type.toLowerCase() === type.toLowerCase()
-        )[0];
-        body = filteredType;
-      }
-      console.log({ body });
-      const formDataInitialFetched = Object.entries(body).reduce(
+      
+      const formDataInitialFetched = Object.entries(fields).reduce(
         (acc, [key, value]) => ({
           ...acc,
-          ...(fields[key] !== undefined ? { [fields[key]]: value } : null),
+          [value]: body[key]
         }),
         {}
       );
@@ -181,6 +175,13 @@ export const EmployeeModalTab = ({
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
 
+  const generateOptions = (values) => {
+    return values?.map((opt) => ({
+      value: opt,
+      label: opt
+    }))
+  }
+
   return (
     <div>
       {error ? (
@@ -197,27 +198,30 @@ export const EmployeeModalTab = ({
                 return <></>;
               }
               if (inputTypes && inputTypes[labelKey]) {
-                const options =
-                  inputTypes[labelKey]?.options?.map((opt) => {
-                    return {
-                      value: opt,
-                      label: opt,
-                    };
-                  }) ?? {};
+                let options = [];
+                const dependentOn = inputTypes[labelKey]?.dependentOn ?? false;
+                if(dependentOn){
+                  const currState = watch(dependentOn) ?? "";
+                  options = generateOptions(inputTypes[labelKey]?.options[currState]);
+                }else {
+                  options = generateOptions(inputTypes[labelKey]?.options);
+                }
+                const defaultValue = options[0]?.value
                 return (
                   <Controller
                     control={control}
-                    defaultValue={options[0].value}
                     name={key}
+                    // defaultValue={defaultValue}
                     render={({ field }) => (
                       <>
                         <label>{labelKey}</label>
                         <Select
+                          key={`selected_${defaultValue}`}
                           inputRef={field.ref}
                           classNamePrefix="addl-class"
                           className="select-comp"
                           options={options}
-                          value={options.find((c) => c.value === field.value)}
+                          value={options?.find((c) => c.value === field.value)}
                           onChange={(v) => {
                             field.onChange(v.value);
                           }}

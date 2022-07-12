@@ -14,7 +14,7 @@ export const EmployeeModal = ({ currEmployeeId, setDidDialogChange }) => {
         interactive={true}
         elevation={Elevation.THREE}
       >
-        <Tabs id="employeeDetailsParentTab">
+        <Tabs renderActiveTabPanelOnly id="employeeDetailsParentTab">
           {Object.entries(employeeFieldsToTabsMap).map(
             ([key, value], index) => {
               const { category, fields, hasSubTabs } = value;
@@ -67,7 +67,7 @@ const SubTabs = ({
 }) => {
   const { fields, category, types, inputTypes } = value;
   return (
-    <Tabs id="employeeDetails">
+    <Tabs renderActiveTabPanelOnly id="employeeDetails">
       {Object.entries(fields).map(([key, fieldsList], index) => {
         return (
           <Tab
