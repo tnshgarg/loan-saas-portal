@@ -23,6 +23,7 @@ export const EmployeeModalTab = ({
   const responseFromQuery = useGetEmployeeDetailsByEmployeeIdQuery({
     id: currEmployeeId,
     category,
+    subCategory,
   });
   const { data, isLoading, error } = responseFromQuery;
 
@@ -56,11 +57,13 @@ export const EmployeeModalTab = ({
       let body = data.body ?? {};
 
       if (_.isArray(body)) {
-        console.log({type})
-        const filteredType = body.filter((b) => b.type.toLowerCase() === type.toLowerCase())[0];
+        console.log({ type });
+        const filteredType = body.filter(
+          (b) => b.type.toLowerCase() === type.toLowerCase()
+        )[0];
         body = filteredType;
       }
-      console.log({body})
+      console.log({ body });
       const formDataInitialFetched = Object.entries(body).reduce(
         (acc, [key, value]) => ({
           ...acc,
@@ -194,12 +197,13 @@ export const EmployeeModalTab = ({
                 return <></>;
               }
               if (inputTypes && inputTypes[labelKey]) {
-                const options = inputTypes[labelKey]?.options?.map((opt) => {
-                  return {
-                    value: opt,
-                    label: opt,
-                  };
-                }) ?? {};
+                const options =
+                  inputTypes[labelKey]?.options?.map((opt) => {
+                    return {
+                      value: opt,
+                      label: opt,
+                    };
+                  }) ?? {};
                 return (
                   <Controller
                     control={control}
