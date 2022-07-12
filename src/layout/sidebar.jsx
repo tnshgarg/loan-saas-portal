@@ -19,6 +19,8 @@ export function AppSidebar() {
         hasBackdrop={false}
         size={sidebar.width}
         isOpen={"true"}
+        enforceFocus={false}
+        autoFocus={false}
         position={Position.LEFT}
       >
         <div style={{
