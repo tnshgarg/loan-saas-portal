@@ -67,7 +67,7 @@ const MODAL_STYLING = {
   // height: "25rem",
   marginTop: "7.5rem",
   marginBottom: "5rem",
-  width: "50rem",
+  width: "55rem",
 };
 
 // Define a default UI for filtering

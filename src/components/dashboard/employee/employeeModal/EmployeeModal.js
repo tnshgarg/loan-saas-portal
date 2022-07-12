@@ -5,7 +5,6 @@ import { EmployeeModalTab } from "./EmployeeModalTab";
 const EMPLOYEE_MODAL_STYLING = {
   marginRight: "auto",
   marginLeft: "auto",
-  overflowX: "scroll",
 };
 export const EmployeeModal = ({ currEmployeeId, setDidDialogChange }) => {
   return (
@@ -15,7 +14,7 @@ export const EmployeeModal = ({ currEmployeeId, setDidDialogChange }) => {
         interactive={true}
         elevation={Elevation.THREE}
       >
-        <Tabs id="registerForm">
+        <Tabs id="employeeDetailsParentTab">
           {Object.entries(employeeFieldsToTabsMap).map(
             ([key, value], index) => {
               const { category, fields, hasSubTabs } = value;
@@ -68,7 +67,7 @@ const SubTabs = ({
 }) => {
   const { fields, category, types, inputTypes } = value;
   return (
-    <Tabs id="employeeDetails1">
+    <Tabs id="employeeDetails">
       {Object.entries(fields).map(([key, fieldsList], index) => {
         return (
           <Tab
