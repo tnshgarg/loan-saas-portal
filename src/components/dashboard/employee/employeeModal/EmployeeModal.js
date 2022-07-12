@@ -18,26 +18,76 @@ export const EmployeeModal = ({ currEmployeeId, setDidDialogChange }) => {
         <Tabs id="registerForm">
           {Object.entries(employeeFieldsToTabsMap).map(
             ([key, value], index) => {
-              const { category, fields } = value;
-              return (
-                <Tab
-                  id={index + 1}
-                  title={`${index + 1}. ${key}`}
-                  panel={
-                    <EmployeeModalTab
-                      key={index + 1}
-                      category={category}
-                      fields={fields}
-                      currEmployeeId={currEmployeeId}
-                      setDidDialogChange={setDidDialogChange}
-                    />
-                  }
-                />
-              );
+              const { category, fields, hasSubTabs } = value;
+              if (hasSubTabs) {
+                return (
+                  <Tab
+                    id={index + 1}
+                    title={`${index + 1}. ${key}`}
+                    panel={
+                      <SubTabs
+                        key={index + 1}
+                        index={index}
+                        title={key}
+                        value={value}
+                        currEmployeeId={currEmployeeId}
+                        setDidDialogChange={setDidDialogChange}
+                      />
+                    }
+                  />
+                );
+              } else {
+                return (
+                  <Tab
+                    id={index + 1}
+                    title={`${index + 1}. ${key}`}
+                    panel={
+                      <EmployeeModalTab
+                        key={index + 1}
+                        category={category}
+                        fields={fields}
+                        currEmployeeId={currEmployeeId}
+                        setDidDialogChange={setDidDialogChange}
+                      />
+                    }
+                  />
+                );
+              }
             }
           )}
         </Tabs>
       </Card>
     </>
+  );
+};
+
+const SubTabs = ({
+  value,
+  currEmployeeId,
+  setDidDialogChange,
+}) => {
+  const { fields, category, types, inputTypes } = value;
+  return (
+    <Tabs id="employeeDetails1">
+      {Object.entries(fields).map(([key, fieldsList], index) => {
+        return (
+          <Tab
+            id={index + 1}
+            title={`${index + 1}. ${key}`}
+            panel={
+              <EmployeeModalTab
+                key={index + 1}
+                category={category}
+                fields={fieldsList}
+                currEmployeeId={currEmployeeId}
+                setDidDialogChange={setDidDialogChange}
+                type={types[key]}
+                inputTypes={inputTypes[key]}
+              />
+            }
+          />
+        );
+      })}
+    </Tabs>
   );
 };

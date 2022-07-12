@@ -1,3 +1,5 @@
+import { STATES_DISTRICTS } from "../../../../utils/statesAndDistricts";
+
 export const employeeFieldsToTabsMap = {
   Profile: {
     category: "profile",
@@ -52,26 +54,104 @@ export const employeeFieldsToTabsMap = {
         "ESIC Number (aka IP Number) (Enter if available else leave blank)",
     },
   },
-  // "Family Details": [
-  //   "Father's / Husband's Name",
-  //   "Relation with Employee (Father/Husband)",
-  //   "Name of Nominee (As per Aadhaar card)",
-  //   "Nominee Relationship with Employee",
-  // ],
-  // Addresses: [
-  //   "Employee Present Address",
-  //   "Employee Present Address District",
-  //   "Employee Present Address State",
-  //   "Employee Present Address Pincode",
-
-  //   "Employee Permanent Address",
-  //   "Employee Permanent Address District",
-  //   "Employee Permanent Address State",
-  //   "Employee Permanent Address Pincode",
-
-  //   "Nominee Address",
-  //   "Nominee Address District",
-  //   "Nominee Address State",
-  //   "Nominee Address Pincode",
-  // ],
+  "Family Details": {
+    category: "relatives",
+    hasSubTabs: true,
+    types: {
+      "Father / Husband": "fh",
+      Nominee: "nominee",
+    },
+    inputTypes: {
+      "Father / Husband": {
+        "Relation with Employee (Father/Husband)": {
+          type: "dropdown",
+          options: [
+            "Spouse",
+            "Minor dependant son",
+            "Dependant unmarried daughter",
+            "Dependant son receiving education",
+            "Dependant infirm son",
+            "Dependant infirm unmarried daughter",
+            "Dependant father",
+            "Dependant mother",
+            "Brother",
+            "Sister",
+          ],
+        },
+      },
+      Nominee: {
+        "Nominee Relationship with Employee": {
+          type: "dropdown",
+          options: [
+            "Spouse",
+            "Minor dependant son",
+            "Dependant unmarried daughter",
+            "Dependant son receiving education",
+            "Dependant infirm son",
+            "Dependant infirm unmarried daughter",
+            "Dependant father",
+            "Dependant mother",
+            "Brother",
+            "Sister",
+          ],
+        },
+      },
+    },
+    fields: {
+      "Father / Husband": {
+        name: "Father's / Husband's Name",
+        relation: "Relation with Employee (Father/Husband)",
+      },
+      Nominee: {
+        name: "Name of Nominee (As per Aadhaar card)",
+        relation: "Nominee Relationship with Employee",
+      },
+    },
+  },
+  Addresses: {
+    category: "addresses",
+    hasSubTabs: true,
+    types: {
+      Present: "present",
+      Nominee: "nominee",
+      Permanent: "permanent",
+    },
+    inputTypes: {
+      Permanent: {
+        'Employee Permanent Address State': {
+          type: "dropdown",
+          options: [...Object.keys(STATES_DISTRICTS)],
+        },
+      },
+      Present: {
+        'Employee Present Address State': {
+          type: "dropdown",
+          options: [...Object.keys(STATES_DISTRICTS)],
+        },
+      },
+      Nominee: {
+        'Employee Nominee Address State': {
+          type: "dropdown",
+          options: [...Object.keys(STATES_DISTRICTS)],
+        },
+      },
+    },
+    fields: {
+      Permanent: {
+        state: "Employee Permanent Address State",
+        street: "Employee Permanent Address",
+        pin: "Employee Permanent Address Pincode",
+      },
+      Present: {
+        state: "Employee Present Address State",
+        street: "Employee Present Address",
+        pin: "Employee Present Address Pincode",
+      },
+      Nominee: {
+        state: "Employee Nominee Address State",
+        street: "Employee Nominee Address",
+        pin: "Employee Nominee Address Pincode",
+      },
+    },
+  },
 };
