@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import Profile from "./components/dashboard/profile/Profile";
+import Overview from "./components/dashboard/overview/Overview";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
 
 import { Invalid } from "./components/invalid";
@@ -14,7 +14,7 @@ import { ConfirmSignUp, Login, SignUp } from "./components/signUpLogin/index";
 import Onboard from "./components/dashboard/employee/Onboard";
 import { TabularView } from "./components/dashboard/employee/TabularView";
 
-import { history } from "./helpers/history";
+import { history } from "./utils/history";
 import BaseLayout from "./layout/base";
 
 const App = () => {
@@ -29,8 +29,8 @@ const App = () => {
   });
 
   return (
-    <BaseLayout>
-      <Router history={history}>
+    <Router history={history}>
+      <BaseLayout>
         <br />
         <br />
         <Routes>
@@ -43,14 +43,14 @@ const App = () => {
             path="/confirm-forgot-password"
             element={<ConfirmForgotPassword />}
           />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/register-form" element={<RegisterForm />} />
+          <Route path="/employer/overview" element={<Overview />} />
+          <Route path="/employer/register-form" element={<RegisterForm />} />
           <Route path="/employees/onboard" element={<Onboard />} />
-          <Route path="/employees/view" element={<TabularView />} />
+          <Route path="/employees/panel" element={<TabularView />} />
           <Route path="*" element={<Invalid />} />
         </Routes>
-      </Router>
-    </BaseLayout>
+      </BaseLayout>
+    </Router>
   );
 };
 

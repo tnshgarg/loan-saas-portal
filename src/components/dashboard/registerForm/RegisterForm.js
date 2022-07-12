@@ -1,13 +1,11 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Card, Elevation } from "@blueprintjs/core";
-import Navbar from "../Navbar";
-import { Tabs, Tab } from "@blueprintjs/core";
+import { Card, Elevation, Tab, Tabs } from "@blueprintjs/core";
 import { AddressForm, AutomationForm, TaxSetupForm } from "./index";
 
 const REGISTER_FORM_CARD_STYLING = {
-  width: "50%",
+  width: "80%",
   marginRight: "auto",
   marginLeft: "auto",
 };
@@ -31,7 +29,7 @@ const RegisterFormContent = () => {
     <>
       <Card
         style={REGISTER_FORM_CARD_STYLING}
-        interactive={true}
+        interactive={false}
         elevation={Elevation.THREE}
       >
         <Tabs id="registerForm" defaultSelectedTabId="1">
@@ -45,7 +43,7 @@ const RegisterFormContent = () => {
 };
 
 const RegisterForm = () => {
-  return <Navbar child={<RegisterFormContent />} />;
+  return <RegisterFormContent />;
 };
 
 export default RegisterForm;

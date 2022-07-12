@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getMessageFromError } from "../../helpers/getMessageFromError";
+import { getMessageFromError } from "../../utils/getMessageFromError";
 import AuthService from "../../services/auth.service";
 import { clearMessage, setMessage } from "./messageSlice";
 const initialState = {

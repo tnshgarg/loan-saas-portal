@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../Navbar";
 
 const ProfileContent = () => {
   const auth = useSelector((state) => state.auth);
@@ -22,15 +21,15 @@ const ProfileContent = () => {
 
   return (
     <div>
-      <h5 style={{ color: "white" }}>
+      <h5 style={{ textAlign: "center" }}>
         Hello {userName}, please access the sidebar to continue registeration.
       </h5>
     </div>
   );
 };
 
-const Profile = () => {
-  return <Navbar child={<ProfileContent />} />;
+const Overview = () => {
+  return <ProfileContent />;
 };
 
-export default Profile;
+export default Overview;
