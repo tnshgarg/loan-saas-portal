@@ -27,12 +27,23 @@ export const employeeFieldsToTabsMap = {
       doe: "Date of Exit (dd/mm/yyyy)",
     },
   },
-  // "Government Ids":{
-  //   category:"governmentIds",
-  //   fields:{
-
-  //   }
-  // }
+  "Government Ids": {
+    category: "governmentIds",
+    hasSubTabs: true,
+    inputTypes: {},
+    types: {
+      Aadhaar: "aadhaar",
+      PAN: "pan",
+    },
+    fields: {
+      Aadhaar: {
+        number: "ID Number",
+      },
+      PAN: {
+        number: "ID Number",
+      },
+    },
+  },
   "Bank Details": {
     category: "bankDetails",
     fields: {
@@ -118,19 +129,19 @@ export const employeeFieldsToTabsMap = {
     },
     inputTypes: {
       Permanent: {
-        'Employee Permanent Address State': {
+        "Employee Permanent Address State": {
           type: "dropdown",
           options: [...Object.keys(STATES_DISTRICTS)],
         },
       },
       Present: {
-        'Employee Present Address State': {
+        "Employee Present Address State": {
           type: "dropdown",
           options: [...Object.keys(STATES_DISTRICTS)],
         },
       },
       Nominee: {
-        'Employee Nominee Address State': {
+        "Employee Nominee Address State": {
           type: "dropdown",
           options: [...Object.keys(STATES_DISTRICTS)],
         },
