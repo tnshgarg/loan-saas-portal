@@ -19,6 +19,7 @@ export const employerCredentialsApi = createApi({
     },
   }),
   tagTypes: ["EmployerCredentials"],
+  keepUnusedDataFor: 86400,
   endpoints: (builder) => ({
     // Define endpoints here
     getEmployerCredentialsById: builder.query({
