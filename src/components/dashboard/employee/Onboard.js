@@ -12,19 +12,19 @@ const CARD_STYLING = {
   textAlign: "center",
   marginLeft: "auto",
   marginRight: "auto",
-  width: "50%"
+  width: "50%",
 };
 
 const SUB_HEADING_STYLING = {
   marginTop: "1%",
-  marginBottom: "2%"
+  marginBottom: "2%",
 };
 
 const CSVUpload = () => {
   // AUTH LAYER
   const navigate = useNavigate();
   const auth = useSelector((state) => state.auth);
-  const [userName, setUserName] = useState("");
+  const [, setUserName] = useState("");
 
   useEffect(() => {
     console.log(auth);
@@ -39,7 +39,7 @@ const CSVUpload = () => {
   }, [auth, navigate]);
 
   // CSV FILE UPLOAD
-  const [file, setFile] = useState();
+  const [file, setFile] = useState({ object: null, validations: [] });
   const [fileSize, setFileSize] = useState(0);
   const maxSize = 1024 * 1024 * 2; // 2MB
   const [uploadStatus, setUploadStatus] = useState(false);
@@ -51,14 +51,14 @@ const CSVUpload = () => {
 
   const credentials = {
     accessKeyId: process.env.REACT_APP_ACCESS_KEY,
-    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY
+    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
   };
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = async () => {
     const params = {
-      Body: file,
+      Body: file.object,
       Bucket: S3_BUCKET,
-      Key: `test/data/${file.name}`
+      Key: `test/data/${file.object.name}`,
     };
 
     try {
@@ -66,26 +66,23 @@ const CSVUpload = () => {
         client: new S3Client({ region: REGION, credentials: credentials }),
         params: params,
         partSize: 1024 * 1024 * 5,
-        leavePartsOnError: false
+        leavePartsOnError: false,
       });
 
       if (fileSize > maxSize) {
         throw new Error("FileTooLarge");
+        alert("File is too large. Please upload the file in parts.");
       } else {
         await parallelUploads3.done();
-        setDisabled(false);
-        setLoading(false);
         setUploadStatus(true);
       }
     } catch (err) {
       console.log(err);
-      if (err.message === "FileTooLarge") {
-        alert("File is too large. Please upload the file in parts.");
-      } else {
+
         alert(
           "An error occurred while uploading the file. Please try uploading again."
         );
-      }
+    } finally {
       setDisabled(false);
       setLoading(false);
     }
@@ -112,7 +109,9 @@ const CSVUpload = () => {
           }}
           severity="success"
         >
-          {file ? `File ${file.name} Uploaded Successfully` : null}
+          {file.object
+            ? `File ${file.object.name} Uploaded Successfully`
+            : null}
         </Alert>
       </Collapse>
       <h3>Upload Employee Details</h3>
@@ -135,7 +134,9 @@ const CSVUpload = () => {
       <Button
         disabled={disabled}
         onClick={(e) => {
-          !file ? alert("Please select a file to upload") : handleOnSubmit(e);
+          !file.object
+            ? alert("Please select a file to upload")
+            : handleOnSubmit(e);
         }}
       >
         {loading ? <CircularProgress size={16} /> : "Upload"}
