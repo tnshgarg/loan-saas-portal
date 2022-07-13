@@ -12,12 +12,12 @@ const CARD_STYLING = {
   textAlign: "center",
   marginLeft: "auto",
   marginRight: "auto",
-  width: "50%",
+  width: "50%"
 };
 
 const SUB_HEADING_STYLING = {
   marginTop: "1%",
-  marginBottom: "2%",
+  marginBottom: "2%"
 };
 
 const CSVUpload = () => {
@@ -51,14 +51,14 @@ const CSVUpload = () => {
 
   const credentials = {
     accessKeyId: process.env.REACT_APP_ACCESS_KEY,
-    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY
   };
 
   const handleFileUpload = async () => {
     const params = {
       Body: file.object,
       Bucket: S3_BUCKET,
-      Key: `test/data/${file.object.name}`,
+      Key: `test/data/${file.object.name}`
     };
 
     try {
@@ -66,11 +66,10 @@ const CSVUpload = () => {
         client: new S3Client({ region: REGION, credentials: credentials }),
         params: params,
         partSize: 1024 * 1024 * 5,
-        leavePartsOnError: false,
+        leavePartsOnError: false
       });
 
       if (fileSize > maxSize) {
-        throw new Error("FileTooLarge");
         alert("File is too large. Please upload the file in parts.");
       } else {
         await parallelUploads3.done();
@@ -78,10 +77,9 @@ const CSVUpload = () => {
       }
     } catch (err) {
       console.log(err);
-
-        alert(
-          "An error occurred while uploading the file. Please try uploading again."
-        );
+      alert(
+        "An error occurred while uploading the file. Please try uploading again."
+      );
     } finally {
       setDisabled(false);
       setLoading(false);
