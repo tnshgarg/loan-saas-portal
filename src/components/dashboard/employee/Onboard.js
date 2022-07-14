@@ -12,36 +12,32 @@ const CARD_STYLING = {
   textAlign: "center",
   marginLeft: "auto",
   marginRight: "auto",
-  width: "50%"
+  width: "50%",
 };
 
 const SUB_HEADING_STYLING = {
   marginTop: "1%",
-  marginBottom: "2%"
+  marginBottom: "2%",
 };
 
 const CSVUpload = () => {
-  // AUTH LAYER
-  const navigate = useNavigate();
   const auth = useSelector((state) => state.auth);
-  const [userName, setUserName] = useState("");
+  const navigate = useNavigate();
+
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
   useEffect(() => {
     console.log(auth);
-    if (auth === undefined || auth === {}) {
+    if (auth === undefined || auth === {} || !auth.isLoggedIn) {
       navigate("/login");
-    } else if (!auth.isLoggedIn) {
-      navigate("/login");
-    } else {
-      // setUserName(user.signInUserSession.idToken.payload.name);
-      setUserName(auth.user.attributes.name);
     }
   }, [auth, navigate]);
 
   // CSV FILE UPLOAD
+  const maxSize = 1024 * 1024 * 5; // 5MB
   const [file, setFile] = useState();
   const [fileSize, setFileSize] = useState(0);
-  const maxSize = 1024 * 1024 * 2; // 2MB
   const [uploadStatus, setUploadStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
@@ -51,22 +47,24 @@ const CSVUpload = () => {
 
   const credentials = {
     accessKeyId: process.env.REACT_APP_ACCESS_KEY,
-    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY
+    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
   };
 
   const handleFileUpload = async (e) => {
+    const timestamp = new Date().toISOString();
+
     const params = {
       Body: file,
       Bucket: S3_BUCKET,
-      Key: `test/data/${file.name}`
+      Key: `employers/${employerId}/${timestamp}/${file.name}`,
     };
 
     try {
       const parallelUploads3 = new Upload({
         client: new S3Client({ region: REGION, credentials: credentials }),
         params: params,
-        partSize: 1024 * 1024 * 5,
-        leavePartsOnError: false
+        partSize: 1024 * 1024 * 1,
+        leavePartsOnError: false,
       });
 
       if (fileSize > maxSize) {
@@ -80,7 +78,7 @@ const CSVUpload = () => {
     } catch (err) {
       console.log(err);
       if (err.message === "FileTooLarge") {
-        alert("File is too large. Please upload the file in parts.");
+        alert("File is too large. Maximum file size can be 5MB.");
       } else {
         alert(
           "An error occurred while uploading the file. Please try uploading again."
@@ -104,7 +102,7 @@ const CSVUpload = () => {
   };
 
   return (
-    <Card style={CARD_STYLING} interactive={true} elevation={Elevation.THREE}>
+    <Card style={CARD_STYLING} interactive={false} elevation={Elevation.THREE}>
       <Collapse in={uploadStatus}>
         <Alert
           onClose={() => {
@@ -127,7 +125,7 @@ const CSVUpload = () => {
       <br />
 
       <h5 style={SUB_HEADING_STYLING}>Choose Employee Details CSV</h5>
-      <FileInput text="Choose file..." onInputChange={handleChange} />
+      <FileInput text="Choose file . . . " onInputChange={handleChange} />
 
       <br />
       <br />
