@@ -89,6 +89,15 @@ const CSVUpload = () => {
     }
   };
 
+  // Create a reference to the hidden file input element
+  const hiddenFileInput = React.useRef(null);
+
+  // Programatically click the hidden file input element
+  // when the Button component is clicked
+  const handleClick = (e) => {
+    hiddenFileInput.current.click();
+  };
+
   const handleChange = (e) => {
     setFileSize(e.target.files[0].size);
     setFile(e.target.files[0]);
@@ -114,9 +123,7 @@ const CSVUpload = () => {
         </Alert>
       </Collapse>
       <h3>Upload Employee Details</h3>
-
       <br />
-
       <CSVLink data={headers} filename={"Employee_Details_Format.csv"}>
         <Button>Download Format</Button>
       </CSVLink>
@@ -125,7 +132,20 @@ const CSVUpload = () => {
       <br />
 
       <h5 style={SUB_HEADING_STYLING}>Choose Employee Details CSV</h5>
-      <FileInput text="Choose file . . . " onInputChange={handleChange} />
+      <>
+        <Button onClick={handleClick}>Select File</Button>
+        <input
+          type="file"
+          ref={hiddenFileInput}
+          onChange={handleChange}
+          style={{ display: "none" }}
+        />
+      </>
+
+      <br />
+      <br />
+
+      <h6>{file ? file.name : ""}</h6>
 
       <br />
       <br />
