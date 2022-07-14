@@ -12,36 +12,31 @@ const CARD_STYLING = {
   textAlign: "center",
   marginLeft: "auto",
   marginRight: "auto",
-  width: "50%"
+  width: "50%",
 };
 
 const SUB_HEADING_STYLING = {
   marginTop: "1%",
-  marginBottom: "2%"
+  marginBottom: "2%",
 };
 
 const CSVUpload = () => {
-  // AUTH LAYER
-  const navigate = useNavigate();
   const auth = useSelector((state) => state.auth);
-  const [, setUserName] = useState("");
+  const navigate = useNavigate();
+
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
   useEffect(() => {
     console.log(auth);
-    if (auth === undefined || auth === {}) {
+    if (auth === undefined || auth === {} || !auth.isLoggedIn) {
       navigate("/login");
-    } else if (!auth.isLoggedIn) {
-      navigate("/login");
-    } else {
-      // setUserName(user.signInUserSession.idToken.payload.name);
-      setUserName(auth.user.attributes.name);
     }
   }, [auth, navigate]);
 
   // CSV FILE UPLOAD
   const [file, setFile] = useState({ object: null, validations: [] });
   const [fileSize, setFileSize] = useState(0);
-  const maxSize = 1024 * 1024 * 2; // 2MB
   const [uploadStatus, setUploadStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
@@ -51,14 +46,16 @@ const CSVUpload = () => {
 
   const credentials = {
     accessKeyId: process.env.REACT_APP_ACCESS_KEY,
-    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY
+    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
   };
 
-  const handleFileUpload = async () => {
+  const handleFileUpload = async (e) => {
+    const timestamp = new Date().toISOString();
+
     const params = {
       Body: file.object,
       Bucket: S3_BUCKET,
-      Key: `test/data/${file.object.name}`
+      Key: `employers/${employerId}/${timestamp}/${file.object.name}`,
     };
 
     try {
@@ -84,6 +81,15 @@ const CSVUpload = () => {
       setDisabled(false);
       setLoading(false);
     }
+  };
+
+  // Create a reference to the hidden file input element
+  const hiddenFileInput = React.useRef(null);
+
+  // Programatically click the hidden file input element
+  // when the Button component is clicked
+  const handleClick = (e) => {
+    hiddenFileInput.current.click();
   };
 
   const handleChange = (e) => {
@@ -113,9 +119,7 @@ const CSVUpload = () => {
         </Alert>
       </Collapse>
       <h3>Upload Employee Details</h3>
-
       <br />
-
       <CSVLink data={headers} filename={"Employee_Details_Format.csv"}>
         <Button>Download Format</Button>
       </CSVLink>
