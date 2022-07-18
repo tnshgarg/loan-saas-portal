@@ -30,9 +30,9 @@ const Table = ({
 
   const { value, setValue } = useContext(UpdateAlertContext);
 
-  const cancelCallback = () => {
+  const cancelCallback = (storeData) => {
     setEditableRowIndex(null);
-    setData([...data]);
+    setData([...Object.values(storeData)]);
   };
 
   const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
@@ -71,6 +71,7 @@ const Table = ({
                 editableRowIndex,
                 storeData,
                 setValue,
+                data
               }) => (
                 <Button
                   disabled={
@@ -94,7 +95,7 @@ const Table = ({
                           isOpen: !value.isOpen,
                           newValues: newValues,
                           initialValues: initialValues,
-                          cancelCallback,
+                          cancelCallback : () => cancelCallback(storeData),
                           onConfirm: () =>
                             handleSubmit(
                               updatedRow,
