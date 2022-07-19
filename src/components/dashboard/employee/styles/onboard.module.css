@@ -1,0 +1,30 @@
+.row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.column {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    flex-basis: 100%;
+}
+
+.header {
+
+}
+
+.actions {
+    text-align: right;
+}
+
+.alignRight {
+    text-align: right;
+}
+.inline {
+    display: inline-block;
+    width: auto;
+}
+

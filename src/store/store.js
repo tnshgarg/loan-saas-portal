@@ -6,6 +6,7 @@ import { employerAddressApi } from "./slices/apiSlices/employer/addressApiSlice"
 import { employerCredentialsApi } from "./slices/apiSlices/employer/credentialsApiSlice";
 import { employerTaxApi } from "./slices/apiSlices/employer/taxApiSlice";
 import authReducer from "./slices/authSlice";
+import CSVUploadReducer from "./slices/csvUploadSlice.ts";
 import employeeReducer from "./slices/employeeSlice";
 import messageReducer from "./slices/messageSlice";
 import registerFormReducer from "./slices/registerFormSlice";
@@ -16,6 +17,7 @@ export const store = configureStore({
     auth: authReducer,
     registerForm: registerFormReducer,
     employee: employeeReducer,
+    csvUploads: CSVUploadReducer,
     [employerAddressApi.reducerPath]: employerAddressApi.reducer,
     [employerTaxApi.reducerPath]: employerTaxApi.reducer,
     [employerCredentialsApi.reducerPath]: employerCredentialsApi.reducer,
