@@ -19,6 +19,7 @@ export const allEmployeesBasicDetails = createApi({
     },
   }),
   tagTypes: ["AllEmployeesBasicDetails"],
+  keepUnusedDataFor: 86400,
   endpoints: (builder) => ({
     // Define endpoints here
     getAllEmployeesByEmployerId: builder.query({

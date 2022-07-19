@@ -19,6 +19,7 @@ export const employeeDetails = createApi({
     },
   }),
   tagTypes: ["EmployeeDetails"],
+  keepUnusedDataFor: 86400,
   endpoints: (builder) => ({
     // Define endpoints here
     getEmployeeDetailsByEmployeeId: builder.query({

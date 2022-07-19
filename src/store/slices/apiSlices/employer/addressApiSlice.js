@@ -19,6 +19,7 @@ export const employerAddressApi = createApi({
     },
   }),
   tagTypes: ["EmployerAddress"],
+  keepUnusedDataFor: 86400,
   endpoints: (builder) => ({
     // Define endpoints here
     getEmployerAddressById: builder.query({

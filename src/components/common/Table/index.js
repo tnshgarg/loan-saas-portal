@@ -1,7 +1,13 @@
 import React, { useContext } from "react";
 import PropTypes from "prop-types";
-import { useRowSelect, useSortBy, useTable } from "react-table";
-import styled from "styled-components";
+import {
+  useRowSelect,
+  useSortBy,
+  useTable,
+  useFilters,
+  usePagination,
+} from "react-table";
+import styled, { css } from "styled-components";
 
 //Components
 import EditableCell from "./EditableCell";
@@ -10,6 +16,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import UpdateAlert from "../UpdateAlert";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
+import { Icon } from "@blueprintjs/core";
 
 const Table = ({
   columns,
@@ -23,6 +30,14 @@ const Table = ({
   storeData,
   inputTypes,
   setData,
+  showPagination,
+  handleRowClick,
+  filterTypes,
+  showEditColumn = true,
+  showFilter = false,
+  addLabel,
+  showAddBtn,
+  hoverEffect,
 }) => {
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -30,100 +45,120 @@ const Table = ({
 
   const { value, setValue } = useContext(UpdateAlertContext);
 
-  const cancelCallback = () => {
+  const cancelCallback = (storeData) => {
     setEditableRowIndex(null);
     setData([...data]);
+    setData([...Object.values(storeData)]);
   };
 
-  const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
-    useTable(
-      {
-        columns,
-        data,
-        defaultColumn,
-        initialState,
-        autoResetPage: !skipPageReset,
-        handleSubmit,
-        updateData,
-        editableRowIndex,
-        setEditableRowIndex,
-        setIsOpen,
-        setValue,
-        storeData,
-        inputTypes,
-      },
-      useSortBy,
-      useRowSelect,
-      (hooks) => {
-        hooks.allColumns.push((columns) => {
-          return [
-            ...columns,
-            {
-              accessor: "edit",
-              id: "edit",
-              Header: "Action",
-              disableSortBy: true,
-              Cell: ({
-                row,
-                column,
-                setEditableRowIndex,
-                setIsOpen,
-                editableRowIndex,
-                storeData,
-                setValue,
-              }) => (
-                <Button
-                  disabled={
-                    editableRowIndex === null
-                      ? false
-                      : editableRowIndex !== row.index
-                  }
-                  onClick={() => {
-                    const currentIndex = row.index;
-                    if (editableRowIndex !== currentIndex) {
-                      setEditableRowIndex(currentIndex);
-                    } else {
-                      setCurrRow(row);
-                      const updatedRow = row.values;
-                      if (!value.isOpen) {
-                        const initialValues = storeData[updatedRow.state];
-                        const newValues = { ...updatedRow };
-                        delete newValues.isOther;
-                        setValue({
-                          ...value,
-                          isOpen: !value.isOpen,
-                          newValues: newValues,
-                          initialValues: initialValues,
-                          cancelCallback,
-                          onConfirm: () =>
-                            handleSubmit(
-                              updatedRow,
-                              row,
-                              storeData,
-                              setEditableRowIndex,
-                              () => setValue({ ...value, isOpen: false })
-                            ),
-                        });
-                        return;
-                      }
-                      handleSubmit(
-                        updatedRow,
-                        row,
-                        storeData,
-                        setEditableRowIndex,
-                        () => setValue({ ...value, isOpen: false })
-                      );
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    prepareRow,
+    rows,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize },
+  } = useTable(
+    {
+      columns,
+      data,
+      defaultColumn,
+      initialState,
+      autoResetPage: !skipPageReset,
+      handleSubmit,
+      updateData,
+      editableRowIndex,
+      setEditableRowIndex,
+      setIsOpen,
+      setValue,
+      storeData,
+      inputTypes,
+      filterTypes,
+    },
+    showFilter && useFilters,
+    useSortBy,
+    usePagination,
+    useRowSelect,
+    (hooks) => {
+      hooks.allColumns.push((columns) => {
+        return [...columns].concat(
+          showEditColumn
+            ? {
+                accessor: "edit",
+                id: "edit",
+                Header: "Action",
+                disableSortBy: true,
+
+                Cell: ({
+                  row,
+                  column,
+                  setEditableRowIndex,
+                  setIsOpen,
+                  editableRowIndex,
+                  storeData,
+                  setValue,
+                }) => (
+                  <Button
+                    disabled={
+                      editableRowIndex === null
+                        ? false
+                        : editableRowIndex !== row.index
                     }
-                  }}
-                >
-                  {editableRowIndex !== row.index ? "Edit" : "Save"}
-                </Button>
-              ),
-            },
-          ];
-        });
-      }
-    );
+                    onClick={() => {
+                      const currentIndex = row.index;
+                      if (editableRowIndex !== currentIndex) {
+                        setEditableRowIndex(currentIndex);
+                      } else {
+                        setCurrRow(row);
+                        const updatedRow = row.values;
+                        if (!value.isOpen) {
+                          const initialValues = storeData[updatedRow.state];
+                          const newValues = { ...updatedRow };
+                          delete newValues.isOther;
+                          setValue({
+                            ...value,
+                            isOpen: !value.isOpen,
+                            newValues: newValues,
+                            initialValues: initialValues,
+                            cancelCallback: () => cancelCallback(storeData),
+                            onConfirm: () =>
+                              handleSubmit(
+                                updatedRow,
+                                row,
+                                storeData,
+                                setEditableRowIndex,
+                                () => setValue({ ...value, isOpen: false })
+                              ),
+                          });
+                          return;
+                        }
+                        handleSubmit(
+                          updatedRow,
+                          row,
+                          storeData,
+                          setEditableRowIndex,
+                          () => setValue({ ...value, isOpen: false })
+                        );
+                      }
+                    }}
+                  >
+                    {editableRowIndex !== row.index ? "Edit" : "Save"}
+                  </Button>
+                ),
+              }
+            : []
+        );
+      });
+    }
+  );
 
   const addhandler = () => {
     setEditableRowIndex(0);
@@ -136,22 +171,24 @@ const Table = ({
 
   return (
     <>
-      <Button
-        onClick={addhandler}
-        variant="outlined"
-        disabled={editableRowIndex !== null}
-        startIcon={<AddCircleIcon />}
-      >
-        Add another State
-      </Button>
-      <Styles>
+      {showAddBtn && (
+        <Button
+          onClick={addhandler}
+          variant="outlined"
+          disabled={editableRowIndex !== null}
+          startIcon={<AddCircleIcon />}
+        >
+          {addLabel ?? "Add"}
+        </Button>
+      )}
+      <Styles hoverEffect={hoverEffect}>
         <table {...getTableProps()}>
           <thead>
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
                   <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                    {column.render("Header")}
+                    <span className="heading">{column.render("Header")}</span>
                     <span>
                       {column.isSorted
                         ? column.isSortedDesc
@@ -172,7 +209,12 @@ const Table = ({
               prepareRow(row);
               return (
                 <>
-                  <tr {...row.getRowProps()}>
+                  <tr
+                    {...row.getRowProps()}
+                    onClick={() => {
+                      handleRowClick(row.original);
+                    }}
+                  >
                     {row.cells.map((cell) => {
                       return (
                         <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
@@ -184,6 +226,72 @@ const Table = ({
             })}
           </tbody>
         </table>
+        {showPagination && (
+          <div className="pagination">
+            <span className="per_page">Rows per page</span>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+              }}
+            >
+              {[5, 10, 20, 30, 40, 50].map((pageSize) => (
+                <option key={pageSize} value={pageSize}>
+                  {pageSize}
+                </option>
+              ))}
+            </select>
+            <span
+              style={{
+                marginLeft: "1%",
+                marginRight: "0.5%",
+                marginTop: "0.2%",
+              }}
+            >
+              Page{" "}
+              <span>
+                {pageIndex + 1} of {pageOptions.length}
+              </span>
+            </span>
+            <div className="nav_container">
+              <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                <Icon className="nav_icons" icon="double-chevron-left" />
+              </button>
+              <button
+                onClick={() => previousPage()}
+                disabled={!canPreviousPage}
+              >
+                <Icon className="nav_icons" icon="chevron-left" />
+              </button>
+              <button onClick={() => nextPage()} disabled={!canNextPage}>
+                <Icon className="nav_icons" icon="chevron-right" />
+              </button>
+              <button
+                onClick={() => gotoPage(pageCount - 1)}
+                disabled={!canNextPage}
+              >
+                <Icon className="nav_icons" icon="double-chevron-right" />
+              </button>
+            </div>
+            <span
+              style={{
+                marginLeft: "0.5%",
+                marginRight: "0.5%",
+              }}
+            >
+              Go to page:
+              <input
+                type="number"
+                defaultValue={pageIndex + 1}
+                onChange={(e) => {
+                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                  gotoPage(page);
+                }}
+                style={{ width: "50px" }}
+              />
+            </span>
+          </div>
+        )}
         <UpdateAlert />
       </Styles>
     </>
@@ -209,22 +317,33 @@ const Styles = styled.div`
   table {
     width: 100%;
     border-spacing: 0;
-    border: 1px solid black;
     tr {
+      cursor: pointer;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
       :last-child {
         td {
           border-bottom: 0;
         }
       }
     }
-
+    th {
+      color: rgba(0, 0, 0, 0.87);
+      font-weight: 500;
+      .heading {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 78%;
+        display: inline-block;
+      }
+    }
     th,
     td {
       margin: 0;
       padding: 0.5rem;
-      border-bottom: 1px solid black;
-      border-right: 1px solid black;
-
+      p {
+        margin-bottom: 0px;
+      }
       :last-child {
         border-right: 0;
       }
@@ -235,8 +354,59 @@ const Styles = styled.div`
         margin-top: 15px;
       }
     }
+    tbody {
+      tr {
+        ${(props) =>
+          props.hoverEffect &&
+          css`
+            :hover {
+              background-color: rgb(114, 202, 155);
+            }
+          `};
+      }
+    }
   }
   .pagination {
-    padding: 0.5rem;
+    color: rgba(0, 0, 0, 0.54) !important;
+    justify-content: flex-end;
+    padding: 1rem 0.5rem;
+    align-items: center;
+    .per_page {
+      margin: 0px 4px;
+    }
+    select {
+      cursor: pointer;
+      height: 24px;
+      max-width: 100%;
+      user-select: none;
+      padding-left: 8px;
+      padding-right: 5px;
+      box-sizing: content-box;
+      font-size: inherit;
+      color: inherit;
+      border: none;
+      background-color: transparent;
+      direction: ltr;
+      flex-shrink: 0;
+    }
+    .nav_container {
+      margin: 0px 10px;
+    }
+    .down_icon {
+      padding-right: 5px;
+    }
+    button {
+      outline: none;
+      border: 0px;
+      .nav_icons {
+        padding: 0px 5px;
+      }
+    }
+    input {
+      border: 1px solid rgba(0, 0, 0, 0.3);
+      margin-left: 5px;
+      padding: 2px 5px;
+      text-align: center;
+    }
   }
 `;

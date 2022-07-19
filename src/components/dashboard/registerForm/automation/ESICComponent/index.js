@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useAlert } from "react-alert";
 
 //Components
@@ -188,6 +188,8 @@ export default function ESICComponent() {
         updateData={updateData}
         initialState={{ hiddenColumns: ["isOther"] }}
         inputTypes={inputTypes}
+        addLabel={'Add Another State'}
+        showAddBtn={true}
       />
     </>
   );

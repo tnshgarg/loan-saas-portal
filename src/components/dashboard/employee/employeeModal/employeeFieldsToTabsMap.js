@@ -76,10 +76,7 @@ export const employeeFieldsToTabsMap = {
       "Father / Husband": {
         "Relation with Employee (Father/Husband)": {
           type: "dropdown",
-          options: [
-            "Fahter",
-            "Husband"
-          ],
+          options: ["Father", "Husband"],
         },
       },
       Nominee: {
@@ -96,7 +93,7 @@ export const employeeFieldsToTabsMap = {
             "Dependant mother",
             "Brother",
             "Sister",
-            "Others"
+            "Others",
           ],
         },
       },
@@ -128,9 +125,9 @@ export const employeeFieldsToTabsMap = {
         },
         "Employee Permanent Address District": {
           type: "dropdown",
-          dependentOn: 'EmployeePermanentAddressState',
-          options: STATES_DISTRICTS
-        }
+          dependentOn: "EmployeePermanentAddressState",
+          options: STATES_DISTRICTS,
+        },
       },
       Present: {
         "Employee Present Address State": {
@@ -139,9 +136,9 @@ export const employeeFieldsToTabsMap = {
         },
         "Employee Present Address District": {
           type: "dropdown",
-          dependentOn: 'EmployeePresentAddressState',
-          options: STATES_DISTRICTS
-        }
+          dependentOn: "EmployeePresentAddressState",
+          options: STATES_DISTRICTS,
+        },
       },
       Nominee: {
         "Employee Nominee Address State": {
@@ -150,9 +147,9 @@ export const employeeFieldsToTabsMap = {
         },
         "Employee Nominee Address District": {
           type: "dropdown",
-          dependentOn: 'EmployeeNomineeAddressState',
-          options: STATES_DISTRICTS
-        }
+          dependentOn: "EmployeeNomineeAddressState",
+          options: STATES_DISTRICTS,
+        },
       },
     },
     fields: {
