@@ -12,7 +12,7 @@ export function AppSidebar() {
     <SidebarItem key={navItem.route} {...navItem} />
   ));
   return (
-    <div style={{ position: "absolute", top: 0, left: 0, height: "100vh", width: sidebar.width }}>
+    <div style={{ position: "absolute", top: "0px", left: "0px", height: "100vh", width: sidebar.width }}>
       <Drawer
         className={Classes.DARK}
         usePortal={false}
@@ -22,6 +22,7 @@ export function AppSidebar() {
         enforceFocus={false}
         autoFocus={false}
         position={Position.LEFT}
+
       >
         <div style={{
           textAlign: "center",

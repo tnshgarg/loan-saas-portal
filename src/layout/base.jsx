@@ -11,25 +11,29 @@ const NON_LAYOUT_ROUTES = [
   "/confirm-sign-up",
   "/login",
   "/reset-password",
-  "/confirm-reset-password"
+  "/confirm-reset-password",
 ];
 export default function BaseLayout(props) {
   const location = useLocation();
-  console.log(location.pathname, { maxHeight: `calc(100vh - ${navbar.height})` });
+  console.log(location.pathname, {
+    maxHeight: `calc(100vh - ${navbar.height})`,
+  });
   if (NON_LAYOUT_ROUTES.includes(location.pathname))
-    return (
-      <>
-        {props.children}
-      </>
-    );
+    return <>{props.children}</>;
   return (
-    <div>
+    <div style={{ position: "relative" }}>
       <AppSidebar />
-      <div style={{ paddingLeft: sidebar.width, paddingTop: navbar.height }}>
-        <AppNavigation sidebarWidth={sidebar.width} />
-        <div style={{ maxHeight: "calc(100vh-4em)" }}>
-          {props.children}
-        </div>
+      <AppNavigation sidebarWidth={sidebar.width} />
+      <div
+        style={{
+          paddingLeft: sidebar.width,
+          paddingTop: navbar.height,
+          paddingBottom: "5em",
+          maxHeight: `98vh`,
+          overflow: "scroll",
+        }}
+      >
+        <div style={{}}>{props.children}</div>
       </div>
     </div>
   );

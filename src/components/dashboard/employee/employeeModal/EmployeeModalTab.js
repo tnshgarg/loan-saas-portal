@@ -1,8 +1,9 @@
 import { Alert, Intent } from "@blueprintjs/core";
+import Select from "react-select";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import { useAlert } from "react-alert";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { NO_CHANGE_ERROR } from "../../../../utils/messageStrings";
 import {
   useGetEmployeeDetailsByEmployeeIdQuery,
@@ -15,12 +16,14 @@ export const EmployeeModalTab = ({
   fields,
   currEmployeeId,
   setDidDialogChange,
+  type,
+  inputTypes,
 }) => {
   const alert = useAlert();
-
   const responseFromQuery = useGetEmployeeDetailsByEmployeeIdQuery({
     id: currEmployeeId,
     category,
+    subCategory: type
   });
   const { data, isLoading, error } = responseFromQuery;
 
@@ -31,6 +34,9 @@ export const EmployeeModalTab = ({
     register,
     handleSubmit,
     reset,
+    control,
+    getValues,
+    watch,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -50,11 +56,12 @@ export const EmployeeModalTab = ({
 
   useEffect(() => {
     if (data) {
-      const body = data.body ?? {};
-      const formDataInitialFetched = Object.entries(body).reduce(
+      let body = data.body ?? {};
+      
+      const formDataInitialFetched = Object.entries(fields).reduce(
         (acc, [key, value]) => ({
           ...acc,
-          [fields[key]]: value,
+          [value]: body[key]
         }),
         {}
       );
@@ -87,7 +94,7 @@ export const EmployeeModalTab = ({
 
       reset(formDataNewFieldsFetched);
     }
-  }, [data, fields, reset]);
+  }, [data, fields, reset, type]);
 
   useEffect(() => {
     if (updateEmployeeMutationResponse) {
@@ -115,7 +122,9 @@ export const EmployeeModalTab = ({
         ...acc,
         [fieldsInverted[key]]: value,
       }),
-      {}
+      {
+        ...(type && { type }),
+      }
     );
 
     const finalEmployeeUpdateObjectToSend = {
@@ -129,7 +138,6 @@ export const EmployeeModalTab = ({
   };
 
   const onSubmit = (data) => {
-    console.log(`disabled: ${disabled}`);
     if (!disabled) {
       return;
     }
@@ -158,7 +166,6 @@ export const EmployeeModalTab = ({
         },
         {}
       );
-      console.log(changedEmployeeDetails);
       setChangesInEmployeeDetails(changedEmployeeDetails);
       setIsAlertOpen(true);
     } else {
@@ -167,6 +174,13 @@ export const EmployeeModalTab = ({
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
+
+  const generateOptions = (values) => {
+    return values?.map((opt) => ({
+      value: opt,
+      label: opt
+    }))
+  }
 
   return (
     <div>
@@ -179,8 +193,46 @@ export const EmployeeModalTab = ({
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* register your input into the hook by invoking the "register" function */}
             {Object.entries(formDataNewFields).map(([key, value]) => {
+              const labelKey = formDataNewFieldsToInitialFieldsMap[key];
               if (key === "_id") {
                 return <></>;
+              }
+              if (inputTypes && inputTypes[labelKey]) {
+                let options = [];
+                const dependentOn = inputTypes[labelKey]?.dependentOn ?? false;
+                if(dependentOn){
+                  const currState = watch(dependentOn) ?? "";
+                  options = generateOptions(inputTypes[labelKey]?.options[currState]);
+                }else {
+                  options = generateOptions(inputTypes[labelKey]?.options);
+                }
+                const defaultValue = options[0]?.value
+                return (
+                  <Controller
+                    control={control}
+                    name={key}
+                    // defaultValue={defaultValue}
+                    render={({ field }) => (
+                      <>
+                        <label>{labelKey}</label>
+                        <Select
+                          key={`selected_${defaultValue}`}
+                          inputRef={field.ref}
+                          classNamePrefix="addl-class"
+                          className="select-comp"
+                          options={options}
+                          value={options?.find((c) => c.value === field.value)}
+                          onChange={(v) => {
+                            field.onChange(v.value);
+                          }}
+                          name={key}
+                          isDisabled={disabled}
+                        />
+                        <div>&nbsp;</div>
+                      </>
+                    )}
+                  />
+                );
               }
               return (
                 <FormInput
@@ -190,9 +242,9 @@ export const EmployeeModalTab = ({
                   field={key}
                   inputProps={{
                     icon: "user",
-                    label: formDataNewFieldsToInitialFieldsMap[key],
-                    placeholder: `Please enter ${formDataNewFieldsToInitialFieldsMap[key]} for selected employee`,
-                    errorMessage: `Please enter ${formDataNewFieldsToInitialFieldsMap[key]} for selected employee`,
+                    label: labelKey,
+                    placeholder: `Please enter ${labelKey} for selected employee`,
+                    errorMessage: `Please enter ${labelKey} for selected employee`,
                     disabled: disabled,
                   }}
                 />

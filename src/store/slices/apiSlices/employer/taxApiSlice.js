@@ -19,6 +19,7 @@ export const employerTaxApi = createApi({
     },
   }),
   tagTypes: ["EmployerTax"],
+  keepUnusedDataFor: 86400,
   endpoints: (builder) => ({
     // Define endpoints here
     getEmployerTaxById: builder.query({

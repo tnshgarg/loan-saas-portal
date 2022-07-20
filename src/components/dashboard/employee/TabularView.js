@@ -1,7 +1,6 @@
 import {
   Card,
   Dialog,
-  EditableText,
   Elevation,
   Tab,
   Tabs,
@@ -10,53 +9,13 @@ import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useFilters, usePagination, useSortBy, useTable } from "react-table";
-import styled from "styled-components";
 import {
   useGetAllEmployeesByEmployerIdQuery,
   useLazyGetAllEmployeesByEmployerIdQuery,
 } from "../../../store/slices/apiSlices/employees/employeesApiSlice";
+import Table from "../../common/Table";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
-
-const Styles = styled.div`
-  padding: 1rem;
-
-  table {
-    border-spacing: 0;
-    border: 1px solid black;
-
-    tbody {
-      tr {
-        :last-child {
-          td {
-            border-bottom: 0;
-          }
-        }
-
-        :hover {
-          background-color: #72ca9b;
-          cursor: pointer;
-        }
-      }
-    }
-
-    th,
-    td {
-      margin: 0;
-      padding: 0.5rem;
-      border-bottom: 1px solid black;
-      border-right: 1px solid black;
-
-      :last-child {
-        border-right: 0;
-      }
-    }
-  }
-  .pagination {
-    padding: 0.5rem;
-  }
-`;
 
 const REGISTER_FORM_CARD_STYLING = {
   width: "80%",
@@ -70,11 +29,16 @@ const TABLE_CARD_STYLING = {
 };
 
 const MODAL_STYLING = {
-  // height: "25rem",
   marginTop: "7.5rem",
   marginBottom: "5rem",
-  width: "50rem",
+  width: "55rem",
 };
+
+const FILTER_INPUT_STYLING = {
+  border: '1px solid rgba(0, 0, 0, 0.3)',
+  marginTop: '5px',
+  padding: '5px 5px',
+}
 
 // Define a default UI for filtering
 function DefaultColumnFilter({
@@ -84,6 +48,7 @@ function DefaultColumnFilter({
 
   return (
     <input
+      style={FILTER_INPUT_STYLING}
       value={filterValue || ""}
       onChange={(e) => {
         setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
@@ -98,23 +63,6 @@ function fuzzyTextFilterFn(rows, id, filterValue) {
 }
 
 fuzzyTextFilterFn.autoRemove = (val) => !val;
-
-// Create an editable cell renderer
-const EditableCell = ({ value: initialValue, row, column: { id } }) => {
-  // We need to keep and update the state of the cell normally
-  const [value, setValue] = useState(initialValue);
-
-  // If the initialValue is changed external, sync it up with our state
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-
-  return (
-    <div>
-      <EditableText value={value} disabled={true} />
-    </div>
-  );
-};
 
 const TabularViewTab = () => {
   const employerId =
@@ -198,7 +146,6 @@ const TabularViewTab = () => {
     () => ({
       // Let's set up our default Filter UI
       Filter: DefaultColumnFilter,
-      Cell: EditableCell,
     }),
     []
   );
@@ -221,183 +168,37 @@ const TabularViewTab = () => {
     }
     setDidDialogChange(false);
   };
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    page, // Instead of using 'rows', we'll use page,
-    // which has only the rows for the active page
-
-    // The rest of these things are super handy, too ;)
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    pageCount,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-    state: { pageIndex, pageSize },
-  } = useTable(
-    {
-      columns,
-      data: fetchedRows,
-      initialState: { pageIndex: 0, pageSize: 5 },
-      defaultColumn, // Be sure to pass the defaultColumn option
-      filterTypes,
-    },
-
-    useFilters, // useFilters!
-    useSortBy,
-    usePagination
-  );
-
-  // Render the UI for your table
   return (
-    <div>
-      {error ? (
-        <>Oh no, there was an error</>
-      ) : isLoading ? (
-        <>Loading...</>
-      ) : data ? (
-        <Card
-          style={TABLE_CARD_STYLING}
-          interactive={false}
-          elevation={Elevation.THREE}
-        >
-          <Styles>
-            <table {...getTableProps()}>
-              <thead>
-                {headerGroups.map((headerGroup) => (
-                  <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map((column) => (
-                      <th
-                        {...column.getHeaderProps(
-                          column.getSortByToggleProps()
-                        )}
-                      >
-                        {column.render("Header")}
-                        {/* Add a sort direction indicator */}
-                        <span>
-                          {column.isSorted
-                            ? column.isSortedDesc
-                              ? " 🔽"
-                              : " 🔼"
-                            : ""}
-                        </span>
-                        <div>
-                          {column.canFilter ? column.render("Filter") : null}
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody {...getTableBodyProps()}>
-                {page.map((row, i) => {
-                  prepareRow(row);
-                  return (
-                    <tr
-                      {...row.getRowProps()}
-                      onClick={() => {
-                        handleRowClick(row.original);
-                      }}
-                    >
-                      {row.cells.map((cell) => {
-                        return (
-                          <td {...cell.getCellProps()}>
-                            {cell.render("Cell")}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            <div className="pagination">
-              <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-                {"<<"}
-              </button>{" "}
-              <button
-                onClick={() => previousPage()}
-                disabled={!canPreviousPage}
-              >
-                {"<"}
-              </button>{" "}
-              <button onClick={() => nextPage()} disabled={!canNextPage}>
-                {">"}
-              </button>{" "}
-              <button
-                onClick={() => gotoPage(pageCount - 1)}
-                disabled={!canNextPage}
-              >
-                {">>"}
-              </button>{" "}
-              <span
-                style={{
-                  marginLeft: "1%",
-                  marginRight: "0.5%",
-                  marginTop: "0.2%",
-                }}
-              >
-                Page{" "}
-                <strong>
-                  {pageIndex + 1} of {pageOptions.length}
-                </strong>{" "}
-              </span>
-              <span
-                style={{
-                  marginLeft: "0.5%",
-                  marginRight: "0.5%",
-                }}
-              >
-                Go to page:{" "}
-                <input
-                  type="number"
-                  defaultValue={pageIndex + 1}
-                  onChange={(e) => {
-                    const page = e.target.value
-                      ? Number(e.target.value) - 1
-                      : 0;
-                    gotoPage(page);
-                  }}
-                  style={{ width: "50px" }}
-                />
-              </span>{" "}
-              <select
-                value={pageSize}
-                onChange={(e) => {
-                  setPageSize(Number(e.target.value));
-                }}
-              >
-                {[5, 10, 20, 30, 40, 50].map((pageSize) => (
-                  <option key={pageSize} value={pageSize}>
-                    Show {pageSize}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <Dialog
-              isOpen={isDialogOpen}
-              onClose={handleDialogClose}
-              title="Employee Details"
-              style={MODAL_STYLING}
-            >
-              <Card interactive={true} elevation={Elevation.THREE}>
-                <EmployeeModal
-                  currEmployeeId={currEmployeeId}
-                  setDidDialogChange={setDidDialogChange}
-                />
-              </Card>
-            </Dialog>
-          </Styles>
+    <Card
+      style={TABLE_CARD_STYLING}
+      interactive={false}
+      elevation={Elevation.THREE}
+    >
+      <Table
+        columns={columns}
+        defaultColumn={defaultColumn}
+        data={fetchedRows}
+        handleRowClick={handleRowClick}
+        showPagination={true}
+        filterTypes={filterTypes}
+        showEditColumn={false}
+        showFilter={true}
+        hoverEffect={true}
+      />
+      <Dialog
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        title="Employee Details"
+        style={MODAL_STYLING}
+      >
+        <Card interactive={true} elevation={Elevation.THREE}>
+          <EmployeeModal
+            currEmployeeId={currEmployeeId}
+            setDidDialogChange={setDidDialogChange}
+          />
         </Card>
-      ) : null}
-    </div>
+      </Dialog>
+    </Card>
   );
 };
 

@@ -2,7 +2,9 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Card, Elevation, Tab, Tabs } from "@blueprintjs/core";
-import { AddressForm, AutomationForm, TaxSetupForm } from "./index";
+import AddressForm from "./AddressForm";
+import TaxSetupForm from "./TaxSetupForm";
+import AutomationForm from "./automation/AutomationForm";
 
 const REGISTER_FORM_CARD_STYLING = {
   width: "80%",
@@ -12,16 +14,12 @@ const REGISTER_FORM_CARD_STYLING = {
 
 const RegisterFormContent = () => {
   const auth = useSelector((state) => state.auth);
-
   const navigate = useNavigate();
 
   useEffect(() => {
     console.log(auth);
     if (auth === undefined || auth === {} || !auth.isLoggedIn) {
       navigate("/login");
-    } else {
-      // setUserName(user.signInUserSession.idToken.payload.name);
-      // setUserName(auth.user.attributes.name);
     }
   }, [auth, navigate]);
 
