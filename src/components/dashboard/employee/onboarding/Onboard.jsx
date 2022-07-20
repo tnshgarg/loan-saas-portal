@@ -41,6 +41,7 @@ function _Onboard(props) {
   // CSV FILE UPLOAD
   const [file, setFile] = useState({ object: null, validations: [] });
   const [fileSize, setFileSize] = useState(0);
+  const [alertMessage, setAlertMessage] = useState("");
   const [uploadStatus, setUploadStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
@@ -53,12 +54,12 @@ function _Onboard(props) {
     secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY
   };
   //Hacky
-  const getter = {}
+  const getter = {};
   const setDataGetter = (data) => {
-    getter['data'] = data;
-  }
+    getter["data"] = data;
+  };
   const handleFileUpload = async () => {
-    const tableData = getter['data']();
+    const tableData = getter["data"]();
     const tableCSV = Papa.unparse(tableData);
     const csvFile = new Blob([tableCSV], {type: 'text/csv'});
     const timestamp = new Date().getTime();
@@ -83,6 +84,8 @@ function _Onboard(props) {
         alert("File is too large. Please upload the file in parts.");
       } else {
         await parallelUploads3.done();
+        setFile({ object: null, validations: [] });
+        setAlertMessage(`File ${file.object.name} Uploaded Successfully`)
         setUploadStatus(true);
       }
     } catch (err) {
@@ -190,9 +193,7 @@ function _Onboard(props) {
           }}
           severity="success"
         >
-          {file.object
-            ? `File ${file.object.name} Uploaded Successfully`
-            : null}
+          {alertMessage}
         </Alert>
       </Collapse>
 
@@ -210,13 +211,14 @@ function _Onboard(props) {
           </Button>
         </>
       ) : (
-        <NonIdealState
+        !uploadStatus ?
+          (<NonIdealState
           icon={"folder-open"}
           title={"No File Open"}
           description={<>No CSV file has been selected, please import data using <strong>Import Data</strong> on top
             right.</>}
           layout={"horizontal"}
-        />
+        />) : ""
       )}
     </Card>
   );
