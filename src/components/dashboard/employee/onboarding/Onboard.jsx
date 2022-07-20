@@ -61,12 +61,14 @@ function _Onboard(props) {
     const tableData = getter['data']();
     const tableCSV = Papa.unparse(tableData);
     const csvFile = new Blob([tableCSV], {type: 'text/csv'});
-    const timestamp = new Date().toISOString();
+    const timestamp = new Date().getTime();
+
+    console.log({timestamp, employerId, file})
 
     const params = {
       Body: csvFile,
       Bucket: S3_BUCKET,
-      Key: `employers/${employerId}/${timestamp}/${file.object.name}`
+      Key: `${employerId}/${timestamp}-${file.object.name}`
     };
 
     try {
