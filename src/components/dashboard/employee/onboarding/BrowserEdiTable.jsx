@@ -242,7 +242,6 @@ function Table({
     hiddenHeaders: {},
     hiddenColumns: [],
   });
-  console.log({ columns });
   const headerMap = {};
   const visibilityToolbar = columns.reduce((groups, header) => {
     if (header.columns) {
@@ -252,6 +251,7 @@ function Table({
     return groups;
   }, []);
 
+  // tech debt useEffec shallow compare
   useEffect(() => {
     const hiddenHeaders = {};
     let hiddenColumns = [];
@@ -264,13 +264,13 @@ function Table({
       hiddenColumns = hiddenColumns.concat(item.columns.map((i) => i.accessor));
     });
     setVisibility({ hiddenHeaders, hiddenColumns });
-  }, [visibilityToolbar]);
+  }, [JSON.stringify(visibilityToolbar)]);
 
   const toggleVisibility = (header) => {
     Object.keys(visibility.hiddenHeaders).forEach((k) => {
       visibility.hiddenHeaders[k] = true;
     });
-    visibility.hiddenHeaders[header] = !visibility.hiddenHeaders[header];
+    visibility.hiddenHeaders[header] = false;
     let hiddenColumns = [];
     Object.entries(visibility.hiddenHeaders).forEach(([k, v]) => {
       if (v) {
@@ -279,11 +279,10 @@ function Table({
         );
       }
     });
+    console.log({hiddenColumns})
     setVisibility({ ...visibility, hiddenColumns });
+    setHiddenColumns(hiddenColumns);
   };
-  useEffect(() => {
-    setHiddenColumns(visibility.hiddenColumns);
-  }, [visibility]);
   return (
     <div>
       {visibilityToolbar ? (
