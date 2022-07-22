@@ -12,6 +12,7 @@ import { headers } from "../headerData";
 import { HEADER_GROUPS, transformHeadersToFields } from "./fields";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import BrowserEdiTable from "./BrowserEdiTable";
+import { allEmployeesBasicDetails } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
 
 const CARD_STYLING = {
   marginLeft: "2.7em",
@@ -94,6 +95,7 @@ function _Onboard(props) {
         "An error occurred while uploading the file. Please try uploading again."
       );
     } finally {
+      dispatch(allEmployeesBasicDetails.util.invalidateTags(['AllEmployeesBasicDetails']))
       setDisabled(false);
       setLoading(false);
     }

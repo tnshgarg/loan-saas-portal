@@ -33,6 +33,7 @@ const TaxSetupForm = () => {
       pan: { number: panInitial } = "",
       tan: { number: tanInitial } = "",
       gstin: { number: gstinInitial } = "",
+      cin: { number: cinInitial } = "",
     } = {},
   } = data ?? {};
 
@@ -51,16 +52,17 @@ const TaxSetupForm = () => {
       reset({
         pan: panInitial,
         tan: tanInitial,
-        gstin: gstinInitial
+        gstin: gstinInitial,
+        cin: cinInitial
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, reset]);
 
   const onSubmit = (taxSetupFormDetailsNew) => {
-    const { pan, tan, gstin } = taxSetupFormDetailsNew;
+    const { pan, tan, gstin, cin } = taxSetupFormDetailsNew;
     const isEqual =
-      pan === panInitial && tan === tanInitial && gstin === gstinInitial;
+      pan === panInitial && tan === tanInitial && gstin === gstinInitial && cin === cinInitial;
     if (!isEqual) {
       updateEmployerTax({
         ...taxSetupFormDetailsNew,
@@ -99,6 +101,7 @@ const TaxSetupForm = () => {
       pan: panInitial,
       tan: tanInitial,
       gstin: gstinInitial,
+      cin: cinInitial
     };
     setValue({
       ...value,
@@ -156,6 +159,25 @@ const TaxSetupForm = () => {
                 placeholder: "Please enter company's TAN number",
                 errorMessage:
                   "Please enter a valid TAN number with 10 characters",
+              }}
+            />
+            <FormInput
+              register={register}
+              validations={{
+                required: true,
+                pattern: {
+                  value: /^([a-zA-Z0-9]{21})$/,
+                },
+              }}
+              errors={errors}
+              field={"cin"}
+              inputProps={{
+                disabled: disabled,
+                icon: "id-number",
+                label: "CIN",
+                placeholder: "Please enter company's CIN number",
+                errorMessage:
+                  "Please enter a valid CIN number with 21 characters",
               }}
             />
             <FormInput
