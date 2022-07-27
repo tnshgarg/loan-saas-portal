@@ -169,7 +169,7 @@ const AddressForm = () => {
                 required: true,
                 minLength: 1,
                 pattern: {
-                  value: /^[A-Z0-9a-z, ]+$/,
+                  value: /^[A-Z0-9a-z,\- ]+$/,
                 },
               }}
               errors={errors}
