@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { read, utils, writeFile } from 'xlsx';
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Upload } from "@aws-sdk/lib-storage";
@@ -12,6 +13,7 @@ import { headers } from "../headerData";
 import { HEADER_GROUPS, transformHeadersToFields } from "./fields";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import BrowserEdiTable from "./BrowserEdiTable";
+import { allEmployeesBasicDetails } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
 
 const CARD_STYLING = {
   marginLeft: "2.7em",
@@ -94,6 +96,7 @@ function _Onboard(props) {
         "An error occurred while uploading the file. Please try uploading again."
       );
     } finally {
+      dispatch(allEmployeesBasicDetails.util.invalidateTags(['AllEmployeesBasicDetails']))
       setDisabled(false);
       setLoading(false);
     }
@@ -106,12 +109,12 @@ function _Onboard(props) {
     console.log({ handleFileError: ctx });
   };
 
-  const handleFileImport = ({ data, errors, meta }) => {
-    if (errors.length) {
-      handleFileError({ data, errors, meta });
-      return;
-    }
-    console.log("dispatched", dispatch);
+  const handleFileImport = (data) => {
+    // if (errors.length) {
+    //   handleFileError({ data, errors, meta });
+    //   return;
+    // }
+    console.log("dispatched", dispatch, data, "data");
     dispatch(
       initCSVUpload({
         data: transformHeadersToFields(data),
@@ -138,11 +141,23 @@ function _Onboard(props) {
     console.log("file effect triggered", file.object);
     if (file.object) {
       console.log("file is set");
-      Papa.parse(file.object, {
-        header: true,
-        complete: handleFileImport,
-        error: handleFileError
-      });
+      // Papa.parse(file.object, {
+      //   header: true,
+      //   complete: handleFileImport,
+      //   error: handleFileError
+      // });
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const wb = read(event.target.result);
+        const sheets = wb.SheetNames;
+
+        if (sheets.length) {
+            const rows = utils.sheet_to_json(wb.Sheets[sheets[0]]);
+            console.log(rows)
+            handleFileImport(rows)
+        }
+    }
+    reader.readAsArrayBuffer(file.object);
     }
   }, [file.object]);
 
@@ -179,7 +194,7 @@ function _Onboard(props) {
                 type="file"
                 ref={hiddenFileInput}
                 onChange={handleChange}
-                accept=".csv"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
               />
             </div>
           </div>
