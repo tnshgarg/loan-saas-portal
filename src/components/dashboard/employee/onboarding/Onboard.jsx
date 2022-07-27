@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { read, utils, writeFile } from 'xlsx';
+import { read, utils } from 'xlsx';
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Upload } from "@aws-sdk/lib-storage";
@@ -105,15 +105,7 @@ function _Onboard(props) {
   // Create a reference to the hidden file input element
   const hiddenFileInput = useRef(null);
 
-  const handleFileError = (ctx) => {
-    console.log({ handleFileError: ctx });
-  };
-
   const handleFileImport = (data) => {
-    // if (errors.length) {
-    //   handleFileError({ data, errors, meta });
-    //   return;
-    // }
     console.log("dispatched", dispatch, data, "data");
     dispatch(
       initCSVUpload({
@@ -141,11 +133,6 @@ function _Onboard(props) {
     console.log("file effect triggered", file.object);
     if (file.object) {
       console.log("file is set");
-      // Papa.parse(file.object, {
-      //   header: true,
-      //   complete: handleFileImport,
-      //   error: handleFileError
-      // });
       const reader = new FileReader();
       reader.onload = (event) => {
         const wb = read(event.target.result);
