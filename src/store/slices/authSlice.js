@@ -89,7 +89,7 @@ export const login = (username, password) => (dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
-  // AuthService.logout();
+  AuthService.logout();
   dispatch(setLoggedInUser(null));
   dispatch(clearMessage());
 };

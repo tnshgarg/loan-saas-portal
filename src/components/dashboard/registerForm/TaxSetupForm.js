@@ -164,7 +164,7 @@ const TaxSetupForm = () => {
             <FormInput
               register={register}
               validations={{
-                required: true,
+                required: false,
                 pattern: {
                   value: /^([a-zA-Z0-9]{21})$/,
                 },
