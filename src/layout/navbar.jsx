@@ -25,7 +25,7 @@ function _UserMenuItem(props) {
           minimal={true}
           style={{ width: "100%" }}
           onClick={() => {
-            dispatch(logout());
+            dispatch(logout);
           }}
         />
       </Menu>} position={Position.BOTTOM_LEFT}>
