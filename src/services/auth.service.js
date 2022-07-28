@@ -43,6 +43,10 @@ const confirmForgotPassword = (username, code, password) => {
   return Auth.forgotPasswordSubmit(username, code, password);
 };
 
+const logout = () => {
+  return Auth.signOut();
+};
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   signUp,
@@ -50,4 +54,5 @@ export default {
   login,
   forgotPassword,
   confirmForgotPassword,
+  logout,
 };
