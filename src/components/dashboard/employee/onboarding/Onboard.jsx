@@ -48,7 +48,7 @@ function _Onboard(props) {
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
-  const S3_BUCKET = process.env.REACT_APP_S3_BUCKET;
+  const S3_BUCKET = `employer-${process.env.REACT_APP_STAGE}-raw`;
   const REGION = process.env.REACT_APP_S3_REGION;
 
   const credentials = {
@@ -71,7 +71,7 @@ function _Onboard(props) {
     const params = {
       Body: csvFile,
       Bucket: S3_BUCKET,
-      Key: `${employerId}/${timestamp}-${file.object.name}`
+      Key: `${employerId}/${timestamp}_${file.object.name.replace("/\W/g", "_")}`
     };
 
     try {
@@ -140,8 +140,8 @@ function _Onboard(props) {
 
         if (sheets.length) {
             const rows = utils.sheet_to_json(wb.Sheets[sheets[0]]);
-            console.log(rows)
-            handleFileImport(rows)
+            console.log(rows);
+            handleFileImport(rows);
         }
     }
     reader.readAsArrayBuffer(file.object);
