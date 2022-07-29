@@ -1,10 +1,5 @@
-import {
-  Card,
-  Dialog,
-  Elevation,
-  Tab,
-  Tabs,
-} from "@blueprintjs/core";
+import { Card, Dialog, Elevation, Tab, Tabs } from "@blueprintjs/core";
+import Select from "react-select";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
@@ -35,10 +30,25 @@ const MODAL_STYLING = {
 };
 
 const FILTER_INPUT_STYLING = {
-  border: '1px solid rgba(0, 0, 0, 0.3)',
-  marginTop: '5px',
-  padding: '5px 5px',
-}
+  border: "1px solid rgba(0, 0, 0, 0.3)",
+  marginTop: "5px",
+  padding: "5px 5px",
+};
+
+const UNVERIFIED_OPTIONS = [
+  {
+    label: "Aadhar",
+    value: "aadhaar",
+  },
+  {
+    label: "Pan",
+    value: "pan",
+  },
+  {
+    label: "Bank Details",
+    value: "bank",
+  },
+];
 
 // Define a default UI for filtering
 function DefaultColumnFilter({
@@ -64,11 +74,17 @@ function fuzzyTextFilterFn(rows, id, filterValue) {
 
 fuzzyTextFilterFn.autoRemove = (val) => !val;
 
-const TabularViewTab = () => {
+const TabularViewTab = ({ status, verified }) => {
+  const [category, setCategory] = useState("aadhaar");
+
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
-  const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
+  const responseFromQuery = useGetAllEmployeesByEmployerIdQuery({
+    id: employerId,
+    status,
+    verified,
+  });
   const { data, isLoading, error } = responseFromQuery;
 
   const responseFromLazyQuery = useLazyGetAllEmployeesByEmployerIdQuery();
@@ -79,30 +95,66 @@ const TabularViewTab = () => {
 
   const [fetchedRows, setFetchedRows] = useState([]);
 
+  const generateUnverifiedRows = (row) => {
+    console.log(row, data[category]);
+    let numberKey;
+    switch (category) {
+      case "aadhaar":
+        numberKey = "Aadhaar Number";
+        break;
+      case "pan":
+        numberKey = "PAN Number";
+        break;
+      case "bank":
+        numberKey = "Account Number";
+        break;
+      default:
+        numberKey = "aadhar";
+    }
+    let value = {
+      [numberKey]: row?.number,
+      Status: row?.verifyStatus,
+      Message: row?.verifyMsg,
+    };
+    return value;
+  };
+
+  const generateColumns = () => {
+    return !verified
+      ? [
+          ...(category === "aadhaar" ? ["Aadhaar Number"] : []),
+          ...(category === "pan" ? ["PAN Number"] : []),
+          ...(category === "bank" ? ["Account Number"] : []),
+          "Status",
+          "Message",
+        ]
+      : [];
+  };
+
   const setFetchedRowsFromBody = (body) => {
     const fetchedRowsData = body.map((employee) => {
-      const { employeeId, name, mobile, email, aadhaar, dob, title, _id } =
-        employee;
+      const { employeeId, name, mobile, email, dob, title, _id } = employee;
       return {
         "Employee ID": employeeId,
         Name: name,
         "Mobile Number": mobile,
         Email: email,
-        "Aadhaar Number": aadhaar,
         "Date of Birth (dd/mm/yyyy)": dob,
         "Job Title": title,
         _id: _id,
+        ...generateUnverifiedRows(employee[category]),
       };
     });
     setFetchedRows(fetchedRowsData);
   };
 
   useEffect(() => {
+    console.log(category);
     if (data) {
       const body = data.body ?? [];
       setFetchedRowsFromBody(body);
     }
-  }, [data]);
+  }, [data, category]);
 
   useEffect(() => {
     if (lazyData) {
@@ -113,13 +165,13 @@ const TabularViewTab = () => {
 
   const columns = useMemo(
     () =>
-      tableColumns.map((header) => {
+      tableColumns.concat(generateColumns()).map((header) => {
         return {
           Header: header,
           accessor: header,
         };
       }),
-    []
+    [category]
   );
 
   const filterTypes = useMemo(
@@ -174,6 +226,21 @@ const TabularViewTab = () => {
       interactive={false}
       elevation={Elevation.THREE}
     >
+      {!verified && (
+        <Select
+          styles={{
+            container: (provided) => ({
+              ...provided,
+              width: "40%",
+            }),
+          }}
+          options={UNVERIFIED_OPTIONS}
+          value={UNVERIFIED_OPTIONS.find((c) => c.value === category)}
+          onChange={(val) => {
+            setCategory(val.value);
+          }}
+        />
+      )}
       <Table
         columns={columns}
         defaultColumn={defaultColumn}
@@ -208,7 +275,6 @@ const TabularTabsComponent = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(auth);
     if (auth === undefined || auth === {} || !auth.isLoggedIn) {
       navigate("/login");
     } else {
@@ -224,12 +290,39 @@ const TabularTabsComponent = () => {
         interactive={false}
         elevation={Elevation.THREE}
       >
-        <Tabs id="tabularView" defaultSelectedTabId="1">
-          <Tab id="1" title="Correct" panel={<TabularViewTab />} />
-          <Tab id="2" title="Errors" panel={<TabularViewTab />} />
-        </Tabs>
+        <ActiveInactiveTabs />
       </Card>
     </>
+  );
+};
+
+const ActiveInactiveTabs = () => {
+  return (
+    <Tabs id="activeInactiveView" defaultSelectedTabId="1">
+      <Tab id="1" title="Active" panel={<VerfiedUnverifiedTabs />} />
+      <Tab
+        id="2"
+        title="Inactive"
+        panel={<TabularViewTab status="inactive" />}
+      />
+    </Tabs>
+  );
+};
+
+const VerfiedUnverifiedTabs = () => {
+  return (
+    <Tabs id="verifiedUnverifiedTab" defaultSelectedTabId="1">
+      <Tab
+        id="1"
+        title="Verified"
+        panel={<TabularViewTab status="active" verified={true} />}
+      />
+      <Tab
+        id="2"
+        title="Unverified"
+        panel={<TabularViewTab status="active" verified={false} />}
+      />
+    </Tabs>
   );
 };
 
