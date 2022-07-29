@@ -23,7 +23,7 @@ export const allEmployeesBasicDetails = createApi({
   endpoints: (builder) => ({
     // Define endpoints here
     getAllEmployeesByEmployerId: builder.query({
-      query: ({id, status, verified}) => `/employees?id=${id}&status=${status}&verified=${verified}`,
+      query: (id) => `/employees?id=${id}`,
       providesTags: ["AllEmployeesBasicDetails"],
     }),
   }),

@@ -11,6 +11,7 @@ import {
 import Table from "../../common/Table";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
+import { capitalize, isObject } from "lodash";
 
 const REGISTER_FORM_CARD_STYLING = {
   width: "80%",
@@ -21,6 +22,7 @@ const REGISTER_FORM_CARD_STYLING = {
 
 const TABLE_CARD_STYLING = {
   overflow: "scroll",
+  borderRadius: "0px",
 };
 
 const MODAL_STYLING = {
@@ -74,17 +76,11 @@ function fuzzyTextFilterFn(rows, id, filterValue) {
 
 fuzzyTextFilterFn.autoRemove = (val) => !val;
 
-const TabularViewTab = ({ status, verified }) => {
-  const [category, setCategory] = useState("aadhaar");
-
+const TabularViewTab = () => {
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
-  const responseFromQuery = useGetAllEmployeesByEmployerIdQuery({
-    id: employerId,
-    status,
-    verified,
-  });
+  const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
   const { data, isLoading, error } = responseFromQuery;
 
   const responseFromLazyQuery = useLazyGetAllEmployeesByEmployerIdQuery();
@@ -95,45 +91,21 @@ const TabularViewTab = ({ status, verified }) => {
 
   const [fetchedRows, setFetchedRows] = useState([]);
 
-  const generateUnverifiedRows = (row) => {
-    console.log(row, data[category]);
-    let numberKey;
-    switch (category) {
-      case "aadhaar":
-        numberKey = "Aadhaar Number";
-        break;
-      case "pan":
-        numberKey = "PAN Number";
-        break;
-      case "bank":
-        numberKey = "Account Number";
-        break;
-      default:
-        numberKey = "aadhar";
-    }
-    let value = {
-      [numberKey]: row?.number,
-      Status: row?.verifyStatus,
-      Message: row?.verifyMsg,
-    };
-    return value;
-  };
-
-  const generateColumns = () => {
-    return !verified
-      ? [
-          ...(category === "aadhaar" ? ["Aadhaar Number"] : []),
-          ...(category === "pan" ? ["PAN Number"] : []),
-          ...(category === "bank" ? ["Account Number"] : []),
-          "Status",
-          "Message",
-        ]
-      : [];
-  };
-
   const setFetchedRowsFromBody = (body) => {
     const fetchedRowsData = body.map((employee) => {
-      const { employeeId, name, mobile, email, dob, title, _id } = employee;
+      const {
+        employeeId,
+        name,
+        mobile,
+        email,
+        dob,
+        title,
+        aadhaar,
+        pan,
+        bank,
+        _id,
+        status,
+      } = employee;
       return {
         "Employee ID": employeeId,
         Name: name,
@@ -142,19 +114,24 @@ const TabularViewTab = ({ status, verified }) => {
         "Date of Birth (dd/mm/yyyy)": dob,
         "Job Title": title,
         _id: _id,
-        ...generateUnverifiedRows(employee[category]),
+        Status: capitalize(status),
+        "Aadhaar Number": aadhaar?.number,
+        "Aadhaar Status": aadhaar.verifyStatus,
+        "PAN Number": pan?.number,
+        "PAN Status": pan.verifyStatus,
+        "Account Number": bank?.accountNumber,
+        "Account Status": bank?.verifyStatus,
       };
     });
     setFetchedRows(fetchedRowsData);
   };
 
   useEffect(() => {
-    console.log(category);
     if (data) {
       const body = data.body ?? [];
       setFetchedRowsFromBody(body);
     }
-  }, [data, category]);
+  }, [data]);
 
   useEffect(() => {
     if (lazyData) {
@@ -165,13 +142,19 @@ const TabularViewTab = ({ status, verified }) => {
 
   const columns = useMemo(
     () =>
-      tableColumns.concat(generateColumns()).map((header) => {
+      tableColumns.map((header) => {
+        if (isObject(header)) {
+          return {
+            Header: header.Header,
+            columns: header.columns,
+          };
+        }
         return {
           Header: header,
           accessor: header,
         };
       }),
-    [category]
+    []
   );
 
   const filterTypes = useMemo(
@@ -220,27 +203,27 @@ const TabularViewTab = ({ status, verified }) => {
     }
     setDidDialogChange(false);
   };
+
+  const rowProps = (row) => {
+    console.log({row})
+    const isSuccess =
+      row.values["Aadhaar Status"] === "SUCCESS" &&
+      row.values["PAN Status"] === "SUCCESS" &&
+      row.values["Account Status"] === "SUCCESS";
+    return {
+      style: {
+        backgroundColor: isSuccess
+          ? "rgb(114, 202, 155)"
+          : "rgb(235, 164, 197)",
+      },
+    };
+  };
   return (
     <Card
       style={TABLE_CARD_STYLING}
       interactive={false}
       elevation={Elevation.THREE}
     >
-      {!verified && (
-        <Select
-          styles={{
-            container: (provided) => ({
-              ...provided,
-              width: "40%",
-            }),
-          }}
-          options={UNVERIFIED_OPTIONS}
-          value={UNVERIFIED_OPTIONS.find((c) => c.value === category)}
-          onChange={(val) => {
-            setCategory(val.value);
-          }}
-        />
-      )}
       <Table
         columns={columns}
         defaultColumn={defaultColumn}
@@ -251,6 +234,7 @@ const TabularViewTab = ({ status, verified }) => {
         showEditColumn={false}
         showFilter={true}
         hoverEffect={true}
+        rowProps={rowProps}
       />
       <Dialog
         isOpen={isDialogOpen}
@@ -290,39 +274,9 @@ const TabularTabsComponent = () => {
         interactive={false}
         elevation={Elevation.THREE}
       >
-        <ActiveInactiveTabs />
+        <TabularViewTab />
       </Card>
     </>
-  );
-};
-
-const ActiveInactiveTabs = () => {
-  return (
-    <Tabs id="activeInactiveView" defaultSelectedTabId="1">
-      <Tab id="1" title="Active" panel={<VerfiedUnverifiedTabs />} />
-      <Tab
-        id="2"
-        title="Inactive"
-        panel={<TabularViewTab status="inactive" />}
-      />
-    </Tabs>
-  );
-};
-
-const VerfiedUnverifiedTabs = () => {
-  return (
-    <Tabs id="verifiedUnverifiedTab" defaultSelectedTabId="1">
-      <Tab
-        id="1"
-        title="Verified"
-        panel={<TabularViewTab status="active" verified={true} />}
-      />
-      <Tab
-        id="2"
-        title="Unverified"
-        panel={<TabularViewTab status="active" verified={false} />}
-      />
-    </Tabs>
   );
 };
 
