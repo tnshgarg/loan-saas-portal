@@ -44,7 +44,7 @@ const confirmForgotPassword = (username, code, password) => {
 };
 
 const logout = () => {
-  localStorage.removeItem("user");
+  return Auth.signOut();
 };
 
 // eslint-disable-next-line import/no-anonymous-default-export
