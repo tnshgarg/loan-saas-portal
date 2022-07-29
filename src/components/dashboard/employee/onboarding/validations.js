@@ -47,4 +47,4 @@ export const VALIDATIONS = {
     return validGenders.includes(value.toLowerCase()) ? FS.VALID : FS.WARN;
   }
 };
-console.log(VALIDATIONS)
+console.log(VALIDATIONS);

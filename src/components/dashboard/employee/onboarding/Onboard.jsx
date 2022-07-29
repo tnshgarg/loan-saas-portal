@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { read, utils, writeFile } from 'xlsx';
+import { read, utils } from 'xlsx';
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Upload } from "@aws-sdk/lib-storage";
@@ -48,7 +48,7 @@ function _Onboard(props) {
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
-  const S3_BUCKET = process.env.REACT_APP_S3_BUCKET;
+  const S3_BUCKET = `employer-${process.env.REACT_APP_STAGE}-raw`;
   const REGION = process.env.REACT_APP_S3_REGION;
 
   const credentials = {
@@ -71,7 +71,7 @@ function _Onboard(props) {
     const params = {
       Body: csvFile,
       Bucket: S3_BUCKET,
-      Key: `${employerId}/${timestamp}-${file.object.name}`
+      Key: `${employerId}/${timestamp}_${file.object.name.replace("/\W/g", "_")}`
     };
 
     try {
@@ -105,15 +105,7 @@ function _Onboard(props) {
   // Create a reference to the hidden file input element
   const hiddenFileInput = useRef(null);
 
-  const handleFileError = (ctx) => {
-    console.log({ handleFileError: ctx });
-  };
-
   const handleFileImport = (data) => {
-    // if (errors.length) {
-    //   handleFileError({ data, errors, meta });
-    //   return;
-    // }
     console.log("dispatched", dispatch, data, "data");
     dispatch(
       initCSVUpload({
@@ -141,11 +133,6 @@ function _Onboard(props) {
     console.log("file effect triggered", file.object);
     if (file.object) {
       console.log("file is set");
-      // Papa.parse(file.object, {
-      //   header: true,
-      //   complete: handleFileImport,
-      //   error: handleFileError
-      // });
       const reader = new FileReader();
       reader.onload = (event) => {
         const wb = read(event.target.result);
@@ -153,8 +140,8 @@ function _Onboard(props) {
 
         if (sheets.length) {
             const rows = utils.sheet_to_json(wb.Sheets[sheets[0]]);
-            console.log(rows)
-            handleFileImport(rows)
+            console.log(rows);
+            handleFileImport(rows);
         }
     }
     reader.readAsArrayBuffer(file.object);

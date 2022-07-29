@@ -89,9 +89,12 @@ export const login = (username, password) => (dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
-  // AuthService.logout();
-  dispatch(setLoggedInUser(null));
-  dispatch(clearMessage());
+  AuthService.logout().then(
+    (response) => {
+      dispatch(setLoggedInUser(null));
+      dispatch(clearMessage());
+    }
+  );
 };
 
 export const forgotPassword = (username) => (dispatch) => {
