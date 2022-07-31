@@ -42,6 +42,7 @@ export const VALIDATIONS = {
   [currencyValidation]: regexValidation(reg.FIN_NUMBER, FS.WARN),
   [noValidation]: () => FS.VALID,
   [genderValidation]: (value) => {
+    // if(!value) return FS.VALID;
     const validGenders = ["male", "female", "transgender", "m", "f", "t"];
     return validGenders.includes(value.toLowerCase()) ? FS.VALID : FS.WARN;
   }
