@@ -20,8 +20,7 @@ const LOGIN_CONTAINER_STYLING = {
 };
 
 const INPUT_CONTAINER_STYLING = {
-  padding: "2em",
-  paddingBottom: "0",
+  padding: "3em",
 };
 
 const SPACE_REDUCER = () => <div style={{ marginTop: "-10px" }}></div>;
@@ -51,10 +50,6 @@ export const Login = () => {
 
   const handleResetPasswordOnClick = () => {
     navigate("/reset-password");
-  };
-
-  const handleSignUpOnClick = () => {
-    navigate("/sign-up");
   };
 
   const {
@@ -133,16 +128,6 @@ export const Login = () => {
                 Sign In
               </Button>
             </form>
-
-            <Button
-              type="button"
-              onClick={handleSignUpOnClick}
-              large
-              intent={Intent.PRIMARY}
-              // style={{ float: "center" }}
-            >
-              Sign Up
-            </Button>
 
             <Button
               type="button"
