@@ -1,5 +1,4 @@
-import { Card, Dialog, Elevation, Tab, Tabs } from "@blueprintjs/core";
-import Select from "react-select";
+import { Card, Dialog, Elevation } from "@blueprintjs/core";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
@@ -36,21 +35,6 @@ const FILTER_INPUT_STYLING = {
   marginTop: "5px",
   padding: "5px 5px",
 };
-
-const UNVERIFIED_OPTIONS = [
-  {
-    label: "Aadhar",
-    value: "aadhaar",
-  },
-  {
-    label: "Pan",
-    value: "pan",
-  },
-  {
-    label: "Bank Details",
-    value: "bank",
-  },
-];
 
 // Define a default UI for filtering
 function DefaultColumnFilter({
@@ -120,7 +104,8 @@ const TabularViewTab = () => {
         "PAN Number": pan?.number,
         "PAN Status": pan.verifyStatus,
         "Account Number": bank?.accountNumber,
-        "Account Status": bank?.verifyStatus,
+        "IFSC Code": bank?.ifsc,
+        "Account Status": bank.verifyStatus,
       };
     });
     setFetchedRows(fetchedRowsData);
@@ -205,7 +190,7 @@ const TabularViewTab = () => {
   };
 
   const rowProps = (row) => {
-    console.log({row})
+    // console.log({ row });
     const isSuccess =
       row.values["Aadhaar Status"] === "SUCCESS" &&
       row.values["PAN Status"] === "SUCCESS" &&
