@@ -1,7 +1,7 @@
 export const FIELD_STATUS = {
   ERROR: 1,
   WARN: 2,
-  VALID: 3
+  VALID: 3,
 };
 export const FS = FIELD_STATUS;
 
@@ -12,11 +12,11 @@ const reg = {
   PAN: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
   AADHAAR: /^\d{12}$/,
   IFSC: /^[A-Z]{4}0[A-Z0-9]{6}$/,
-  FIN_NUMBER: /^\d+(,\d+)*$/
+  FIN_NUMBER: /^\d+(,\d+)*$/,
 };
 
 function regexValidation(regex, errorLevel) {
-  return function(value) {
+  return function (value) {
     return regex.test(value) ? FS.VALID : errorLevel;
   };
 }
@@ -45,6 +45,5 @@ export const VALIDATIONS = {
     // if(!value) return FS.VALID;
     const validGenders = ["male", "female", "transgender", "m", "f", "t"];
     return validGenders.includes(value.toLowerCase()) ? FS.VALID : FS.WARN;
-  }
+  },
 };
-console.log(VALIDATIONS);
