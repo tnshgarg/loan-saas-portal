@@ -38,7 +38,7 @@ const Table = ({
   addLabel,
   showAddBtn,
   hoverEffect,
-  rowProps = () => ({})
+  rowProps = () => ({}),
 }) => {
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -331,15 +331,17 @@ const Styles = styled.div`
       color: rgba(0, 0, 0, 0.87);
       font-weight: 500;
       .heading {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
+        white-space: normal !important;
+        // text-overflow: ellipsis;
+        overflow: visible;
         width: 78%;
         display: inline-block;
       }
     }
     th,
     td {
+      white-space: normal !important;
+      overflow: visible;
       margin: 0;
       padding: 0.5rem;
       p {
@@ -353,17 +355,6 @@ const Styles = styled.div`
       }
       .other-form-input {
         margin-top: 15px;
-      }
-    }
-    tbody {
-      tr {
-        ${(props) =>
-          props.hoverEffect &&
-          css`
-            :hover {
-              background-color: rgb(114, 202, 155);
-            }
-          `};
       }
     }
   }

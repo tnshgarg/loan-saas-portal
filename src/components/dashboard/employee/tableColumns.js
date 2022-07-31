@@ -5,6 +5,7 @@ export const tableColumns = [
   "Email",
   "Date of Birth (dd/mm/yyyy)",
   "Job Title",
+  "Status",
   {
     Header: "Aadhaar",
     columns: [
@@ -48,5 +49,4 @@ export const tableColumns = [
       },
     ],
   },
-  "Status",
 ];
