@@ -9,6 +9,7 @@ import { registerUser } from "../../store/slices/authSlice";
 import FormInput from "../common/FormInput";
 
 export const SignUp = () => {
+  var md5 = require("md5");
   const [successful, setSuccessful] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -85,12 +86,35 @@ export const SignUp = () => {
             title="Login Details"
             nextButtonProps={{
               disabled:
-                !(dirtyFields.email && dirtyFields.password) ||
+                !(
+                  dirtyFields.access_key &&
+                  dirtyFields.email &&
+                  dirtyFields.password
+                ) ||
+                errors.access_key ||
                 errors.email ||
                 errors.password,
             }}
             panel={
               <Card>
+                <FormInput
+                  register={register}
+                  validations={{
+                    required: true,
+                    validate: {
+                      hash: (v) => md5(v) == "a043ed8b42e5e8c38fe5ae27c54c1aa3",
+                    },
+                  }}
+                  errors={errors}
+                  field={"access_key"}
+                  inputProps={{
+                    icon: "key",
+                    type: "text",
+                    label: "Access Key",
+                    placeholder: "Access Key",
+                    errorMessage: "Enter a valid access key",
+                  }}
+                />
                 <FormInput
                   register={register}
                   validations={{
