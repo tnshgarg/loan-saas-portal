@@ -5,23 +5,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../store/slices/authSlice";
 import FormInput from "../common/FormInput";
+import unipeLogo from "../../theme/logo_full.png";
 
 const LOGIN_CARD_STYLING = {
   width: "20%",
   minWidth: "500px",
+  marginTop: "5%",
   marginRight: "auto",
   marginLeft: "auto",
-  marginTop: "20vh",
 };
 
 const LOGIN_CONTAINER_STYLING = {
   textAlign: "center",
-  padding: "2em",
+  padding: "1em",
 };
 
 const INPUT_CONTAINER_STYLING = {
   padding: "2em",
-  paddingBottom: "0",
 };
 
 const SPACE_REDUCER = () => <div style={{ marginTop: "-10px" }}></div>;
@@ -53,10 +53,6 @@ export const Login = () => {
     navigate("/reset-password");
   };
 
-  const handleSignUpOnClick = () => {
-    navigate("/sign-up");
-  };
-
   const {
     register,
     handleSubmit,
@@ -82,7 +78,7 @@ export const Login = () => {
     <div>
       <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
         <div style={LOGIN_CONTAINER_STYLING}>
-          <h5>Welcome</h5>
+          <img src={unipeLogo} alt="unipe logo" style={{ width: "50%" }} />
           <div style={INPUT_CONTAINER_STYLING}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <FormInput
@@ -133,16 +129,6 @@ export const Login = () => {
                 Sign In
               </Button>
             </form>
-
-            <Button
-              type="button"
-              onClick={handleSignUpOnClick}
-              large
-              intent={Intent.PRIMARY}
-              // style={{ float: "center" }}
-            >
-              Sign Up
-            </Button>
 
             <Button
               type="button"

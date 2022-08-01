@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { EMPLOYER_BASE_API_URL } from "../../../../utils/apiUrls";
+import { EMPLOYER_BASE_API_URL, TIMEOUT } from "../../../../utils/apiUrls";
 
 // Define a service using a base URL and expected endpoints
 export const employeeDetails = createApi({
@@ -19,7 +19,7 @@ export const employeeDetails = createApi({
     },
   }),
   tagTypes: ["EmployeeDetails"],
-  keepUnusedDataFor: 86400,
+  keepUnusedDataFor: TIMEOUT,
   endpoints: (builder) => ({
     // Define endpoints here
     getEmployeeDetailsByEmployeeId: builder.query({

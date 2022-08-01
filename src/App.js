@@ -8,7 +8,13 @@ import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
 
 import { Invalid } from "./components/invalid";
 
-import { ConfirmResetPassword, ConfirmSignUp, Login, ResetPassword, SignUp } from "./components/signUpLogin/index";
+import {
+  ConfirmResetPassword,
+  ConfirmSignUp,
+  Login,
+  ResetPassword,
+  SignUp,
+} from "./components/signUpLogin/index";
 
 import { TabularView } from "./components/dashboard/employee/TabularView";
 
@@ -22,8 +28,8 @@ const App = () => {
       Auth: {
         region: process.env.REACT_APP_REGION,
         userPoolId: process.env.REACT_APP_USER_POOL_ID,
-        userPoolWebClientId: process.env.REACT_APP_USER_POOL_WEB_CLIENT_ID
-      }
+        userPoolWebClientId: process.env.REACT_APP_USER_POOL_WEB_CLIENT_ID,
+      },
     });
   });
 

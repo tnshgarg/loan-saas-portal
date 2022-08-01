@@ -317,8 +317,6 @@ export const HEADER_GROUPS = FIELDS.reduce((groups, column) => {
   return groups;
 }, []);
 
-console.log({ HEADER_GROUPS });
-
 export function transformHeadersToFields(list) {
   return list.map((item) => {
     return Object.entries(HEADERS_MAP).reduce(
