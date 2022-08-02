@@ -69,6 +69,7 @@ export const SignUp = () => {
           isOpen={true}
           title={"Sign Up"}
           navigationPosition={"top"}
+          isCloseButtonShown={false}
           usePortal={false}
           backdropProps={{
             style: {
