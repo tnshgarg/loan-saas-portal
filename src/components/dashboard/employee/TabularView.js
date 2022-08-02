@@ -75,6 +75,14 @@ const TabularViewTab = () => {
 
   const [fetchedRows, setFetchedRows] = useState([]);
 
+  const checkOverallStatus = (aadhaar, pan, bank) => {
+    return aadhaar?.verifyStatus === "PENDING" ||
+      pan?.verifyStatus === "PENDING" ||
+      bank?.verifyStatus === "PENDING"
+      ? "PENDING"
+      : "SUCCESS";
+  };
+
   const setFetchedRowsFromBody = (body) => {
     const fetchedRowsData = body.map((employee) => {
       const {
@@ -94,6 +102,7 @@ const TabularViewTab = () => {
         "Employee ID": employeeId,
         Name: name,
         "Mobile Number": mobile,
+        "Verification Status": checkOverallStatus(aadhaar, pan, bank),
         Email: email,
         "Date of Birth (dd/mm/yyyy)": dob,
         "Job Title": title,
@@ -189,17 +198,25 @@ const TabularViewTab = () => {
     setDidDialogChange(false);
   };
 
-  const rowProps = (row) => {
-    // console.log({ row });
-    const isSuccess =
-      row.values["Aadhaar Status"] === "SUCCESS" &&
-      row.values["PAN Status"] === "SUCCESS" &&
-      row.values["Account Status"] === "SUCCESS";
+  const cellProps = (cell) => {
+    let bgColor;
+    switch (cell.value) {
+      case "SUCCESS":
+        bgColor = "rgb(114, 202, 155)";
+        break;
+      case "PENDING":
+        bgColor = "rgb(255, 255, 167)";
+        break;
+      case cell.value.includes("ERROR"):
+        bgColor = "rgb(255, 255, 167)";
+        break;
+      default:
+        bgColor = "white";
+        break;
+    }
     return {
       style: {
-        backgroundColor: isSuccess
-          ? "rgb(114, 202, 155)"
-          : "rgb(235, 164, 197)",
+        backgroundColor: bgColor,
       },
     };
   };
@@ -219,7 +236,7 @@ const TabularViewTab = () => {
         showEditColumn={false}
         showFilter={true}
         hoverEffect={true}
-        rowProps={rowProps}
+        cellProps={cellProps}
       />
       <Dialog
         isOpen={isDialogOpen}
