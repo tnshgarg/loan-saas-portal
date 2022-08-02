@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { EMPLOYER_BASE_API_URL } from "../../../../utils/apiUrls";
+import { EMPLOYER_BASE_API_URL, TIMEOUT } from "../../../../utils/apiUrls";
 
 // Define a service using a base URL and expected endpoints
 export const allEmployeesBasicDetails = createApi({
@@ -7,6 +7,7 @@ export const allEmployeesBasicDetails = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: EMPLOYER_BASE_API_URL,
     prepareHeaders: (headers, { getState }) => {
+      console.log("getState: ", getState());
       const token =
         getState().auth.user.signInUserSession.idToken.jwtToken ?? "";
 
@@ -19,7 +20,7 @@ export const allEmployeesBasicDetails = createApi({
     },
   }),
   tagTypes: ["AllEmployeesBasicDetails"],
-  keepUnusedDataFor: 86400,
+  keepUnusedDataFor: TIMEOUT,
   endpoints: (builder) => ({
     // Define endpoints here
     getAllEmployeesByEmployerId: builder.query({

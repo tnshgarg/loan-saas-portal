@@ -29,9 +29,9 @@ const AddressForm = () => {
 
   const {
     body: {
-      pin: pincodeInitial,
+      pin: pinInitial,
       state: stateInitial,
-      street: addressInitial,
+      street: streetInitial,
       company: companyInitial,
       brand: brandInitial,
     } = {},
@@ -52,29 +52,27 @@ const AddressForm = () => {
       reset({
         company: companyInitial,
         brand: brandInitial,
-        address: addressInitial,
+        street: streetInitial,
         state: stateInitial,
-        pincode: pincodeInitial,
+        pin: pinInitial,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, reset]);
 
   const onSubmit = (addressFormDetailsNew) => {
-    const { company, brand, address, state, pincode } = addressFormDetailsNew;
+    const { company, brand, street, state, pin } = addressFormDetailsNew;
 
     const isEqual =
       company === companyInitial &&
       brand === brandInitial &&
-      address === addressInitial &&
+      street === streetInitial &&
       state === stateInitial &&
-      pincode === pincodeInitial;
+      pin === pinInitial;
     if (!isEqual) {
       updateEmployerAddress({
         ...addressFormDetailsNew,
         id: employerId,
-        street: address,
-        pin: pincode,
       })
         .then(({ data }) => {
           const status = data.status;
@@ -109,9 +107,9 @@ const AddressForm = () => {
     const addressFormDetails = {
       company: companyInitial,
       brand: brandInitial,
-      address: addressInitial,
+      street: streetInitial,
       state: stateInitial,
-      pincode: pincodeInitial,
+      pin: pinInitial,
     };
     setValue({
       ...value,
@@ -175,7 +173,7 @@ const AddressForm = () => {
                 },
               }}
               errors={errors}
-              field={"address"}
+              field={"street"}
               inputProps={{
                 disabled: disabled,
                 icon: "home",
@@ -215,7 +213,7 @@ const AddressForm = () => {
                 },
               }}
               errors={errors}
-              field={"pincode"}
+              field={"pin"}
               inputProps={{
                 disabled: disabled,
                 icon: "pin",

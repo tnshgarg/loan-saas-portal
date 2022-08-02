@@ -150,7 +150,7 @@ const EditableCell = ({
 
   let validLevel = FS.VALID;
   if (VALIDATIONS[column.validations]) {
-    validLevel = VALIDATIONS[column.validations](value);
+    validLevel = VALIDATIONS[column.validations](value ?? "");
   }
 
   const intent = intentMap[validLevel] || Intent.NONE;
