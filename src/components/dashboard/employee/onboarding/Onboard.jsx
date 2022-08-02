@@ -55,11 +55,13 @@ function _Onboard(props) {
     accessKeyId: process.env.REACT_APP_ACCESS_KEY,
     secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY
   };
+  
   //Hacky
   const getter = {};
   const setDataGetter = (data) => {
     getter["data"] = data;
   };
+
   const handleFileUpload = async () => {
     const tableData = getter["data"]();
     const tableCSV = Papa.unparse(tableData);

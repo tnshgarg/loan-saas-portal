@@ -76,11 +76,11 @@ const TabularViewTab = () => {
   const [fetchedRows, setFetchedRows] = useState([]);
 
   const checkOverallStatus = (aadhaar, pan, bank) => {
-    return aadhaar?.verifyStatus === "PENDING" ||
-      pan?.verifyStatus === "PENDING" ||
-      bank?.verifyStatus === "PENDING"
-      ? "PENDING"
-      : "SUCCESS";
+    return aadhaar?.verifyStatus === "SUCCESS" &&
+      pan?.verifyStatus === "SUCCESS" &&
+      bank?.verifyStatus === "SUCCESS"
+      ? "SUCCESS"
+      : "PENDING";
   };
 
   const setFetchedRowsFromBody = (body) => {
@@ -199,21 +199,15 @@ const TabularViewTab = () => {
   };
 
   const cellProps = (cell) => {
-    let bgColor;
-    switch (cell.value) {
-      case "SUCCESS":
-        bgColor = "rgb(114, 202, 155)";
-        break;
-      case "PENDING":
-        bgColor = "rgb(255, 255, 167)";
-        break;
-      case cell.value.includes("ERROR"):
-        bgColor = "rgb(255, 255, 167)";
-        break;
-      default:
-        bgColor = "white";
-        break;
+    let bgColor = "white";
+    if (cell.value.includes("SUCCESS")) {
+      bgColor = "rgb(114, 202, 155, 0.5)";
+    } else if (cell.value.includes("PENDING")) {
+      bgColor = "rgb(255, 255, 167, 0.5)";
+    } else if (cell.value.includes("ERROR")) {
+      bgColor = "rgb(235, 164, 197, 0.5)";
     }
+
     return {
       style: {
         backgroundColor: bgColor,

@@ -69,6 +69,7 @@ export const SignUp = () => {
           isOpen={true}
           title={"Sign Up"}
           navigationPosition={"top"}
+          isCloseButtonShown={false}
           usePortal={false}
           backdropProps={{
             style: {
@@ -102,7 +103,8 @@ export const SignUp = () => {
                   validations={{
                     required: true,
                     validate: {
-                      hash: (v) => md5(v) == "a043ed8b42e5e8c38fe5ae27c54c1aa3",
+                      hash: (v) =>
+                        md5(v) === "a043ed8b42e5e8c38fe5ae27c54c1aa3",
                     },
                   }}
                   errors={errors}
