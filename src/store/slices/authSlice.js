@@ -28,8 +28,8 @@ export const registerUser =
     phone_number,
     name,
     company_name,
-    no_of_employees,
-    title
+    employee_count,
+    designation
   ) =>
   (dispatch) => {
     return AuthService.signUp(
@@ -39,8 +39,8 @@ export const registerUser =
       phone_number,
       name,
       company_name,
-      no_of_employees,
-      title
+      employee_count,
+      designation
     ).then(
       (response) => {
         dispatch(setLoggedInUser(null));
@@ -89,12 +89,10 @@ export const login = (username, password) => (dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
-  AuthService.logout().then(
-    (response) => {
-      dispatch(setLoggedInUser(null));
-      dispatch(clearMessage());
-    }
-  );
+  AuthService.logout().then((response) => {
+    dispatch(setLoggedInUser(null));
+    dispatch(clearMessage());
+  });
 };
 
 export const forgotPassword = (username) => (dispatch) => {

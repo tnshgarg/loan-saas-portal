@@ -7,22 +7,19 @@ import FormInput from "../common/FormInput";
 import { forgotPassword } from "../../store/slices/authSlice";
 
 const LOGIN_CARD_STYLING = {
-  width: "20%",
-  minWidth: "500px",
+  width: "30%",
+  marginTop: "5%",
   marginRight: "auto",
   marginLeft: "auto",
-  marginTop: "20vh",
 };
 
 const LOGIN_CONTAINER_STYLING = {
   textAlign: "center",
-  padding: "2em",
+  padding: "5%",
 };
 
 const INPUT_CONTAINER_STYLING = {
-  textAlign: "left",
-  padding: "2em",
-  paddingBottom: "0",
+  padding: "10%",
 };
 
 export const ResetPassword = () => {
@@ -56,10 +53,10 @@ export const ResetPassword = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
-          <div style={LOGIN_CONTAINER_STYLING}>
-            <h5>Reset Password</h5>
+      <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
+        <div style={LOGIN_CONTAINER_STYLING}>
+          <h5>Reset Password</h5>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div style={INPUT_CONTAINER_STYLING}>
               <FormInput
                 register={register}
@@ -74,31 +71,17 @@ export const ResetPassword = () => {
                 inputProps={{
                   icon: "envelope",
                   type: "email",
-                  label: "Email",
                   placeholder: "Email",
                   errorMessage: "Enter a valid email address",
                 }}
               />
-
-              {message && !successful && (
-                <div className="form-group">
-                  <div
-                    className={
-                      successful ? "alert alert-success" : "alert alert-danger"
-                    }
-                    role="alert"
-                  >
-                    {message}
-                  </div>
-                </div>
-              )}
             </div>
             <Button type="submit" large intent={Intent.PRIMARY}>
               Submit
             </Button>
-          </div>
-        </Card>
-      </form>
+          </form>
+        </div>
+      </Card>
     </div>
   );
 };

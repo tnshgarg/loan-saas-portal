@@ -3,26 +3,25 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import ErrorDialog from "../common/ErrorDialog";
 import FormInput from "../common/FormInput";
 import { confirmForgotPassword } from "../../store/slices/authSlice";
 
 const LOGIN_CARD_STYLING = {
-  width: "20%",
-  minWidth: "500px",
+  width: "35%",
+  marginTop: "5%",
   marginRight: "auto",
   marginLeft: "auto",
-  marginTop: "20vh",
 };
 
 const LOGIN_CONTAINER_STYLING = {
   textAlign: "center",
-  padding: "2em",
+  padding: "5%",
 };
 
 const INPUT_CONTAINER_STYLING = {
   textAlign: "left",
-  padding: "2em",
-  paddingBottom: "0",
+  padding: "10%",
 };
 
 export const ConfirmResetPassword = () => {
@@ -38,7 +37,7 @@ export const ConfirmResetPassword = () => {
     formState: { errors },
   } = useForm({ mode: "all" });
   const onSubmit = (data) => {
-    console.log(data);
+    // console.log(data);
     const { code, password } = data;
     const username = message;
     console.log(username, code, password);
@@ -57,10 +56,10 @@ export const ConfirmResetPassword = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
-          <div style={LOGIN_CONTAINER_STYLING}>
-            <h5>Confirm New Password</h5>
+      <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
+        <div style={LOGIN_CONTAINER_STYLING}>
+          <h5>Confirm New Password</h5>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div style={INPUT_CONTAINER_STYLING}>
               <FormInput
                 register={register}
@@ -80,7 +79,7 @@ export const ConfirmResetPassword = () => {
                   required: true,
                   pattern: {
                     value:
-                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      /^(?=.{8,}$)(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?\W).*$/,
                   },
                 }}
                 errors={errors}
@@ -90,31 +89,20 @@ export const ConfirmResetPassword = () => {
                   type: "password",
                   label: "New Password",
                   subLabel:
-                    "Enter a strong atleast 8 lettered password with a special character, a number, a lowercase and an uppercase alphabet",
+                    "Password must contain atleast 8 characters with a special character, a number, a lowercase and an uppercase alphabet",
                   placeholder: "Enter your new password",
-                  errorMessage: "Password cannot be empty",
+                  errorMessage:
+                    "Password must contain atleast 8 characters with a special character, a number, a lowercase and an uppercase alphabet",
                 }}
               />
-
-              {message && !successful && (
-                <div className="form-group">
-                  <div
-                    className={
-                      successful ? "alert alert-success" : "alert alert-danger"
-                    }
-                    role="alert"
-                  >
-                    {message}
-                  </div>
-                </div>
-              )}
             </div>
             <Button type="submit" large intent={Intent.PRIMARY}>
               Submit
             </Button>
-          </div>
-        </Card>
-      </form>
+          </form>
+        </div>
+      </Card>
+      <ErrorDialog message={message} success={successful} />
     </div>
   );
 };
