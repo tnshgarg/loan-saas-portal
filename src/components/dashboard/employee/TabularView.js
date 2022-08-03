@@ -13,7 +13,7 @@ import { tableColumns } from "./tableColumns";
 import { capitalize, isObject } from "lodash";
 
 const REGISTER_FORM_CARD_STYLING = {
-  width: "80%",
+  width: "90%",
   marginRight: "auto",
   marginLeft: "auto",
   overflow: "scroll",
@@ -75,6 +75,14 @@ const TabularViewTab = () => {
 
   const [fetchedRows, setFetchedRows] = useState([]);
 
+  const checkOverallStatus = (aadhaar, pan, bank) => {
+    return aadhaar?.verifyStatus === "SUCCESS" &&
+      pan?.verifyStatus === "SUCCESS" &&
+      bank?.verifyStatus === "SUCCESS"
+      ? "SUCCESS"
+      : "PENDING";
+  };
+
   const setFetchedRowsFromBody = (body) => {
     const fetchedRowsData = body.map((employee) => {
       const {
@@ -94,6 +102,7 @@ const TabularViewTab = () => {
         "Employee ID": employeeId,
         Name: name,
         "Mobile Number": mobile,
+        "Verification Status": checkOverallStatus(aadhaar, pan, bank),
         Email: email,
         "Date of Birth (dd/mm/yyyy)": dob,
         "Job Title": title,
@@ -189,26 +198,24 @@ const TabularViewTab = () => {
     setDidDialogChange(false);
   };
 
-  const rowProps = (row) => {
-    // console.log({ row });
-    const isSuccess =
-      row.values["Aadhaar Status"] === "SUCCESS" &&
-      row.values["PAN Status"] === "SUCCESS" &&
-      row.values["Account Status"] === "SUCCESS";
+  const cellProps = (cell) => {
+    let bgColor = "white";
+    if (cell.value.includes("SUCCESS")) {
+      bgColor = "rgb(204, 255, 216, 0.5)";
+    } else if (cell.value.includes("PENDING")) {
+      bgColor = "rgb(247, 252, 162, 0.5)";
+    } else if (cell.value.includes("ERROR")) {
+      bgColor = "rgb(255, 215, 213, 0.5)";
+    }
+
     return {
       style: {
-        backgroundColor: isSuccess
-          ? "rgb(114, 202, 155)"
-          : "rgb(235, 164, 197)",
+        backgroundColor: bgColor,
       },
     };
   };
   return (
-    <Card
-      style={TABLE_CARD_STYLING}
-      interactive={false}
-      elevation={Elevation.THREE}
-    >
+    <>
       <Table
         columns={columns}
         defaultColumn={defaultColumn}
@@ -219,7 +226,7 @@ const TabularViewTab = () => {
         showEditColumn={false}
         showFilter={true}
         hoverEffect={true}
-        rowProps={rowProps}
+        cellProps={cellProps}
       />
       <Dialog
         isOpen={isDialogOpen}
@@ -234,7 +241,7 @@ const TabularViewTab = () => {
           />
         </Card>
       </Dialog>
-    </Card>
+    </>
   );
 };
 

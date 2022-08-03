@@ -38,7 +38,7 @@ const Table = ({
   addLabel,
   showAddBtn,
   hoverEffect,
-  rowProps = () => ({}),
+  cellProps = () => ({}),
 }) => {
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -211,14 +211,14 @@ const Table = ({
               return (
                 <>
                   <tr
-                    {...row.getRowProps(rowProps(row))}
+                    {...row.getRowProps()}
                     onClick={() => {
                       handleRowClick(row.original);
                     }}
                   >
                     {row.cells.map((cell) => {
                       return (
-                        <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                        <td {...cell.getCellProps(cellProps(cell))}>{cell.render("Cell")}</td>
                       );
                     })}
                   </tr>
