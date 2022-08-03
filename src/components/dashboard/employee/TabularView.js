@@ -1,10 +1,4 @@
-import {
-  Card,
-  Dialog,
-  Elevation,
-  Tab,
-  Tabs,
-} from "@blueprintjs/core";
+import { Card, Dialog, Elevation } from "@blueprintjs/core";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
@@ -16,6 +10,7 @@ import {
 import Table from "../../common/Table";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
+import { capitalize, isObject } from "lodash";
 
 const REGISTER_FORM_CARD_STYLING = {
   width: "80%",
@@ -26,6 +21,7 @@ const REGISTER_FORM_CARD_STYLING = {
 
 const TABLE_CARD_STYLING = {
   overflow: "scroll",
+  borderRadius: "0px",
 };
 
 const MODAL_STYLING = {
@@ -35,10 +31,10 @@ const MODAL_STYLING = {
 };
 
 const FILTER_INPUT_STYLING = {
-  border: '1px solid rgba(0, 0, 0, 0.3)',
-  marginTop: '5px',
-  padding: '5px 5px',
-}
+  border: "1px solid rgba(0, 0, 0, 0.3)",
+  marginTop: "5px",
+  padding: "5px 5px",
+};
 
 // Define a default UI for filtering
 function DefaultColumnFilter({
@@ -81,17 +77,35 @@ const TabularViewTab = () => {
 
   const setFetchedRowsFromBody = (body) => {
     const fetchedRowsData = body.map((employee) => {
-      const { employeeId, name, mobile, email, aadhaar, dob, title, _id } =
-        employee;
+      const {
+        employeeId,
+        name,
+        mobile,
+        email,
+        dob,
+        title,
+        aadhaar,
+        pan,
+        bank,
+        _id,
+        status,
+      } = employee;
       return {
         "Employee ID": employeeId,
         Name: name,
         "Mobile Number": mobile,
         Email: email,
-        "Aadhaar Number": aadhaar,
         "Date of Birth (dd/mm/yyyy)": dob,
         "Job Title": title,
         _id: _id,
+        Status: capitalize(status),
+        "Aadhaar Number": aadhaar?.number,
+        "Aadhaar Status": aadhaar.verifyStatus,
+        "PAN Number": pan?.number,
+        "PAN Status": pan.verifyStatus,
+        "Account Number": bank?.accountNumber,
+        "IFSC Code": bank?.ifsc,
+        "Account Status": bank.verifyStatus,
       };
     });
     setFetchedRows(fetchedRowsData);
@@ -114,6 +128,12 @@ const TabularViewTab = () => {
   const columns = useMemo(
     () =>
       tableColumns.map((header) => {
+        if (isObject(header)) {
+          return {
+            Header: header.Header,
+            columns: header.columns,
+          };
+        }
         return {
           Header: header,
           accessor: header,
@@ -168,6 +188,21 @@ const TabularViewTab = () => {
     }
     setDidDialogChange(false);
   };
+
+  const rowProps = (row) => {
+    // console.log({ row });
+    const isSuccess =
+      row.values["Aadhaar Status"] === "SUCCESS" &&
+      row.values["PAN Status"] === "SUCCESS" &&
+      row.values["Account Status"] === "SUCCESS";
+    return {
+      style: {
+        backgroundColor: isSuccess
+          ? "rgb(114, 202, 155)"
+          : "rgb(235, 164, 197)",
+      },
+    };
+  };
   return (
     <Card
       style={TABLE_CARD_STYLING}
@@ -184,6 +219,7 @@ const TabularViewTab = () => {
         showEditColumn={false}
         showFilter={true}
         hoverEffect={true}
+        rowProps={rowProps}
       />
       <Dialog
         isOpen={isDialogOpen}
@@ -208,7 +244,6 @@ const TabularTabsComponent = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(auth);
     if (auth === undefined || auth === {} || !auth.isLoggedIn) {
       navigate("/login");
     } else {
@@ -224,10 +259,7 @@ const TabularTabsComponent = () => {
         interactive={false}
         elevation={Elevation.THREE}
       >
-        <Tabs id="tabularView" defaultSelectedTabId="1">
-          <Tab id="1" title="Correct" panel={<TabularViewTab />} />
-          <Tab id="2" title="Errors" panel={<TabularViewTab />} />
-        </Tabs>
+        <TabularViewTab />
       </Card>
     </>
   );
