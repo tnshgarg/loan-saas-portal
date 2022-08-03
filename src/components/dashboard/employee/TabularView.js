@@ -13,7 +13,7 @@ import { tableColumns } from "./tableColumns";
 import { capitalize, isObject } from "lodash";
 
 const REGISTER_FORM_CARD_STYLING = {
-  width: "80%",
+  width: "90%",
   marginRight: "auto",
   marginLeft: "auto",
   overflow: "scroll",
@@ -201,11 +201,11 @@ const TabularViewTab = () => {
   const cellProps = (cell) => {
     let bgColor = "white";
     if (cell.value.includes("SUCCESS")) {
-      bgColor = "rgb(114, 202, 155, 0.5)";
+      bgColor = "rgb(204, 255, 216, 0.5)";
     } else if (cell.value.includes("PENDING")) {
-      bgColor = "rgb(255, 255, 167, 0.5)";
+      bgColor = "rgb(247, 252, 162, 0.5)";
     } else if (cell.value.includes("ERROR")) {
-      bgColor = "rgb(235, 164, 197, 0.5)";
+      bgColor = "rgb(255, 215, 213, 0.5)";
     }
 
     return {
@@ -215,11 +215,7 @@ const TabularViewTab = () => {
     };
   };
   return (
-    <Card
-      style={TABLE_CARD_STYLING}
-      interactive={false}
-      elevation={Elevation.THREE}
-    >
+    <>
       <Table
         columns={columns}
         defaultColumn={defaultColumn}
@@ -245,7 +241,7 @@ const TabularViewTab = () => {
           />
         </Card>
       </Dialog>
-    </Card>
+    </>
   );
 };
 

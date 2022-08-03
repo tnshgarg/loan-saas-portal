@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { numberOfEmployees } from "../../utils/numberOfEmployees";
 import { registerUser } from "../../store/slices/authSlice";
+import ErrorDialog from "../common/ErrorDialog";
 import FormInput from "../common/FormInput";
 
 export const SignUp = () => {
@@ -24,7 +25,7 @@ export const SignUp = () => {
     formState: { errors, dirtyFields },
   } = useForm({ mode: "all" });
   const onSubmit = (data) => {
-    console.log(data);
+    // console.log(data);
     const {
       email: username,
       password,
@@ -32,8 +33,8 @@ export const SignUp = () => {
       phone_number,
       name,
       company_name,
-      no_of_employees,
-      title,
+      employee_count,
+      designation,
     } = data;
 
     dispatch(
@@ -44,8 +45,8 @@ export const SignUp = () => {
         phone_number,
         name,
         company_name,
-        no_of_employees,
-        title
+        employee_count,
+        designation
       )
     )
       .then(() => {
@@ -228,7 +229,7 @@ export const SignUp = () => {
                     required: true,
                   }}
                   errors={errors}
-                  field={"title"}
+                  field={"designation"}
                   inputProps={{
                     icon: "briefcase",
                     type: "text",
@@ -241,7 +242,7 @@ export const SignUp = () => {
                 <Controller
                   control={control}
                   defaultValue={numberOfEmployees[0]}
-                  name="no_of_employees"
+                  name="employee_count"
                   render={({ field }) => (
                     <Select
                       inputRef={field.ref}
@@ -261,18 +262,7 @@ export const SignUp = () => {
           />
         </MultistepDialog>
       </form>
-      {message && (
-        <div className="form-group">
-          <div
-            className={
-              successful ? "alert alert-success" : "alert alert-danger"
-            }
-            role="alert"
-          >
-            {message}
-          </div>
-        </div>
-      )}
+      <ErrorDialog message={message} success={successful} />
     </div>
   );
 };
