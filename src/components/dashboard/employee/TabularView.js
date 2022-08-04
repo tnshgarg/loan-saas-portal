@@ -1,4 +1,4 @@
-import { Card, Dialog, Elevation } from "@blueprintjs/core";
+import { Button, Card, Dialog, Elevation, Intent } from "@blueprintjs/core";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
@@ -66,7 +66,7 @@ const TabularViewTab = () => {
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
   const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
-  const { data, isLoading, error } = responseFromQuery;
+  const { data, isLoading, error, refetch } = responseFromQuery;
 
   const responseFromLazyQuery = useLazyGetAllEmployeesByEmployerIdQuery();
   const [
@@ -216,6 +216,7 @@ const TabularViewTab = () => {
   };
   return (
     <>
+    <Button intent={Intent.PRIMARY} text="Refetch" onClick={refetch}/>
       <Table
         columns={columns}
         defaultColumn={defaultColumn}
