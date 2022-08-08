@@ -23,7 +23,7 @@ import { HEADER_GROUPS, transformHeadersToFields } from "./fields";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import BrowserEdiTable from "./BrowserEdiTable";
 import { allEmployeesBasicDetails } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
-import Toast from "../../../common/Toast";
+import { useToastContext } from "../../../../contexts/ToastContext";
 
 const CARD_STYLING = {
   marginLeft: "2.7em",
@@ -43,7 +43,8 @@ const mapOnboardPropsToState = (state) => {
 function _Onboard(props) {
   const { employerId, dispatch } = props;
   const navigate = useNavigate();
-  const [showToast, setShowToast] = useState(false);
+
+  const { handleProgressToast, setConfig } = useToastContext();
 
   useEffect(() => {
     if (employerId === "") {
@@ -80,7 +81,6 @@ function _Onboard(props) {
     const timestamp = new Date().getTime();
 
     console.log({ timestamp, employerId, file });
-
     const params = {
       Body: csvFile,
       Bucket: S3_BUCKET,
@@ -106,7 +106,7 @@ function _Onboard(props) {
         setAlertMessage(
           `File ${file.object.name} has been added to the queue successfully`
         );
-        setShowToast(true);
+        handleProgressToast(file?.object?.name, 900000);
         setUploadStatus(true);
       }
     } catch (err) {
@@ -169,6 +169,10 @@ function _Onboard(props) {
         }
       };
       reader.readAsArrayBuffer(file.object);
+      setConfig((prevState) => ({
+        ...prevState,
+        onDismiss: onToastDismiss,
+      }));
     }
   }, [file.object]);
 
@@ -256,12 +260,6 @@ function _Onboard(props) {
       ) : (
         ""
       )}
-      <Toast
-        onDismiss={onToastDismiss}
-        fileName={file?.object?.name}
-        interval={900000}
-        showToast={showToast}
-      />
     </Card>
   );
 }
