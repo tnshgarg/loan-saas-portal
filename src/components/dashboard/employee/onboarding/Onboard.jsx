@@ -163,7 +163,10 @@ function _Onboard(props) {
         const sheets = wb.SheetNames;
 
         if (sheets.length) {
-          const rows = utils.sheet_to_json(wb.Sheets[sheets[0]]);
+          const rows = utils.sheet_to_json(wb.Sheets[sheets[0]], {
+            dateNF: "dd-mm-yyyy",
+            raw: false,
+          });
           console.log(rows);
           handleFileImport(rows);
         }
