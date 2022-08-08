@@ -1,33 +1,23 @@
-import {
-  Classes,
-  Intent,
-  Position,
-  ProgressBar,
-  Toaster,
-} from "@blueprintjs/core";
+import { Classes, Intent, Position, ProgressBar, Toaster } from "@blueprintjs/core";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import React, { useEffect, useRef } from "react";
 
-const Toast = ({ showToast, fileName, interval, onDismiss }) => {
-  const defaultOptions = {
+const ToastContext = createContext();
+
+export default ToastContext;
+
+export function ToastContextProvider({ children }) {
+  const [config, setConfig] = useState({
     autoFocus: false,
     canEscapeKeyClear: true,
     position: Position.BOTTOM_RIGHT,
     usePortal: true,
-    canEscapeKeyClear: false,
-  };
+  });
+  const toastRef = useRef(null);
 
   let progressToastInterval;
 
-  const toastRef = useRef(null);
-
-  useEffect(() => {
-    if (showToast) {
-      handleProgressToast();
-    }
-  }, [showToast]);
-
-  const renderProgress = (amount) => {
+  const renderProgress = (amount, fileName) => {
     return {
       icon: "cloud-upload",
       message: (
@@ -44,27 +34,34 @@ const Toast = ({ showToast, fileName, interval, onDismiss }) => {
       ),
       onDismiss: (didTimeoutExpire) => {
         window.clearInterval(progressToastInterval);
-        onDismiss && onDismiss();
+        config?.onDismiss && config?.onDismiss();
       },
       timeout: amount < 100 ? 0 : 2000,
     };
   };
 
-  const handleProgressToast = () => {
+  const handleProgressToast = (fileName = '', interval = 5000) => {
     let progress = 0;
     let percent = interval / 100;
-    const key = toastRef.current.show(renderProgress(0));
+    const key = toastRef.current.show(renderProgress(0, fileName));
     progressToastInterval = window.setInterval(() => {
       if (toastRef.current == null || progress > 100) {
         window.clearInterval(progressToastInterval);
       } else {
         progress = progress + 1;
-        toastRef.current.show(renderProgress(progress), key);
+        toastRef.current.show(renderProgress(progress, fileName), key);
       }
     }, percent);
   };
 
-  return <>{showToast && <Toaster {...defaultOptions} ref={toastRef} />}</>;
-};
+  return (
+    <ToastContext.Provider value={{ config, handleProgressToast, setConfig }}>
+      {children}
+      <>{<Toaster {...config} ref={toastRef} />}</>;
+    </ToastContext.Provider>
+  );
+}
 
-export default Toast;
+export function useToastContext() {
+  return useContext(ToastContext);
+}
