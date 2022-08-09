@@ -58,6 +58,7 @@ const Table = ({
     headerGroups,
     prepareRow,
     rows,
+    page,
     canPreviousPage,
     canNextPage,
     pageOptions,
@@ -166,10 +167,6 @@ const Table = ({
     addCallback();
   };
 
-  const toggleAlert = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
     <>
       {showAddBtn && (
@@ -206,7 +203,7 @@ const Table = ({
             ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
+            {(showPagination ? page : rows).map((row, i) => {
               prepareRow(row);
               return (
                 <>
@@ -218,7 +215,9 @@ const Table = ({
                   >
                     {row.cells.map((cell) => {
                       return (
-                        <td {...cell.getCellProps(cellProps(cell))}>{cell.render("Cell")}</td>
+                        <td {...cell.getCellProps(cellProps(cell))}>
+                          {cell.render("Cell")}
+                        </td>
                       );
                     })}
                   </tr>
