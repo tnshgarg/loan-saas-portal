@@ -8,3 +8,7 @@
 *:focus {
     outline: none;
 }
+
+.bp4-toast button {
+    display: none;
+}
