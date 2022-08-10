@@ -122,7 +122,7 @@ const TabularViewTab = () => {
 
   useEffect(() => {
     if (data) {
-      const body = data.body ?? [];
+      const body = Array(65).fill(data.body[0]) ?? [];
       setFetchedRowsFromBody(body);
     }
   }, [data]);

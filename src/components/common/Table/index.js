@@ -84,6 +84,7 @@ const Table = ({
       storeData,
       inputTypes,
       filterTypes,
+      className: "-striped -highlight",
     },
     showFilter && useFilters,
     useSortBy,
@@ -313,10 +314,20 @@ Table.defaultProps = {
 
 const Styles = styled.div`
   padding: 1rem;
-
+  height: 400px;
   table {
     width: 100%;
     border-spacing: 0;
+    position: relative;
+    border-collapse: collapse;
+    tbody {
+      height: calc(100vh - 400px);
+      display: block;
+      overflow: scroll;
+    }
+    thead, tbody tr {
+      display: table;
+    }
     tr {
       cursor: pointer;
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -329,6 +340,10 @@ const Styles = styled.div`
     th {
       color: rgba(0, 0, 0, 0.87);
       font-weight: 500;
+      background: white;
+      position: sticky;
+      top: -24px;
+      box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
       .heading {
         white-space: normal !important;
         // text-overflow: ellipsis;
