@@ -191,11 +191,11 @@ const Table = ({
     }
   }
 
-  console.log({ headerGroups });
-
   function getExcel() {
+    const d = new Date();
+    
     const config = {
-      filename: "general-ledger-Q1",
+      filename: d.toString().split('GMT')[0].trim(),
       sheet: {
         data: [],
       },
