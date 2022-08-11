@@ -40,6 +40,7 @@ const Table = ({
   addLabel,
   showAddBtn,
   hoverEffect,
+  showDownload = false,
   cellProps = () => ({}),
 }) => {
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
@@ -364,7 +365,13 @@ const Table = ({
             </span>
           </div>
         )}
-        <BLButton intent={Intent.SUCCESS} text="Download Excel" onClick={getExcel} />
+        {showDownload && (
+          <BLButton
+            intent={Intent.SUCCESS}
+            text="Download Excel"
+            onClick={getExcel}
+          />
+        )}
         <UpdateAlert />
       </Styles>
     </>
