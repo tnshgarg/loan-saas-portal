@@ -22,6 +22,7 @@ const REGISTER_FORM_CARD_STYLING = {
 const TABLE_CARD_STYLING = {
   overflow: "scroll",
   borderRadius: "0px",
+  height: '600px'
 };
 
 const MODAL_STYLING = {
@@ -122,7 +123,7 @@ const TabularViewTab = () => {
 
   useEffect(() => {
     if (data) {
-      const body = data?.body ?? [];
+      const body = Array(65).fill(data?.body[0]) ?? [];
       setFetchedRowsFromBody(body);
     }
   }, [data]);
@@ -221,10 +222,8 @@ const TabularViewTab = () => {
     };
   };
   return (
-    <Card
+    <div
       style={TABLE_CARD_STYLING}
-      interactive={false}
-      elevation={Elevation.THREE}
     >
       <Table
         columns={columns}
@@ -251,7 +250,7 @@ const TabularViewTab = () => {
           />
         </Card>
       </Dialog>
-    </Card>
+    </div>
   );
 };
 
