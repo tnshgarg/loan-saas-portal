@@ -61,6 +61,7 @@ const Table = ({
     headerGroups,
     prepareRow,
     rows,
+    page,
     canPreviousPage,
     canNextPage,
     pageOptions,
@@ -276,7 +277,7 @@ const Table = ({
             ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
+            {(showPagination ? page : rows).map((row, i) => {
               prepareRow(row);
               return (
                 <>
