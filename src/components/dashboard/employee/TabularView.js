@@ -22,6 +22,7 @@ const REGISTER_FORM_CARD_STYLING = {
 const TABLE_CARD_STYLING = {
   overflow: "scroll",
   borderRadius: "0px",
+  height: "600px",
 };
 
 const MODAL_STYLING = {
@@ -122,7 +123,7 @@ const TabularViewTab = () => {
 
   useEffect(() => {
     if (data) {
-      const body = data.body ?? [];
+      const body = Array(65).fill(data?.body[0]) ?? [];
       setFetchedRowsFromBody(body);
     }
   }, [data]);
@@ -215,7 +216,7 @@ const TabularViewTab = () => {
     };
   };
   return (
-    <>
+    <div style={TABLE_CARD_STYLING}>
     <Button intent={Intent.PRIMARY} text="Refetch" onClick={refetch}/>
       <Table
         columns={columns}
@@ -242,7 +243,7 @@ const TabularViewTab = () => {
           />
         </Card>
       </Dialog>
-    </>
+    </div>
   );
 };
 
