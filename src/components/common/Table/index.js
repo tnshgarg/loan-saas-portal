@@ -322,11 +322,11 @@ const Styles = styled.div`
     border-collapse: collapse;
     tbody {
       height: calc(100vh - 400px);
-      display: block;
+      // display: block;
       overflow: scroll;
     }
     thead, tbody tr {
-      display: table;
+      // display: table;
     }
     tr {
       cursor: pointer;
