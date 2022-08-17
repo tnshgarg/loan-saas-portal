@@ -229,6 +229,7 @@ const TabularViewTab = () => {
         showFilter={true}
         hoverEffect={true}
         cellProps={cellProps}
+        showDownload={true}
       />
       <Dialog
         isOpen={isDialogOpen}

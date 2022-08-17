@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import PropTypes from "prop-types";
 import {
   useRowSelect,
@@ -12,11 +12,13 @@ import styled, { css } from "styled-components";
 //Components
 import EditableCell from "./EditableCell";
 import { Button } from "@mui/material";
+import { Button as BLButton } from "@blueprintjs/core";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import UpdateAlert from "../UpdateAlert";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
-import { Icon } from "@blueprintjs/core";
+import { Icon, Intent } from "@blueprintjs/core";
+import generateExcel from "zipcelx";
 
 const Table = ({
   columns,
@@ -38,6 +40,7 @@ const Table = ({
   addLabel,
   showAddBtn,
   hoverEffect,
+  showDownload = false,
   cellProps = () => ({}),
 }) => {
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
@@ -168,6 +171,77 @@ const Table = ({
     addCallback();
   };
 
+  const toggleAlert = () => {
+    setIsOpen(!isOpen);
+  };
+
+  function getHeader(column) {
+    if (column.parent) {
+      return [
+        {
+          value: column.parent.Header + " " + column.Header,
+          type: "string",
+        },
+      ];
+    } else {
+      return [
+        {
+          value: column.Header,
+          type: "string",
+        },
+      ];
+    }
+  }
+
+  function getExcel() {
+    const d = new Date();
+    
+    const config = {
+      filename: d.toString().split('GMT')[0].trim(),
+      sheet: {
+        data: [],
+      },
+    };
+
+    const dataSet = config.sheet.data;
+
+    headerGroups.forEach((headerGroup) => {
+      const headerRow = [];
+      if (headerGroup.headers) {
+        headerGroup.headers.forEach((column) => {
+          if (column?.accessor) {
+            headerRow.push(...getHeader(column));
+          }
+        });
+      }
+      headerRow.length && dataSet.push(headerRow);
+    });
+
+    if (rows.length > 0) {
+      rows.forEach((row) => {
+        const dataRow = [];
+
+        Object.values(row.values).forEach((value) =>
+          dataRow.push({
+            value,
+            type: typeof value === "number" ? "number" : "string",
+          })
+        );
+
+        dataSet.push(dataRow);
+      });
+    } else {
+      dataSet.push([
+        {
+          value: "No data",
+          type: "string",
+        },
+      ]);
+    }
+
+    return generateExcel(config);
+  }
+
   return (
     <>
       {showAddBtn && (
@@ -292,6 +366,13 @@ const Table = ({
               />
             </span>
           </div>
+        )}
+        {showDownload && (
+          <BLButton
+            intent={Intent.SUCCESS}
+            text="Download Excel"
+            onClick={getExcel}
+          />
         )}
         <UpdateAlert />
       </Styles>
