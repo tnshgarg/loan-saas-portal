@@ -159,7 +159,10 @@ function _Onboard(props) {
       console.log("file is set");
       const reader = new FileReader();
       reader.onload = (event) => {
-        const wb = read(event.target.result);
+        const wb = read(event.target.result, {
+          type: 'string',
+          raw: true
+        });
         const sheets = wb.SheetNames;
 
         if (sheets.length) {
