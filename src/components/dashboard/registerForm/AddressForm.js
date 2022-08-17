@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useAlert } from "react-alert";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
 import {
   useGetEmployerAddressByIdQuery,
@@ -10,7 +10,9 @@ import FormInput from "../../common/FormInput";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import UpdateAlert from "../../common/UpdateAlert";
+import Select from "react-select";
 import { NO_CHANGE_ERROR } from "../../../utils/messageStrings";
+import states from "../../../utils/states";
 
 const AddressForm = () => {
   const alert = useAlert();
@@ -37,11 +39,25 @@ const AddressForm = () => {
     } = {},
   } = data ?? {};
 
+  const statesOptions = states.map((state) => ({
+    value: state,
+    label: state,
+  }));
+
+  const customStyles = {
+    container: (provided, _) => ({
+      ...provided,
+      marginBottom: "30px",
+      marginTop: '25px'
+    }),
+  }
+
   const {
     register,
     getValues,
     reset,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -101,7 +117,7 @@ const AddressForm = () => {
   const cancelCallback = () => {
     setDisabled(true);
     reset();
-  }
+  };
 
   const hydrateUpdateAlert = () => {
     const addressFormDetails = {
@@ -169,7 +185,7 @@ const AddressForm = () => {
                 required: true,
                 minLength: 1,
                 pattern: {
-                  value: /^[A-Z0-9a-z,\- ]+$/,
+                  value: /^[a-zA-Z0-9!@#$&()`.+,/"-\w\s+]*$/,
                 },
               }}
               errors={errors}
@@ -177,31 +193,29 @@ const AddressForm = () => {
               inputProps={{
                 disabled: disabled,
                 icon: "home",
-                label: "Address",
-                placeholder: "Please enter your company address",
-                errorMessage: "Please enter your company address",
+                label: "Registered Address",
+                placeholder: "Please enter your registered company address",
+                errorMessage: "Please enter your registered company address",
               }}
             />
-            <FormInput
-              register={register}
-              validations={{
-                required: true,
-                minLength: 1,
-                pattern: {
-                  value: /^[A-Za-z ]+$/,
-                },
-              }}
-              errors={errors}
-              field={"state"}
-              inputProps={{
-                disabled: disabled,
-                icon: "locate",
-                label: "State",
-                placeholder:
-                  "Please enter the State in which your company office is located",
-                errorMessage:
-                  "Please enter the State in which your company office is located",
-              }}
+            <Controller
+              control={control}
+              defaultValue={statesOptions[0]}
+              name="state"
+              render={({ field }) => (
+                <Select
+                  styles={customStyles}
+                  placeholder="Please enter the State in which your company office is located"
+                  inputRef={field.ref}
+                  classNamePrefix="addl-class"
+                  options={statesOptions}
+                  value={statesOptions.find((c) => c.value === field.value)}
+                  onChange={(val) => {
+                    field.onChange(val.value);
+                  }}
+                  isDisabled={disabled}
+                />
+              )}
             />
             <FormInput
               register={register}

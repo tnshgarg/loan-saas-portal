@@ -77,6 +77,7 @@ const TaxSetupForm = () => {
           }
         })
         .catch((error) => {
+          setValue({ ...value, isOpen: false });
           const message = error.response?.data?.message ?? "Some error occured";
           alert.error(message);
         });

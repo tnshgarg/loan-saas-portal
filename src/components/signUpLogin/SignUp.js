@@ -1,4 +1,10 @@
-import { Card, DialogStep, MultistepDialog } from "@blueprintjs/core";
+import {
+  Button,
+  Card,
+  DialogStep,
+  Intent,
+  MultistepDialog,
+} from "@blueprintjs/core";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,10 +14,12 @@ import { numberOfEmployees } from "../../utils/numberOfEmployees";
 import { registerUser } from "../../store/slices/authSlice";
 import ErrorDialog from "../common/ErrorDialog";
 import FormInput from "../common/FormInput";
+import { Tooltip2 } from "@blueprintjs/popover2";
 
 export const SignUp = () => {
   var md5 = require("md5");
   const [successful, setSuccessful] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -148,8 +156,20 @@ export const SignUp = () => {
                   errors={errors}
                   field={"password"}
                   inputProps={{
+                    rightElement: (
+                      <Tooltip2
+                        content={`${showPassword ? "Hide" : "Show"} Password`}
+                      >
+                        <Button
+                          icon={showPassword ? "unlock" : "lock"}
+                          intent={Intent.WARNING}
+                          minimal={true}
+                          onClick={() => setShowPassword(!showPassword)}
+                        />
+                      </Tooltip2>
+                    ),
                     icon: "shield",
-                    type: "password",
+                    type: showPassword ? "text" : 'password',
                     label: "Password",
                     subLabel:
                       "Password must contain atleast 8 characters with a special character, a number, a lowercase and an uppercase alphabet",
@@ -186,7 +206,7 @@ export const SignUp = () => {
                   validations={{
                     required: true,
                     pattern: {
-                      value: /^\+91\d{10}$/,
+                      value: /^\d{10}$/,
                     },
                   }}
                   errors={errors}
@@ -196,8 +216,8 @@ export const SignUp = () => {
                     type: "text",
                     label: "Phone Number",
                     placeholder:
-                      "Enter you 10-digit phone number with country code",
-                    errorMessage: "Enter 10 digit number starting with +91",
+                      "Enter you 10-digit phone number",
+                    errorMessage: "Enter 10 digit number",
                   }}
                 />
               </Card>
