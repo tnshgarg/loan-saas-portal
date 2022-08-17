@@ -314,19 +314,18 @@ Table.defaultProps = {
 
 const Styles = styled.div`
   padding: 1rem;
-  height: 400px;
+  height: 87%;
   table {
     width: 100%;
     border-spacing: 0;
     position: relative;
+    overflow: scroll;
+    height: 100%;
+    display: block;
     border-collapse: collapse;
     tbody {
       height: calc(100vh - 400px);
-      // display: block;
       overflow: scroll;
-    }
-    thead, tbody tr {
-      // display: table;
     }
     tr {
       cursor: pointer;
@@ -342,7 +341,7 @@ const Styles = styled.div`
       font-weight: 500;
       background: white;
       position: sticky;
-      top: -24px;
+      top: -5px;
       box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
       .heading {
         white-space: normal !important;
