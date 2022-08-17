@@ -3,26 +3,25 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import ErrorDialog from "../common/ErrorDialog";
 import FormInput from "../common/FormInput";
 import { confirmSignUp } from "../../store/slices/authSlice";
 
 const LOGIN_CARD_STYLING = {
-  width: "20%",
-  minWidth: "500px",
+  width: "30%",
+  marginTop: "5%",
   marginRight: "auto",
   marginLeft: "auto",
-  marginTop: "20vh",
 };
 
 const LOGIN_CONTAINER_STYLING = {
   textAlign: "center",
-  padding: "2em",
+  padding: "5%",
 };
 
 const INPUT_CONTAINER_STYLING = {
   textAlign: "left",
-  padding: "2em",
-  paddingBottom: "0",
+  padding: "10%",
 };
 
 export const ConfirmSignUp = () => {
@@ -57,10 +56,12 @@ export const ConfirmSignUp = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
-          <div style={LOGIN_CONTAINER_STYLING}>
-            <h5>Confirm Sign Up</h5>
+      <ErrorDialog message={message} success={successful} />
+
+      <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
+        <div style={LOGIN_CONTAINER_STYLING}>
+          <h5>Confirm Sign Up</h5>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div style={INPUT_CONTAINER_STYLING}>
               <FormInput
                 register={register}
@@ -74,26 +75,13 @@ export const ConfirmSignUp = () => {
                   errorMessage: "Verification Code cannot be empty",
                 }}
               />
-
-              {message && (
-                <div className="form-group">
-                  <div
-                    className={
-                      successful ? "alert alert-success" : "alert alert-danger"
-                    }
-                    role="alert"
-                  >
-                    {message}
-                  </div>
-                </div>
-              )}
             </div>
             <Button type="submit" large intent={Intent.PRIMARY}>
               Submit
             </Button>
-          </div>
-        </Card>
-      </form>
+          </form>
+        </div>
+      </Card>
     </div>
   );
 };

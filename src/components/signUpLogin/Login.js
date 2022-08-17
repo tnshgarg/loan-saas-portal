@@ -4,43 +4,27 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../store/slices/authSlice";
+import ErrorDialog from "../common/ErrorDialog";
 import FormInput from "../common/FormInput";
+import unipeLogo from "../../theme/logo_full.png";
 
 const LOGIN_CARD_STYLING = {
-  width: "20%",
-  minWidth: "500px",
+  width: "35%",
+  marginTop: "5%",
   marginRight: "auto",
   marginLeft: "auto",
-  marginTop: "20vh",
 };
 
 const LOGIN_CONTAINER_STYLING = {
   textAlign: "center",
-  padding: "2em",
+  padding: "2%",
+  marginBottom: "5%",
 };
 
 const INPUT_CONTAINER_STYLING = {
-  padding: "3em",
+  padding: "10%",
 };
 
-const SPACE_REDUCER = () => <div style={{ marginTop: "-10px" }}></div>;
-
-function ErrorDialog({ message, success }) {
-  if (message) {
-    return (
-      <div className="form-group">
-        <br />
-        <div
-          className={success ? "alert alert-success" : "alert alert-danger"}
-          role="alert"
-        >
-          {message}
-        </div>
-      </div>
-    );
-  }
-  return <></>;
-}
 export const Login = () => {
   const [successful, setSuccessful] = useState(true);
   const dispatch = useDispatch();
@@ -77,7 +61,7 @@ export const Login = () => {
     <div>
       <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>
         <div style={LOGIN_CONTAINER_STYLING}>
-          <h5>Welcome</h5>
+          <img src={unipeLogo} alt="unipe logo" style={{ width: "50%" }} />
           <div style={INPUT_CONTAINER_STYLING}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <FormInput
@@ -98,7 +82,6 @@ export const Login = () => {
                   errorMessage: "Enter a valid email address",
                 }}
               />
-              <SPACE_REDUCER />
               <FormInput
                 register={register}
                 validations={{
@@ -138,11 +121,10 @@ export const Login = () => {
             >
               Reset Password
             </Button>
-
-            <ErrorDialog message={message} success={successful} />
           </div>
         </div>
       </Card>
+      <ErrorDialog message={message} success={successful} />
     </div>
   );
 };

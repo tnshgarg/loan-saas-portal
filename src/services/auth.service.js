@@ -7,8 +7,8 @@ const signUp = (
   phone_number,
   name,
   company_name,
-  no_of_employees,
-  title
+  employee_count,
+  designation
 ) => {
   return Auth.signUp({
     username: username,
@@ -18,8 +18,8 @@ const signUp = (
       phone_number: phone_number,
       name: name,
       "custom:company_name": company_name,
-      "custom:no_of_employees": no_of_employees,
-      "custom:title": title,
+      "custom:employee_count": employee_count,
+      "custom:designation": designation,
     },
   });
 };

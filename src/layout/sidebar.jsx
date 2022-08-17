@@ -2,7 +2,7 @@ import { Classes, Colors, Drawer, Position } from "@blueprintjs/core";
 import { THEME } from "../theme/base";
 import NAV_MENU from "./navigation";
 import SidebarItem from "./components/SidebarItem";
-import unipeLogo from "./logo_small.png";
+import unipeLogo from "../theme/logo_small.png";
 
 const { sidebar } = THEME;
 

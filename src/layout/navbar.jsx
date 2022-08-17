@@ -53,9 +53,7 @@ export default function AppNavigation(props) {
     <Navbar style={{ height: THEME.navbar.height, paddingLeft: props.sidebarWidth, paddingTop: "0.7em" }}
             fixedToTop={true}>
       <NavbarGroup align={Alignment.LEFT}>
-        <NavbarHeading>
-
-        </NavbarHeading>
+        <NavbarHeading />
         <Breadcrumbs items={breadCrumbs} />
       </NavbarGroup>
       <NavbarGroup align={Alignment.RIGHT}>
