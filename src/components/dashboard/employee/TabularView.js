@@ -216,7 +216,7 @@ const TabularViewTab = () => {
     };
   };
   return (
-    <>
+    <div style={TABLE_CARD_STYLING}>
     <Button intent={Intent.PRIMARY} text="Refetch" onClick={refetch}/>
       <Table
         columns={columns}
@@ -243,7 +243,7 @@ const TabularViewTab = () => {
           />
         </Card>
       </Dialog>
-    </>
+    </div>
   );
 };
 
