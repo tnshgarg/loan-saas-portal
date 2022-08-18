@@ -196,7 +196,7 @@ function _Onboard(props) {
                 .toISOString()
                 .replaceAll(/-|\./g, "_")}.csv`}
             >
-              <Button icon="cloud-download">Download Template</Button>
+              <Button icon="cloud-download">Download Template File</Button>
             </CSVLink>
             <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <Button
@@ -204,7 +204,7 @@ function _Onboard(props) {
               intent={Intent.PRIMARY}
               onClick={(e) => hiddenFileInput.current.click(e)}
             >
-              Import Data
+              Upload File
             </Button>
 
             <div style={{ display: "none" }}>
@@ -255,7 +255,7 @@ function _Onboard(props) {
           description={
             <>
               No CSV file has been selected, please import data using{" "}
-              <strong>Import Data</strong> on top right.
+              <strong>Upload File</strong> on top right.
             </>
           }
           layout={"horizontal"}
