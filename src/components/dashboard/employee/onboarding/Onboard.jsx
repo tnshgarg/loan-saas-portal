@@ -160,14 +160,13 @@ function _Onboard(props) {
       const reader = new FileReader();
       reader.onload = (event) => {
         const wb = read(event.target.result, {
-          type: 'string',
-          raw: true
+          type: "string",
+          raw: true,
         });
         const sheets = wb.SheetNames;
-
         if (sheets.length) {
           const rows = utils.sheet_to_json(wb.Sheets[sheets[0]]);
-          console.log(rows);
+          console.log({ rows });
           handleFileImport(rows);
         }
       };

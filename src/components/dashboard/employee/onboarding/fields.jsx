@@ -293,6 +293,8 @@ export const FIELD_MAP = FIELDS.reduce((map, column) => {
   return map;
 }, {});
 
+export const DATE_FIELDS = ["dob", "doj"];
+
 /**
  * HEADER_GROUPS is a react-table feature, which allows creating of column groups
  */
