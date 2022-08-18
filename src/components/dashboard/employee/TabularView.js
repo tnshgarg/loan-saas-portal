@@ -123,7 +123,7 @@ const TabularViewTab = () => {
 
   useEffect(() => {
     if (data) {
-      const body = Array(65).fill(data?.body[0]) ?? [];
+      const body = data.body ?? [];
       setFetchedRowsFromBody(body);
     }
   }, [data]);
@@ -217,7 +217,7 @@ const TabularViewTab = () => {
   };
   return (
     <div style={TABLE_CARD_STYLING}>
-    <Button intent={Intent.PRIMARY} text="Refetch" onClick={refetch}/>
+      <Button intent={Intent.PRIMARY} text="Refetch" onClick={refetch} />
       <Table
         columns={columns}
         defaultColumn={defaultColumn}
