@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { DATE_FIELDS } from "../../components/dashboard/employee/onboarding/fields";
 import { convertExcelSerialToDateString } from "../../utils/excelHandling";
+import { reg } from "../../components/dashboard/employee/onboarding/validations.js";
 
 interface TableData {
   [tableName: string]: {
@@ -27,7 +28,12 @@ interface TableFields {
 
 interface TableErrors {
   [tableName: string]: {
-    [fieldName: string]: string;
+    errors: {
+      [fieldName: string]: string;
+    };
+    warnings: {
+      [fieldName: string]: string;
+    };
   };
 }
 
@@ -54,7 +60,7 @@ export const CSVUploadsSlice = createSlice({
             if (!(typeof value === "string" || value instanceof String))
               value = String(value);
             row[key] = value.trim();
-            if (DATE_FIELDS.includes(key)) {
+            if (DATE_FIELDS.includes(key) && !reg.DATE.test(value)) {
               const serialTime = parseInt(value.trim());
               if (serialTime)
                 row[key] = convertExcelSerialToDateString(serialTime);
@@ -80,7 +86,6 @@ export const CSVUploadsSlice = createSlice({
   },
 });
 
-export const { initCSVUpload, updateCSVRow, deleteCSVRow } =
-  CSVUploadsSlice.actions;
+export const { initCSVUpload, updateCSVRow } = CSVUploadsSlice.actions;
 
 export default CSVUploadsSlice.reducer;
