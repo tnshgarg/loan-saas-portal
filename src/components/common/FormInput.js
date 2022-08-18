@@ -42,6 +42,7 @@ export default function FormInput({
         onBlur={onBlur}
         inputRef={ref}
         name={name}
+        style={inputProps.style}
       />
     </FormGroup>
   );

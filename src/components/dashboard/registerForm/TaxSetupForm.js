@@ -15,7 +15,6 @@ import UpdateAlert from "../../common/UpdateAlert";
 const TaxSetupForm = () => {
   const alert = useAlert();
 
-  const [disabled, setDisabled] = useState(true);
   const { value, setValue } = useContext(UpdateAlertContext);
 
   const [updateEmployerTax] = useUpdateEmployerTaxMutation();
@@ -23,10 +22,8 @@ const TaxSetupForm = () => {
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
-
   const responseFromQuery = useGetEmployerTaxByIdQuery(employerId);
   const { data, isLoading, error } = responseFromQuery;
-
 
   const {
     body: {
@@ -53,7 +50,7 @@ const TaxSetupForm = () => {
         pan: panInitial,
         tan: tanInitial,
         gstin: gstinInitial,
-        cin: cinInitial
+        cin: cinInitial,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -62,7 +59,10 @@ const TaxSetupForm = () => {
   const onSubmit = (taxSetupFormDetailsNew) => {
     const { pan, tan, gstin, cin } = taxSetupFormDetailsNew;
     const isEqual =
-      pan === panInitial && tan === tanInitial && gstin === gstinInitial && cin === cinInitial;
+      pan === panInitial &&
+      tan === tanInitial &&
+      gstin === gstinInitial &&
+      cin === cinInitial;
     if (!isEqual) {
       updateEmployerTax({
         ...taxSetupFormDetailsNew,
@@ -72,7 +72,7 @@ const TaxSetupForm = () => {
           const status = response.data.status;
           if (status === 200) {
             alert.success(VALUES_UPDATED);
-            setDisabled(true);
+
             setValue({ ...value, isOpen: false });
           }
         })
@@ -83,26 +83,21 @@ const TaxSetupForm = () => {
         });
     } else {
       setValue({ ...value, isOpen: false });
-      setDisabled(true);
+
       alert.error(NO_CHANGE_ERROR);
     }
-  }; 
-
-  const toggleDisabled = () => {
-    setDisabled(!disabled);
   };
 
   const cancelCallback = () => {
-    setDisabled(true);
     reset();
-  }
+  };
 
   const hydrateUpdateAlert = () => {
     const taxFormDetails = {
       pan: panInitial,
       tan: tanInitial,
       gstin: gstinInitial,
-      cin: cinInitial
+      cin: cinInitial,
     };
     setValue({
       ...value,
@@ -129,13 +124,12 @@ const TaxSetupForm = () => {
               validations={{
                 required: true,
                 pattern: {
-                  value: /^([a-zA-Z0-9]{10})$/,
+                  value: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
                 },
               }}
               errors={errors}
               field={"pan"}
               inputProps={{
-                disabled: disabled,
                 icon: "id-number",
                 label: "PAN",
                 placeholder: "Please enter company's PAN number",
@@ -148,13 +142,12 @@ const TaxSetupForm = () => {
               validations={{
                 required: true,
                 pattern: {
-                  value: /^([a-zA-Z0-9]{10})$/,
+                  value: /^((^[a-zA-Z]{4}[0-9]{5}[a-zA-Z]{1}?$))$/,
                 },
               }}
               errors={errors}
               field={"tan"}
               inputProps={{
-                disabled: disabled,
                 icon: "id-number",
                 label: "TAN",
                 placeholder: "Please enter company's TAN number",
@@ -167,13 +160,12 @@ const TaxSetupForm = () => {
               validations={{
                 required: false,
                 pattern: {
-                  value: /^([a-zA-Z0-9]{21})$/,
+                  value: /^([L|U]{1})([0-9]{5})([A-Za-z]{2})([0-9]{4})([A-Za-z]{3})([0-9]{6})$/,
                 },
               }}
               errors={errors}
               field={"cin"}
               inputProps={{
-                disabled: disabled,
                 icon: "id-number",
                 label: "CIN",
                 placeholder: "Please enter company's CIN number",
@@ -186,13 +178,12 @@ const TaxSetupForm = () => {
               validations={{
                 required: true,
                 pattern: {
-                  value: /^([a-zA-Z0-9]{15})$/,
+                  value: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
                 },
               }}
               errors={errors}
               field={"gstin"}
               inputProps={{
-                disabled: disabled,
                 icon: "id-number",
                 label: "GSTIN",
                 placeholder: "Please enter company's GSTIN number",
@@ -203,8 +194,8 @@ const TaxSetupForm = () => {
             <input
               disabled={Object.values(errors).length}
               type="button"
-              value={disabled ? "Edit" : "Submit"}
-              onClick={disabled ? toggleDisabled : hydrateUpdateAlert}
+              value={"Submit"}
+              onClick={hydrateUpdateAlert}
             />
           </form>
           <UpdateAlert />

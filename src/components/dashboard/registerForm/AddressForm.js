@@ -17,8 +17,6 @@ import states from "../../../utils/states";
 const AddressForm = () => {
   const alert = useAlert();
 
-  const [disabled, setDisabled] = useState(true);
-
   const { value, setValue } = useContext(UpdateAlertContext);
 
   const [updateEmployerAddress] = useUpdateEmployerAddressMutation();
@@ -48,9 +46,9 @@ const AddressForm = () => {
     container: (provided, _) => ({
       ...provided,
       marginBottom: "30px",
-      marginTop: '25px'
+      marginTop: "25px",
     }),
-  }
+  };
 
   const {
     register,
@@ -95,7 +93,7 @@ const AddressForm = () => {
           if (status === 200) {
             const message = data.message;
             alert.success(message);
-            setDisabled(true);
+
             setValue({ ...value, isOpen: false });
           }
         })
@@ -105,17 +103,12 @@ const AddressForm = () => {
         });
     } else {
       setValue({ ...value, isOpen: false });
-      setDisabled(true);
+
       alert.error(NO_CHANGE_ERROR);
     }
   };
 
-  const toggleDisabled = () => {
-    setDisabled(!disabled);
-  };
-
   const cancelCallback = () => {
-    setDisabled(true);
     reset();
   };
 
@@ -157,7 +150,6 @@ const AddressForm = () => {
               errors={errors}
               field={"company"}
               inputProps={{
-                disabled: disabled,
                 icon: "office",
                 label: "Company Name",
                 placeholder: "Please enter your company name",
@@ -172,7 +164,6 @@ const AddressForm = () => {
               errors={errors}
               field={"brand"}
               inputProps={{
-                disabled: disabled,
                 icon: "tag",
                 label: "Brand Name",
                 placeholder: "Please enter your brand name",
@@ -191,7 +182,6 @@ const AddressForm = () => {
               errors={errors}
               field={"street"}
               inputProps={{
-                disabled: disabled,
                 icon: "home",
                 label: "Registered Address",
                 placeholder: "Please enter your registered company address",
@@ -213,7 +203,6 @@ const AddressForm = () => {
                   onChange={(val) => {
                     field.onChange(val.value);
                   }}
-                  isDisabled={disabled}
                 />
               )}
             />
@@ -229,7 +218,6 @@ const AddressForm = () => {
               errors={errors}
               field={"pin"}
               inputProps={{
-                disabled: disabled,
                 icon: "pin",
                 label: "Pincode",
                 placeholder: "Please enter company address pincode",
@@ -240,8 +228,8 @@ const AddressForm = () => {
             <input
               disabled={Object.values(errors).length}
               type="button"
-              value={disabled ? "Edit" : "Submit"}
-              onClick={disabled ? toggleDisabled : hydrateUpdateAlert}
+              value={"Submit"}
+              onClick={hydrateUpdateAlert}
             />
           </form>
           <UpdateAlert />
