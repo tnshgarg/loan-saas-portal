@@ -154,6 +154,10 @@ const EditableCell = ({
   }
 
   const intent = intentMap[validLevel] || Intent.NONE;
+  const backgroundColor = {
+    [Intent.WARNING]: "#FFE4A0",
+    [Intent.DANGER]: Colors.RED5,
+  }[intent];
   const onChange = (e) => {
     setValue(e);
   };
@@ -173,13 +177,21 @@ const EditableCell = ({
   }, [initialValue]);
 
   return (
-    <EditableText
-      value={value}
-      intent={intent}
-      onChange={onChange}
-      onConfirm={onBlur}
-      onEdit={onFocus}
-    />
+    <div
+      style={{
+        backgroundColor,
+        margin: "-6px -8px -6px -8px",
+        padding: " 6px  8px  6px  8px",
+      }}
+    >
+      <EditableText
+        value={value}
+        intent={intent}
+        onChange={onChange}
+        onConfirm={onBlur}
+        onEdit={onFocus}
+      />
+    </div>
   );
 };
 
@@ -188,13 +200,7 @@ const defaultColumn = {
   Cell: EditableCell,
 };
 
-function Table({
-  columns,
-  data,
-  updateMyData,
-  skipPageReset,
-  fieldMap,
-}) {
+function Table({ columns, data, updateMyData, skipPageReset, fieldMap }) {
   // Use the state and functions returned from useTable to build your UI
   const {
     getTableProps,
@@ -251,7 +257,7 @@ function Table({
     return groups;
   }, []);
 
-  // tech debt useEffec shallow compare
+  // tech debt useEffect shallow compare
   useEffect(() => {
     const hiddenHeaders = {};
     let hiddenColumns = [];
@@ -279,7 +285,7 @@ function Table({
         );
       }
     });
-    console.log({hiddenColumns})
+    console.log({ hiddenColumns });
     setVisibility({ ...visibility, hiddenColumns });
     setHiddenColumns(hiddenColumns);
   };
