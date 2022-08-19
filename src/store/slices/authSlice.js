@@ -7,6 +7,7 @@ const AUTH_STORAGE_KEY = "cognitoSession";
 
 function getLocalAuth() {
   let localAuth = JSON.parse(localStorage.getItem(AUTH_STORAGE_KEY) ?? "{}");
+  if (!process.env.REACT_APP_PERSIST_LOGIN) return {};
   if (Date.now() > localAuth.user?.expiry) {
     localStorage.removeItem(AUTH_STORAGE_KEY);
     return {};
