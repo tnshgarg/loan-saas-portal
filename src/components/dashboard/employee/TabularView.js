@@ -108,7 +108,7 @@ const TabularViewTab = () => {
         "Date of Birth (dd/mm/yyyy)": dob,
         "Job Title": title,
         _id: _id,
-        Status: capitalize(status),
+        "Employment Status": capitalize(status),
         "Aadhaar Number": aadhaar?.number,
         "Aadhaar Status": aadhaar.verifyStatus,
         "PAN Number": pan?.number,
