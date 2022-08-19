@@ -2,9 +2,22 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getMessageFromError } from "../../utils/getMessageFromError";
 import AuthService from "../../services/auth.service";
 import { clearMessage, setMessage } from "./messageSlice";
+
+const AUTH_STORAGE_KEY = "cognitoSession";
+
+function getLocalAuth() {
+  let localAuth = JSON.parse(localStorage.getItem(AUTH_STORAGE_KEY) ?? "{}");
+  if (Date.now() > localAuth.user?.expiry) {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    return {};
+  }
+  return localAuth;
+}
+
 const initialState = {
   isLoggedIn: false,
   user: null,
+  ...getLocalAuth(),
 };
 
 export const authSlice = createSlice({
@@ -12,8 +25,20 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     setLoggedInUser: (state, action) => {
-      state.isLoggedIn = action.payload ? true : false;
+      state.isLoggedIn = !!action.payload;
       state.user = action.payload ? action.payload.user : null;
+      if (state.user) {
+        state.user.expiry =
+          state.user?.signInUserSession.idToken.payload.exp * 1000;
+        localStorage.setItem(
+          AUTH_STORAGE_KEY,
+          JSON.stringify({
+            ...state,
+          })
+        );
+      } else {
+        localStorage.removeItem(AUTH_STORAGE_KEY);
+      }
     },
   },
 });
@@ -87,9 +112,9 @@ export const login = (username, password) => (dispatch) => {
     }
   );
 };
-
 export const logout = () => (dispatch) => {
-  AuthService.logout().then((response) => {
+  AuthService.logout().then(() => {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
     dispatch(setLoggedInUser(null));
     dispatch(clearMessage());
   });
@@ -97,7 +122,7 @@ export const logout = () => (dispatch) => {
 
 export const forgotPassword = (username) => (dispatch) => {
   return AuthService.forgotPassword(username).then(
-    (response) => {
+    () => {
       dispatch(setLoggedInUser(null));
       dispatch(setMessage(username));
       return Promise.resolve();
