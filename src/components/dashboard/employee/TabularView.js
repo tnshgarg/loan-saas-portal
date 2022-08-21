@@ -19,12 +19,6 @@ const REGISTER_FORM_CARD_STYLING = {
   overflow: "scroll",
 };
 
-const TABLE_CARD_STYLING = {
-  overflow: "scroll",
-  borderRadius: "0px",
-  height: "600px",
-};
-
 const MODAL_STYLING = {
   marginTop: "7.5rem",
   marginBottom: "5rem",
@@ -216,7 +210,7 @@ const TabularViewTab = () => {
     };
   };
   return (
-    <div style={TABLE_CARD_STYLING}>
+    <>
     <Button intent={Intent.PRIMARY} text="Refetch" onClick={refetch}/>
       <Table
         columns={columns}
@@ -243,7 +237,7 @@ const TabularViewTab = () => {
           />
         </Card>
       </Dialog>
-    </div>
+    </>
   );
 };
 

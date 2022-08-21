@@ -188,7 +188,7 @@ const Table = ({
                 {headerGroup.headers.map((column) => (
                   <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                     <span className="heading">{column.render("Header")}</span>
-                    <span>
+                    <span style={{display: 'inline-block'}}>
                       {column.isSorted
                         ? column.isSortedDesc
                           ? " 🔽"
@@ -314,7 +314,11 @@ Table.defaultProps = {
 
 const Styles = styled.div`
   padding: 1rem;
-  height: 87%;
+  overflow: auto;
+  thead {
+    position: sticky;
+    top: 0px;
+  }
   table {
     width: 100%;
     border-spacing: 0;
@@ -323,10 +327,7 @@ const Styles = styled.div`
     height: 100%;
     display: block;
     border-collapse: collapse;
-    tbody {
-      height: calc(100vh - 400px);
-      overflow: scroll;
-    }
+    height: 55vh;
     tr {
       cursor: pointer;
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -340,12 +341,9 @@ const Styles = styled.div`
       color: rgba(0, 0, 0, 0.87);
       font-weight: 500;
       background: white;
-      position: sticky;
-      top: -5px;
       box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
       .heading {
-        white-space: normal !important;
-        // text-overflow: ellipsis;
+        white-space: nowrap !important;
         overflow: visible;
         width: 78%;
         display: inline-block;
@@ -370,6 +368,9 @@ const Styles = styled.div`
         margin-top: 15px;
       }
     }
+  }
+  td {
+    text-align: center;
   }
   .pagination {
     color: rgba(0, 0, 0, 0.54) !important;
