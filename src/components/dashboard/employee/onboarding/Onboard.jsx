@@ -24,6 +24,7 @@ import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import BrowserEdiTable from "./BrowserEdiTable";
 import { allEmployeesBasicDetails } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
 import { useToastContext } from "../../../../contexts/ToastContext";
+import { VerifyAndUploadEmployees } from "./verifyAndUploadEmployees";
 
 const CARD_STYLING = {
   marginLeft: "2.7em",
@@ -58,7 +59,7 @@ function _Onboard(props) {
   const [alertMessage, setAlertMessage] = useState("");
   const [uploadStatus, setUploadStatus] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [disabled, setDisabled] = useState(false);
+  const [cloudUploadDisabled, setCloudUploadDisabled] = useState(false);
 
   const S3_BUCKET = `employer-${process.env.REACT_APP_STAGE}-raw`;
   const REGION = process.env.REACT_APP_S3_REGION;
@@ -111,7 +112,7 @@ function _Onboard(props) {
         "An error occurred while uploading the file. Please try uploading again."
       );
     } finally {
-      setDisabled(false);
+      setCloudUploadDisabled(false);
       setLoading(false);
     }
   };
@@ -136,8 +137,7 @@ function _Onboard(props) {
   };
 
   const uploadCSV = (e) => {
-    e.preventDefault();
-    setDisabled(true);
+    setCloudUploadDisabled(true);
     setLoading(true);
     handleFileUpload(e);
   };
@@ -197,7 +197,22 @@ function _Onboard(props) {
             >
               Upload File
             </Button>
-
+            {file.object ? (
+              <>
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <VerifyAndUploadEmployees
+                  fileName={file.object.name}
+                  disableButton={cloudUploadDisabled}
+                  onClick={(e) => {
+                    !file.object
+                      ? alert("Please select a file to upload")
+                      : uploadCSV(e);
+                  }}
+                />
+              </>
+            ) : (
+              ""
+            )}
             <div style={{ display: "none" }}>
               <input
                 type="file"
@@ -227,17 +242,6 @@ function _Onboard(props) {
             setter={setDataGetter}
             tableName={file.object?.name}
           />
-          <Button
-            disabled={disabled}
-            onClick={(e) => {
-              !file.object
-                ? alert("Please select a file to upload")
-                : uploadCSV(e);
-            }}
-            loading={loading}
-          >
-            Upload
-          </Button>
         </>
       ) : !uploadStatus ? (
         <NonIdealState
