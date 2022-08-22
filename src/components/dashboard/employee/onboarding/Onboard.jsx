@@ -84,10 +84,7 @@ function _Onboard(props) {
     const params = {
       Body: csvFile,
       Bucket: S3_BUCKET,
-      Key: `${employerId}/${timestamp}_${file.object.name.replace(
-        "/W/g",
-        "_"
-      )}`,
+      Key: `${employerId}/${timestamp}_${file.object.name.replace(/\W/g, "_")}`,
     };
 
     try {
@@ -193,7 +190,7 @@ function _Onboard(props) {
               data={headers}
               filename={`Employee_Details_Template_${new Date()
                 .toISOString()
-                .replaceAll(/-|\./g, "_")}.csv`}
+                .replaceAll(/[-.]/g, "_")}.csv`}
             >
               <Button icon="cloud-download">Download Template File</Button>
             </CSVLink>

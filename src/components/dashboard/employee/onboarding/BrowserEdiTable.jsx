@@ -11,10 +11,15 @@ import {
   Intent,
   Navbar,
   NavbarGroup,
+  Tag,
 } from "@blueprintjs/core";
 import { connect } from "react-redux";
-import { updateCSVRow } from "../../../../store/slices/csvUploadSlice.ts";
+import {
+  toggleFilter,
+  updateCSVRow,
+} from "../../../../store/slices/csvUploadSlice.ts";
 import { FS, VALIDATIONS } from "./validations";
+import { coalesce } from "../../../../utils/array";
 
 const intentMap = {
   [FS.WARN]: Intent.WARNING,
@@ -155,8 +160,8 @@ const EditableCell = ({
 
   const intent = intentMap[validLevel] || Intent.NONE;
   const backgroundColor = {
-    [Intent.WARNING]: "#FFE4A0",
-    [Intent.DANGER]: Colors.RED5,
+    [Intent.WARNING]: "rgb(247, 252, 162, 0.5)",
+    [Intent.DANGER]: "rgb(255, 215, 213, 0.5)",
   }[intent];
   const onChange = (e) => {
     setValue(e);
@@ -200,7 +205,16 @@ const defaultColumn = {
   Cell: EditableCell,
 };
 
-function Table({ columns, data, updateMyData, skipPageReset, fieldMap }) {
+function Table({
+  columns,
+  data,
+  updateMyData,
+  filterMyData,
+  filters,
+  skipPageReset,
+  fieldMap,
+  stats,
+}) {
   // Use the state and functions returned from useTable to build your UI
   const {
     getTableProps,
@@ -309,7 +323,7 @@ function Table({ columns, data, updateMyData, skipPageReset, fieldMap }) {
       ) : (
         ""
       )}
-      <div style={{ maxHeight: "55vh", width: "100%", overflow: "scroll" }}>
+      <div style={{ maxHeight: "55vh", width: "100%", overflow: "auto" }}>
         <HTMLTable
           bordered={true}
           condensed={true}
@@ -346,9 +360,43 @@ function Table({ columns, data, updateMyData, skipPageReset, fieldMap }) {
           {/*</pre>*/}
         </HTMLTable>
       </div>
-      <div style={{ textAlign: "right" }}>
+      <div>
         <div style={{ display: "inline-block" }}>
-          <Pagination {...paginationProps} />
+          {stats[FS.ERROR] ? (
+            <>
+              <Tag
+                minimal={!filters.includes(FS.ERROR)}
+                interactive={true}
+                intent={Intent.DANGER}
+                icon={"error"}
+                onClick={() => filterMyData(FS.ERROR)}
+              >
+                {stats[FS.ERROR]}
+              </Tag>
+              &nbsp;&nbsp;
+            </>
+          ) : (
+            ""
+          )}
+          {stats[FS.WARN] ? (
+            <Tag
+              minimal={!filters.includes(FS.WARN)}
+              interactive={true}
+              intent={Intent.WARNING}
+              icon={"warning-sign"}
+              onClick={() => filterMyData(FS.WARN)}
+            >
+              {stats[FS.WARN]}
+            </Tag>
+          ) : (
+            ""
+          )}
+        </div>
+
+        <div style={{ textAlign: "right" }}>
+          <div style={{ display: "inline-block" }}>
+            <Pagination {...paginationProps} />
+          </div>
         </div>
       </div>
     </div>
@@ -357,14 +405,27 @@ function Table({ columns, data, updateMyData, skipPageReset, fieldMap }) {
 
 const mapStateToProps = (state, ownProps) => {
   const { tableName } = ownProps;
-  console.log(state, ownProps);
+  console.log({ state, ownProps });
+  const {
+    csvUploads: { errorFilters, filteredData, data, fields, stats },
+  } = state;
   return {
-    data: state.csvUploads.data[tableName] || [],
-    columns: state.csvUploads.fields[tableName] || [],
+    data: coalesce([filteredData[tableName], data[tableName], []]),
+    columns: fields[tableName] || [],
+    stats: stats[tableName] || {},
+    errorFilters: errorFilters[tableName] || [],
   };
 };
 
-function BrowserEdiTable({ data, columns, tableName, dispatch, setter }) {
+function BrowserEdiTable({
+  data,
+  columns,
+  tableName,
+  dispatch,
+  setter,
+  stats,
+  errorFilters,
+}) {
   const columnsMemo = React.useMemo(() => columns, [columns]);
   const dataMemo = React.useMemo(() => data, [data]);
   const [skipPageReset, setSkipPageReset] = React.useState(false);
@@ -379,6 +440,10 @@ function BrowserEdiTable({ data, columns, tableName, dispatch, setter }) {
     setSkipPageReset(true);
     dispatch(updateCSVRow({ tableName, rowIndex, columnId, value }));
   };
+
+  const filterMyData = (errorFilter) => {
+    dispatch(toggleFilter({ tableName, errorFilter }));
+  };
   console.log({ columns });
   return (
     <Styles>
@@ -387,7 +452,10 @@ function BrowserEdiTable({ data, columns, tableName, dispatch, setter }) {
         data={dataMemo}
         hasGroups={true}
         updateMyData={updateMyData}
+        filterMyData={filterMyData}
+        filters={errorFilters}
         skipPageReset={skipPageReset}
+        stats={stats}
       />
     </Styles>
   );

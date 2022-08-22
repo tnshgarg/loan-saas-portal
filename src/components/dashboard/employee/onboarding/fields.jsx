@@ -2,12 +2,14 @@ import {
   aadhaarValidation,
   currencyValidation,
   dateValidation,
+  dojValidation,
   emailValidation,
   genderValidation,
   ifscValidation,
   noValidation,
   panValidation,
   phoneValidation,
+  requiredValidation,
 } from "./validations";
 
 export const FIELD_GROUP = {
@@ -26,13 +28,13 @@ export const FIELDS = [
   {
     header: "Name",
     field: "name",
-    required: false,
-    validations: noValidation,
+    validations: requiredValidation,
     group: FG.PERSISTENT,
   },
   {
     header: "Mobile Number",
     field: "mobile",
+    required: true,
     validations: phoneValidation,
     group: FG.PERSISTENT,
   },
@@ -40,7 +42,8 @@ export const FIELDS = [
     header: "Employee ID",
     field: "employeeId",
     default: true,
-    required: false,
+    required: true,
+    validations: requiredValidation,
     group: FG.PERSISTENT,
   },
   {
@@ -74,8 +77,8 @@ export const FIELDS = [
   {
     header: "Date of Joining (dd/mm/yyyy)",
     field: "doj",
-    required: false,
-    validations: dateValidation,
+    required: true,
+    validations: dojValidation,
     group: FG.EMPLOYMENT,
   },
   {
@@ -123,8 +126,8 @@ export const FIELDS = [
   {
     header: "Job Title",
     field: "title",
-    required: false,
-    validations: noValidation,
+    required: true,
+    validations: requiredValidation,
     group: FG.EMPLOYMENT,
   },
   {
@@ -137,7 +140,7 @@ export const FIELDS = [
   {
     header: "Annual CTC",
     field: "aCTC",
-    required: false,
+    required: true,
     validations: currencyValidation,
     group: FG.EMPLOYMENT,
   },
