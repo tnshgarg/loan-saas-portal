@@ -26,20 +26,20 @@ const FG = FIELD_GROUP;
 // FIELDS are order Sensetive
 export const FIELDS = [
   {
-    header: "Name",
+    header: "Name (Required)",
     field: "name",
     validations: requiredValidation,
     group: FG.PERSISTENT,
   },
   {
-    header: "Mobile Number",
+    header: "Mobile Number (Required)",
     field: "mobile",
     required: true,
     validations: phoneValidation,
     group: FG.PERSISTENT,
   },
   {
-    header: "Employee ID",
+    header: "Employee ID (Required)",
     field: "employeeId",
     default: true,
     required: true,
@@ -75,7 +75,7 @@ export const FIELDS = [
     group: FG.PERSONAL_DETAILS,
   },
   {
-    header: "Date of Joining (dd/mm/yyyy)",
+    header: "Date of Joining (dd/mm/yyyy) (Required)",
     field: "doj",
     required: true,
     validations: dojValidation,
@@ -124,7 +124,7 @@ export const FIELDS = [
     group: FG.EMPLOYMENT,
   },
   {
-    header: "Job Title",
+    header: "Job Title (Required)",
     field: "title",
     required: true,
     validations: requiredValidation,
@@ -138,7 +138,7 @@ export const FIELDS = [
     group: FG.EMPLOYMENT,
   },
   {
-    header: "Annual CTC",
+    header: "Annual CTC (Required)",
     field: "aCTC",
     required: true,
     validations: currencyValidation,
