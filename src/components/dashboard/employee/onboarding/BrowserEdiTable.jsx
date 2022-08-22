@@ -300,10 +300,50 @@ function Table({
   };
   return (
     <div>
+      <div style={{ textAlign: "center", paddingBottom: "1em" }}>
+        {stats[FS.ERROR] ? (
+          <>
+            <Tag
+              large
+              minimal={!filters.includes(FS.ERROR)}
+              interactive={true}
+              intent={Intent.DANGER}
+              icon={"error"}
+              rightIcon={filters.includes(FS.ERROR) ? "cross" : ""}
+              onClick={() => filterMyData(FS.ERROR)}
+            >
+              {stats[FS.ERROR]} problems need immediate attention
+            </Tag>
+            &nbsp;&nbsp;
+          </>
+        ) : (
+          ""
+        )}
+        {stats[FS.WARN] ? (
+          <>
+            <Tag
+              large={true}
+              minimal={!filters.includes(FS.WARN)}
+              interactive={true}
+              intent={Intent.WARNING}
+              icon={"warning-sign"}
+              rightIcon={filters.includes(FS.WARN) ? "cross" : ""}
+              onClick={() => filterMyData(FS.WARN)}
+            >
+              {stats[FS.WARN]} fields are incorrect, but can be fixed later
+            </Tag>
+          </>
+        ) : (
+          ""
+        )}
+      </div>
       {visibilityToolbar ? (
         <>
-          Choose Columns to view:{" "}
           <ButtonGroup>
+            <Button disabled={true} minimal={true}>
+              {" "}
+              Choose Columns to view{" "}
+            </Button>
             {visibilityToolbar.map((item) => (
               <Button
                 active={!visibility.hiddenHeaders[item.Header]}
@@ -314,6 +354,8 @@ function Table({
               </Button>
             ))}
           </ButtonGroup>
+          <br />
+          <small>&nbsp;</small>
         </>
       ) : (
         ""
@@ -356,38 +398,6 @@ function Table({
         </HTMLTable>
       </div>
       <div>
-        <div style={{ display: "inline-block" }}>
-          {stats[FS.ERROR] ? (
-            <>
-              <Tag
-                minimal={!filters.includes(FS.ERROR)}
-                interactive={true}
-                intent={Intent.DANGER}
-                icon={"error"}
-                onClick={() => filterMyData(FS.ERROR)}
-              >
-                {stats[FS.ERROR]}
-              </Tag>
-              &nbsp;&nbsp;
-            </>
-          ) : (
-            ""
-          )}
-          {stats[FS.WARN] ? (
-            <Tag
-              minimal={!filters.includes(FS.WARN)}
-              interactive={true}
-              intent={Intent.WARNING}
-              icon={"warning-sign"}
-              onClick={() => filterMyData(FS.WARN)}
-            >
-              {stats[FS.WARN]}
-            </Tag>
-          ) : (
-            ""
-          )}
-        </div>
-
         <div style={{ textAlign: "right" }}>
           <div style={{ display: "inline-block" }}>
             <Pagination {...paginationProps} />
