@@ -23,7 +23,7 @@ export const EmployeeModalTab = ({
   const responseFromQuery = useGetEmployeeDetailsByEmployeeIdQuery({
     id: currEmployeeId,
     category,
-    subCategory: type
+    subCategory: type,
   });
   const { data, isLoading, error } = responseFromQuery;
 
@@ -57,11 +57,11 @@ export const EmployeeModalTab = ({
   useEffect(() => {
     if (data) {
       let body = data.body ?? {};
-      
+
       const formDataInitialFetched = Object.entries(fields).reduce(
         (acc, [key, value]) => ({
           ...acc,
-          [value]: body[key]
+          [value]: body[key],
         }),
         {}
       );
@@ -178,10 +178,10 @@ export const EmployeeModalTab = ({
   const generateOptions = (values) => {
     return values?.map((opt) => ({
       value: opt,
-      label: opt
-    }))
-  }
-
+      label: opt,
+    }));
+  };
+  const disableEditing = data?.body?.verifyStatus === "SUCCESS";
   return (
     <div>
       {error ? (
@@ -200,13 +200,15 @@ export const EmployeeModalTab = ({
               if (inputTypes && inputTypes[labelKey]) {
                 let options = [];
                 const dependentOn = inputTypes[labelKey]?.dependentOn ?? false;
-                if(dependentOn){
+                if (dependentOn) {
                   const currState = watch(dependentOn) ?? "";
-                  options = generateOptions(inputTypes[labelKey]?.options[currState]);
-                }else {
+                  options = generateOptions(
+                    inputTypes[labelKey]?.options[currState]
+                  );
+                } else {
                   options = generateOptions(inputTypes[labelKey]?.options);
                 }
-                const defaultValue = options[0]?.value
+                const defaultValue = options ? options[0]?.value : null;
                 return (
                   <Controller
                     control={control}
@@ -234,6 +236,7 @@ export const EmployeeModalTab = ({
                   />
                 );
               }
+              console.log({ key, labelKey });
               return (
                 <FormInput
                   key={key}
@@ -250,11 +253,11 @@ export const EmployeeModalTab = ({
                 />
               );
             })}
-
             <input
               type="submit"
               value={disabled ? "Edit" : "Submit"}
               onClick={toggleDisabled}
+              disabled={disableEditing}
             />
           </form>
           <Alert
