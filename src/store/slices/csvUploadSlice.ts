@@ -61,7 +61,6 @@ function populateFilteredData(data: any, errorFilters: any, filteredData: any) {
   data.forEach((row) => {
     const appliedFilters = errorFilters.filter((f) => !!row.status[f]);
     if (appliedFilters.length > 0) {
-      console.log({ appliedFilters, row });
       filteredData.push(row);
     }
   });
@@ -114,7 +113,6 @@ export const CSVUploadsSlice = createSlice({
         });
       });
       state.data[fileName] = data;
-      console.log({ fields, data });
     },
     updateCSVRow: (state, action) => {
       const {

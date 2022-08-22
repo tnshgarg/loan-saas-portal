@@ -80,7 +80,6 @@ function _Onboard(props) {
     const csvFile = new Blob([tableCSV], { type: "text/csv" });
     const timestamp = new Date().getTime();
 
-    console.log({ timestamp, employerId, file });
     const params = {
       Body: csvFile,
       Bucket: S3_BUCKET,
@@ -121,7 +120,6 @@ function _Onboard(props) {
   const hiddenFileInput = useRef(null);
 
   const handleFileImport = (data) => {
-    console.log("dispatched", dispatch, data, "data");
     dispatch(
       initCSVUpload({
         data: transformHeadersToFields(data),
@@ -151,9 +149,7 @@ function _Onboard(props) {
   };
 
   useEffect(() => {
-    console.log("file effect triggered", file.object);
     if (file.object) {
-      console.log("file is set");
       const reader = new FileReader();
       reader.onload = (event) => {
         const wb = read(event.target.result, {
@@ -163,7 +159,6 @@ function _Onboard(props) {
         const sheets = wb.SheetNames;
         if (sheets.length) {
           const rows = utils.sheet_to_json(wb.Sheets[sheets[0]]);
-          console.log({ rows });
           handleFileImport(rows);
         }
       };

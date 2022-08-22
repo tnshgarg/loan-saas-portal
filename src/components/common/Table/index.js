@@ -12,7 +12,7 @@ import styled, { css } from "styled-components";
 //Components
 import EditableCell from "./EditableCell";
 import { Button } from "@mui/material";
-import { Button as BLButton } from "@blueprintjs/core";
+import { Button as BLButton, EditableText } from "@blueprintjs/core";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import UpdateAlert from "../UpdateAlert";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
@@ -195,9 +195,9 @@ const Table = ({
 
   function getExcel() {
     const d = new Date();
-    
+
     const config = {
-      filename: d.toString().split('GMT')[0].trim(),
+      filename: d.toString().split("GMT")[0].trim(),
       sheet: {
         data: [],
       },

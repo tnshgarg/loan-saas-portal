@@ -277,10 +277,6 @@ function Table({
     let hiddenColumns = [];
     visibilityToolbar.forEach((item) => {
       hiddenHeaders[item.Header] = true;
-      console.log({
-        headerItem: item,
-        cct: item.columns.map((i) => i.accessor),
-      });
       hiddenColumns = hiddenColumns.concat(item.columns.map((i) => i.accessor));
     });
     setVisibility({ hiddenHeaders, hiddenColumns });
@@ -299,7 +295,6 @@ function Table({
         );
       }
     });
-    console.log({ hiddenColumns });
     setVisibility({ ...visibility, hiddenColumns });
     setHiddenColumns(hiddenColumns);
   };
@@ -405,7 +400,6 @@ function Table({
 
 const mapStateToProps = (state, ownProps) => {
   const { tableName } = ownProps;
-  console.log({ state, ownProps });
   const {
     csvUploads: { errorFilters, filteredData, data, fields, stats },
   } = state;
@@ -434,7 +428,6 @@ function BrowserEdiTable({
     setSkipPageReset(false);
   }, [data]);
 
-  console.log({ columnsMemo, dataMemo });
   const updateMyData = (rowIndex, columnId, value) => {
     // We also turn on the flag to not reset the page
     setSkipPageReset(true);
@@ -444,7 +437,7 @@ function BrowserEdiTable({
   const filterMyData = (errorFilter) => {
     dispatch(toggleFilter({ tableName, errorFilter }));
   };
-  console.log({ columns });
+
   return (
     <Styles>
       <Table

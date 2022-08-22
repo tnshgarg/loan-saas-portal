@@ -236,7 +236,6 @@ export const EmployeeModalTab = ({
                   />
                 );
               }
-              console.log({ key, labelKey });
               return (
                 <FormInput
                   key={key}
