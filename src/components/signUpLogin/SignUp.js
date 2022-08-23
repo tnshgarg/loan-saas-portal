@@ -59,7 +59,6 @@ export const SignUp = () => {
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
-  console.log({ dirtyFields, errors });
   return (
     <div>
       <form onSubmit={(e) => e.preventDefault()}>

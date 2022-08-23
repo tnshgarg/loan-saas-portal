@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import PropTypes from "prop-types";
 import {
   useRowSelect,
@@ -12,12 +12,14 @@ import styled, { css } from "styled-components";
 //Components
 import EditableCell from "./EditableCell";
 import { Button } from "@mui/material";
+import { Button as BLButton, EditableText } from "@blueprintjs/core";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import UpdateAlert from "../UpdateAlert";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
-import { Icon } from "@blueprintjs/core";
 import TableFilter from "react-table-filter";
+import { Icon, Intent } from "@blueprintjs/core";
+import generateExcel from "zipcelx";
 import "react-table-filter/lib/styles.css";
 
 const Table = ({
@@ -40,7 +42,9 @@ const Table = ({
   addLabel,
   showAddBtn,
   hoverEffect,
+  showDownload = false,
   cellProps = () => ({}),
+  handlers,
 }) => {
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -71,8 +75,7 @@ const Table = ({
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize, },
-    stateReducer
+    state: { pageIndex, pageSize },
   } = useTable(
     {
       columns,
@@ -88,10 +91,10 @@ const Table = ({
       setValue,
       storeData,
       inputTypes,
-      // filterTypes,
+      filterTypes,
       className: "-striped -highlight",
     },
-    // showFilter && useFilters,
+    showFilter && useFilters,
     useSortBy,
     usePagination,
     useRowSelect,
@@ -169,11 +172,11 @@ const Table = ({
   );
 
   React.useEffect(() => {
-    filterRef.current.reset(data, true);
+   showFilter && filterRef.current.reset(data, true);
     setFilteredData(data);
   }, [data]);
 
-  const updateFilterHandler = newData => {
+  const updateFilterHandler = (newData) => {
     setFilteredData(newData);
   };
 
@@ -182,13 +185,94 @@ const Table = ({
     addCallback();
   };
 
-  const filterUpdated = (newData) =>  {
-    // this.setState({
-    //   episodes: newData
-    // });
-    console.log({newData})
-    stateReducer(newData, 'rows')
+  function getHeader(column) {
+    if (column.parent) {
+      return [
+        {
+          value: column.parent.Header + " " + column.Header,
+          type: "string",
+        },
+      ];
+    } else {
+      return [
+        {
+          value: column.Header,
+          type: "string",
+        },
+      ];
+    }
   }
+
+  function getExcel() {
+    const d = new Date();
+
+    const config = {
+      filename: d.toString().split("GMT")[0].trim(),
+      sheet: {
+        data: [],
+      },
+    };
+
+    const dataSet = config.sheet.data;
+
+    headerGroups.forEach((headerGroup) => {
+      const headerRow = [];
+      if (headerGroup.headers) {
+        headerGroup.headers.forEach((column) => {
+          if (column?.accessor) {
+            headerRow.push(...getHeader(column));
+          }
+        });
+      }
+      headerRow.length && dataSet.push(headerRow);
+    });
+
+    if (rows.length > 0) {
+      rows.forEach((row) => {
+        const dataRow = [];
+
+        Object.values(row.values).forEach((value) =>
+          dataRow.push({
+            value,
+            type: typeof value === "number" ? "number" : "string",
+          })
+        );
+
+        dataSet.push(dataRow);
+      });
+    } else {
+      dataSet.push([
+        {
+          value: "No data",
+          type: "string",
+        },
+      ]);
+    }
+
+    return generateExcel(config);
+  }
+
+  if (handlers) {
+    handlers["download-excel"] = () => {
+      getExcel();
+    };
+  }
+
+  const HeaderRowWrapper = ({ children, ...rest }) => {
+    return showFilter ? (
+      <TableFilter
+        {...rest}
+        style={{ color: "black" }}
+        rows={data}
+        onFilterUpdate={updateFilterHandler}
+        ref={filterRef}
+      >
+        {children}
+      </TableFilter>
+    ) : (
+      <tr {...rest}>{children}</tr>
+    );
+  };
 
   return (
     <>
@@ -203,67 +287,46 @@ const Table = ({
         </Button>
       )}
       <Styles hoverEffect={hoverEffect}>
-          <table {...getTableProps()}>
-            <thead>
-              {headerGroups.map((headerGroup) => (
-              //   <TableFilter
-              //   {...headerGroup.getHeaderGroupProps()}
-              //   style={{ color: "black" }}
-              //   rows={data}
-              //   onFilterUpdate={updateFilterHandler}
-              //   ref={filterRef}
-              // >
-                <TableFilter {...headerGroup.getHeaderGroupProps()} style={{ color: "black" }}
-                rows={data}
-                onFilterUpdate={updateFilterHandler}
-                ref={filterRef}>
-                  {headerGroup.headers.map((column) => (
-                    <th
-                      {...column.getHeaderProps()}
-                      filterkey={column.id}
-                    >
-                      <span className="heading">{column.render("Header")}</span>
-                      {/* <span style={{ display: "inline-block" }}>
-                        {column.isSorted
-                          ? column.isSortedDesc
-                            ? " 🔽"
-                            : " 🔼"
-                          : ""}
-                      </span> */}
-                      {/* <div>
-                        {column.canFilter ? column.render("Filter") : null}
-                      </div> */}
-                    </th>
-                  ))}
-                </TableFilter>
-                // </TableFilter>
-              ))}
-            </thead>
-            <tbody {...getTableBodyProps()}>
-              {(showPagination ? page : rows).map((row, i) => {
-                prepareRow(row);
-                return (
-                  <>
-                    <tr
-                      {...row.getRowProps()}
-                      onClick={() => {
-                        handleRowClick(row.original);
-                      }}
-                      id={row.getRowProps().key}
-                    >
-                      {row.cells.map((cell) => {
-                        return (
-                          <td id={cell.getCellProps().key} {...cell.getCellProps(cellProps(cell))}>
-                            {cell.render("Cell")}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  </>
-                );
-              })}
-            </tbody>
-          </table>
+        <table {...getTableProps()}>
+          <thead>
+            {headerGroups.map((headerGroup) => (
+              <HeaderRowWrapper {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <th {...column.getHeaderProps()} filterkey={column.id}>
+                    <span className="heading">{column.render("Header")}</span>
+                  </th>
+                ))}
+              </HeaderRowWrapper>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {(showPagination ? page : rows).map((row, i) => {
+              prepareRow(row);
+              return (
+                <>
+                  <tr
+                    {...row.getRowProps()}
+                    onClick={() => {
+                      handleRowClick(row.original);
+                    }}
+                    id={row.getRowProps().key}
+                  >
+                    {row.cells.map((cell) => {
+                      return (
+                        <td
+                          id={cell.getCellProps().key}
+                          {...cell.getCellProps(cellProps(cell))}
+                        >
+                          {cell.render("Cell")}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                </>
+              );
+            })}
+          </tbody>
+        </table>
         {showPagination && (
           <div className="pagination">
             <span className="per_page">Rows per page</span>
@@ -330,6 +393,13 @@ const Table = ({
             </span>
           </div>
         )}
+        {showDownload && (
+          <BLButton
+            intent={Intent.SUCCESS}
+            text="Download Excel"
+            onClick={getExcel}
+          />
+        )}
         <UpdateAlert />
       </Styles>
     </>
@@ -360,7 +430,7 @@ const Styles = styled.div`
     width: 100%;
     border-spacing: 0;
     position: relative;
-    overflow: scroll;
+    overflow: auto;
     height: 100%;
     display: block;
     border-collapse: collapse;
@@ -389,9 +459,8 @@ const Styles = styled.div`
     th,
     td {
       white-space: normal !important;
-      overflow: visible;
       margin: 0;
-      padding: 0.5rem;
+      padding: 0.5rem 2rem;
       p {
         margin-bottom: 0px;
       }
@@ -405,9 +474,6 @@ const Styles = styled.div`
         margin-top: 15px;
       }
     }
-  }
-  td {
-    text-align: center;
   }
   .pagination {
     color: rgba(0, 0, 0, 0.54) !important;
