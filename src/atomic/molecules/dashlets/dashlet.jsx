@@ -15,7 +15,7 @@ export function Dashlet({ title, icon, actions, children }) {
       <div className={styles.row}>
         <div className={HEADER_CLASS}>
           <H3>
-            <Icon icon={icon} size={"1em"} />
+            <Icon icon={icon} size={24} />
             &nbsp;{title}
           </H3>
         </div>
