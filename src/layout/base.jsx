@@ -30,7 +30,8 @@ export default function BaseLayout(props) {
           paddingTop: navbar.height,
           paddingBottom: "5em",
           maxHeight: `98vh`,
-          overflow: "scroll",
+          overflowY: "auto",
+          overflowX: "hidden",
         }}
       >
         <div style={{}}>{props.children}</div>

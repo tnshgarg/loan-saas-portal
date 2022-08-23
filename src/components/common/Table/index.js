@@ -42,6 +42,7 @@ const Table = ({
   hoverEffect,
   showDownload = false,
   cellProps = () => ({}),
+  handlers,
 }) => {
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -242,6 +243,11 @@ const Table = ({
     return generateExcel(config);
   }
 
+  if (handlers) {
+    handlers["download-excel"] = () => {
+      getExcel();
+    };
+  }
   return (
     <>
       {showAddBtn && (
@@ -400,13 +406,13 @@ const Styles = styled.div`
     width: 100%;
     border-spacing: 0;
     position: relative;
-    overflow: scroll;
+    overflow: auto;
     height: 100%;
     display: block;
     border-collapse: collapse;
     tbody {
       height: calc(100vh - 400px);
-      overflow: scroll;
+      overflow: auto;
     }
     tr {
       cursor: pointer;
@@ -435,7 +441,7 @@ const Styles = styled.div`
     th,
     td {
       white-space: normal !important;
-      overflow: visible;
+      overflow: auto;
       margin: 0;
       padding: 0.5rem;
       p {
