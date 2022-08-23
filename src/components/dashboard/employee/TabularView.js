@@ -125,7 +125,7 @@ const TabularViewTab = ({ handlers }) => {
 
   useEffect(() => {
     if (data) {
-      const body = data?.body ?? [];
+      const body = Array(65).fill(data?.body[0]) ?? [];
       setFetchedRowsFromBody(body);
     }
   }, [data]);
@@ -203,12 +203,14 @@ const TabularViewTab = ({ handlers }) => {
 
   const cellProps = (cell) => {
     let bgColor = "white";
-    if (cell.value.includes("SUCCESS")) {
-      bgColor = "rgb(204, 255, 216, 0.5)";
-    } else if (cell.value.includes("PENDING")) {
-      bgColor = "rgb(247, 252, 162, 0.5)";
-    } else if (cell.value.includes("ERROR")) {
-      bgColor = "rgb(255, 215, 213, 0.5)";
+    if (cell?.value) {
+      if (cell.value.includes("SUCCESS")) {
+        bgColor = "rgb(204, 255, 216, 0.5)";
+      } else if (cell.value.includes("PENDING")) {
+        bgColor = "rgb(247, 252, 162, 0.5)";
+      } else if (cell.value.includes("ERROR")) {
+        bgColor = "rgb(255, 215, 213, 0.5)";
+      }
     }
 
     return {
@@ -223,7 +225,18 @@ const TabularViewTab = ({ handlers }) => {
   return (
     <>
       <Table
-        columns={columns}
+        columns={[
+          {
+            Header: "S/N",
+            id: "row",
+            maxWidth: 50,
+            filterable: false,
+            Cell: ({row}) => {
+              return <div>{row.index + 1}</div>;
+            },
+          },
+          ...columns,
+        ]}
         defaultColumn={defaultColumn}
         data={fetchedRows}
         handleRowClick={handleRowClick}
