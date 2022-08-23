@@ -55,6 +55,8 @@ function fuzzyTextFilterFn(rows, id, filterValue) {
 
 fuzzyTextFilterFn.autoRemove = (val) => !val;
 
+
+
 const TabularViewTab = () => {
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
@@ -115,6 +117,31 @@ const TabularViewTab = () => {
     setFetchedRows(fetchedRowsData);
   };
 
+  const customFilter = ({ fieldName, filter, onChange }) => {
+
+    return (
+      <select
+        onChange={event => onChange(event.target.value)}
+        style={{ width: "100%" }}
+        value={filter ? filter.value : "all"}
+      > 
+        <option value="all">Show All</option>
+        {fetchedRows
+          .map(item => item[fieldName])
+  
+          .filter((item, i, s) => s.lastIndexOf(item) == i)
+          .map(function (value) {
+            console.log('renderItem: ', value);
+            return (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            );
+          })}
+      </select>
+    );
+  };
+
   useEffect(() => {
     if (data) {
       const body = data?.body ?? [];
@@ -141,6 +168,11 @@ const TabularViewTab = () => {
         return {
           Header: header,
           accessor: header,
+          filterMethod: (filter, row) => {
+            return row[filter.id] === filter.value;
+          },
+          Filter: ({ filter, onChange }) =>
+            customFilter({ fieldName:header, filter, onChange })
         };
       }),
     []

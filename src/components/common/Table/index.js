@@ -17,6 +17,8 @@ import UpdateAlert from "../UpdateAlert";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import { Icon } from "@blueprintjs/core";
+import TableFilter from "react-table-filter";
+import "react-table-filter/lib/styles.css";
 
 const Table = ({
   columns,
@@ -43,6 +45,8 @@ const Table = ({
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
   const [currRow, setCurrRow] = React.useState(null);
+  const [filteredData, setFilteredData] = React.useState([]);
+  const filterRef = React.useRef(null);
 
   const { value, setValue } = useContext(UpdateAlertContext);
 
@@ -67,11 +71,12 @@ const Table = ({
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize },
+    state: { pageIndex, pageSize, },
+    stateReducer
   } = useTable(
     {
       columns,
-      data,
+      data: filteredData,
       defaultColumn,
       initialState,
       autoResetPage: !skipPageReset,
@@ -83,10 +88,10 @@ const Table = ({
       setValue,
       storeData,
       inputTypes,
-      filterTypes,
+      // filterTypes,
       className: "-striped -highlight",
     },
-    showFilter && useFilters,
+    // showFilter && useFilters,
     useSortBy,
     usePagination,
     useRowSelect,
@@ -163,10 +168,27 @@ const Table = ({
     }
   );
 
+  React.useEffect(() => {
+    filterRef.current.reset(data, true);
+    setFilteredData(data);
+  }, [data]);
+
+  const updateFilterHandler = newData => {
+    setFilteredData(newData);
+  };
+
   const addhandler = () => {
     setEditableRowIndex(0);
     addCallback();
   };
+
+  const filterUpdated = (newData) =>  {
+    // this.setState({
+    //   episodes: newData
+    // });
+    console.log({newData})
+    stateReducer(newData, 'rows')
+  }
 
   return (
     <>
@@ -181,52 +203,67 @@ const Table = ({
         </Button>
       )}
       <Styles hoverEffect={hoverEffect}>
-        <table {...getTableProps()}>
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                    <span className="heading">{column.render("Header")}</span>
-                    <span style={{display: 'inline-block'}}>
-                      {column.isSorted
-                        ? column.isSortedDesc
-                          ? " 🔽"
-                          : " 🔼"
-                        : ""}
-                    </span>
-                    <div>
-                      {column.canFilter ? column.render("Filter") : null}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {(showPagination ? page : rows).map((row, i) => {
-              prepareRow(row);
-              return (
-                <>
-                  <tr
-                    {...row.getRowProps()}
-                    onClick={() => {
-                      handleRowClick(row.original);
-                    }}
-                  >
-                    {row.cells.map((cell) => {
-                      return (
-                        <td {...cell.getCellProps(cellProps(cell))}>
-                          {cell.render("Cell")}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                </>
-              );
-            })}
-          </tbody>
-        </table>
+          <table {...getTableProps()}>
+            <thead>
+              {headerGroups.map((headerGroup) => (
+              //   <TableFilter
+              //   {...headerGroup.getHeaderGroupProps()}
+              //   style={{ color: "black" }}
+              //   rows={data}
+              //   onFilterUpdate={updateFilterHandler}
+              //   ref={filterRef}
+              // >
+                <TableFilter {...headerGroup.getHeaderGroupProps()} style={{ color: "black" }}
+                rows={data}
+                onFilterUpdate={updateFilterHandler}
+                ref={filterRef}>
+                  {headerGroup.headers.map((column) => (
+                    <th
+                      {...column.getHeaderProps()}
+                      filterkey={column.id}
+                    >
+                      <span className="heading">{column.render("Header")}</span>
+                      {/* <span style={{ display: "inline-block" }}>
+                        {column.isSorted
+                          ? column.isSortedDesc
+                            ? " 🔽"
+                            : " 🔼"
+                          : ""}
+                      </span> */}
+                      {/* <div>
+                        {column.canFilter ? column.render("Filter") : null}
+                      </div> */}
+                    </th>
+                  ))}
+                </TableFilter>
+                // </TableFilter>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {(showPagination ? page : rows).map((row, i) => {
+                prepareRow(row);
+                return (
+                  <>
+                    <tr
+                      {...row.getRowProps()}
+                      onClick={() => {
+                        handleRowClick(row.original);
+                      }}
+                      id={row.getRowProps().key}
+                    >
+                      {row.cells.map((cell) => {
+                        return (
+                          <td id={cell.getCellProps().key} {...cell.getCellProps(cellProps(cell))}>
+                            {cell.render("Cell")}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  </>
+                );
+              })}
+            </tbody>
+          </table>
         {showPagination && (
           <div className="pagination">
             <span className="per_page">Rows per page</span>
