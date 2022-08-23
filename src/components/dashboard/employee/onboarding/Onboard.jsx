@@ -5,10 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Alert, Collapse } from "@mui/material";
-import { Button, Intent, NonIdealState } from "@blueprintjs/core";
+import { Intent, NonIdealState } from "@blueprintjs/core";
 import styles from "../styles/onboard.module.css";
 import * as Papa from "papaparse";
-import { CSVLink } from "react-csv";
 import { HEADER_GROUPS, HEADER_LIST, transformHeadersToFields } from "./fields";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import BrowserEdiTable from "./BrowserEdiTable";
@@ -17,6 +16,7 @@ import { useToastContext } from "../../../../contexts/ToastContext";
 import { VerifyAndUploadEmployees } from "./verifyAndUploadEmployees";
 import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 import { CSVFileInput } from "../../../../atomic/atoms/forms/CSVFileInput";
+import { TemplateDownloadButton } from "../../../../atomic/atoms/forms/TemplateDownloadButton";
 
 // techdebt: move this to another styling/theme file
 export const CARD_STYLING = {
@@ -167,14 +167,10 @@ function _Onboard(props) {
         title={"Upload Employee Details"}
         actions={
           <>
-            <CSVLink
-              data={[HEADER_LIST]}
-              filename={`Employee_Details_Template_${new Date()
-                .toISOString()
-                .replaceAll(/[-.]/g, "_")}.csv`}
-            >
-              <Button icon="cloud-download">Download Template File</Button>
-            </CSVLink>
+            <TemplateDownloadButton
+              fileName={"Employee Details"}
+              headers={HEADER_LIST}
+            />
             <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <CSVFileInput
               icon="add-to-folder"
