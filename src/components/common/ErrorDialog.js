@@ -1,8 +1,7 @@
+import { Intent, Tag } from "@blueprintjs/core";
+
 const ALERT_STYLING = {
-  width: "20%",
-  marginTop: "5%",
-  marginRight: "auto",
-  marginLeft: "auto",
+  marginTop: "1em",
   textAlign: "center",
 };
 
@@ -10,12 +9,14 @@ export default function ErrorDialog({ message, success }) {
   if (message) {
     return (
       <div style={ALERT_STYLING}>
-        <div
-          className={success ? "alert alert-success" : "alert alert-danger"}
-          role="alert"
+        <Tag
+          intent={success ? Intent.SUCCESS : Intent.DANGER}
+          icon={success ? "tick-circle" : "error"}
+          large
+          minimal
         >
           {message}
-        </div>
+        </Tag>
       </div>
     );
   }
