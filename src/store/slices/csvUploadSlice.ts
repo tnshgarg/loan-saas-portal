@@ -41,6 +41,10 @@ interface TableErrors {
   };
 }
 
+interface TableStats {
+  [tableName: string]: any;
+}
+
 interface ErrorFilters {
   [tableName: string]: Array<Number>;
 }
@@ -53,11 +57,12 @@ const CSV_UPLOADS_INITIAL_STATE = {
   updates: {} as TableData,
   errors: {} as TableErrors,
   pagination: {} as TablePagination,
-  stats: {},
+  stats: {} as TableStats,
   errorFilters: {} as ErrorFilters,
 };
 
 function populateFilteredData(data: any, errorFilters: any, filteredData: any) {
+  filteredData.splice(0, filteredData.length);
   data.forEach((row) => {
     const appliedFilters = errorFilters.filter((f) => !!row.status[f]);
     if (appliedFilters.length > 0) {
@@ -118,17 +123,23 @@ export const CSVUploadsSlice = createSlice({
       const {
         payload: { tableName, rowIndex, columnId, value },
       } = action;
-      let row = state.data[tableName][rowIndex];
-      const currentState = VALIDATIONS[state.fieldMap[tableName][columnId]](
-        row[columnId] || ""
-      );
+      const {
+        data: { [tableName]: data },
+        errorFilters: { [tableName]: errorFilters },
+        filteredData: { [tableName]: filteredData },
+        stats: { [tableName]: stats },
+      } = state;
+      let row = data[rowIndex];
+      if (errorFilters.length) {
+        row = data[filteredData[rowIndex].rowNumber];
+      }
+      const validate = VALIDATIONS[state.fieldMap[tableName][columnId]];
+      const currentState = validate(row[columnId] || "");
       row[columnId] = value;
-      const updatedState = VALIDATIONS[state.fieldMap[tableName][columnId]](
-        row[columnId] || ""
-      );
+      const updatedState = validate(row[columnId] || "");
       if (currentState !== updatedState) {
-        state.stats[currentState] -= 1;
-        state.stats[updatedState] += 1;
+        stats[currentState] -= 1;
+        stats[updatedState] += 1;
 
         console.assert(state.stats[currentState] >= 0);
 
@@ -136,6 +147,10 @@ export const CSVUploadsSlice = createSlice({
         row.status[updatedState] += 1;
 
         console.assert(row.status[currentState] >= 0);
+        console.log(currentState, updatedState);
+        if (errorFilters.length) {
+          populateFilteredData(data, errorFilters, filteredData);
+        }
       }
     },
     toggleFilter: (state, action) => {
@@ -156,10 +171,7 @@ export const CSVUploadsSlice = createSlice({
         errorFilters.splice(filterIndex, 1);
       }
       // reusing the same `filteredData` to maintain object reference
-      filteredData.splice(0, filteredData.length);
-      if (errorFilters.length !== 0) {
-        populateFilteredData(data, errorFilters, filteredData);
-      }
+      populateFilteredData(data, errorFilters, filteredData);
     },
     // WIP: discuss and add
     // deleteCSVRow: (state, action) => {
