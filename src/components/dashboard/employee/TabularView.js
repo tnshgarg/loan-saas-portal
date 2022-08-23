@@ -1,4 +1,13 @@
-import { Button, Card, Dialog, Elevation, Intent } from "@blueprintjs/core";
+import {
+  Button,
+  Card,
+  Dialog,
+  Divider,
+  Elevation,
+  H3,
+  Icon,
+  Intent,
+} from "@blueprintjs/core";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
@@ -11,18 +20,17 @@ import Table from "../../common/Table";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
 import { capitalize, isObject } from "lodash";
-
-const REGISTER_FORM_CARD_STYLING = {
-  width: "90%",
-  marginRight: "auto",
-  marginLeft: "auto",
-  overflow: "scroll",
-};
+import styles from "./styles/onboard.module.css";
+import {
+  ACTIONS_CLASS,
+  CARD_STYLING,
+  HEADER_CLASS,
+} from "./onboarding/Onboard";
 
 const TABLE_CARD_STYLING = {
-  overflow: "scroll",
+  overflow: "auto",
   borderRadius: "0px",
-  height: "600px",
+  height: "60vh",
 };
 
 const MODAL_STYLING = {
@@ -61,7 +69,7 @@ function fuzzyTextFilterFn(rows, id, filterValue) {
 
 fuzzyTextFilterFn.autoRemove = (val) => !val;
 
-const TabularViewTab = () => {
+const TabularViewTab = ({ handlers }) => {
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
@@ -108,7 +116,7 @@ const TabularViewTab = () => {
         "Date of Birth (dd/mm/yyyy)": dob,
         "Job Title": title,
         _id: _id,
-        Status: capitalize(status),
+        "Employment Status": capitalize(status),
         "Aadhaar Number": aadhaar?.number,
         "Aadhaar Status": aadhaar.verifyStatus,
         "PAN Number": pan?.number,
@@ -215,9 +223,11 @@ const TabularViewTab = () => {
       },
     };
   };
+  handlers["refresh"] = () => {
+    refetch();
+  };
   return (
     <div style={TABLE_CARD_STYLING}>
-      <Button intent={Intent.PRIMARY} text="Refetch" onClick={refetch} />
       <Table
         columns={columns}
         defaultColumn={defaultColumn}
@@ -229,7 +239,8 @@ const TabularViewTab = () => {
         showFilter={true}
         hoverEffect={true}
         cellProps={cellProps}
-        showDownload={true}
+        showDownload={false}
+        handlers={handlers}
       />
       <Dialog
         isOpen={isDialogOpen}
@@ -262,16 +273,40 @@ const TabularTabsComponent = () => {
     }
   }, [auth, navigate]);
 
+  const handlers = {};
+  const createHandler = (e) => {
+    return () => {
+      if (handlers[e]) handlers[e]();
+    };
+  };
   return (
-    <>
-      <Card
-        style={REGISTER_FORM_CARD_STYLING}
-        interactive={false}
-        elevation={Elevation.THREE}
-      >
-        <TabularViewTab />
-      </Card>
-    </>
+    <Card style={CARD_STYLING} elevation={Elevation.THREE}>
+      <div className={styles.row}>
+        <div className={HEADER_CLASS}>
+          <H3>
+            {" "}
+            <Icon icon={"people"} size={"1em"} /> Employee Records
+          </H3>
+        </div>
+        <div className={ACTIONS_CLASS}>
+          <div className={styles.alignRight}>
+            <Button icon={"refresh"} onClick={createHandler("refresh")}>
+              Refresh
+            </Button>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <Button
+              icon={"saved"}
+              intent={Intent.SUCCESS}
+              onClick={createHandler("download-excel")}
+            >
+              Download Excel
+            </Button>
+          </div>
+        </div>
+      </div>
+      <Divider />
+      <TabularViewTab handlers={handlers} />
+    </Card>
   );
 };
 

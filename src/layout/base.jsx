@@ -29,8 +29,9 @@ export default function BaseLayout(props) {
           paddingLeft: sidebar.width,
           paddingTop: navbar.height,
           paddingBottom: "5em",
-          maxHeight: `98vh`,
-          overflow: "scroll",
+          maxHeight: `calc(100vh - 1.5em)`,
+          overflowY: "auto",
+          overflowX: "hidden",
         }}
       >
         <div style={{}}>{props.children}</div>

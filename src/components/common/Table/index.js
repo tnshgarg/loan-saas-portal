@@ -12,7 +12,7 @@ import styled, { css } from "styled-components";
 //Components
 import EditableCell from "./EditableCell";
 import { Button } from "@mui/material";
-import { Button as BLButton } from "@blueprintjs/core";
+import { Button as BLButton, EditableText } from "@blueprintjs/core";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import UpdateAlert from "../UpdateAlert";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
@@ -42,6 +42,7 @@ const Table = ({
   hoverEffect,
   showDownload = false,
   cellProps = () => ({}),
+  handlers,
 }) => {
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -195,9 +196,9 @@ const Table = ({
 
   function getExcel() {
     const d = new Date();
-    
+
     const config = {
-      filename: d.toString().split('GMT')[0].trim(),
+      filename: d.toString().split("GMT")[0].trim(),
       sheet: {
         data: [],
       },
@@ -242,6 +243,11 @@ const Table = ({
     return generateExcel(config);
   }
 
+  if (handlers) {
+    handlers["download-excel"] = () => {
+      getExcel();
+    };
+  }
   return (
     <>
       {showAddBtn && (
@@ -395,19 +401,15 @@ Table.defaultProps = {
 
 const Styles = styled.div`
   padding: 1rem;
-  height: 87%;
+  height: 90%;
   table {
     width: 100%;
     border-spacing: 0;
     position: relative;
-    overflow: scroll;
+    overflow: auto;
     height: 100%;
     display: block;
     border-collapse: collapse;
-    tbody {
-      height: calc(100vh - 400px);
-      overflow: scroll;
-    }
     tr {
       cursor: pointer;
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -435,7 +437,7 @@ const Styles = styled.div`
     th,
     td {
       white-space: normal !important;
-      overflow: visible;
+      overflow: auto;
       margin: 0;
       padding: 0.5rem;
       p {

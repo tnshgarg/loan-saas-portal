@@ -18,21 +18,22 @@ import {
 import styles from "../styles/onboard.module.css";
 import * as Papa from "papaparse";
 import { CSVLink } from "react-csv";
-import { headers } from "../headerData";
-import { HEADER_GROUPS, transformHeadersToFields } from "./fields";
+import { HEADER_GROUPS, HEADER_LIST, transformHeadersToFields } from "./fields";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import BrowserEdiTable from "./BrowserEdiTable";
 import { allEmployeesBasicDetails } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
 import { useToastContext } from "../../../../contexts/ToastContext";
+import { VerifyAndUploadEmployees } from "./verifyAndUploadEmployees";
 
-const CARD_STYLING = {
+// techdebt: move this to another styling/theme file
+export const CARD_STYLING = {
   marginLeft: "2.7em",
   marginRight: "2.7em",
 };
 
-const HEADER_CLASS = `${styles.column} ${styles.header}`;
-const ACTIONS_CLASS = `${styles.column} ${styles.actions}`;
-const MAX_SIZE = 1024 * 1024 * 5;
+export const HEADER_CLASS = `${styles.column} ${styles.header}`;
+export const ACTIONS_CLASS = `${styles.column} ${styles.actions}`;
+export const MAX_SIZE = 1024 * 1024 * 5;
 
 const mapOnboardPropsToState = (state) => {
   return {
@@ -58,7 +59,7 @@ function _Onboard(props) {
   const [alertMessage, setAlertMessage] = useState("");
   const [uploadStatus, setUploadStatus] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [disabled, setDisabled] = useState(false);
+  const [cloudUploadDisabled, setCloudUploadDisabled] = useState(false);
 
   const S3_BUCKET = `employer-${process.env.REACT_APP_STAGE}-raw`;
   const REGION = process.env.REACT_APP_S3_REGION;
@@ -80,14 +81,10 @@ function _Onboard(props) {
     const csvFile = new Blob([tableCSV], { type: "text/csv" });
     const timestamp = new Date().getTime();
 
-    console.log({ timestamp, employerId, file });
     const params = {
       Body: csvFile,
       Bucket: S3_BUCKET,
-      Key: `${employerId}/${timestamp}_${file.object.name.replace(
-        "/W/g",
-        "_"
-      )}`,
+      Key: `${employerId}/${timestamp}_${file.object.name.replace(/\W/g, "_")}`,
     };
 
     try {
@@ -115,7 +112,7 @@ function _Onboard(props) {
         "An error occurred while uploading the file. Please try uploading again."
       );
     } finally {
-      setDisabled(false);
+      setCloudUploadDisabled(false);
       setLoading(false);
     }
   };
@@ -124,7 +121,6 @@ function _Onboard(props) {
   const hiddenFileInput = useRef(null);
 
   const handleFileImport = (data) => {
-    console.log("dispatched", dispatch, data, "data");
     dispatch(
       initCSVUpload({
         data: transformHeadersToFields(data),
@@ -141,8 +137,7 @@ function _Onboard(props) {
   };
 
   const uploadCSV = (e) => {
-    e.preventDefault();
-    setDisabled(true);
+    setCloudUploadDisabled(true);
     setLoading(true);
     handleFileUpload(e);
   };
@@ -154,20 +149,16 @@ function _Onboard(props) {
   };
 
   useEffect(() => {
-    console.log("file effect triggered", file.object);
     if (file.object) {
-      console.log("file is set");
       const reader = new FileReader();
       reader.onload = (event) => {
         const wb = read(event.target.result, {
-          type: 'string',
-          raw: true
+          type: "string",
+          raw: true,
         });
         const sheets = wb.SheetNames;
-
         if (sheets.length) {
           const rows = utils.sheet_to_json(wb.Sheets[sheets[0]]);
-          console.log(rows);
           handleFileImport(rows);
         }
       };
@@ -191,12 +182,12 @@ function _Onboard(props) {
         <div className={ACTIONS_CLASS}>
           <div className={styles.alignRight}>
             <CSVLink
-              data={headers}
+              data={[HEADER_LIST]}
               filename={`Employee_Details_Template_${new Date()
                 .toISOString()
-                .replaceAll(/-|\./g, "_")}.csv`}
+                .replaceAll(/[-.]/g, "_")}.csv`}
             >
-              <Button icon="cloud-download">Download Template</Button>
+              <Button icon="cloud-download">Download Template File</Button>
             </CSVLink>
             <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <Button
@@ -204,9 +195,24 @@ function _Onboard(props) {
               intent={Intent.PRIMARY}
               onClick={(e) => hiddenFileInput.current.click(e)}
             >
-              Import Data
+              Upload File
             </Button>
-
+            {file.object ? (
+              <>
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <VerifyAndUploadEmployees
+                  fileName={file.object.name}
+                  disableButton={cloudUploadDisabled}
+                  onClick={(e) => {
+                    !file.object
+                      ? alert("Please select a file to upload")
+                      : uploadCSV(e);
+                  }}
+                />
+              </>
+            ) : (
+              ""
+            )}
             <div style={{ display: "none" }}>
               <input
                 type="file"
@@ -236,17 +242,6 @@ function _Onboard(props) {
             setter={setDataGetter}
             tableName={file.object?.name}
           />
-          <Button
-            disabled={disabled}
-            onClick={(e) => {
-              !file.object
-                ? alert("Please select a file to upload")
-                : uploadCSV(e);
-            }}
-            loading={loading}
-          >
-            Upload
-          </Button>
         </>
       ) : !uploadStatus ? (
         <NonIdealState
@@ -255,7 +250,7 @@ function _Onboard(props) {
           description={
             <>
               No CSV file has been selected, please import data using{" "}
-              <strong>Import Data</strong> on top right.
+              <strong>Upload File</strong> on top right.
             </>
           }
           layout={"horizontal"}
