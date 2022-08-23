@@ -5,16 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Alert, Collapse } from "@mui/material";
-import {
-  Button,
-  Card,
-  Divider,
-  Elevation,
-  H3,
-  Icon,
-  Intent,
-  NonIdealState,
-} from "@blueprintjs/core";
+import { Button, Intent, NonIdealState } from "@blueprintjs/core";
 import styles from "../styles/onboard.module.css";
 import * as Papa from "papaparse";
 import { CSVLink } from "react-csv";
@@ -24,6 +15,7 @@ import BrowserEdiTable from "./BrowserEdiTable";
 import { allEmployeesBasicDetails } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
 import { useToastContext } from "../../../../contexts/ToastContext";
 import { VerifyAndUploadEmployees } from "./verifyAndUploadEmployees";
+import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 
 // techdebt: move this to another styling/theme file
 export const CARD_STYLING = {
@@ -171,16 +163,12 @@ function _Onboard(props) {
   }, [file.object]);
 
   return (
-    <Card style={CARD_STYLING} elevation={Elevation.THREE}>
-      <div className={styles.row}>
-        <div className={HEADER_CLASS}>
-          <H3>
-            {" "}
-            <Icon icon={"cloud-upload"} size={"1em"} /> Upload Employee Details
-          </H3>
-        </div>
-        <div className={ACTIONS_CLASS}>
-          <div className={styles.alignRight}>
+    <>
+      <Dashlet
+        icon={"cloud-upload"}
+        title={"Upload Employee Details"}
+        actions={
+          <>
             <CSVLink
               data={[HEADER_LIST]}
               filename={`Employee_Details_Template_${new Date()
@@ -221,44 +209,44 @@ function _Onboard(props) {
                 accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
               />
             </div>
-          </div>
-        </div>
-      </div>
-      <Divider />
-      <Collapse in={uploadStatus}>
-        <Alert
-          onClose={() => {
-            setUploadStatus(!uploadStatus);
-          }}
-          severity="success"
-        >
-          {alertMessage}
-        </Alert>
-      </Collapse>
+          </>
+        }
+      >
+        <Collapse in={uploadStatus}>
+          <Alert
+            onClose={() => {
+              setUploadStatus(!uploadStatus);
+            }}
+            severity="success"
+          >
+            {alertMessage}
+          </Alert>
+        </Collapse>
 
-      {file.object ? (
-        <>
-          <BrowserEdiTable
-            setter={setDataGetter}
-            tableName={file.object?.name}
+        {file.object ? (
+          <>
+            <BrowserEdiTable
+              setter={setDataGetter}
+              tableName={file.object?.name}
+            />
+          </>
+        ) : !uploadStatus ? (
+          <NonIdealState
+            icon={"folder-open"}
+            title={"No File Open"}
+            description={
+              <>
+                No CSV file has been selected, please import data using{" "}
+                <strong>Upload File</strong> on top right.
+              </>
+            }
+            layout={"horizontal"}
           />
-        </>
-      ) : !uploadStatus ? (
-        <NonIdealState
-          icon={"folder-open"}
-          title={"No File Open"}
-          description={
-            <>
-              No CSV file has been selected, please import data using{" "}
-              <strong>Upload File</strong> on top right.
-            </>
-          }
-          layout={"horizontal"}
-        />
-      ) : (
-        ""
-      )}
-    </Card>
+        ) : (
+          ""
+        )}
+      </Dashlet>
+    </>
   );
 }
 
