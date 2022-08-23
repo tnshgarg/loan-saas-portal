@@ -25,14 +25,15 @@ import { allEmployeesBasicDetails } from "../../../../store/slices/apiSlices/emp
 import { useToastContext } from "../../../../contexts/ToastContext";
 import { VerifyAndUploadEmployees } from "./verifyAndUploadEmployees";
 
-const CARD_STYLING = {
+// techdebt: move this to another styling/theme file
+export const CARD_STYLING = {
   marginLeft: "2.7em",
   marginRight: "2.7em",
 };
 
-const HEADER_CLASS = `${styles.column} ${styles.header}`;
-const ACTIONS_CLASS = `${styles.column} ${styles.actions}`;
-const MAX_SIZE = 1024 * 1024 * 5;
+export const HEADER_CLASS = `${styles.column} ${styles.header}`;
+export const ACTIONS_CLASS = `${styles.column} ${styles.actions}`;
+export const MAX_SIZE = 1024 * 1024 * 5;
 
 const mapOnboardPropsToState = (state) => {
   return {

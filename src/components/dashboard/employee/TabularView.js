@@ -262,16 +262,40 @@ const TabularTabsComponent = () => {
     }
   }, [auth, navigate]);
 
+  const handlers = {};
+  const createHandler = (e) => {
+    return () => {
+      if (handlers[e]) handlers[e]();
+    };
+  };
   return (
-    <>
-      <Card
-        style={REGISTER_FORM_CARD_STYLING}
-        interactive={false}
-        elevation={Elevation.THREE}
-      >
-        <TabularViewTab />
-      </Card>
-    </>
+    <Card style={CARD_STYLING} elevation={Elevation.THREE}>
+      <div className={styles.row}>
+        <div className={HEADER_CLASS}>
+          <H3>
+            {" "}
+            <Icon icon={"people"} size={"1em"} /> Employee Records
+          </H3>
+        </div>
+        <div className={ACTIONS_CLASS}>
+          <div className={styles.alignRight}>
+            <Button icon={"refresh"} onClick={createHandler("refresh")}>
+              Refresh
+            </Button>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <Button
+              icon={"saved"}
+              intent={Intent.SUCCESS}
+              onClick={createHandler("download-excel")}
+            >
+              Download Excel
+            </Button>
+          </div>
+        </div>
+      </div>
+      <Divider />
+      <TabularViewTab handlers={handlers} />
+    </Card>
   );
 };
 
