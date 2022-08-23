@@ -9,7 +9,7 @@ import {
   useGetEmployeeDetailsByEmployeeIdQuery,
   useUpdateEmployeeDetailsMutation,
 } from "../../../../store/slices/apiSlices/employee/employeeDetailsApiSlice";
-import FormInput from "../../../common/FormInput";
+import FormInput from "../../../../atomic/atoms/forms/FormInput";
 
 export const EmployeeModalTab = ({
   category,

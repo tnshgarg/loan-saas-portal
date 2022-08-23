@@ -6,7 +6,7 @@ import {
   useGetEmployerAddressByIdQuery,
   useUpdateEmployerAddressMutation,
 } from "../../../store/slices/apiSlices/employer/addressApiSlice";
-import FormInput from "../../common/FormInput";
+import FormInput from "../../../atomic/atoms/forms/FormInput";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import UpdateAlert from "../../common/UpdateAlert";

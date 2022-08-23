@@ -13,7 +13,7 @@ import Select from "react-select";
 import { numberOfEmployees } from "../../utils/numberOfEmployees";
 import { registerUser } from "../../store/slices/authSlice";
 import ErrorDialog from "../common/ErrorDialog";
-import FormInput from "../common/FormInput";
+import FormInput from "../../atomic/atoms/forms/FormInput";
 import { Tooltip2 } from "@blueprintjs/popover2";
 
 export const SignUp = () => {

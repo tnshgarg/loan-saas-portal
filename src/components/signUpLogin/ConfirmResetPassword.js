@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ErrorDialog from "../common/ErrorDialog";
-import FormInput from "../common/FormInput";
+import FormInput from "../../atomic/atoms/forms/FormInput";
 import { confirmForgotPassword } from "../../store/slices/authSlice";
 
 const LOGIN_CARD_STYLING = {
