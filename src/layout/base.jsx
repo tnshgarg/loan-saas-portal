@@ -29,7 +29,7 @@ export default function BaseLayout(props) {
           paddingLeft: sidebar.width,
           paddingTop: navbar.height,
           paddingBottom: "5em",
-          maxHeight: `98vh`,
+          maxHeight: `calc(100vh - 1.5em)`,
           overflowY: "auto",
           overflowX: "hidden",
         }}

@@ -401,7 +401,7 @@ Table.defaultProps = {
 
 const Styles = styled.div`
   padding: 1rem;
-  height: 87%;
+  height: 90%;
   table {
     width: 100%;
     border-spacing: 0;
@@ -410,10 +410,6 @@ const Styles = styled.div`
     height: 100%;
     display: block;
     border-collapse: collapse;
-    tbody {
-      height: calc(100vh - 400px);
-      overflow: auto;
-    }
     tr {
       cursor: pointer;
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);

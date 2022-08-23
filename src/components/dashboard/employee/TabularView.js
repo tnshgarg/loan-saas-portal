@@ -30,7 +30,7 @@ import {
 const TABLE_CARD_STYLING = {
   overflow: "auto",
   borderRadius: "0px",
-  height: "80vh",
+  height: "60vh",
 };
 
 const MODAL_STYLING = {
