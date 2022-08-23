@@ -229,8 +229,6 @@ const TabularViewTab = ({ handlers }) => {
           {
             Header: "S/N",
             id: "row",
-            maxWidth: 50,
-            filterable: false,
             Cell: ({row}) => {
               return <div>{row.index + 1}</div>;
             },

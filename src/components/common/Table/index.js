@@ -172,7 +172,7 @@ const Table = ({
   );
 
   React.useEffect(() => {
-   showFilter && filterRef.current.reset(data, true);
+   showFilter && filterRef?.current?.reset(data, true);
     setFilteredData(data);
   }, [data]);
 
@@ -258,7 +258,7 @@ const Table = ({
     };
   }
 
-  const HeaderRowWrapper = ({ children, ...rest }) => {
+  const HeaderRowWrapper = React.useCallback(({ children, ...rest }) => {
     return showFilter ? (
       <TableFilter
         {...rest}
@@ -272,7 +272,7 @@ const Table = ({
     ) : (
       <tr {...rest}>{children}</tr>
     );
-  };
+  },[showFilter]);
 
   return (
     <>
