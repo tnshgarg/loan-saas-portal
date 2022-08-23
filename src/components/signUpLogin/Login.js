@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../store/slices/authSlice";
-import ErrorDialog from "../common/ErrorDialog";
+import ErrorDialog from "../../atomic/atoms/alerts/ErrorDialog";
 import FormInput from "../../atomic/atoms/forms/FormInput";
 import unipeLogo from "../../theme/logo_full.png";
 
