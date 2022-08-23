@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { read, utils } from "xlsx";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,7 @@ import { allEmployeesBasicDetails } from "../../../../store/slices/apiSlices/emp
 import { useToastContext } from "../../../../contexts/ToastContext";
 import { VerifyAndUploadEmployees } from "./verifyAndUploadEmployees";
 import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
+import { CSVFileInput } from "../../../../atomic/atoms/forms/CSVFileInput";
 
 // techdebt: move this to another styling/theme file
 export const CARD_STYLING = {
@@ -109,9 +110,6 @@ function _Onboard(props) {
     }
   };
 
-  // Create a reference to the hidden file input element
-  const hiddenFileInput = useRef(null);
-
   const handleFileImport = (data) => {
     dispatch(
       initCSVUpload({
@@ -178,13 +176,11 @@ function _Onboard(props) {
               <Button icon="cloud-download">Download Template File</Button>
             </CSVLink>
             <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <Button
+            <CSVFileInput
               icon="add-to-folder"
               intent={Intent.PRIMARY}
-              onClick={(e) => hiddenFileInput.current.click(e)}
-            >
-              Upload File
-            </Button>
+              onChange={handleChange}
+            />
             {file.object ? (
               <>
                 <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -201,14 +197,6 @@ function _Onboard(props) {
             ) : (
               ""
             )}
-            <div style={{ display: "none" }}>
-              <input
-                type="file"
-                ref={hiddenFileInput}
-                onChange={handleChange}
-                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-              />
-            </div>
           </>
         }
       >
