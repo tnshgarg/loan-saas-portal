@@ -18,8 +18,7 @@ import {
 import styles from "../styles/onboard.module.css";
 import * as Papa from "papaparse";
 import { CSVLink } from "react-csv";
-import { headers } from "../headerData";
-import { HEADER_GROUPS, transformHeadersToFields } from "./fields";
+import { HEADER_GROUPS, HEADER_LIST, transformHeadersToFields } from "./fields";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import BrowserEdiTable from "./BrowserEdiTable";
 import { allEmployeesBasicDetails } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
@@ -182,7 +181,7 @@ function _Onboard(props) {
         <div className={ACTIONS_CLASS}>
           <div className={styles.alignRight}>
             <CSVLink
-              data={headers}
+              data={[HEADER_LIST]}
               filename={`Employee_Details_Template_${new Date()
                 .toISOString()
                 .replaceAll(/[-.]/g, "_")}.csv`}

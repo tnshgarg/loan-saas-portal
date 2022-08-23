@@ -22,24 +22,25 @@ export const FIELD_GROUP = {
   BANK_AC: "Bank A/c",
 };
 const FG = FIELD_GROUP;
+const REQUIRED_SUFFIX = " (Required)";
 
-// FIELDS are order Sensetive
+// FIELDS are order Sensitive
 export const FIELDS = [
   {
-    header: "Name (Required)",
+    header: "Name" + REQUIRED_SUFFIX,
     field: "name",
     validations: requiredValidation,
     group: FG.PERSISTENT,
   },
   {
-    header: "Mobile Number (Required)",
+    header: "Mobile Number" + REQUIRED_SUFFIX,
     field: "mobile",
     required: true,
     validations: phoneValidation,
     group: FG.PERSISTENT,
   },
   {
-    header: "Employee ID (Required)",
+    header: "Employee ID" + REQUIRED_SUFFIX,
     field: "employeeId",
     default: true,
     required: true,
@@ -75,7 +76,7 @@ export const FIELDS = [
     group: FG.PERSONAL_DETAILS,
   },
   {
-    header: "Date of Joining (dd/mm/yyyy) (Required)",
+    header: "Date of Joining (dd/mm/yyyy)" + REQUIRED_SUFFIX,
     field: "doj",
     required: true,
     validations: dojValidation,
@@ -124,7 +125,7 @@ export const FIELDS = [
     group: FG.EMPLOYMENT,
   },
   {
-    header: "Job Title (Required)",
+    header: "Job Title" + REQUIRED_SUFFIX,
     field: "title",
     required: true,
     validations: requiredValidation,
@@ -138,7 +139,7 @@ export const FIELDS = [
     group: FG.EMPLOYMENT,
   },
   {
-    header: "Annual CTC (Required)",
+    header: "Annual CTC" + REQUIRED_SUFFIX,
     field: "aCTC",
     required: true,
     validations: currencyValidation,
@@ -322,10 +323,13 @@ export const HEADER_GROUPS = FIELDS.reduce((groups, column) => {
   return groups;
 }, []);
 
+export const HEADER_LIST = FIELDS.map((column) => column.header);
 export function transformHeadersToFields(list) {
   return list.map((item) => {
     return Object.entries(HEADERS_MAP).reduce(
       (transformedObject, [header, column]) => {
+        header = header.replace(REQUIRED_SUFFIX, "").trim();
+        console.log(header);
         transformedObject[column.field] = item[header];
         return transformedObject;
       },
