@@ -11,10 +11,11 @@ function buildTemplate(employeesData) {
   const headers = TEMPLATE_FIELDS.map((field) => field.header);
   const rows = employeesData.map((employee) =>
     TEMPLATE_FIELDS.map((field) =>
-      field.prefetch ? employee[field.prefetch] : ""
+      field.prefetch ? employee[field.prefetch].toString() : ""
     )
   );
   console.table([headers, ...rows]);
+  return [headers, ...rows];
 }
 function _PayrollUpload({ employerId, dispatch }) {
   // techdebt: fetches on render, can lead to unnecessary API calls
@@ -22,11 +23,12 @@ function _PayrollUpload({ employerId, dispatch }) {
     useGetAllEmployeesByEmployerIdQuery(employerId);
   const employeesData = data?.body ?? [];
   const templateData = buildTemplate(employeesData);
+  console.log(templateData);
   return (
     <CSVUploadDashlet
       title={"Payroll"}
       label={"payroll"}
-      templateData={templateData}
+      templateDownloadProps={{ loading: isLoading, templateData }}
       fields={HEADER_GROUPS}
       preProcessing={transformHeadersToFields}
       onToastDismiss={() => {

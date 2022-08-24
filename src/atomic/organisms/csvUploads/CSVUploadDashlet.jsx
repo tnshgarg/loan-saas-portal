@@ -27,6 +27,7 @@ function _CSVUploadDashlet({
   title,
   label,
   templateData,
+  templateDownloadProps,
   fields,
   employerId,
   dispatch,
@@ -34,7 +35,7 @@ function _CSVUploadDashlet({
   onToastDismiss,
 }) {
   const navigate = useNavigate();
-
+  templateDownloadProps = templateDownloadProps ?? {};
   const { handleProgressToast, setConfig } = useToastContext();
 
   useEffect(() => {
@@ -161,6 +162,7 @@ function _CSVUploadDashlet({
             <TemplateDownloadButton
               fileName={title}
               templateData={templateData}
+              {...templateDownloadProps}
             />
             <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <CSVFileInput
