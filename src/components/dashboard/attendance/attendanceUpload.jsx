@@ -8,7 +8,7 @@ export function AttendanceUpload() {
     <CSVUploadDashlet
       title={"Employee Attendance"}
       label={"attendance_details"}
-      headers={HEADER_LIST}
+      templateData={[HEADER_LIST]}
       fields={HEADER_GROUPS}
       preProcessing={transformHeadersToFields}
       onToastDismiss={() => {

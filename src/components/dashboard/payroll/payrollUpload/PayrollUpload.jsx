@@ -1,14 +1,32 @@
-import { HEADER_GROUPS, HEADER_LIST, transformHeadersToFields } from "./fields";
-import { useDispatch } from "react-redux";
+import {
+  HEADER_GROUPS,
+  TEMPLATE_FIELDS,
+  transformHeadersToFields,
+} from "./fields";
+import { connect } from "react-redux";
 import { CSVUploadDashlet } from "../../../../atomic/organisms/csvUploads/CSVUploadDashlet";
+import { useGetAllEmployeesByEmployerIdQuery } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
 
-export function PayrollUpload() {
-  const dispatch = useDispatch();
+function buildTemplate(employeesData) {
+  const headers = TEMPLATE_FIELDS.map((field) => field.header);
+  const rows = employeesData.map((employee) =>
+    TEMPLATE_FIELDS.map((field) =>
+      field.prefetch ? employee[field.prefetch] : ""
+    )
+  );
+  console.table([headers, ...rows]);
+}
+function _PayrollUpload({ employerId, dispatch }) {
+  // techdebt: fetches on render, can lead to unnecessary API calls
+  const { data, error, isLoading } =
+    useGetAllEmployeesByEmployerIdQuery(employerId);
+  const employeesData = data?.body ?? [];
+  const templateData = buildTemplate(employeesData);
   return (
     <CSVUploadDashlet
       title={"Payroll"}
       label={"payroll"}
-      headers={HEADER_LIST}
+      templateData={templateData}
       fields={HEADER_GROUPS}
       preProcessing={transformHeadersToFields}
       onToastDismiss={() => {
@@ -22,3 +40,11 @@ export function PayrollUpload() {
     ></CSVUploadDashlet>
   );
 }
+
+function mapStateToProps(state, ownProps) {
+  return {
+    employerId: state.auth.user?.attributes.sub,
+  };
+}
+
+export const PayrollUpload = connect(mapStateToProps)(_PayrollUpload);

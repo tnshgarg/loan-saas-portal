@@ -26,7 +26,7 @@ const mapOnboardPropsToState = (state) => {
 function _CSVUploadDashlet({
   title,
   label,
-  headers,
+  templateData,
   fields,
   employerId,
   dispatch,
@@ -155,10 +155,13 @@ function _CSVUploadDashlet({
     <>
       <Dashlet
         icon={"cloud-upload"}
-        title={`${title} Details`}
+        title={title}
         actions={
           <>
-            <TemplateDownloadButton fileName={title} headers={headers} />
+            <TemplateDownloadButton
+              fileName={title}
+              templateData={templateData}
+            />
             <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <CSVFileInput
               icon="add-to-folder"
