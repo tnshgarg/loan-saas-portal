@@ -27,12 +27,6 @@ import {
   HEADER_CLASS,
 } from "./onboarding/Onboard";
 
-const TABLE_CARD_STYLING = {
-  overflow: "auto",
-  borderRadius: "0px",
-  height: "60vh",
-};
-
 const MODAL_STYLING = {
   marginTop: "7.5rem",
   marginBottom: "5rem",
@@ -131,7 +125,7 @@ const TabularViewTab = ({ handlers }) => {
 
   useEffect(() => {
     if (data) {
-      const body = data.body ?? [];
+      const body = data?.body ?? [];
       setFetchedRowsFromBody(body);
     }
   }, [data]);
@@ -209,12 +203,14 @@ const TabularViewTab = ({ handlers }) => {
 
   const cellProps = (cell) => {
     let bgColor = "white";
-    if (cell.value.includes("SUCCESS")) {
-      bgColor = "rgb(204, 255, 216, 0.5)";
-    } else if (cell.value.includes("PENDING")) {
-      bgColor = "rgb(247, 252, 162, 0.5)";
-    } else if (cell.value.includes("ERROR")) {
-      bgColor = "rgb(255, 215, 213, 0.5)";
+    if (cell?.value) {
+      if (cell.value.includes("SUCCESS")) {
+        bgColor = "rgb(204, 255, 216, 0.5)";
+      } else if (cell.value.includes("PENDING")) {
+        bgColor = "rgb(247, 252, 162, 0.5)";
+      } else if (cell.value.includes("ERROR")) {
+        bgColor = "rgb(255, 215, 213, 0.5)";
+      }
     }
 
     return {
@@ -227,9 +223,18 @@ const TabularViewTab = ({ handlers }) => {
     refetch();
   };
   return (
-    <div style={TABLE_CARD_STYLING}>
+    <>
       <Table
-        columns={columns}
+        columns={[
+          {
+            Header: "S/N",
+            id: "row",
+            Cell: ({row}) => {
+              return <div>{row.index + 1}</div>;
+            },
+          },
+          ...columns,
+        ]}
         defaultColumn={defaultColumn}
         data={fetchedRows}
         handleRowClick={handleRowClick}
@@ -255,7 +260,7 @@ const TabularViewTab = ({ handlers }) => {
           />
         </Card>
       </Dialog>
-    </div>
+    </>
   );
 };
 
