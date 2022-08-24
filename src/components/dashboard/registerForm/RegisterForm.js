@@ -31,9 +31,9 @@ const RegisterFormContent = () => {
         elevation={Elevation.THREE}
       >
         <Tabs id="registerForm" defaultSelectedTabId="1">
-          <Tab id="1" title="1. Address " panel={<AddressForm />} />
+          <Tab id="1" title="1. Company Details " panel={<AddressForm />} />
           <Tab id="2" title="2. Tax Setup" panel={<TaxSetupForm />} />
-          <Tab id="3" title="3. Automation" panel={<AutomationForm />} />
+          <Tab id="3" title="3. Compliance Automation" panel={<AutomationForm />} />
         </Tabs>
       </Card>
     </>
