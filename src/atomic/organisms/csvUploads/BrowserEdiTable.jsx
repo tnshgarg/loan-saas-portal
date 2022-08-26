@@ -14,12 +14,16 @@ import {
   Tag,
 } from "@blueprintjs/core";
 import { connect } from "react-redux";
+
+import {
+  FS,
+  VALIDATIONS,
+} from "../../../components/dashboard/employee/onboarding/validations";
+import { coalesce } from "../../../utils/array";
 import {
   toggleFilter,
   updateCSVRow,
-} from "../../../../store/slices/csvUploadSlice.ts";
-import { FS, VALIDATIONS } from "./validations";
-import { coalesce } from "../../../../utils/array";
+} from "../../../store/slices/csvUploadSlice.ts";
 
 const intentMap = {
   [FS.WARN]: Intent.WARNING,

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import FormInput from "../common/FormInput";
+import FormInput from "../../atomic/atoms/forms/FormInput";
 import { forgotPassword } from "../../store/slices/authSlice";
 
 const LOGIN_CARD_STYLING = {

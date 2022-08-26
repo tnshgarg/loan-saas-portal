@@ -7,7 +7,7 @@ import {
   useUpdateEmployerTaxMutation,
 } from "../../../store/slices/apiSlices/employer/taxApiSlice";
 import { NO_CHANGE_ERROR, VALUES_UPDATED } from "../../../utils/messageStrings";
-import FormInput from "../../common/FormInput";
+import FormInput from "../../../atomic/atoms/forms/FormInput";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import UpdateAlert from "../../common/UpdateAlert";
