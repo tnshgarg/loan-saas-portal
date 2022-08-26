@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useAlert } from "react-alert";
+import React, { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import {
@@ -11,10 +10,10 @@ import FormInput from "../../../atomic/atoms/forms/FormInput";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import UpdateAlert from "../../common/UpdateAlert";
+import { Intent } from "@blueprintjs/core";
+import { AppToaster } from "../../../contexts/ToastContext";
 
 const TaxSetupForm = () => {
-  const alert = useAlert();
-
   const { value, setValue } = useContext(UpdateAlertContext);
 
   const [updateEmployerTax] = useUpdateEmployerTaxMutation();
@@ -71,20 +70,27 @@ const TaxSetupForm = () => {
         .then((response) => {
           const status = response.data.status;
           if (status === 200) {
-            alert.success(VALUES_UPDATED);
-
+            AppToaster.show({
+              intent: Intent.SUCCESS,
+              message: VALUES_UPDATED,
+            });
             setValue({ ...value, isOpen: false });
           }
         })
         .catch((error) => {
           setValue({ ...value, isOpen: false });
           const message = error.response?.data?.message ?? "Some error occured";
-          alert.error(message);
+          AppToaster.show({
+            intent: Intent.DANGER,
+            message,
+          });
         });
     } else {
       setValue({ ...value, isOpen: false });
-
-      alert.error(NO_CHANGE_ERROR);
+      AppToaster.show({
+        intent: Intent.DANGER,
+        message: NO_CHANGE_ERROR,
+      });
     }
   };
 
@@ -160,7 +166,8 @@ const TaxSetupForm = () => {
               validations={{
                 required: false,
                 pattern: {
-                  value: /^([L|U]{1})([0-9]{5})([A-Za-z]{2})([0-9]{4})([A-Za-z]{3})([0-9]{6})$/,
+                  value:
+                    /^([L|U]{1})([0-9]{5})([A-Za-z]{2})([0-9]{4})([A-Za-z]{3})([0-9]{6})$/,
                 },
               }}
               errors={errors}
@@ -178,7 +185,8 @@ const TaxSetupForm = () => {
               validations={{
                 required: true,
                 pattern: {
-                  value: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+                  value:
+                    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
                 },
               }}
               errors={errors}

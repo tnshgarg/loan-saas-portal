@@ -1,24 +1,21 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import {
+  useFilters,
+  usePagination,
   useRowSelect,
   useSortBy,
   useTable,
-  useFilters,
-  usePagination,
 } from "react-table";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 //Components
 import EditableCell from "./EditableCell";
-import { Button } from "@mui/material";
-import { Button as BLButton, EditableText } from "@blueprintjs/core";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { Button, Icon, Intent } from "@blueprintjs/core";
 import UpdateAlert from "../UpdateAlert";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import TableFilter from "react-table-filter";
-import { Icon, Intent } from "@blueprintjs/core";
 import generateExcel from "zipcelx";
 import "react-table-filter/lib/styles.css";
 
@@ -172,7 +169,7 @@ const Table = ({
   );
 
   React.useEffect(() => {
-   showFilter && filterRef?.current?.reset(data, true);
+    showFilter && filterRef?.current?.reset(data, true);
     setFilteredData(data);
   }, [data]);
 
@@ -258,30 +255,33 @@ const Table = ({
     };
   }
 
-  const HeaderRowWrapper = React.useCallback(({ children, ...rest }) => {
-    return showFilter ? (
-      <TableFilter
-        {...rest}
-        style={{ color: "black" }}
-        rows={data}
-        onFilterUpdate={updateFilterHandler}
-        ref={filterRef}
-      >
-        {children}
-      </TableFilter>
-    ) : (
-      <tr {...rest}>{children}</tr>
-    );
-  },[showFilter]);
+  const HeaderRowWrapper = React.useCallback(
+    ({ children, ...rest }) => {
+      return showFilter ? (
+        <TableFilter
+          {...rest}
+          style={{ color: "black" }}
+          rows={data}
+          onFilterUpdate={updateFilterHandler}
+          ref={filterRef}
+        >
+          {children}
+        </TableFilter>
+      ) : (
+        <tr {...rest}>{children}</tr>
+      );
+    },
+    [showFilter]
+  );
 
   return (
     <>
       {showAddBtn && (
         <Button
           onClick={addhandler}
-          variant="outlined"
+          minimal
           disabled={editableRowIndex !== null}
-          startIcon={<AddCircleIcon />}
+          icon={"add"}
         >
           {addLabel ?? "Add"}
         </Button>
@@ -394,7 +394,7 @@ const Table = ({
           </div>
         )}
         {showDownload && (
-          <BLButton
+          <Button
             intent={Intent.SUCCESS}
             text="Download Excel"
             onClick={getExcel}
