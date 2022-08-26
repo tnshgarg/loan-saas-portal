@@ -12,7 +12,7 @@ import styled from "styled-components";
 //Components
 import EditableCell from "./EditableCell";
 import { Button, Icon, Intent } from "@blueprintjs/core";
-import UpdateAlert from "../UpdateAlert";
+import UpdateAlert from "../../../components/common/UpdateAlert";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import TableFilter from "react-table-filter";
