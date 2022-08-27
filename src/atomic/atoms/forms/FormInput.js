@@ -36,11 +36,13 @@ export default function FormInput({
         disabled={inputProps.disabled}
         leftIcon={inputProps.icon}
         type={inputProps.type}
+        rightElement={inputProps.rightElement}
         placeholder={inputProps.placeholder}
         onChange={onChange}
         onBlur={onBlur}
         inputRef={ref}
         name={name}
+        style={inputProps.style}
       />
     </FormGroup>
   );

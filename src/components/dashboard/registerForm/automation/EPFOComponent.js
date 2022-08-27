@@ -7,7 +7,7 @@ import {
   VALUES_UPDATED,
 } from "../../../../utils/messageStrings";
 import { setPfForm } from "../../../../store/slices/registerFormSlice";
-import FormInput from "../../../common/FormInput";
+import FormInput from "../../../../atomic/atoms/forms/FormInput";
 import withUpdateAlert from "../../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../../contexts/updateAlertContext";
 import UpdateAlert from "../../../common/UpdateAlert";

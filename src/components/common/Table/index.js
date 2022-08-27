@@ -12,13 +12,15 @@ import styled, { css } from "styled-components";
 //Components
 import EditableCell from "./EditableCell";
 import { Button } from "@mui/material";
-import { Button as BLButton } from "@blueprintjs/core";
+import { Button as BLButton, EditableText } from "@blueprintjs/core";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import UpdateAlert from "../UpdateAlert";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
+import TableFilter from "react-table-filter";
 import { Icon, Intent } from "@blueprintjs/core";
 import generateExcel from "zipcelx";
+import "react-table-filter/lib/styles.css";
 
 const Table = ({
   columns,
@@ -42,10 +44,13 @@ const Table = ({
   hoverEffect,
   showDownload = false,
   cellProps = () => ({}),
+  handlers,
 }) => {
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
   const [currRow, setCurrRow] = React.useState(null);
+  const [filteredData, setFilteredData] = React.useState([]);
+  const filterRef = React.useRef(null);
 
   const { value, setValue } = useContext(UpdateAlertContext);
 
@@ -74,7 +79,7 @@ const Table = ({
   } = useTable(
     {
       columns,
-      data,
+      data: filteredData,
       defaultColumn,
       initialState,
       autoResetPage: !skipPageReset,
@@ -166,13 +171,18 @@ const Table = ({
     }
   );
 
+  React.useEffect(() => {
+   showFilter && filterRef?.current?.reset(data, true);
+    setFilteredData(data);
+  }, [data]);
+
+  const updateFilterHandler = (newData) => {
+    setFilteredData(newData);
+  };
+
   const addhandler = () => {
     setEditableRowIndex(0);
     addCallback();
-  };
-
-  const toggleAlert = () => {
-    setIsOpen(!isOpen);
   };
 
   function getHeader(column) {
@@ -195,9 +205,9 @@ const Table = ({
 
   function getExcel() {
     const d = new Date();
-    
+
     const config = {
-      filename: d.toString().split('GMT')[0].trim(),
+      filename: d.toString().split("GMT")[0].trim(),
       sheet: {
         data: [],
       },
@@ -242,6 +252,28 @@ const Table = ({
     return generateExcel(config);
   }
 
+  if (handlers) {
+    handlers["download-excel"] = () => {
+      getExcel();
+    };
+  }
+
+  const HeaderRowWrapper = React.useCallback(({ children, ...rest }) => {
+    return showFilter ? (
+      <TableFilter
+        {...rest}
+        style={{ color: "black" }}
+        rows={data}
+        onFilterUpdate={updateFilterHandler}
+        ref={filterRef}
+      >
+        {children}
+      </TableFilter>
+    ) : (
+      <tr {...rest}>{children}</tr>
+    );
+  },[showFilter]);
+
   return (
     <>
       {showAddBtn && (
@@ -258,23 +290,13 @@ const Table = ({
         <table {...getTableProps()}>
           <thead>
             {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
+              <HeaderRowWrapper {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  <th {...column.getHeaderProps()} filterkey={column.id}>
                     <span className="heading">{column.render("Header")}</span>
-                    <span>
-                      {column.isSorted
-                        ? column.isSortedDesc
-                          ? " 🔽"
-                          : " 🔼"
-                        : ""}
-                    </span>
-                    <div>
-                      {column.canFilter ? column.render("Filter") : null}
-                    </div>
                   </th>
                 ))}
-              </tr>
+              </HeaderRowWrapper>
             ))}
           </thead>
           <tbody {...getTableBodyProps()}>
@@ -287,10 +309,14 @@ const Table = ({
                     onClick={() => {
                       handleRowClick(row.original);
                     }}
+                    id={row.getRowProps().key}
                   >
                     {row.cells.map((cell) => {
                       return (
-                        <td {...cell.getCellProps(cellProps(cell))}>
+                        <td
+                          id={cell.getCellProps().key}
+                          {...cell.getCellProps(cellProps(cell))}
+                        >
                           {cell.render("Cell")}
                         </td>
                       );
@@ -395,19 +421,20 @@ Table.defaultProps = {
 
 const Styles = styled.div`
   padding: 1rem;
-  height: 87%;
+  overflow: auto;
+  thead {
+    position: sticky;
+    top: 0px;
+  }
   table {
     width: 100%;
     border-spacing: 0;
     position: relative;
-    overflow: scroll;
+    overflow: auto;
     height: 100%;
     display: block;
     border-collapse: collapse;
-    tbody {
-      height: calc(100vh - 400px);
-      overflow: scroll;
-    }
+    height: 55vh;
     tr {
       cursor: pointer;
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -421,12 +448,9 @@ const Styles = styled.div`
       color: rgba(0, 0, 0, 0.87);
       font-weight: 500;
       background: white;
-      position: sticky;
-      top: -5px;
       box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
       .heading {
-        white-space: normal !important;
-        // text-overflow: ellipsis;
+        white-space: nowrap !important;
         overflow: visible;
         width: 78%;
         display: inline-block;
@@ -435,9 +459,8 @@ const Styles = styled.div`
     th,
     td {
       white-space: normal !important;
-      overflow: visible;
       margin: 0;
-      padding: 0.5rem;
+      padding: 0.5rem 2rem;
       p {
         margin-bottom: 0px;
       }

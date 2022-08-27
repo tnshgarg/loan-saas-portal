@@ -1,21 +1,21 @@
 import { useContext, useEffect, useState } from "react";
 import { useAlert } from "react-alert";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
 import {
   useGetEmployerAddressByIdQuery,
   useUpdateEmployerAddressMutation,
 } from "../../../store/slices/apiSlices/employer/addressApiSlice";
-import FormInput from "../../common/FormInput";
+import FormInput from "../../../atomic/atoms/forms/FormInput";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import UpdateAlert from "../../common/UpdateAlert";
+import Select from "react-select";
 import { NO_CHANGE_ERROR } from "../../../utils/messageStrings";
+import states from "../../../utils/states";
 
 const AddressForm = () => {
   const alert = useAlert();
-
-  const [disabled, setDisabled] = useState(true);
 
   const { value, setValue } = useContext(UpdateAlertContext);
 
@@ -37,11 +37,25 @@ const AddressForm = () => {
     } = {},
   } = data ?? {};
 
+  const statesOptions = states.map((state) => ({
+    value: state,
+    label: state,
+  }));
+
+  const customStyles = {
+    container: (provided, _) => ({
+      ...provided,
+      marginBottom: "30px",
+      marginTop: "25px",
+    }),
+  };
+
   const {
     register,
     getValues,
     reset,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -79,7 +93,7 @@ const AddressForm = () => {
           if (status === 200) {
             const message = data.message;
             alert.success(message);
-            setDisabled(true);
+
             setValue({ ...value, isOpen: false });
           }
         })
@@ -89,19 +103,14 @@ const AddressForm = () => {
         });
     } else {
       setValue({ ...value, isOpen: false });
-      setDisabled(true);
+
       alert.error(NO_CHANGE_ERROR);
     }
   };
 
-  const toggleDisabled = () => {
-    setDisabled(!disabled);
-  };
-
   const cancelCallback = () => {
-    setDisabled(true);
     reset();
-  }
+  };
 
   const hydrateUpdateAlert = () => {
     const addressFormDetails = {
@@ -141,7 +150,6 @@ const AddressForm = () => {
               errors={errors}
               field={"company"}
               inputProps={{
-                disabled: disabled,
                 icon: "office",
                 label: "Company Name",
                 placeholder: "Please enter your company name",
@@ -156,7 +164,6 @@ const AddressForm = () => {
               errors={errors}
               field={"brand"}
               inputProps={{
-                disabled: disabled,
                 icon: "tag",
                 label: "Brand Name",
                 placeholder: "Please enter your brand name",
@@ -169,39 +176,35 @@ const AddressForm = () => {
                 required: true,
                 minLength: 1,
                 pattern: {
-                  value: /^[A-Z0-9a-z,\- ]+$/,
+                  value: /^[a-zA-Z0-9!@#$&()`.+,/"-\w\s+]*$/,
                 },
               }}
               errors={errors}
               field={"street"}
               inputProps={{
-                disabled: disabled,
                 icon: "home",
-                label: "Address",
-                placeholder: "Please enter your company address",
-                errorMessage: "Please enter your company address",
+                label: "Registered Address",
+                placeholder: "Please enter your registered company address",
+                errorMessage: "Please enter your registered company address",
               }}
             />
-            <FormInput
-              register={register}
-              validations={{
-                required: true,
-                minLength: 1,
-                pattern: {
-                  value: /^[A-Za-z ]+$/,
-                },
-              }}
-              errors={errors}
-              field={"state"}
-              inputProps={{
-                disabled: disabled,
-                icon: "locate",
-                label: "State",
-                placeholder:
-                  "Please enter the State in which your company office is located",
-                errorMessage:
-                  "Please enter the State in which your company office is located",
-              }}
+            <Controller
+              control={control}
+              defaultValue={statesOptions[0]}
+              name="state"
+              render={({ field }) => (
+                <Select
+                  styles={customStyles}
+                  placeholder="Please enter the State in which your company office is located"
+                  inputRef={field.ref}
+                  classNamePrefix="addl-class"
+                  options={statesOptions}
+                  value={statesOptions.find((c) => c.value === field.value)}
+                  onChange={(val) => {
+                    field.onChange(val.value);
+                  }}
+                />
+              )}
             />
             <FormInput
               register={register}
@@ -215,7 +218,6 @@ const AddressForm = () => {
               errors={errors}
               field={"pin"}
               inputProps={{
-                disabled: disabled,
                 icon: "pin",
                 label: "Pincode",
                 placeholder: "Please enter company address pincode",
@@ -226,8 +228,8 @@ const AddressForm = () => {
             <input
               disabled={Object.values(errors).length}
               type="button"
-              value={disabled ? "Edit" : "Submit"}
-              onClick={disabled ? toggleDisabled : hydrateUpdateAlert}
+              value={"Submit"}
+              onClick={hydrateUpdateAlert}
             />
           </form>
           <UpdateAlert />

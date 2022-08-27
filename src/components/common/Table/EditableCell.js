@@ -25,12 +25,14 @@ const EditableCell = ({
 
   return index === editableRowIndex ? (
     <input
+      key={`${index}_${id}`}
       className="bp4-input"
       type={inputTypes[id].type}
       value={value}
       onChange={onChange}
       onBlur={onBlur}
       pattern={inputTypes[id].pattern}
+      autocomplete="new-password"
     />
   ) : (
     <p>

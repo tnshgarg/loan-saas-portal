@@ -2,11 +2,11 @@ export const tableColumns = [
   "Employee ID",
   "Name",
   "Mobile Number",
-  'Verification Status',
+  "Verification Status",
   "Email",
   "Date of Birth (dd/mm/yyyy)",
   "Job Title",
-  "Status",
+  "Employment Status",
   {
     Header: "Aadhaar",
     columns: [
