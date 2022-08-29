@@ -1,6 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { useAlert } from "react-alert";
-import { useForm, Controller } from "react-hook-form";
+import { useContext, useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import {
   useGetEmployerAddressByIdQuery,
@@ -13,10 +12,10 @@ import UpdateAlert from "../../common/UpdateAlert";
 import Select from "react-select";
 import { NO_CHANGE_ERROR } from "../../../utils/messageStrings";
 import states from "../../../utils/states";
+import { Intent } from "@blueprintjs/core";
+import { AppToaster } from "../../../contexts/ToastContext";
 
 const AddressForm = () => {
-  const alert = useAlert();
-
   const { value, setValue } = useContext(UpdateAlertContext);
 
   const [updateEmployerAddress] = useUpdateEmployerAddressMutation();
@@ -92,19 +91,26 @@ const AddressForm = () => {
           const status = data.status;
           if (status === 200) {
             const message = data.message;
-            alert.success(message);
-
+            AppToaster.show({
+              message,
+              intent: Intent.SUCCESS,
+            });
             setValue({ ...value, isOpen: false });
           }
         })
         .catch((error) => {
           const message = error.response?.data?.message ?? "Some error occured";
-          alert.error(message);
+          AppToaster.show({
+            message,
+            intent: Intent.DANGER,
+          });
         });
     } else {
       setValue({ ...value, isOpen: false });
-
-      alert.error(NO_CHANGE_ERROR);
+      AppToaster.show({
+        message: NO_CHANGE_ERROR,
+        intent: Intent.DANGER,
+      });
     }
   };
 

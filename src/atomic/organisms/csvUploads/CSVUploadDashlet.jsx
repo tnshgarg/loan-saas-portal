@@ -4,8 +4,7 @@ import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
-import { Alert, Collapse } from "@mui/material";
-import { Intent, NonIdealState } from "@blueprintjs/core";
+import { Collapse, Intent, NonIdealState, Tag } from "@blueprintjs/core";
 import * as Papa from "papaparse";
 import { useToastContext } from "../../../contexts/ToastContext";
 import { initCSVUpload } from "../../../store/slices/csvUploadSlice.ts";
@@ -189,15 +188,19 @@ function _CSVUploadDashlet({
           </>
         }
       >
-        <Collapse in={uploadStatus}>
-          <Alert
-            onClose={() => {
+        <Collapse isOpen={uploadStatus}>
+          <Tag
+            removeable
+            minimal
+            fill
+            icon={"endorsed"}
+            onRemove={() => {
               setUploadStatus(!uploadStatus);
             }}
-            severity="success"
+            intent={Intent.SUCCESS}
           >
             {alertMessage}
-          </Alert>
+          </Tag>
         </Collapse>
 
         {file.object ? (
