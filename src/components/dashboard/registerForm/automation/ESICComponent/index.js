@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 //Components
-import Table from "../../../../common/Table";
+import Table from "../../../../../atomic/organisms/table";
 
 import EditableDropdown from "./EditableDropdown";
 import {

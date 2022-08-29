@@ -7,6 +7,8 @@ import {
   H3,
   Icon,
   Intent,
+  Spinner,
+  Tag,
 } from "@blueprintjs/core";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
@@ -16,7 +18,6 @@ import {
   useGetAllEmployeesByEmployerIdQuery,
   useLazyGetAllEmployeesByEmployerIdQuery,
 } from "../../../store/slices/apiSlices/employees/employeesApiSlice";
-import Table from "../../common/Table";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
 import { capitalize, isObject } from "lodash";
@@ -26,6 +27,7 @@ import {
   CARD_STYLING,
   HEADER_CLASS,
 } from "./onboarding/Onboard";
+import Table from "../../../atomic/organisms/table";
 
 const MODAL_STYLING = {
   marginTop: "7.5rem",
@@ -224,42 +226,52 @@ const TabularViewTab = ({ handlers }) => {
   };
   return (
     <>
-      <Table
-        columns={[
-          {
-            Header: "S/N",
-            id: "row",
-            Cell: ({row}) => {
-              return <div>{row.index + 1}</div>;
-            },
-          },
-          ...columns,
-        ]}
-        defaultColumn={defaultColumn}
-        data={fetchedRows}
-        handleRowClick={handleRowClick}
-        showPagination={true}
-        filterTypes={filterTypes}
-        showEditColumn={false}
-        showFilter={true}
-        hoverEffect={true}
-        cellProps={cellProps}
-        showDownload={false}
-        handlers={handlers}
-      />
-      <Dialog
-        isOpen={isDialogOpen}
-        onClose={handleDialogClose}
-        title="Employee Details"
-        style={MODAL_STYLING}
-      >
-        <Card interactive={true} elevation={Elevation.THREE}>
-          <EmployeeModal
-            currEmployeeId={currEmployeeId}
-            setDidDialogChange={setDidDialogChange}
+      {isLoading ? (
+        <Spinner style={{ marginTop: "2em", marginBottom: "2em" }} size={54} />
+      ) : error ? (
+        <Tag icon={"error"} intent={Intent.DANGER} large minimal>
+          {error}
+        </Tag>
+      ) : (
+        <>
+          <Table
+            columns={[
+              {
+                Header: "S/N",
+                id: "row",
+                Cell: ({ row }) => {
+                  return <div>{row.index + 1}</div>;
+                },
+              },
+              ...columns,
+            ]}
+            defaultColumn={defaultColumn}
+            data={fetchedRows}
+            handleRowClick={handleRowClick}
+            showPagination={true}
+            filterTypes={filterTypes}
+            showEditColumn={false}
+            showFilter={true}
+            hoverEffect={true}
+            cellProps={cellProps}
+            showDownload={false}
+            handlers={handlers}
           />
-        </Card>
-      </Dialog>
+          <Dialog
+            isOpen={isDialogOpen}
+            onClose={handleDialogClose}
+            title="Employee Details"
+            style={MODAL_STYLING}
+          >
+            <Card interactive={true} elevation={Elevation.THREE}>
+              <EmployeeModal
+                currEmployeeId={currEmployeeId}
+                setDidDialogChange={setDidDialogChange}
+              />
+            </Card>
+          </Dialog>
+        </>
+      )}
     </>
   );
 };
