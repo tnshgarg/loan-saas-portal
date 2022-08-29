@@ -325,12 +325,13 @@ export const HEADER_GROUPS = FIELDS.reduce((groups, column) => {
 
 export const HEADER_LIST = FIELDS.map((column) => column.header);
 export function transformHeadersToFields(list) {
+  console.log({ transformHeadersToFields: true, list });
   return list.map((item) => {
     return Object.entries(HEADERS_MAP).reduce(
       (transformedObject, [header, column]) => {
-        header = header.replace(REQUIRED_SUFFIX, "").trim();
-        console.log(header);
-        transformedObject[column.field] = item[header];
+        const trimmedHeader = header.replace(REQUIRED_SUFFIX, "").trim();
+        console.log({ header, column, item });
+        transformedObject[column.field] = item[header] ?? item[trimmedHeader];
         return transformedObject;
       },
       {}
