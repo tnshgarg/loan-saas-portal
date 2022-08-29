@@ -9,6 +9,8 @@
     outline: none;
 }
 
-.bp4-toast button {
-    display: none;
+.AppToaster .bp4-toast {
+    font-size: 1.3em;
+    padding: 0.3em;
 }
+
