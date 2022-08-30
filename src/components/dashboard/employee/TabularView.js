@@ -10,6 +10,7 @@ import {
   H6,
   Icon,
   Intent,
+  Spinner,
   Tag,
 } from "@blueprintjs/core";
 import { matchSorter } from "match-sorter";
@@ -21,7 +22,6 @@ import {
   useLazyGetAllEmployeesByEmployerIdQuery,
 } from "../../../store/slices/apiSlices/employees/employeesApiSlice";
 import { useGetEmployerMetricsByIdQuery } from "../../../store/slices/apiSlices/employer/metricsApiSlice";
-import Table from "../../common/Table";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
 import { capitalize, isObject, upperFirst } from "lodash";
@@ -33,6 +33,7 @@ import {
 } from "./onboarding/Onboard";
 import Metrics from "../../../atomic/molecules/metrics/metrics";
 import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
+import Table from "../../../atomic/organisms/table";
 
 const MODAL_STYLING = {
   marginTop: "7.5rem",
@@ -231,42 +232,52 @@ const TabularViewTab = ({ handlers }) => {
   };
   return (
     <>
-      <Table
-        columns={[
-          {
-            Header: "S/N",
-            id: "row",
-            Cell: ({ row }) => {
-              return <div>{row.index + 1}</div>;
-            },
-          },
-          ...columns,
-        ]}
-        defaultColumn={defaultColumn}
-        data={fetchedRows}
-        handleRowClick={handleRowClick}
-        showPagination={true}
-        filterTypes={filterTypes}
-        showEditColumn={false}
-        showFilter={true}
-        hoverEffect={true}
-        cellProps={cellProps}
-        showDownload={false}
-        handlers={handlers}
-      />
-      <Dialog
-        isOpen={isDialogOpen}
-        onClose={handleDialogClose}
-        title="Employee Details"
-        style={MODAL_STYLING}
-      >
-        <Card interactive={true} elevation={Elevation.THREE}>
-          <EmployeeModal
-            currEmployeeId={currEmployeeId}
-            setDidDialogChange={setDidDialogChange}
+      {isLoading ? (
+        <Spinner style={{ marginTop: "2em", marginBottom: "2em" }} size={54} />
+      ) : error ? (
+        <Tag icon={"error"} intent={Intent.DANGER} large minimal>
+          {error}
+        </Tag>
+      ) : (
+        <>
+          <Table
+            columns={[
+              {
+                Header: "S/N",
+                id: "row",
+                Cell: ({ row }) => {
+                  return <div>{row.index + 1}</div>;
+                },
+              },
+              ...columns,
+            ]}
+            defaultColumn={defaultColumn}
+            data={fetchedRows}
+            handleRowClick={handleRowClick}
+            showPagination={true}
+            filterTypes={filterTypes}
+            showEditColumn={false}
+            showFilter={true}
+            hoverEffect={true}
+            cellProps={cellProps}
+            showDownload={false}
+            handlers={handlers}
           />
-        </Card>
-      </Dialog>
+          <Dialog
+            isOpen={isDialogOpen}
+            onClose={handleDialogClose}
+            title="Employee Details"
+            style={MODAL_STYLING}
+          >
+            <Card interactive={true} elevation={Elevation.THREE}>
+              <EmployeeModal
+                currEmployeeId={currEmployeeId}
+                setDidDialogChange={setDidDialogChange}
+              />
+            </Card>
+          </Dialog>
+        </>
+      )}
     </>
   );
 };
@@ -284,11 +295,19 @@ const TabularTabsComponent = () => {
     subCategory: "onboarding",
   });
 
-  const metricsLabelMap = {
-    employees: 'Employees',
-    aadhaar: "Aadhaar KYC",
-    pan: "PAN KYC",
-    bank: "Bank KYC",
+  const metricsConfig = {
+    labels: {
+      employees: "Employees",
+      aadhaar: "Aadhaar KYC",
+      pan: "PAN KYC",
+      bank: "Bank KYC",
+    },
+    secondaryConfig: {
+      Error: {
+        intent: "DANGER",
+        icon: "error",
+      },
+    },
   };
 
   useEffect(() => {
@@ -311,7 +330,7 @@ const TabularTabsComponent = () => {
       <EmployerMetrics
         data={data}
         primaryKey={"SUCCESS"}
-        labelsMap={metricsLabelMap}
+        config={metricsConfig}
       />
       <Card style={CARD_STYLING} elevation={Elevation.THREE}>
         <div className={styles.row}>

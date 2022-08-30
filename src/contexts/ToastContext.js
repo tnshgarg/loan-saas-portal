@@ -1,10 +1,21 @@
-import { Classes, Intent, Position, ProgressBar, Toaster } from "@blueprintjs/core";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  Classes,
+  Intent,
+  Position,
+  ProgressBar,
+  Toaster,
+} from "@blueprintjs/core";
+import { createContext, useContext, useRef, useState } from "react";
 import classNames from "classnames";
 
 const ToastContext = createContext();
 
 export default ToastContext;
+
+export const AppToaster = Toaster.create({
+  className: "AppToaster",
+  position: Position.BOTTOM_RIGHT,
+});
 
 export function ToastContextProvider({ children }) {
   const [config, setConfig] = useState({
@@ -40,7 +51,7 @@ export function ToastContextProvider({ children }) {
     };
   };
 
-  const handleProgressToast = (fileName = '', interval = 5000) => {
+  const handleProgressToast = (fileName = "", interval = 5000) => {
     let progress = 0;
     let percent = interval / 100;
     const key = toastRef.current.show(renderProgress(0, fileName));

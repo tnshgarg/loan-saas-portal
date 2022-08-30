@@ -11,7 +11,7 @@ import {
 import React from "react";
 import styles from "./metrics.module.css";
 
-export default function Metrics({ title, primary, secondary }) {
+export default function Metrics({ title, primary, secondary, secondaryConfig }) {
   return (
     <Card elevation={Elevation.TWO} className={styles.cardRoot}>
       <H5 className={styles.heading}>
@@ -35,6 +35,14 @@ export default function Metrics({ title, primary, secondary }) {
       <Divider className={styles.divider} />
       <div className={styles.secondaryContainer}>
         {secondary.map((item) => {
+          let tagProps = {}
+          let secondaryConfigKey = secondaryConfig[item.title]
+          if(secondaryConfigKey){
+            tagProps = {
+              intent: Intent[secondaryConfigKey.intent],
+              icon: <Icon icon={secondaryConfigKey.icon} size={15} />
+            }
+          }
           return (
             <Tag
               style={{marginRight: '10px'}}
@@ -43,6 +51,7 @@ export default function Metrics({ title, primary, secondary }) {
               intent={Intent.PRIMARY}
               large={true}
               icon={<Icon icon="tag" size={15} />}
+              {...tagProps}
             >
               <span className={styles.tag}>
                 {item.title}: {item.count}

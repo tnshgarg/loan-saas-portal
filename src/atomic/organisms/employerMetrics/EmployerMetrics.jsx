@@ -7,7 +7,9 @@ import Metrics from "../../molecules/metrics/metrics";
 //Styles
 import styles from './employerMetrics.module.css';
 
-export default function EmployerMetrics({ data, primaryKey, labelsMap }) {
+export default function EmployerMetrics({ data, primaryKey, config }) {
+  const {labels, secondaryConfig} = config;
+  console.log({labels})
   return (
     <div
       className={styles.metricsWrapper}
@@ -27,9 +29,10 @@ export default function EmployerMetrics({ data, primaryKey, labelsMap }) {
             }));
           return (
             <Metrics
-              title={labelsMap[key]}
+              title={labels[key]}
               primary={primaryData}
               secondary={secondaryData}
+              secondaryConfig={secondaryConfig}
             />
           );
         })}
