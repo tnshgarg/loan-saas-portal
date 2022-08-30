@@ -17,7 +17,7 @@ export function Onboard() {
   return (
     <CSVUploadDashlet
       title={"Employee Details"}
-      label={"employee_details"}
+      module={"onboarding"}
       templateData={[HEADER_LIST]}
       fields={HEADER_GROUPS}
       preProcessing={transformHeadersToFields}

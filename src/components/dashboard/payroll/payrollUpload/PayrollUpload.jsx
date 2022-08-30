@@ -27,7 +27,7 @@ function _PayrollUpload({ employerId, dispatch }) {
   return (
     <CSVUploadDashlet
       title={"Payroll"}
-      label={"payroll"}
+      module={"payroll"}
       templateDownloadProps={{ loading: isLoading, templateData }}
       fields={HEADER_GROUPS}
       preProcessing={transformHeadersToFields}

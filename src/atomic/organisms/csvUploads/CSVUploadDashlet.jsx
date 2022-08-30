@@ -24,7 +24,6 @@ const mapOnboardPropsToState = (state) => {
 
 function _CSVUploadDashlet({
   title,
-  label,
   templateData,
   templateDownloadProps,
   fields,
@@ -32,6 +31,7 @@ function _CSVUploadDashlet({
   dispatch,
   preProcessing,
   onToastDismiss,
+  module,
 }) {
   const navigate = useNavigate();
   templateDownloadProps = templateDownloadProps ?? {};
@@ -74,7 +74,10 @@ function _CSVUploadDashlet({
     const params = {
       Body: csvFile,
       Bucket: S3_BUCKET,
-      Key: `${employerId}/${timestamp}_${file.object.name.replace(/\W/g, "_")}`,
+      Key: `${employerId}/${module}/${timestamp}_${file.object.name.replace(
+        /\W/g,
+        "_"
+      )}`,
     };
 
     try {
