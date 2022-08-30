@@ -93,19 +93,19 @@ export const CSVUploadsSlice = createSlice({
         return res;
       }, {});
       state.stats[fileName] = getErrorDict();
-
       data.forEach((row, index: number) => {
         const rowEntries = Object.entries(row);
         row.rowNumber = index;
         row.status = getErrorDict();
         rowEntries.forEach(([key, value]: [string, any]) => {
           if (value) {
+            if(typeof value === 'object') return;
             if (!(typeof value === "string" || value instanceof String))
               value = String(value);
             row[key] = value.trim();
             if (DATE_FIELDS.includes(key) && !reg.DATE.test(value)) {
               const serialTime = parseInt(value.trim());
-              if (serialTime)
+              if (serialTime && !value.includes('/'))
                 value = row[key] = convertExcelSerialToDateString(serialTime);
             }
           }

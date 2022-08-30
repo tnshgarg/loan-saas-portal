@@ -13,6 +13,7 @@ import { TemplateDownloadButton } from "../../atoms/forms/TemplateDownloadButton
 import { CSVFileInput } from "../../atoms/forms/CSVFileInput";
 import { VerifyAndUploadEmployees } from "../../../components/dashboard/employee/onboarding/verifyAndUploadEmployees";
 import BrowserEdiTable from "./BrowserEdiTable";
+import { FS } from "../../../components/dashboard/employee/onboarding/validations";
 
 export const MAX_SIZE = 1024 * 1024 * 5;
 
@@ -46,7 +47,11 @@ function _CSVUploadDashlet({
   // CSV FILE UPLOAD
   const [file, setFile] = useState({ object: null, validations: [] });
   const [fileSize, setFileSize] = useState(0);
-  const [alertMessage, setAlertMessage] = useState("");
+  const [alertMessage, setAlertMessage] = useState({
+    message: "",
+    intent: "SUCCESS",
+    icon: 'tick'
+  });
   const [uploadStatus, setUploadStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [cloudUploadDisabled, setCloudUploadDisabled] = useState(false);
@@ -67,7 +72,17 @@ function _CSVUploadDashlet({
 
   const handleFileUpload = async () => {
     const tableData = getter["data"]();
-    const tableCSV = Papa.unparse(tableData);
+    let validData = [];
+    let erroredData = [];
+
+    tableData.map((row) => {
+      if (row.status["1"] >= 1) {
+        erroredData.push({ ...row });
+      } else {
+        validData.push({ ...row });
+      }
+    });
+    const tableCSV = Papa.unparse(validData);
     const csvFile = new Blob([tableCSV], { type: "text/csv" });
     const timestamp = new Date().getTime();
 
@@ -89,12 +104,40 @@ function _CSVUploadDashlet({
         alert("File is too large. Please upload the file in parts.");
       } else {
         await parallelUploads3.done();
-        setFile({ object: null, validations: [] });
-        setAlertMessage(
-          `File ${file.object.name} has been added to the queue successfully`
-        );
-        handleProgressToast(file?.object?.name, 900000);
-        setUploadStatus(true);
+        if (erroredData.length) {
+          setAlertMessage({
+            message: `File ${file.object.name} has been added to the queue successfully but please fix the following errors`,
+            intent: "SUCCESS",
+            icon: 'tick'
+          });
+          setUploadStatus(true);
+          dispatch(
+            initCSVUpload({
+              data: erroredData,
+              fileName: file.object.name,
+              fields,
+            })
+          );
+        }else {
+          setUploadStatus(true);
+          setFile({ object: null, validations: [] });
+        }
+        if (validData.length) {
+          setAlertMessage({
+            message: `File ${file.object.name} has been added to the queue successfully`,
+            intent: "SUCCESS",
+            icon: 'tick'
+          });
+          setUploadStatus(true);
+          handleProgressToast(file?.object?.name, 900000);
+        } else {
+          setUploadStatus(true);
+          setAlertMessage({
+            message: "Please fix the following errors shown below",
+            intent: "DANGER",
+            icon: 'error'
+          });
+        }
       }
     } catch (err) {
       console.log(err);
@@ -193,13 +236,13 @@ function _CSVUploadDashlet({
             removeable
             minimal
             fill
-            icon={"endorsed"}
+            icon={alertMessage?.icon ?? "endorsed"}
             onRemove={() => {
               setUploadStatus(!uploadStatus);
             }}
-            intent={Intent.SUCCESS}
+            intent={Intent[alertMessage?.intent ?? "SUCCESS"]}
           >
-            {alertMessage}
+            {alertMessage?.message}
           </Tag>
         </Collapse>
 
