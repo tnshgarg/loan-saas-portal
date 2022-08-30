@@ -639,7 +639,7 @@ export const HEADER_GROUPS = FIELDS.reduce((groups, column) => {
   return groups;
 }, []);
 
-export const TEMPLATE_FIELDS = FIELDS.filter((column) => column.required);
+export const TEMPLATE_FIELDS = FIELDS;
 
 export function transformHeadersToFields(list) {
   return list.map((item) => {
