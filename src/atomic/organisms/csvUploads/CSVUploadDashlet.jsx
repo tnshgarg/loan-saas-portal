@@ -33,6 +33,7 @@ function _CSVUploadDashlet({
   dispatch,
   preProcessing,
   onToastDismiss,
+  panelName
 }) {
   const navigate = useNavigate();
   templateDownloadProps = templateDownloadProps ?? {};
@@ -76,7 +77,7 @@ function _CSVUploadDashlet({
     let erroredData = [];
 
     tableData.map((row) => {
-      if (row.status["1"] >= 1) {
+      if (row.status[FS.ERROR] >= 1) {
         erroredData.push({ ...row });
       } else {
         validData.push({ ...row });
@@ -116,6 +117,7 @@ function _CSVUploadDashlet({
               data: erroredData,
               fileName: file.object.name,
               fields,
+              panelName
             })
           );
         }else {
@@ -156,6 +158,7 @@ function _CSVUploadDashlet({
         data: preProcessing(data),
         fileName: file.object.name,
         fields,
+        panelName: panelName
       })
     );
   };
@@ -217,6 +220,7 @@ function _CSVUploadDashlet({
                 <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 <VerifyAndUploadEmployees
                   fileName={file.object.name}
+                  panelName={panelName}
                   disableButton={cloudUploadDisabled}
                   onClick={(e) => {
                     !file.object
@@ -251,6 +255,7 @@ function _CSVUploadDashlet({
             <BrowserEdiTable
               setter={setDataGetter}
               tableName={file.object?.name}
+              panelName={panelName}
             />
           </>
         ) : !uploadStatus ? (
