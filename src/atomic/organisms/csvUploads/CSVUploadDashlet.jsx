@@ -17,9 +17,15 @@ import { FS } from "../../../components/dashboard/employee/onboarding/validation
 
 export const MAX_SIZE = 1024 * 1024 * 5;
 
-const mapOnboardPropsToState = (state) => {
+const mapOnboardPropsToState = (state, ownProps) => {
+  const { panelName } = ownProps;
+  console.log({ csvUploads: state.csvUploads[panelName] });
+  const savedFileName = state?.csvUploads[panelName]
+    ? Object.keys(state.csvUploads[panelName])[0]
+    : "";
   return {
     employerId: state.auth.user?.attributes.sub || "",
+    savedFileName,
   };
 };
 
@@ -33,7 +39,8 @@ function _CSVUploadDashlet({
   dispatch,
   preProcessing,
   onToastDismiss,
-  panelName
+  panelName,
+  savedFileName,
 }) {
   const navigate = useNavigate();
   templateDownloadProps = templateDownloadProps ?? {};
@@ -51,7 +58,7 @@ function _CSVUploadDashlet({
   const [alertMessage, setAlertMessage] = useState({
     message: "",
     intent: "SUCCESS",
-    icon: 'tick'
+    icon: "tick",
   });
   const [uploadStatus, setUploadStatus] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -79,8 +86,6 @@ function _CSVUploadDashlet({
     tableData.map((row) => {
       if (row.status[FS.ERROR] >= 1) {
         erroredData.push({ ...row });
-      } else {
-        validData.push({ ...row });
       }
     });
     const tableCSV = Papa.unparse(validData);
@@ -109,7 +114,7 @@ function _CSVUploadDashlet({
           setAlertMessage({
             message: `File ${file.object.name} has been added to the queue successfully but please fix the following errors`,
             intent: "SUCCESS",
-            icon: 'tick'
+            icon: "tick",
           });
           setUploadStatus(true);
           dispatch(
@@ -117,29 +122,20 @@ function _CSVUploadDashlet({
               data: erroredData,
               fileName: file.object.name,
               fields,
-              panelName
+              panelName,
             })
           );
-        }else {
+        } else {
           setUploadStatus(true);
           setFile({ object: null, validations: [] });
         }
-        if (validData.length) {
-          setAlertMessage({
-            message: `File ${file.object.name} has been added to the queue successfully`,
-            intent: "SUCCESS",
-            icon: 'tick'
-          });
-          setUploadStatus(true);
-          handleProgressToast(file?.object?.name, 900000);
-        } else {
-          setUploadStatus(true);
-          setAlertMessage({
-            message: "Please fix the following errors shown below",
-            intent: "DANGER",
-            icon: 'error'
-          });
-        }
+        setAlertMessage({
+          message: `File ${file.object.name} has been added to the queue successfully`,
+          intent: "SUCCESS",
+          icon: "tick",
+        });
+        setUploadStatus(true);
+        handleProgressToast(file?.object?.name, 900000);
       }
     } catch (err) {
       console.log(err);
@@ -158,7 +154,7 @@ function _CSVUploadDashlet({
         data: preProcessing(data),
         fileName: file.object.name,
         fields,
-        panelName: panelName
+        panelName: panelName,
       })
     );
   };
@@ -176,7 +172,13 @@ function _CSVUploadDashlet({
   };
 
   useEffect(() => {
-    if (file.object) {
+    if(savedFileName) {
+      setFile({ object: { name: savedFileName }, validations: [] });
+    }
+  },[savedFileName])
+
+  useEffect(() => {
+    if ((file?.object?.name && file?.object?.size) || !savedFileName) {
       const reader = new FileReader();
       reader.onload = (event) => {
         const wb = read(event.target.result, {
@@ -194,8 +196,8 @@ function _CSVUploadDashlet({
         ...prevState,
         onDismiss: onToastDismiss,
       }));
-    }
-  }, [file.object]);
+    } 
+  }, [file.object, onToastDismiss, savedFileName, setConfig]);
 
   return (
     <>
@@ -219,7 +221,7 @@ function _CSVUploadDashlet({
               <>
                 <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 <VerifyAndUploadEmployees
-                  fileName={file.object.name}
+                  fileName={file?.object?.name}
                   panelName={panelName}
                   disableButton={cloudUploadDisabled}
                   onClick={(e) => {
@@ -250,11 +252,11 @@ function _CSVUploadDashlet({
           </Tag>
         </Collapse>
 
-        {file.object ? (
+        {file.object || savedFileName ? (
           <>
             <BrowserEdiTable
               setter={setDataGetter}
-              tableName={file.object?.name}
+              tableName={file?.object?.name}
               panelName={panelName}
             />
           </>
