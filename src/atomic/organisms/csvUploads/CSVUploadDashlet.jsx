@@ -178,7 +178,7 @@ function _CSVUploadDashlet({
   },[savedFileName])
 
   useEffect(() => {
-    if ((file?.object?.name && file?.object?.size) || !savedFileName) {
+    if ((file?.object?.name && file?.object?.size)) {
       const reader = new FileReader();
       reader.onload = (event) => {
         const wb = read(event.target.result, {

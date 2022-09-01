@@ -107,7 +107,7 @@ const TabularViewTab = ({ handlers }) => {
         "Employee ID": employeeId,
         Name: name,
         "Mobile Number": mobile,
-        "Verification Status": checkOverallStatus(aadhaar, pan, bank),
+        "Onboarding Status": checkOverallStatus(aadhaar, pan, bank),
         Email: email,
         "Date of Birth (dd/mm/yyyy)": dob,
         "Job Title": title,
