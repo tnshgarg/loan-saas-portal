@@ -80,22 +80,22 @@ function _CSVUploadDashlet({
 
   const handleFileUpload = async () => {
     const tableData = getter["data"]();
-    let validData = [];
     let erroredData = [];
-
+    console.log({tableData})
     tableData.map((row) => {
       if (row.status[FS.ERROR] >= 1) {
         erroredData.push({ ...row });
       }
     });
-    const tableCSV = Papa.unparse(validData);
+    const tableCSV = Papa.unparse(tableData);
+    console.log({tableCSV})
     const csvFile = new Blob([tableCSV], { type: "text/csv" });
     const timestamp = new Date().getTime();
 
     const params = {
       Body: csvFile,
       Bucket: S3_BUCKET,
-      Key: `${employerId}/${timestamp}_${file.object.name.replace(/\W/g, "_")}`,
+      Key: `${employerId}/${panelName}/${timestamp}_${file.object.name.replace(/\W/g, "_")}`,
     };
 
     try {

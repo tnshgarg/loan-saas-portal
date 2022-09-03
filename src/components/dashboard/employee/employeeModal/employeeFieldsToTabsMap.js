@@ -20,9 +20,8 @@ export const employeeFieldsToTabsMap = {
     fields: {
       employeeId: "Employee ID",
       doj: "Date of Joining (dd/mm/yyyy)",
-      // prEmpName: "Name of Principal Employer",
-      title: "Designation",
-      bUnit: "Department (Optional)",
+      designation: "Designation",
+      department: "Department",
       aCTC: "Annual CTC",
       doe: "Date of Exit (dd/mm/yyyy)",
     },
