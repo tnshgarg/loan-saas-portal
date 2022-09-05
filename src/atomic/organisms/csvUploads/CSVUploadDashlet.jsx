@@ -183,6 +183,7 @@ function _CSVUploadDashlet({
                       ? alert("Please select a file to upload")
                       : uploadCSV(e);
                   }}
+                  buttonText={`Add ${title}`}
                 />
               </>
             ) : (
