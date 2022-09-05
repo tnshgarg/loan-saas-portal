@@ -2,10 +2,7 @@ import {
   Button,
   Card,
   Dialog,
-  Divider,
   Elevation,
-  H3,
-  Icon,
   Intent,
   Spinner,
   Tag,
@@ -21,13 +18,8 @@ import {
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
 import { capitalize, isObject } from "lodash";
-import styles from "./styles/onboard.module.css";
-import {
-  ACTIONS_CLASS,
-  CARD_STYLING,
-  HEADER_CLASS,
-} from "./onboarding/Onboard";
 import Table from "../../../atomic/organisms/table";
+import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
 
 const MODAL_STYLING = {
   marginTop: "7.5rem",
@@ -297,16 +289,12 @@ const TabularTabsComponent = () => {
     };
   };
   return (
-    <Card style={CARD_STYLING} elevation={Elevation.THREE}>
-      <div className={styles.row}>
-        <div className={HEADER_CLASS}>
-          <H3>
-            {" "}
-            <Icon icon={"people"} size={"1em"} /> Employee Records
-          </H3>
-        </div>
-        <div className={ACTIONS_CLASS}>
-          <div className={styles.alignRight}>
+    <>
+      <Dashlet
+        icon={"people"}
+        title={"Employee Records"}
+        actions={
+          <>
             <Button icon={"refresh"} onClick={createHandler("refresh")}>
               Refresh
             </Button>
@@ -318,12 +306,12 @@ const TabularTabsComponent = () => {
             >
               Download Excel
             </Button>
-          </div>
-        </div>
-      </div>
-      <Divider />
-      <TabularViewTab handlers={handlers} />
-    </Card>
+          </>
+        }
+      >
+        <TabularViewTab handlers={handlers} />
+      </Dashlet>
+    </>
   );
 };
 
