@@ -15,7 +15,7 @@ import {
   SignUp,
 } from "./components/signUpLogin/index";
 
-import { TabularView } from "./components/dashboard/employee/TabularView";
+import { EmployeesPanel } from "./components/dashboard/employee/EmployeesPanel";
 
 import { history } from "./utils/history";
 import BaseLayout from "./layout/base";
@@ -52,6 +52,7 @@ const App = () => {
           <Route path="/employer/overview" element={<Overview />} />
           <Route path="/employer/register-form" element={<RegisterForm />} />
           <Route path="/employees/onboard" element={<Onboard />} />
+          <Route path="/employees/panel" element={<EmployeesPanel />} />
           <Route path="/attendance/import" element={<AttendanceUpload />} />
           <Route path="/payroll/payout" element={<PayrollUpload />} />
           <Route path="/employees/panel" element={<TabularView />} />
