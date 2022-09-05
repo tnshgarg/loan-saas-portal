@@ -173,7 +173,8 @@ const Table = ({
     setFilteredData(data);
   }, [data]);
 
-  const updateFilterHandler = (newData) => {
+  const updateFilterHandler = (newData, filterConfiguration) => {
+    console.log({filterConfiguration})
     setFilteredData(newData);
   };
 

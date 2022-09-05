@@ -1,0 +1,7 @@
+.metricsWrapper {
+    display: flex;
+    margin-bottom: 2rem;
+    margin-left: 2.7em;
+    margin-right: 2.7em;
+    justify-content: flex-start;
+}

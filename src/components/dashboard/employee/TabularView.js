@@ -1,10 +1,13 @@
 import {
   Button,
   Card,
+  Classes,
   Dialog,
   Divider,
   Elevation,
   H3,
+  H5,
+  H6,
   Icon,
   Intent,
   Spinner,
@@ -18,15 +21,18 @@ import {
   useGetAllEmployeesByEmployerIdQuery,
   useLazyGetAllEmployeesByEmployerIdQuery,
 } from "../../../store/slices/apiSlices/employees/employeesApiSlice";
+import { useGetEmployerMetricsByIdQuery } from "../../../store/slices/apiSlices/employer/metricsApiSlice";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
-import { capitalize, isObject } from "lodash";
+import { capitalize, isObject, upperFirst } from "lodash";
 import styles from "./styles/onboard.module.css";
 import {
   ACTIONS_CLASS,
   CARD_STYLING,
   HEADER_CLASS,
 } from "./onboarding/Onboard";
+import Metrics from "../../../atomic/molecules/metrics/metrics";
+import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
 import Table from "../../../atomic/organisms/table";
 
 const MODAL_STYLING = {
@@ -278,8 +284,31 @@ const TabularViewTab = ({ handlers }) => {
 
 const TabularTabsComponent = () => {
   const auth = useSelector((state) => state.auth);
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
   const navigate = useNavigate();
+
+  const { data } = useGetEmployerMetricsByIdQuery({
+    employerId,
+    category: "metrics",
+    subCategory: "onboarding",
+  });
+
+  const metricsConfig = {
+    labels: {
+      employees: "Employees",
+      aadhaar: "Aadhaar KYC",
+      pan: "PAN KYC",
+      bank: "Bank KYC",
+    },
+    secondaryConfig: {
+      Error: {
+        intent: "DANGER",
+        icon: "error",
+      },
+    },
+  };
 
   useEffect(() => {
     if (auth === undefined || auth === {} || !auth.isLoggedIn) {
@@ -297,33 +326,40 @@ const TabularTabsComponent = () => {
     };
   };
   return (
-    <Card style={CARD_STYLING} elevation={Elevation.THREE}>
-      <div className={styles.row}>
-        <div className={HEADER_CLASS}>
-          <H3>
-            {" "}
-            <Icon icon={"people"} size={"1em"} /> Employee Records
-          </H3>
-        </div>
-        <div className={ACTIONS_CLASS}>
-          <div className={styles.alignRight}>
-            <Button icon={"refresh"} onClick={createHandler("refresh")}>
-              Refresh
-            </Button>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <Button
-              icon={"saved"}
-              intent={Intent.SUCCESS}
-              onClick={createHandler("download-excel")}
-            >
-              Download Excel
-            </Button>
+    <>
+      <EmployerMetrics
+        data={data}
+        primaryKey={"SUCCESS"}
+        config={metricsConfig}
+      />
+      <Card style={CARD_STYLING} elevation={Elevation.THREE}>
+        <div className={styles.row}>
+          <div className={HEADER_CLASS}>
+            <H3>
+              {" "}
+              <Icon icon={"people"} size={"1em"} /> Employee Records
+            </H3>
+          </div>
+          <div className={ACTIONS_CLASS}>
+            <div className={styles.alignRight}>
+              <Button icon={"refresh"} onClick={createHandler("refresh")}>
+                Refresh
+              </Button>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <Button
+                icon={"saved"}
+                intent={Intent.SUCCESS}
+                onClick={createHandler("download-excel")}
+              >
+                Download Excel
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-      <Divider />
-      <TabularViewTab handlers={handlers} />
-    </Card>
+        <Divider />
+        <TabularViewTab handlers={handlers} />
+      </Card>
+    </>
   );
 };
 
