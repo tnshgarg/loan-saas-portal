@@ -1,6 +1,7 @@
 import {
   noValidation,
   requiredValidation,
+  dojValidation,
 } from "../../employee/onboarding/validations";
 
 const REQUIRED_SUFFIX = " (Required)";
@@ -20,7 +21,7 @@ const FG = FIELD_GROUPS;
 export const FIELDS = [
   {
     header: "Emp ID",
-    field: "EmpID",
+    field: "employeeId",
     validations: requiredValidation,
     required: true,
     prefetch: "employeeId",
@@ -64,11 +65,25 @@ export const FIELDS = [
     group: FG.EMPLOYMENT,
   },
   {
+    header: "Year",
+    field: "Year",
+    validations: requiredValidation,
+    required: true,
+    group: FG.EMPLOYMENT,
+  },
+  {
+    header: "Processing Date",
+    field: "processingDate",
+    validations: dojValidation,
+    required: true,
+    group: FG.EMPLOYMENT,
+  },
+  {
     header: "Designation",
     field: "Designation",
     validations: requiredValidation,
     required: true,
-    prefetch: "title",
+    prefetch: "designation",
     group: FG.EMPLOYMENT,
   },
   {
@@ -228,56 +243,56 @@ export const FIELDS = [
   {
     header: "Arrear Calender Days",
     field: "ArrearCalenderDays",
-    validations: requiredValidation,
+    validations: noValidation,
     required: true,
     group: FG.DAY_CALC,
   },
   {
     header: "Arrear Days",
     field: "ArrearDays",
-    validations: requiredValidation,
+    validations: noValidation,
     required: true,
     group: FG.DAY_CALC,
   },
   {
     header: "Notice Pay Days",
     field: "NoticePayDays",
-    validations: requiredValidation,
+    validations: noValidation,
     required: true,
     group: FG.DAY_CALC,
   },
   {
     header: "Notice Recovery Days",
     field: "NoticeRecoveryDays",
-    validations: requiredValidation,
+    validations: noValidation,
     required: true,
     group: FG.DAY_CALC,
   },
   {
     header: "Leave Encashment Days",
     field: "LeaveEncashmentDays",
-    validations: requiredValidation,
+    validations: noValidation,
     required: true,
     group: FG.DAY_CALC,
   },
   {
     header: "LOP reversals Days",
     field: "LOPreversalsDays",
-    validations: requiredValidation,
+    validations: noValidation,
     required: true,
     group: FG.DAY_CALC,
   },
   {
     header: "Holiday Pay Days",
     field: "HolidayPayDays",
-    validations: requiredValidation,
+    validations: noValidation,
     required: true,
     group: FG.DAY_CALC,
   },
   {
     header: "Severance Pay Days",
     field: "SeverancePayDays",
-    validations: requiredValidation,
+    validations: noValidation,
     required: true,
     group: FG.DAY_CALC,
   },
@@ -429,8 +444,15 @@ export const FIELDS = [
     group: FG.DEDUCTIONS,
   },
   {
-    header: "LWF Employer",
-    field: "ArrearsLWFEmployer",
+    header: "Earned LWF Employer",
+    field: "EarnedEmployerLWF",
+    validations: noValidation,
+    required: false,
+    group: FG.DEDUCTIONS,
+  },
+  {
+    header: "Arrear LWF Employer",
+    field: "ArrearEmployerLWF",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
@@ -471,8 +493,15 @@ export const FIELDS = [
     group: FG.DEDUCTIONS,
   },
   {
-    header: "Employee LWF",
+    header: "Earned Employee LWF",
     field: "EarnedEmployeeLWF",
+    validations: noValidation,
+    required: false,
+    group: FG.DEDUCTIONS,
+  },
+  {
+    header: "Arrear Employee LWF",
+    field: "ArrearEmployeeLWF",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
@@ -646,8 +675,7 @@ export function transformHeadersToFields(list) {
     return Object.entries(HEADERS_MAP).reduce(
       (transformedObject, [header, column]) => {
         header = header.replace(REQUIRED_SUFFIX, "").trim();
-        console.log(header);
-        transformedObject[column.field] = item[header];
+        transformedObject[column.field] = item[header] || 0;
         return transformedObject;
       },
       {}
