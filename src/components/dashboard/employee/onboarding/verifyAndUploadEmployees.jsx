@@ -21,6 +21,7 @@ function _VerifyAndUploadEmployees(props) {
     fileName,
     onClick: parentOnClick,
     errors,
+    buttonText,
   } = props ?? {};
 
   const [overrideDialog, setOverrideDialog] = useState(false);
@@ -47,7 +48,7 @@ function _VerifyAndUploadEmployees(props) {
         intent={Intent.SUCCESS}
         icon="cloud-upload"
       >
-        Add Employees
+        {buttonText}
       </Button>
       <Dialog
         isOpen={overrideDialog}
