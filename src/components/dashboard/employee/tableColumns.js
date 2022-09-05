@@ -2,7 +2,7 @@ export const tableColumns = [
   "Employee ID",
   "Name",
   "Mobile Number",
-  "Verification Status",
+  "Onboarding Status",
   "Email",
   "Date of Birth (dd/mm/yyyy)",
   "Job Title",

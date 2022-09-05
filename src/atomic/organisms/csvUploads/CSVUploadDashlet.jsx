@@ -13,12 +13,19 @@ import { TemplateDownloadButton } from "../../atoms/forms/TemplateDownloadButton
 import { CSVFileInput } from "../../atoms/forms/CSVFileInput";
 import { VerifyAndUploadEmployees } from "../../../components/dashboard/employee/onboarding/verifyAndUploadEmployees";
 import BrowserEdiTable from "./BrowserEdiTable";
+import { FS } from "../../../components/dashboard/employee/onboarding/validations";
 
 export const MAX_SIZE = 1024 * 1024 * 5;
 
-const mapOnboardPropsToState = (state) => {
+const mapOnboardPropsToState = (state, ownProps) => {
+  const { panelName } = ownProps;
+  console.log({ csvUploads: state.csvUploads[panelName] });
+  const savedFileName = state?.csvUploads[panelName]
+    ? Object.keys(state.csvUploads[panelName])[0]
+    : "";
   return {
     employerId: state.auth.user?.attributes.sub || "",
+    savedFileName,
   };
 };
 
@@ -32,6 +39,8 @@ function _CSVUploadDashlet({
   dispatch,
   preProcessing,
   onToastDismiss,
+  panelName,
+  savedFileName,
 }) {
   const navigate = useNavigate();
   templateDownloadProps = templateDownloadProps ?? {};
@@ -46,7 +55,11 @@ function _CSVUploadDashlet({
   // CSV FILE UPLOAD
   const [file, setFile] = useState({ object: null, validations: [] });
   const [fileSize, setFileSize] = useState(0);
-  const [alertMessage, setAlertMessage] = useState("");
+  const [alertMessage, setAlertMessage] = useState({
+    message: "",
+    intent: "SUCCESS",
+    icon: "tick",
+  });
   const [uploadStatus, setUploadStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [cloudUploadDisabled, setCloudUploadDisabled] = useState(false);
@@ -67,14 +80,22 @@ function _CSVUploadDashlet({
 
   const handleFileUpload = async () => {
     const tableData = getter["data"]();
+    let erroredData = [];
+    console.log({tableData})
+    tableData.map((row) => {
+      if (row.status[FS.ERROR] >= 1) {
+        erroredData.push({ ...row });
+      }
+    });
     const tableCSV = Papa.unparse(tableData);
+    console.log({tableCSV})
     const csvFile = new Blob([tableCSV], { type: "text/csv" });
     const timestamp = new Date().getTime();
 
     const params = {
       Body: csvFile,
       Bucket: S3_BUCKET,
-      Key: `${employerId}/${timestamp}_${file.object.name.replace(/\W/g, "_")}`,
+      Key: `${employerId}/${panelName}/${timestamp}_${file.object.name.replace(/\W/g, "_")}`,
     };
 
     try {
@@ -89,12 +110,32 @@ function _CSVUploadDashlet({
         alert("File is too large. Please upload the file in parts.");
       } else {
         await parallelUploads3.done();
-        setFile({ object: null, validations: [] });
-        setAlertMessage(
-          `File ${file.object.name} has been added to the queue successfully`
-        );
-        handleProgressToast(file?.object?.name, 900000);
+        if (erroredData.length) {
+          setAlertMessage({
+            message: `File ${file.object.name} has been added to the queue successfully but please fix the following errors`,
+            intent: "SUCCESS",
+            icon: "tick",
+          });
+          setUploadStatus(true);
+          dispatch(
+            initCSVUpload({
+              data: erroredData,
+              fileName: file.object.name,
+              fields,
+              panelName,
+            })
+          );
+        } else {
+          setUploadStatus(true);
+          setFile({ object: null, validations: [] });
+        }
+        setAlertMessage({
+          message: `File ${file.object.name} has been added to the queue successfully`,
+          intent: "SUCCESS",
+          icon: "tick",
+        });
         setUploadStatus(true);
+        handleProgressToast(file?.object?.name, 900000);
       }
     } catch (err) {
       console.log(err);
@@ -113,6 +154,7 @@ function _CSVUploadDashlet({
         data: preProcessing(data),
         fileName: file.object.name,
         fields,
+        panelName: panelName,
       })
     );
   };
@@ -130,7 +172,13 @@ function _CSVUploadDashlet({
   };
 
   useEffect(() => {
-    if (file.object) {
+    if(savedFileName) {
+      setFile({ object: { name: savedFileName }, validations: [] });
+    }
+  },[savedFileName])
+
+  useEffect(() => {
+    if ((file?.object?.name && file?.object?.size)) {
       const reader = new FileReader();
       reader.onload = (event) => {
         const wb = read(event.target.result, {
@@ -148,8 +196,8 @@ function _CSVUploadDashlet({
         ...prevState,
         onDismiss: onToastDismiss,
       }));
-    }
-  }, [file.object]);
+    } 
+  }, [file.object, onToastDismiss, savedFileName, setConfig]);
 
   return (
     <>
@@ -173,7 +221,8 @@ function _CSVUploadDashlet({
               <>
                 <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 <VerifyAndUploadEmployees
-                  fileName={file.object.name}
+                  fileName={file?.object?.name}
+                  panelName={panelName}
                   disableButton={cloudUploadDisabled}
                   onClick={(e) => {
                     !file.object
@@ -193,21 +242,22 @@ function _CSVUploadDashlet({
             removeable
             minimal
             fill
-            icon={"endorsed"}
+            icon={alertMessage?.icon ?? "endorsed"}
             onRemove={() => {
               setUploadStatus(!uploadStatus);
             }}
-            intent={Intent.SUCCESS}
+            intent={Intent[alertMessage?.intent ?? "SUCCESS"]}
           >
-            {alertMessage}
+            {alertMessage?.message}
           </Tag>
         </Collapse>
 
-        {file.object ? (
+        {file.object || savedFileName ? (
           <>
             <BrowserEdiTable
               setter={setDataGetter}
-              tableName={file.object?.name}
+              tableName={file?.object?.name}
+              panelName={panelName}
             />
           </>
         ) : !uploadStatus ? (
