@@ -341,10 +341,10 @@ function Table({
           ""
         )}
       </div>
-      {visibilityToolbar ? (
+      {visibilityToolbar && visibilityToolbar.length ? (
         <>
           <ButtonGroup>
-            <Button disabled={true} minimal={true}>
+            <Button disabled minimal>
               {" "}
               Choose Columns to view{" "}
             </Button>
@@ -364,12 +364,19 @@ function Table({
       ) : (
         ""
       )}
-      <div style={{ maxHeight: "55vh", width: "100%", overflow: "auto" }}>
+      <div
+        style={{
+          maxHeight: "55vh",
+          width: "100%",
+          overflow: "auto",
+        }}
+      >
         <HTMLTable
           bordered={true}
           condensed={true}
           striped={true}
           {...getTableProps()}
+          style={{ margin: "auto" }}
         >
           <thead>
             {headerGroups.map((headerGroup) => (
