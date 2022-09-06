@@ -33,7 +33,7 @@ const intentMap = {
 const Styles = styled.div`
   padding: 1rem;
   width: 100%;
-  overflow-x: scroll;
+  overflow-x: auto;
 
   table {
     border: 1px solid rgb(17 20 24 / 15%);
@@ -74,7 +74,10 @@ function Pagination({
 }) {
   return (
     <div className="pagination">
-      <Navbar minimal style={{ color: Colors.LIGHT_GRAY1, boxShadow: "none" }}>
+      <Navbar
+        minimal
+        style={{ color: Colors.GRAY1, boxShadow: "none", padding: 0 }}
+      >
         <NavbarGroup>
           <small>Rows per Page</small>
           <HTMLSelect
@@ -89,20 +92,12 @@ function Pagination({
               <option
                 key={pageSize}
                 value={pageSize}
-                style={{ fontSize: "0.7em" }}
+                style={{ fontSize: "0.8em" }}
               >
                 {pageSize}
               </option>
             ))}
           </HTMLSelect>
-        </NavbarGroup>
-        <NavbarGroup>
-          <small>
-            Page{" "}
-            <strong>
-              {pageIndex + 1} of {pageOptions.length}
-            </strong>{" "}
-          </small>
         </NavbarGroup>
         <NavbarGroup>
           <Button
@@ -117,6 +112,14 @@ function Pagination({
             onClick={() => previousPage()}
             disabled={!canPreviousPage}
           />
+          <NavbarGroup>
+            <small>
+              Page{" "}
+              <strong>
+                {pageIndex + 1} of {pageOptions.length}
+              </strong>{" "}
+            </small>
+          </NavbarGroup>
           <Button
             minimal
             icon="chevron-right"
@@ -367,8 +370,9 @@ function Table({
       <div
         style={{
           maxHeight: "55vh",
-          width: "100%",
           overflow: "auto",
+          margin: "auto",
+          width: "fit-content",
         }}
       >
         <HTMLTable
@@ -376,7 +380,6 @@ function Table({
           condensed={true}
           striped={true}
           {...getTableProps()}
-          style={{ margin: "auto" }}
         >
           <thead>
             {headerGroups.map((headerGroup) => (
@@ -407,11 +410,11 @@ function Table({
           {/*  <code>{JSON.stringify(state, null, 2)}</code>*/}
           {/*</pre>*/}
         </HTMLTable>
-      </div>
-      <div>
-        <div style={{ textAlign: "right" }}>
-          <div style={{ display: "inline-block" }}>
-            <Pagination {...paginationProps} />
+        <div>
+          <div style={{ textAlign: "right" }}>
+            <div style={{ display: "inline-block" }}>
+              <Pagination {...paginationProps} />
+            </div>
           </div>
         </div>
       </div>
