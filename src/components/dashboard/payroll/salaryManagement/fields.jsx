@@ -1,10 +1,9 @@
 import {
+  dojValidation,
   noValidation,
   requiredValidation,
-  dojValidation,
 } from "../../employee/onboarding/validations";
-
-const REQUIRED_SUFFIX = " (Required)";
+import { buildHeaderMap } from "../util";
 const FIELD_GROUPS = {
   PERSISTENT: "Persistent",
   DAY_CALC: `Day's Calculation`,
@@ -18,6 +17,18 @@ const FIELD_GROUPS = {
 };
 const FG = FIELD_GROUPS;
 // FIELDS are order Sensitive
+const INPUT_DAYS = [
+  "Month Calendar Days",
+  "Earned Days",
+  "Arrear Calender Days",
+  "Arrear Days",
+  "Notice Pay Days",
+  "Notice Recovery Days",
+  "Leave Encashment Days",
+  "LOP reversals Days",
+  "Holiday Pay Days",
+  "Severance Pay Days",
+];
 export const FIELDS = [
   {
     header: "Emp ID",
@@ -113,6 +124,7 @@ export const FIELDS = [
     validations: noValidation,
     required: false,
     group: FG.SAL_BREAKUP,
+    derived: true,
   },
   {
     header: "Monthly CTC",
@@ -235,21 +247,21 @@ export const FIELDS = [
   },
   {
     header: "Earned Days",
-    field: "EarnedDays",
+    field: "earned.Days",
     validations: requiredValidation,
     required: true,
     group: FG.DAY_CALC,
   },
   {
     header: "Arrear Calender Days",
-    field: "ArrearCalenderDays",
+    field: "arrears.CalenderDays",
     validations: noValidation,
     required: true,
     group: FG.DAY_CALC,
   },
   {
     header: "Arrear Days",
-    field: "ArrearDays",
+    field: "arrears.Days",
     validations: noValidation,
     required: true,
     group: FG.DAY_CALC,
@@ -298,28 +310,28 @@ export const FIELDS = [
   },
   {
     header: "Earned Basic",
-    field: "EarnedBasic",
+    field: "earned.Basic",
     validations: noValidation,
     required: false,
     group: FG.EARNED_SAL,
   },
   {
     header: "Earned HRA",
-    field: "EarnedHRA",
+    field: "earned.HRA",
     validations: noValidation,
     required: false,
     group: FG.EARNED_SAL,
   },
   {
     header: "Earned Special",
-    field: "EarnedSpecial",
+    field: "earned.Special",
     validations: noValidation,
     required: false,
     group: FG.EARNED_SAL,
   },
   {
     header: "Earned Bonus",
-    field: "EarnedBonus",
+    field: "earned.Bonus",
     validations: noValidation,
     required: false,
     group: FG.EARNED_SAL,
@@ -375,28 +387,28 @@ export const FIELDS = [
   },
   {
     header: "Arrear Basic",
-    field: "ArrearBasic",
+    field: "arrears.Basic",
     validations: noValidation,
     required: false,
     group: FG.ARREARS_SAL,
   },
   {
     header: "Arrear HRA",
-    field: "ArrearHRA",
+    field: "arrears.HRA",
     validations: noValidation,
     required: false,
     group: FG.ARREARS_SAL,
   },
   {
     header: "Arrear Special",
-    field: "ArrearSpecial",
+    field: "arrears.Special",
     validations: noValidation,
     required: false,
     group: FG.ARREARS_SAL,
   },
   {
     header: "Arrear Statutory Bonus",
-    field: "ArrearStatutoryBonus",
+    field: "arrears.StatutoryBonus",
     validations: noValidation,
     required: false,
     group: FG.ARREARS_SAL,
@@ -417,42 +429,42 @@ export const FIELDS = [
   },
   {
     header: "Employer PF",
-    field: "EarnedEmployerPF",
+    field: "earned.employer.PF",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
   },
   {
     header: "Arrear Employer PF",
-    field: "ArrearEmployerPF",
+    field: "arrears.employer.PF",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
   },
   {
     header: "Employer ESI",
-    field: "EarnedEmployerESI",
+    field: "earned.employer.ESI",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
   },
   {
     header: "Arrear Employer ESI",
-    field: "ArrearEmployerESI",
+    field: "arrears.employer.ESI",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
   },
   {
     header: "Earned LWF Employer",
-    field: "EarnedEmployerLWF",
+    field: "earned.employer.LWF",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
   },
   {
     header: "Arrear LWF Employer",
-    field: "ArrearEmployerLWF",
+    field: "arrears.employer.LWF",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
@@ -473,42 +485,42 @@ export const FIELDS = [
   },
   {
     header: "Employee PF",
-    field: "EarnedEmployeePF",
+    field: "earned.employee.PF",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
   },
   {
     header: "Employee ESI",
-    field: "EarnedEmployeeESI",
+    field: "earned.employee.ESI",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
   },
   {
     header: "Arrear Employee ESI",
-    field: "ArrearEmployeeESI",
+    field: "arrears.employee.ESI",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
   },
   {
     header: "Earned Employee LWF",
-    field: "EarnedEmployeeLWF",
+    field: "earned.employee.LWF",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
   },
   {
     header: "Arrear Employee LWF",
-    field: "ArrearEmployeeLWF",
+    field: "arrears.employee.LWF",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
   },
   {
     header: "Professional Tax",
-    field: "EarnedProfessionalTax",
+    field: "earned.ProfessionalTax",
     validations: noValidation,
     required: false,
     group: FG.DEDUCTIONS,
@@ -634,11 +646,7 @@ export const FIELDS = [
   },
 ];
 
-export const HEADERS_MAP = FIELDS.reduce((map, column) => {
-  map[column.header] = column;
-  return map;
-}, {});
-
+export const HEADERS_MAP = buildHeaderMap(FIELDS);
 export const FIELD_MAP = FIELDS.reduce((map, column) => {
   map[column.field] = column;
   return map;
@@ -669,16 +677,3 @@ export const HEADER_GROUPS = FIELDS.reduce((groups, column) => {
 }, []);
 
 export const TEMPLATE_FIELDS = FIELDS;
-
-export function transformHeadersToFields(list) {
-  return list.map((item) => {
-    return Object.entries(HEADERS_MAP).reduce(
-      (transformedObject, [header, column]) => {
-        header = header.replace(REQUIRED_SUFFIX, "").trim();
-        transformedObject[column.field] = item[header] || 0;
-        return transformedObject;
-      },
-      {}
-    );
-  });
-}

@@ -1,11 +1,8 @@
-import {
-  HEADER_GROUPS,
-  TEMPLATE_FIELDS,
-  transformHeadersToFields,
-} from "./fields";
+import { HEADER_GROUPS, HEADERS_MAP, TEMPLATE_FIELDS } from "./fields";
 import { connect } from "react-redux";
 import { CSVUploadDashlet } from "../../../../atomic/organisms/csvUploads/CSVUploadDashlet";
 import { useGetAllEmployeesByEmployerIdQuery } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
+import { buildRowMapper } from "../util";
 
 function buildTemplate(employeesData) {
   const headers = TEMPLATE_FIELDS.map((field) => field.header);
@@ -33,7 +30,7 @@ function _PayrollUpload({ employerId, dispatch }) {
       module={"payroll"}
       templateDownloadProps={{ loading: isLoading, templateData }}
       fields={HEADER_GROUPS}
-      preProcessing={transformHeadersToFields}
+      preProcessing={buildRowMapper(HEADERS_MAP)}
       onToastDismiss={() => {
         // attendence dispatch
         // dispatch(
@@ -52,4 +49,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export const PayrollUpload = connect(mapStateToProps)(_PayrollUpload);
+export const SalaryUpload = connect(mapStateToProps)(_PayrollUpload);

@@ -21,7 +21,8 @@ import { history } from "./utils/history";
 import BaseLayout from "./layout/base";
 import { Onboard } from "./components/dashboard/employee/onboarding/Onboard";
 import { AttendanceUpload } from "./components/dashboard/attendance/attendanceUpload";
-import { PayrollUpload } from "./components/dashboard/payroll/payrollUpload/PayrollUpload";
+import { PayrollInfo } from "./components/dashboard/payroll/info/PayrollInfo";
+import { OneClickPayments } from "./components/dashboard/payroll/oneClickPayments/PaymentUpload";
 
 const App = () => {
   useEffect(() => {
@@ -54,8 +55,13 @@ const App = () => {
           <Route path="/employees/onboard" element={<Onboard />} />
           <Route path="/employees/panel" element={<EmployeesPanel />} />
           <Route path="/attendance/import" element={<AttendanceUpload />} />
-          <Route path="/payroll/payout" element={<PayrollUpload />} />
-          <Route path="/employees/panel" element={<TabularView />} />
+          <Route
+            path="/payroll/one-click-payout"
+            element={<OneClickPayments />}
+          />
+          <Route path="/payroll/info" element={<PayrollInfo />} />
+          <Route path="/payroll/transactions" element={<PayrollInfo />} />
+
           <Route path="*" element={<Invalid />} />
         </Routes>
       </BaseLayout>
