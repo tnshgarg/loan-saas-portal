@@ -2,6 +2,7 @@ export const FIELD_STATUS = {
   ERROR: 1,
   WARN: 2,
   VALID: 3,
+  DELETED: 4,
 };
 export const FS = FIELD_STATUS;
 

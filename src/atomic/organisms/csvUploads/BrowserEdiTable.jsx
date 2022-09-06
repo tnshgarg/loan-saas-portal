@@ -8,6 +8,7 @@ import {
   EditableText,
   HTMLSelect,
   HTMLTable,
+  Icon,
   Intent,
   Navbar,
   NavbarGroup,
@@ -21,6 +22,8 @@ import {
 } from "../../../components/dashboard/employee/onboarding/validations";
 import { coalesce } from "../../../utils/array";
 import {
+  deleteCSVRow,
+  restoreCSVRow,
   toggleFilter,
   updateCSVRow,
 } from "../../../store/slices/csvUploadSlice.ts";
@@ -153,7 +156,12 @@ function Pagination({
 // Create an editable cell renderer
 const EditableCell = ({
   value: initialValue,
-  row: { index },
+  row: {
+    index,
+    values: {
+      status: { [FS.DELETED]: isDeleted },
+    },
+  },
   column,
   updateMyData, // This is a custom function that we supplied to our table instance
 }) => {
@@ -196,14 +204,38 @@ const EditableCell = ({
         padding: " 6px  8px  6px  8px",
       }}
     >
-      <EditableText
-        value={value}
-        intent={intent}
-        onChange={onChange}
-        onConfirm={onBlur}
-        onEdit={onFocus}
-      />
+      {isDeleted ? (
+        <>
+          <strike style={{ backgroundColor }}>{value || "xxxx"}</strike>
+        </>
+      ) : (
+        <EditableText
+          value={value}
+          intent={intent}
+          onChange={onChange}
+          onConfirm={onBlur}
+          onEdit={onFocus}
+        />
+      )}
     </div>
+  );
+};
+
+const DeleteActionCell = ({ value, row: { index }, deleteRow, restoreRow }) => {
+  const onClick = () => {
+    if (value[FS.DELETED]) {
+      restoreRow(index);
+    } else {
+      deleteRow(index);
+    }
+  };
+  return (
+    <Icon
+      minimal
+      icon={value[FS.DELETED] ? "undo" : "trash"}
+      onClick={onClick}
+      color={Colors.GRAY1}
+    />
   );
 };
 
@@ -215,7 +247,7 @@ const defaultColumn = {
 function Table({
   columns,
   data,
-  updateMyData,
+  reduxActions,
   filterMyData,
   filters,
   skipPageReset,
@@ -247,8 +279,8 @@ function Table({
       data,
       defaultColumn,
       autoResetPage: !skipPageReset,
-      updateMyData,
       fieldMap,
+      ...reduxActions,
     },
     usePagination
   );
@@ -443,8 +475,20 @@ function BrowserEdiTable({
   setter,
   stats,
   errorFilters,
+  deletes,
 }) {
-  const columnsMemo = React.useMemo(() => columns, [columns]);
+  const additionalColumns = [];
+  if (deletes) {
+    additionalColumns.push({
+      Header: "Delete",
+      accessor: "status",
+      Cell: DeleteActionCell,
+    });
+  }
+  const columnsMemo = React.useMemo(
+    () => columns.concat(additionalColumns),
+    [columns]
+  );
   const dataMemo = React.useMemo(() => data, [data]);
   const [skipPageReset, setSkipPageReset] = React.useState(false);
   setter(() => data);
@@ -462,14 +506,21 @@ function BrowserEdiTable({
     dispatch(toggleFilter({ tableName, errorFilter }));
   };
 
+  const deleteRow = (rowIndex) => {
+    dispatch(deleteCSVRow({ tableName, rowIndex }));
+  };
+
+  const restoreRow = (rowIndex) => {
+    dispatch(restoreCSVRow({ tableName, rowIndex }));
+  };
+
   return (
     <Styles>
       <Table
         columns={columnsMemo}
         data={dataMemo}
         hasGroups={true}
-        updateMyData={updateMyData}
-        filterMyData={filterMyData}
+        reduxActions={{ updateMyData, filterMyData, deleteRow, restoreRow }}
         filters={errorFilters}
         skipPageReset={skipPageReset}
         stats={stats}

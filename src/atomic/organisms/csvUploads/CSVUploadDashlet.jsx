@@ -212,6 +212,7 @@ function _CSVUploadDashlet({
             <BrowserEdiTable
               setter={setDataGetter}
               tableName={file.object?.name}
+              deletes={true}
             />
           </>
         ) : !uploadStatus ? (

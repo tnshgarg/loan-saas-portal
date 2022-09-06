@@ -174,6 +174,39 @@ export const CSVUploadsSlice = createSlice({
       // reusing the same `filteredData` to maintain object reference
       populateFilteredData(data, errorFilters, filteredData);
     },
+    deleteCSVRow: (state, action) => {
+      const {
+        payload: { tableName, rowIndex },
+      } = action;
+
+      const {
+        data: { [tableName]: data },
+        errorFilters: { [tableName]: errorFilters },
+        filteredData: { [tableName]: filteredData },
+        stats: { [tableName]: stats },
+      } = state;
+      console.log(rowIndex);
+      data[rowIndex].status[FS.DELETED] = true;
+      [FS.ERROR, FS.VALID, FS.WARN].forEach((errState) => {
+        stats[errState] -= data[rowIndex].status[errState];
+      });
+    },
+    restoreCSVRow: (state, action) => {
+      const {
+        payload: { tableName, rowIndex },
+      } = action;
+
+      const {
+        data: { [tableName]: data },
+        errorFilters: { [tableName]: errorFilters },
+        filteredData: { [tableName]: filteredData },
+        stats: { [tableName]: stats },
+      } = state;
+      delete data[rowIndex].status[FS.DELETED];
+      [FS.ERROR, FS.VALID, FS.WARN].forEach((errState) => {
+        stats[errState] += data[rowIndex].status[errState];
+      });
+    },
     // WIP: discuss and add
     // deleteCSVRow: (state, action) => {
     //   //pass
@@ -181,8 +214,13 @@ export const CSVUploadsSlice = createSlice({
   },
 });
 
-export const { initCSVUpload, updateCSVRow, toggleFilter } =
-  CSVUploadsSlice.actions;
+export const {
+  initCSVUpload,
+  updateCSVRow,
+  toggleFilter,
+  deleteCSVRow,
+  restoreCSVRow,
+} = CSVUploadsSlice.actions;
 
 export default CSVUploadsSlice.reducer;
 
