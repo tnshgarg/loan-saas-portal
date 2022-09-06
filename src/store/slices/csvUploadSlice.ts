@@ -111,8 +111,9 @@ export const CSVUploadsSlice = createSlice({
           }
           let errState = FS.VALID;
           if (state.fieldMap[fileName][key]) {
-            errState = VALIDATIONS[state.fieldMap[fileName][key]](value || "");
+            errState = VALIDATIONS[state.fieldMap[fileName][key]](value);
           }
+          if (errState == FS.ERROR) console.log({ key, value, error: true });
           state.stats[fileName][errState] += 1;
           row.status[errState] += 1;
         });

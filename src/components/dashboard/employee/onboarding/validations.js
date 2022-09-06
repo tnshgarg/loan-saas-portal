@@ -14,6 +14,9 @@ export const reg = {
   AADHAAR: /^\d{12}$/,
   IFSC: /^[A-Z]{4}0[A-Z0-9]{6}$/,
   FIN_NUMBER: /^\d+(,\d+)*(\.\d{1,2})*$/,
+  AMOUNT: /^\d+(,\d+)*(\.\d*)?$/,
+  YEAR: /^\d{4}$/,
+  MONTH: /^(0\d)|(1[1-2])$/,
 };
 
 function regexValidation(regex, errorLevel) {
@@ -33,6 +36,9 @@ export const currencyValidation = "currencyValidation";
 export const noValidation = "noValidation";
 export const genderValidation = "genderValidation";
 export const requiredValidation = "requiredValidation";
+export const amountValidation = "amountValidation";
+export const yearValidation = "yearValidation";
+export const monthValidation = "monthValidation";
 
 // techdebt: make generic
 export const VALIDATIONS = {
@@ -51,4 +57,7 @@ export const VALIDATIONS = {
     const validGenders = ["male", "female", "transgender", "m", "f", "t"];
     return validGenders.includes(value.toLowerCase()) ? FS.VALID : FS.WARN;
   },
+  [yearValidation]: regexValidation(reg.YEAR, FS.ERROR),
+  [monthValidation]: regexValidation(reg.MONTH, FS.ERROR),
+  [amountValidation]: regexValidation(reg.AMOUNT, FS.ERROR),
 };

@@ -331,7 +331,8 @@ export function transformHeadersToFields(list) {
       (transformedObject, [header, column]) => {
         const trimmedHeader = header.replace(REQUIRED_SUFFIX, "").trim();
         console.log({ header, column, item });
-        transformedObject[column.field] = item[header] ?? item[trimmedHeader];
+        transformedObject[column.field] =
+          item[header] ?? item[trimmedHeader] ?? "";
         return transformedObject;
       },
       {}

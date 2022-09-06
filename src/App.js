@@ -21,6 +21,7 @@ import { history } from "./utils/history";
 import BaseLayout from "./layout/base";
 import { Onboard } from "./components/dashboard/employee/onboarding/Onboard";
 import { AttendanceUpload } from "./components/dashboard/attendance/attendanceUpload";
+import { SalaryUpload } from "./components/dashboard/payroll/salaryManagement/SalaryUpload";
 import { PayrollInfo } from "./components/dashboard/payroll/info/PayrollInfo";
 import { OneClickPayments } from "./components/dashboard/payroll/oneClickPayments/PaymentUpload";
 
@@ -59,6 +60,7 @@ const App = () => {
             path="/payroll/one-click-payout"
             element={<OneClickPayments />}
           />
+          <Route path="/payroll/salary" element={<SalaryUpload />} />
           <Route path="/payroll/info" element={<PayrollInfo />} />
           <Route path="/payroll/transactions" element={<PayrollInfo />} />
 
