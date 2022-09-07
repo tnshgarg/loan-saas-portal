@@ -5,6 +5,7 @@ import { allEmployeesBasicDetails } from "./slices/apiSlices/employees/employees
 import { employerAddressApi } from "./slices/apiSlices/employer/addressApiSlice";
 import { employerCredentialsApi } from "./slices/apiSlices/employer/credentialsApiSlice";
 import { employerTaxApi } from "./slices/apiSlices/employer/taxApiSlice";
+import { employerMetricsApi } from "./slices/apiSlices/employer/metricsApiSlice";
 import authReducer from "./slices/authSlice";
 import CSVUploadReducer from "./slices/csvUploadSlice.ts";
 import employeeReducer from "./slices/employeeSlice";
@@ -25,6 +26,7 @@ export const store = configureStore({
     [employerCredentialsApi.reducerPath]: employerCredentialsApi.reducer,
     [allEmployeesBasicDetails.reducerPath]: allEmployeesBasicDetails.reducer,
     [employeeDetails.reducerPath]: employeeDetails.reducer,
+    [employerMetricsApi.reducerPath]: employerMetricsApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -39,7 +41,8 @@ export const store = configureStore({
       .concat(employerTaxApi.middleware)
       .concat(employerCredentialsApi.middleware)
       .concat(allEmployeesBasicDetails.middleware)
-      .concat(employeeDetails.middleware),
+      .concat(employeeDetails.middleware)
+      .concat(employerMetricsApi.middleware)
 });
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors

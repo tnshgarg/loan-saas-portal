@@ -1,8 +1,13 @@
 import {
   Button,
   Card,
+  Classes,
   Dialog,
   Elevation,
+  H3,
+  H5,
+  H6,
+  Icon,
   Intent,
   Spinner,
   Tag,
@@ -15,9 +20,12 @@ import {
   useGetAllEmployeesByEmployerIdQuery,
   useLazyGetAllEmployeesByEmployerIdQuery,
 } from "../../../store/slices/apiSlices/employees/employeesApiSlice";
+import { useGetEmployerMetricsByIdQuery } from "../../../store/slices/apiSlices/employer/metricsApiSlice";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
-import { capitalize, isObject } from "lodash";
+import { capitalize, isObject, upperFirst } from "lodash";
+import Metrics from "../../../atomic/molecules/metrics/metrics";
+import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
 import Table from "../../../atomic/organisms/table";
 import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
 
@@ -88,7 +96,7 @@ const TabularViewTab = ({ handlers }) => {
         mobile,
         email,
         dob,
-        title,
+        designation,
         aadhaar,
         pan,
         bank,
@@ -99,10 +107,10 @@ const TabularViewTab = ({ handlers }) => {
         "Employee ID": employeeId,
         Name: name,
         "Mobile Number": mobile,
-        "Verification Status": checkOverallStatus(aadhaar, pan, bank),
+        "Onboarding Status": checkOverallStatus(aadhaar, pan, bank),
         Email: email,
         "Date of Birth (dd/mm/yyyy)": dob,
-        "Job Title": title,
+        "Job Title": designation,
         _id: _id,
         "Employment Status": capitalize(status),
         "Aadhaar Number": aadhaar?.number,
@@ -270,8 +278,31 @@ const TabularViewTab = ({ handlers }) => {
 
 const TabularTabsComponent = () => {
   const auth = useSelector((state) => state.auth);
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
   const navigate = useNavigate();
+
+  const { data } = useGetEmployerMetricsByIdQuery({
+    employerId,
+    category: "metrics",
+    subCategory: "onboarding",
+  });
+
+  const metricsConfig = {
+    labels: {
+      employees: "Employees",
+      aadhaar: "Aadhaar KYC",
+      pan: "PAN KYC",
+      bank: "Bank KYC",
+    },
+    secondaryConfig: {
+      Error: {
+        intent: "DANGER",
+        icon: "error",
+      },
+    },
+  };
 
   useEffect(() => {
     if (auth === undefined || auth === {} || !auth.isLoggedIn) {
@@ -290,6 +321,11 @@ const TabularTabsComponent = () => {
   };
   return (
     <>
+        <EmployerMetrics
+            data={data}
+            primaryKey={"SUCCESS"}
+            config={metricsConfig}
+        />
       <Dashlet
         icon={"people"}
         title={"Employee Records"}
