@@ -7,9 +7,8 @@ export const allEmployeesBasicDetails = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: EMPLOYER_BASE_API_URL,
     prepareHeaders: (headers, { getState }) => {
-      console.log("getState: ", getState());
       const token =
-        getState().auth.user.signInUserSession.idToken.jwtToken ?? "";
+        getState().auth?.user.signInUserSession.idToken.jwtToken ?? "";
 
       // If we have a token set in state, let's assume that we should be passing it.
       if (token) {
