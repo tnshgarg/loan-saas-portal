@@ -79,14 +79,15 @@ function _CSVUploadDashlet({
 
   const handleFileUpload = async () => {
     const tableData = getter["data"]();
-    let erroredData = [];
-    console.log({ tableData });
-    tableData.map((row) => {
-      if (row.status[FS.ERROR] >= 1) {
-        erroredData.push({ ...row });
-      }
-    });
-    const tableCSV = Papa.unparse(tableData);
+    let erroredData = tableData.filter((row) => row.status[FS.ERROR] >= 1);
+
+    const tableCSV = Papa.unparse(
+      tableData.map((row) => {
+        delete row.status;
+        delete row.rowNumber;
+        return row;
+      })
+    );
     console.log({ tableCSV });
     const csvFile = new Blob([tableCSV], { type: "text/csv" });
     const timestamp = new Date().getTime();
