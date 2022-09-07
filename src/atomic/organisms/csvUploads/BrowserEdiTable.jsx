@@ -455,15 +455,25 @@ function Table({
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const { tableName, panelName } = ownProps;
+  const { tableName, module } = ownProps;
   const {
-    csvUploads: {[panelName]: {[tableName] : {errorFilters = [], filteredData = [], data = [], fields = [], stats = {}} = {}} = {} },
+    csvUploads: {
+      [module]: {
+        [tableName]: {
+          errorFilters = [],
+          filteredData = [],
+          data = [],
+          fields = [],
+          stats = {},
+        } = {},
+      } = {},
+    },
   } = state;
   return {
-    data: coalesce([filteredData , data , []]),
-    columns: fields ,
-    stats: stats ,
-    errorFilters: errorFilters ,
+    data: coalesce([filteredData, data, []]),
+    columns: fields,
+    stats: stats,
+    errorFilters: errorFilters,
   };
 };
 
@@ -476,7 +486,7 @@ function BrowserEdiTable({
   stats,
   errorFilters,
   deletes,
-  panelName
+  module,
 }) {
   const additionalColumns = [];
   if (deletes) {
@@ -491,7 +501,7 @@ function BrowserEdiTable({
     [columns]
   );
   const dataMemo = React.useMemo(() => data, [data]);
-  console.log({dataMemo})
+  console.log({ dataMemo });
   const [skipPageReset, setSkipPageReset] = React.useState(false);
   setter(() => data);
   React.useEffect(() => {
@@ -501,11 +511,11 @@ function BrowserEdiTable({
   const updateMyData = (rowIndex, columnId, value) => {
     // We also turn on the flag to not reset the page
     setSkipPageReset(true);
-    dispatch(updateCSVRow({ tableName, rowIndex, columnId, value, panelName }));
+    dispatch(updateCSVRow({ tableName, rowIndex, columnId, value, module }));
   };
 
   const filterMyData = (errorFilter) => {
-    dispatch(toggleFilter({ tableName, errorFilter, panelName }));
+    dispatch(toggleFilter({ tableName, errorFilter, module }));
   };
 
   const deleteRow = (rowIndex) => {

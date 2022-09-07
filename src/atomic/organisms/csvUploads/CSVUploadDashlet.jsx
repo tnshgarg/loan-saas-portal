@@ -18,10 +18,10 @@ import { FS } from "../../../components/dashboard/employee/onboarding/validation
 export const MAX_SIZE = 1024 * 1024 * 5;
 
 const mapOnboardPropsToState = (state, ownProps) => {
-  const { panelName } = ownProps;
-  console.log({ csvUploads: state.csvUploads[panelName] });
-  const savedFileName = state?.csvUploads[panelName]
-    ? Object.keys(state.csvUploads[panelName])[0]
+  const { module } = ownProps;
+  console.log({ csvUploads: state.csvUploads[module] });
+  const savedFileName = state?.csvUploads[module]
+    ? Object.keys(state.csvUploads[module])[0]
     : "";
   return {
     employerId: state.auth.user?.attributes.sub || "",
@@ -80,14 +80,14 @@ function _CSVUploadDashlet({
   const handleFileUpload = async () => {
     const tableData = getter["data"]();
     let erroredData = [];
-    console.log({tableData})
+    console.log({ tableData });
     tableData.map((row) => {
       if (row.status[FS.ERROR] >= 1) {
         erroredData.push({ ...row });
       }
     });
     const tableCSV = Papa.unparse(tableData);
-    console.log({tableCSV})
+    console.log({ tableCSV });
     const csvFile = new Blob([tableCSV], { type: "text/csv" });
     const timestamp = new Date().getTime();
 
@@ -124,7 +124,7 @@ function _CSVUploadDashlet({
               data: erroredData,
               fileName: file.object.name,
               fields,
-              panelName,
+              module,
             })
           );
         } else {
@@ -156,7 +156,7 @@ function _CSVUploadDashlet({
         data: preProcessing(data),
         fileName: file.object.name,
         fields,
-        panelName: panelName,
+        module: module,
       })
     );
   };
@@ -174,13 +174,13 @@ function _CSVUploadDashlet({
   };
 
   useEffect(() => {
-    if(savedFileName) {
+    if (savedFileName) {
       setFile({ object: { name: savedFileName }, validations: [] });
     }
-  },[savedFileName])
+  }, [savedFileName]);
 
   useEffect(() => {
-    if ((file?.object?.name && file?.object?.size)) {
+    if (file?.object?.name && file?.object?.size) {
       const reader = new FileReader();
       reader.onload = (event) => {
         const wb = read(event.target.result, {
@@ -224,7 +224,7 @@ function _CSVUploadDashlet({
                 <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 <VerifyAndUploadEmployees
                   fileName={file?.object?.name}
-                  panelName={panelName}
+                  module={module}
                   disableButton={cloudUploadDisabled}
                   onClick={(e) => {
                     !file.object
@@ -262,7 +262,7 @@ function _CSVUploadDashlet({
               tableName={file.object?.name}
               deletes={true}
               tableName={file?.object?.name}
-              panelName={panelName}
+              module={module}
             />
           </>
         ) : !uploadStatus ? (

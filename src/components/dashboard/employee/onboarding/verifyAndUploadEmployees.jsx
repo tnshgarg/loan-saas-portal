@@ -4,9 +4,9 @@ import { FS } from "./validations";
 import React, { useState } from "react";
 
 const mapStateToProps = (state, ownProps) => {
-  const { fileName, panelName } = ownProps;
+  const { fileName, module } = ownProps;
   const {
-    csvUploads : {[panelName]: {[fileName]: {stats = {} } = {}} = {} } = {},
+    csvUploads: { [module]: { [fileName]: { stats = {} } = {} } = {} } = {},
   } = state;
 
   const fileStats = stats ?? {};
