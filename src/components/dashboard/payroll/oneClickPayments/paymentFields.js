@@ -11,13 +11,13 @@ import { buildHeaderMap, REQUIRED_SUFFIX } from "../util";
 export const FIELDS = [
   {
     header: "Employee Id" + REQUIRED_SUFFIX,
-    field: "employeeId",
+    field: "employerEmployeeId",
     validations: requiredValidation,
     prefetch: true,
   },
   {
     header: "Employee Name" + REQUIRED_SUFFIX,
-    field: "name",
+    field: "employeeName",
     validations: requiredValidation,
     prefetch: true,
   },
@@ -39,7 +39,7 @@ export const FIELDS = [
   },
   {
     header: "Amount Payable" + REQUIRED_SUFFIX,
-    field: "amount",
+    field: "amountPayable",
     validations: amountValidation,
   },
 ];
