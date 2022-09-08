@@ -96,7 +96,7 @@ const TabularViewTab = ({ handlers }) => {
   const setFetchedRowsFromBody = (body) => {
     const fetchedRowsData = body.map((employee) => {
       const {
-        employeeId,
+        employerEmployeeId,
         name,
         mobile,
         email,
@@ -109,7 +109,7 @@ const TabularViewTab = ({ handlers }) => {
         isActive,
       } = employee;
       return {
-        "Employee ID": employeeId,
+        "Employee ID": employerEmployeeId,
         Name: name,
         "Mobile Number": mobile,
         "Onboarding Status": checkOverallStatus(aadhaar, pan, bank),
