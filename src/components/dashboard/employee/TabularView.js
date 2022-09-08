@@ -24,14 +24,13 @@ import {
 import { useGetEmployerMetricsByIdQuery } from "../../../store/slices/apiSlices/employer/metricsApiSlice";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
-import { capitalize, isObject, upperFirst } from "lodash";
+import { isObject } from "lodash";
 import styles from "./styles/onboard.module.css";
 import {
   ACTIONS_CLASS,
   CARD_STYLING,
   HEADER_CLASS,
 } from "./onboarding/Onboard";
-import Metrics from "../../../atomic/molecules/metrics/metrics";
 import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
 import Table from "../../../atomic/organisms/table";
 
@@ -107,7 +106,7 @@ const TabularViewTab = ({ handlers }) => {
         pan,
         bank,
         _id,
-        status,
+        isActive,
       } = employee;
       return {
         "Employee ID": employeeId,
@@ -118,7 +117,7 @@ const TabularViewTab = ({ handlers }) => {
         "Date of Birth (dd/mm/yyyy)": dob,
         "Job Title": designation,
         _id: _id,
-        "Employment Status": capitalize(status),
+        "Employment Status": isActive ? "ACTIVE" : "INACTIVE",
         "Aadhaar Number": aadhaar?.number,
         "Aadhaar Status": aadhaar.verifyStatus,
         "PAN Number": pan?.number,
