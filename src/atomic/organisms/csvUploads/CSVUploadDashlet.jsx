@@ -83,9 +83,10 @@ function _CSVUploadDashlet({
 
     const tableCSV = Papa.unparse(
       tableData.map((row) => {
-        delete row.status;
-        delete row.rowNumber;
-        return row;
+        let csvRow = Object.assign({}, row);
+        delete csvRow.status;
+        delete csvRow.rowNumber;
+        return csvRow;
       })
     );
     console.log({ tableCSV });
