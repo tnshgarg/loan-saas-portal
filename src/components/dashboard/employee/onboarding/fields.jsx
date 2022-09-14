@@ -5,6 +5,7 @@ import {
   dojValidation,
   emailValidation,
   genderValidation,
+  accNumberValidation,
   ifscValidation,
   noValidation,
   panValidation,
@@ -107,7 +108,7 @@ export const FIELDS = [
     header: "Bank Account Number",
     field: "accountNumber",
     required: false,
-    validations: noValidation,
+    validations: accNumberValidation,
     group: FG.BANK_AC,
   },
   {
@@ -118,22 +119,15 @@ export const FIELDS = [
     group: FG.BANK_AC,
   },
   {
-    header: "Name of Principal Employer",
-    field: "prEmpName",
-    required: false,
-    validations: noValidation,
-    group: FG.EMPLOYMENT,
-  },
-  {
-    header: "Job Title" + REQUIRED_SUFFIX,
-    field: "title",
+    header: "Designation" + REQUIRED_SUFFIX,
+    field: "designation",
     required: true,
     validations: requiredValidation,
     group: FG.EMPLOYMENT,
   },
   {
-    header: "Business Unit (Optional)",
-    field: "bUnit",
+    header: "Department (Optional)",
+    field: "department",
     required: false,
     validations: noValidation,
     group: FG.EMPLOYMENT,
@@ -330,7 +324,7 @@ export function transformHeadersToFields(list) {
     return Object.entries(HEADERS_MAP).reduce(
       (transformedObject, [header, column]) => {
         const trimmedHeader = header.replace(REQUIRED_SUFFIX, "").trim();
-        console.log({ header, column, item });
+        // console.log({ header, column, item });
         transformedObject[column.field] = item[header] ?? item[trimmedHeader];
         return transformedObject;
       },

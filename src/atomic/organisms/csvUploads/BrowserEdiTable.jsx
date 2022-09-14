@@ -413,15 +413,15 @@ function Table({
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const { tableName } = ownProps;
+  const { tableName, panelName } = ownProps;
   const {
-    csvUploads: { errorFilters, filteredData, data, fields, stats },
+    csvUploads: {[panelName]: {[tableName] : {errorFilters = [], filteredData = [], data = [], fields = [], stats = {}} = {}} = {} },
   } = state;
   return {
-    data: coalesce([filteredData[tableName], data[tableName], []]),
-    columns: fields[tableName] || [],
-    stats: stats[tableName] || {},
-    errorFilters: errorFilters[tableName] || [],
+    data: coalesce([filteredData , data , []]),
+    columns: fields ,
+    stats: stats ,
+    errorFilters: errorFilters ,
   };
 };
 
@@ -433,9 +433,11 @@ function BrowserEdiTable({
   setter,
   stats,
   errorFilters,
+  panelName
 }) {
   const columnsMemo = React.useMemo(() => columns, [columns]);
   const dataMemo = React.useMemo(() => data, [data]);
+  console.log({dataMemo})
   const [skipPageReset, setSkipPageReset] = React.useState(false);
   setter(() => data);
   React.useEffect(() => {
@@ -445,11 +447,11 @@ function BrowserEdiTable({
   const updateMyData = (rowIndex, columnId, value) => {
     // We also turn on the flag to not reset the page
     setSkipPageReset(true);
-    dispatch(updateCSVRow({ tableName, rowIndex, columnId, value }));
+    dispatch(updateCSVRow({ tableName, rowIndex, columnId, value, panelName }));
   };
 
   const filterMyData = (errorFilter) => {
-    dispatch(toggleFilter({ tableName, errorFilter }));
+    dispatch(toggleFilter({ tableName, errorFilter, panelName }));
   };
 
   return (
