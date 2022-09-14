@@ -50,7 +50,7 @@ export const SignUp = () => {
         username,
         password,
         email,
-        phone_number,
+        `+91${phone_number}`,
         name,
         company_name,
         employee_count,
@@ -168,7 +168,7 @@ export const SignUp = () => {
                       </Tooltip2>
                     ),
                     icon: "shield",
-                    type: showPassword ? "text" : 'password',
+                    type: showPassword ? "text" : "password",
                     label: "Password",
                     subLabel:
                       "Password must contain atleast 8 characters with a special character, a number, a lowercase and an uppercase alphabet",
@@ -214,8 +214,7 @@ export const SignUp = () => {
                     icon: "phone",
                     type: "text",
                     label: "Phone Number",
-                    placeholder:
-                      "Enter you 10-digit phone number",
+                    placeholder: "Enter you 10-digit phone number",
                     errorMessage: "Enter 10 digit number",
                   }}
                 />
