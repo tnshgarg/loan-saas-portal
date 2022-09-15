@@ -58,6 +58,7 @@ export const registerUser =
     designation
   ) =>
   (dispatch) => {
+    username = username.replace("+", "_");
     return AuthService.signUp(
       username,
       password,
