@@ -42,7 +42,7 @@ export const FIELDS = [
   },
   {
     header: "Employee ID" + REQUIRED_SUFFIX,
-    field: "employeeId",
+    field: "employerEmployeeId",
     default: true,
     required: true,
     validations: requiredValidation,
