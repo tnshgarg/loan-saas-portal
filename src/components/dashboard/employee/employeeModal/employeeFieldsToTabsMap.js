@@ -18,7 +18,7 @@ export const employeeFieldsToTabsMap = {
   Employment: {
     category: "employment",
     fields: {
-      employeeId: "Employee ID",
+      employerEmployeeId: "Employee ID",
       doj: "Date of Joining (dd/mm/yyyy)",
       designation: "Designation",
       department: "Department",
