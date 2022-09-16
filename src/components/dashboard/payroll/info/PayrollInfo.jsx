@@ -1,7 +1,7 @@
 import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 import { faMoneyCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Intent, NonIdealState } from "@blueprintjs/core";
+import { Button, Intent } from "@blueprintjs/core";
 import { connect } from "react-redux";
 import { useState } from "react";
 import {
@@ -9,9 +9,8 @@ import {
   useProcessPayoutsMutation,
 } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
 import { DateDropdown } from "./DateDropdown";
-import BrowserEdiTable from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
-import { ONE_CLICK_HEADERS } from "../oneClickPayments/paymentFields";
-import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
+import { PendingPayoutsTable } from "./PendingPayoutsTable";
+import { HistoricalPayoutsTable } from "./HistoricalPayoutsTable";
 
 // tech-debt: move to utilities or atoms
 const Spacer = () => <>&nbsp;&nbsp;&nbsp;&nbsp;</>;
@@ -29,34 +28,30 @@ export function _PayrollInfo({ employerId, dispatch }) {
     year: today.getFullYear(),
     month: today.getMonth(),
   });
-  const { data, isLoading, error, refetch } = useGetPayoutsQuery({
+  const {
+    data: pendingPayoutsData,
+    isLoading: pendingPayoutsLoading,
+    error: pendingPayoutserror,
+    refetch: pendingPayoutsRefetch,
+  } = useGetPayoutsQuery({
     id: employerId,
     year: date.year,
     month: date.month,
     status: ["AWAITING_CONFIRMATION"],
   });
-  let { data: awaitingConfirmationEntries, meta } = (data && data.body) ?? {
-    data: [],
-    meta: {},
-  };
 
-  if (awaitingConfirmationEntries.length) {
-    console.log(awaitingConfirmationEntries);
-    dispatch(
-      initCSVUpload({
-        data: awaitingConfirmationEntries.map((item) => {
-          const mutableItem = Object.assign({}, item);
-          mutableItem.payrollStatus = mutableItem.status;
-          delete mutableItem.status;
-          mutableItem.status = {};
-          return mutableItem;
-        }),
-        fields: ONE_CLICK_HEADERS,
-        fileName: `payout-info-${date.year}`,
-        module: `payroll`,
-      })
-    );
-  }
+  const {
+    data: historicalPayoutsData,
+    isLoading: historicalPayoutsLoading,
+    error: historicalPayoutserror,
+    refetch: historicalPayoutsRefetch,
+  } = useGetPayoutsQuery({
+    id: employerId,
+    year: date.year,
+    month: date.month,
+    status: ["CONFIRMED", "INPROGRESS", "ERRORED", "ERROR", "SUCCESS"],
+  });
+
   const dateChanged = (updatedDate) => {
     setDate(updatedDate);
   };
@@ -78,8 +73,11 @@ export function _PayrollInfo({ employerId, dispatch }) {
             <Spacer />
             <Button
               icon={"refresh"}
-              loading={isLoading}
-              onClick={() => refetch()}
+              loading={pendingPayoutsLoading || historicalPayoutsLoading}
+              onClick={() => {
+                pendingPayoutsRefetch();
+                historicalPayoutsRefetch();
+              }}
             >
               Refresh data
             </Button>
@@ -102,26 +100,16 @@ export function _PayrollInfo({ employerId, dispatch }) {
           </>
         }
       >
-        {awaitingConfirmationEntries && awaitingConfirmationEntries.length ? (
-          <BrowserEdiTable
-            tableName={`payout-info-${date.year}`}
-            module={"payroll"}
-            deletes={false}
-            selection={false}
+        <div style={{ padding: "0.5em" }}>
+          <PendingPayoutsTable
+            data={pendingPayoutsData}
+            {...{ date, dispatch }}
           />
-        ) : (
-          <NonIdealState
-            icon={"property"}
-            title={"No Pending Payouts"}
-            description={
-              <>
-                Looks like no entries are pending confirmation, please upload
-                payouts or check the history tab
-              </>
-            }
-            layout={"horizontal"}
+          <HistoricalPayoutsTable
+            data={historicalPayoutsData}
+            {...{ date, dispatch }}
           />
-        )}
+        </div>
       </Dashlet>
     </>
   );

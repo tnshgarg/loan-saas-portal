@@ -24,7 +24,9 @@ import {
 import { coalesce } from "../../../utils/array";
 import {
   deleteCSVRow,
+  deselectCSVRow,
   restoreCSVRow,
+  selectCSVRow,
   toggleFilter,
   updateCSVRow,
 } from "../../../store/slices/csvUploadSlice.ts";
@@ -259,7 +261,14 @@ const SelectActionCell = ({
       selectRow(index);
     }
   };
-  return <Checkbox checked={status[FS.SELECTED]} onChange={onChange} />;
+  return (
+    <Checkbox
+      minimal={true}
+      disabled={status[FS.DELETED]}
+      checked={status[FS.SELECTED]}
+      onChange={onChange}
+    />
+  );
 };
 // Set our editable cell renderer as the default Cell renderer
 const defaultColumn = {
@@ -552,19 +561,19 @@ function BrowserEdiTable({
   };
 
   const deleteRow = (rowIndex) => {
-    dispatch(deleteCSVRow({ tableName, rowIndex }));
+    dispatch(deleteCSVRow({ tableName, rowIndex, module }));
   };
 
   const restoreRow = (rowIndex) => {
-    dispatch(restoreCSVRow({ tableName, rowIndex }));
+    dispatch(restoreCSVRow({ tableName, rowIndex, module }));
   };
 
   const selectRow = (rowIndex) => {
-    dispatch(deleteCSVRow({ tableName, rowIndex }));
+    dispatch(selectCSVRow({ tableName, rowIndex, module }));
   };
 
   const deselectRow = (rowIndex) => {
-    dispatch(restoreCSVRow({ tableName, rowIndex }));
+    dispatch(deselectCSVRow({ tableName, rowIndex, module }));
   };
 
   return (

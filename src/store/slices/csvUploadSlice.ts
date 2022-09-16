@@ -203,38 +203,79 @@ export const CSVUploadsSlice = createSlice({
       // reusing the same `filteredData` to maintain object reference
       populateFilteredData(data, errorFilters, filteredData);
     },
-    deleteCSVRow: (state, action) => {
+    selectCSVRow: (state, action) => {
       const {
-        payload: { tableName, rowIndex },
+        payload: { tableName, rowIndex, module },
       } = action;
 
       const {
-        data: { [tableName]: data },
-        errorFilters: { [tableName]: errorFilters },
-        filteredData: { [tableName]: filteredData },
-        stats: { [tableName]: stats },
+        [module]: {
+          [tableName]: { data, errorFilters, filteredData, stats },
+        },
       } = state;
-      console.log(rowIndex);
-      data[rowIndex].status[FS.DELETED] = true;
+      let row = data[rowIndex];
+      if (errorFilters.length) {
+        row = data[filteredData[rowIndex].rowNumber];
+      }
+      row.status[FS.SELECTED] = true;
+      stats[FS.SELECTED] = (stats[FS.SELECTED] || 0) + 1;
+    },
+    deselectCSVRow: (state, action) => {
+      const {
+        payload: { tableName, rowIndex, module },
+      } = action;
+
+      const {
+        [module]: {
+          [tableName]: { data, errorFilters, filteredData, stats },
+        },
+      } = state;
+      let row = data[rowIndex];
+      if (errorFilters.length) {
+        row = data[filteredData[rowIndex].rowNumber];
+      }
+      row.status[FS.SELECTED] = false;
+      stats[FS.SELECTED] = (stats[FS.SELECTED] || 1) - 1;
+    },
+    deleteCSVRow: (state, action) => {
+      const {
+        payload: { tableName, rowIndex, module },
+      } = action;
+      console.log(state);
+      const {
+        [module]: {
+          [tableName]: { data, errorFilters, filteredData, stats },
+        },
+      } = state;
+      let row = data[rowIndex];
+      if (errorFilters.length) {
+        row = data[filteredData[rowIndex].rowNumber];
+      }
+      row.status[FS.DELETED] = true;
       [FS.ERROR, FS.VALID, FS.WARN].forEach((errState) => {
-        stats[errState] -= data[rowIndex].status[errState];
+        stats[errState] -= row.status[errState];
       });
+      stats[FS.DELETED] = (stats[FS.DELETED] || 0) + 1;
     },
     restoreCSVRow: (state, action) => {
       const {
-        payload: { tableName, rowIndex },
+        payload: { tableName, rowIndex, module },
       } = action;
 
       const {
-        data: { [tableName]: data },
-        errorFilters: { [tableName]: errorFilters },
-        filteredData: { [tableName]: filteredData },
-        stats: { [tableName]: stats },
+        [module]: {
+          [tableName]: { data, errorFilters, filteredData, stats },
+        },
       } = state;
-      delete data[rowIndex].status[FS.DELETED];
+      let row = data[rowIndex];
+      if (errorFilters.length) {
+        row = data[filteredData[rowIndex].rowNumber];
+      }
+      delete row.status[FS.DELETED];
       [FS.ERROR, FS.VALID, FS.WARN].forEach((errState) => {
-        stats[errState] += data[rowIndex].status[errState];
+        stats[errState] += row.status[errState];
       });
+      stats[FS.DELETED] = (stats[FS.DELETED] || 1) - 1;
     },
     // WIP: discuss and add
     // deleteCSVRow: (state, action) => {
@@ -249,6 +290,8 @@ export const {
   toggleFilter,
   deleteCSVRow,
   restoreCSVRow,
+  selectCSVRow,
+  deselectCSVRow,
 } = CSVUploadsSlice.actions;
 
 export default CSVUploadsSlice.reducer;
