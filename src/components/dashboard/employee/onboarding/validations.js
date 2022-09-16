@@ -3,6 +3,7 @@ export const FIELD_STATUS = {
   WARN: 2,
   VALID: 3,
   DELETED: 4,
+  SELECTED: 5,
 };
 export const FS = FIELD_STATUS;
 
@@ -17,7 +18,7 @@ export const reg = {
   FIN_NUMBER: /^\d+(,\d+)*(\.\d{1,2})*$/,
   AMOUNT: /^\d+(,\d+)*(\.\d*)?$/,
   YEAR: /^\d{4}$/,
-  MONTH: /^(0\d)|(1[1-2])$/,
+  MONTH: /^(0\d)|(1[0-2])|(\d)$/,
 };
 
 function regexValidation(regex, errorLevel) {

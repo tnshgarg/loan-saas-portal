@@ -4,6 +4,7 @@ import { usePagination, useTable } from "react-table";
 import {
   Button,
   ButtonGroup,
+  Checkbox,
   Colors,
   EditableText,
   HTMLSelect,
@@ -156,15 +157,12 @@ function Pagination({
 // Create an editable cell renderer
 const EditableCell = ({
   value: initialValue,
-  row: {
-    index,
-    values: {
-      status: { [FS.DELETED]: isDeleted },
-    },
-  },
+  row: { index, values },
   column,
   updateMyData, // This is a custom function that we supplied to our table instance
 }) => {
+  let isDeleted = false;
+  if (values.status) isDeleted = values.status[FS.DELETED];
   // We need to keep and update the state of the cell normally
   const [value, setValue] = React.useState(initialValue || "");
 
@@ -221,9 +219,16 @@ const EditableCell = ({
   );
 };
 
-const DeleteActionCell = ({ value, row: { index }, deleteRow, restoreRow }) => {
+const DeleteActionCell = ({
+  row: {
+    index,
+    values: { status },
+  },
+  deleteRow,
+  restoreRow,
+}) => {
   const onClick = () => {
-    if (value[FS.DELETED]) {
+    if (status[FS.DELETED]) {
       restoreRow(index);
     } else {
       deleteRow(index);
@@ -232,13 +237,30 @@ const DeleteActionCell = ({ value, row: { index }, deleteRow, restoreRow }) => {
   return (
     <Icon
       minimal
-      icon={value[FS.DELETED] ? "undo" : "trash"}
+      icon={status[FS.DELETED] ? "undo" : "trash"}
       onClick={onClick}
       color={Colors.GRAY1}
     />
   );
 };
 
+const SelectActionCell = ({
+  row: {
+    index,
+    values: { status },
+  },
+  selectRow,
+  deselectRow,
+}) => {
+  const onChange = () => {
+    if (status[FS.SELECTED]) {
+      deselectRow(index);
+    } else {
+      selectRow(index);
+    }
+  };
+  return <Checkbox checked={status[FS.SELECTED]} onChange={onChange} />;
+};
 // Set our editable cell renderer as the default Cell renderer
 const defaultColumn = {
   Cell: EditableCell,
@@ -486,24 +508,35 @@ function BrowserEdiTable({
   stats,
   errorFilters,
   deletes,
+  selection,
   module,
 }) {
-  const additionalColumns = [];
+  const prefixColumns = [],
+    suffixColumns = [];
   if (deletes) {
-    additionalColumns.push({
+    suffixColumns.push({
       Header: "Delete",
       accessor: "status",
       Cell: DeleteActionCell,
     });
   }
+
+  if (selection) {
+    prefixColumns.push({
+      Header: "Select",
+      accessor: "status-s",
+      Cell: SelectActionCell,
+    });
+  }
+
   const columnsMemo = React.useMemo(
-    () => columns.concat(additionalColumns),
+    () => prefixColumns.concat(columns).concat(suffixColumns),
     [columns]
   );
   const dataMemo = React.useMemo(() => data, [data]);
   console.log({ dataMemo });
   const [skipPageReset, setSkipPageReset] = React.useState(false);
-  setter(() => data);
+  if (setter) setter(() => data);
   React.useEffect(() => {
     setSkipPageReset(false);
   }, [data]);
@@ -526,13 +559,28 @@ function BrowserEdiTable({
     dispatch(restoreCSVRow({ tableName, rowIndex }));
   };
 
+  const selectRow = (rowIndex) => {
+    dispatch(deleteCSVRow({ tableName, rowIndex }));
+  };
+
+  const deselectRow = (rowIndex) => {
+    dispatch(restoreCSVRow({ tableName, rowIndex }));
+  };
+
   return (
     <Styles>
       <Table
         columns={columnsMemo}
         data={dataMemo}
         hasGroups={true}
-        reduxActions={{ updateMyData, filterMyData, deleteRow, restoreRow }}
+        reduxActions={{
+          updateMyData,
+          filterMyData,
+          deleteRow,
+          restoreRow,
+          selectRow,
+          deselectRow,
+        }}
         filters={errorFilters}
         skipPageReset={skipPageReset}
         stats={stats}

@@ -127,11 +127,12 @@ export const CSVUploadsSlice = createSlice({
         }
         return res;
       }, {});
-      state[module][fileName].stats = getErrorDict();
+      state[module][fileName].stats = getStatusDict();
       data.forEach((row, index: number) => {
         const rowEntries = Object.entries(row);
+        console.log(row);
         row.rowNumber = index;
-        row.status = getErrorDict();
+        row.status = getStatusDict();
         rowEntries.forEach(([key, value]: [string, any]) => {
           if (value) {
             if (typeof value === "object") return;
@@ -252,10 +253,12 @@ export const {
 
 export default CSVUploadsSlice.reducer;
 
-function getErrorDict(): any {
+function getStatusDict(): any {
   return {
     [FS.ERROR]: 0,
     [FS.WARN]: 0,
     [FS.VALID]: 0,
+    [FS.SELECTED]: 0,
+    [FS.DELETED]: 0,
   };
 }

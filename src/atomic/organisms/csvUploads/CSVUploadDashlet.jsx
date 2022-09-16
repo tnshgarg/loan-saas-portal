@@ -261,7 +261,6 @@ function _CSVUploadDashlet({
           <>
             <BrowserEdiTable
               setter={setDataGetter}
-              tableName={file.object?.name}
               deletes={true}
               tableName={file?.object?.name}
               module={module}

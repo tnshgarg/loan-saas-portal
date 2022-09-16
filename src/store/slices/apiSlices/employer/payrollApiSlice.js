@@ -22,20 +22,41 @@ export const employerPayrollApi = createApi({
   keepUnusedDataFor: TIMEOUT,
   endpoints: (builder) => ({
     // Define endpoints here
-    getAwaitingPayroll: builder.query({
-      query: (id) => `/payroll?id=${id}`,
-      providesTags: ["EmployerAwaitingPayroll"],
+    getPayouts: builder.query({
+      query: ({ id, year, month, status = [] }) => {
+        const path = `/payouts?id=${id}&year=${year}&month=${month}`;
+        if (!id || !year || !month)
+          throw Error(
+            `none of these can be null ${JSON.stringify({
+              id,
+              year,
+              month,
+            })}`
+          );
+        if (status && status.length) {
+          return path + `&status=${JSON.stringify(status)}`;
+        }
+
+        return path;
+      },
+      transformResponse: (responseData) => {
+        if (responseData.body) {
+          responseData.body = JSON.parse(responseData.body);
+        }
+        return responseData;
+      },
+      providesTags: ["Payouts"],
     }),
-    updateAwaitingPayroll: builder.mutation({
+    processPayouts: builder.mutation({
       query: (body) => ({
-        url: `/payroll`,
+        url: `/payouts/confirmation`,
         method: "POST",
         body: body, // fetchBaseQuery automatically adds `content-type: application/json` to the Headers and calls `JSON.stringify(patch)`
       }),
-      invalidatesTags: ["EmployerAwaitingPayroll"],
+      invalidatesTags: ["Payouts"],
     }),
   }),
 });
 
-export const { useGetAwaitingPayrollQuery, useUpdateAwaitingPayrollMutation } =
+export const { useGetPayoutsQuery, useProcessPayoutsMutation } =
   employerPayrollApi;

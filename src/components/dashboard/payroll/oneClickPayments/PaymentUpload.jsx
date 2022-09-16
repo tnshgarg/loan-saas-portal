@@ -7,8 +7,6 @@ import { connect } from "react-redux";
 import { CSVUploadDashlet } from "../../../../atomic/organisms/csvUploads/CSVUploadDashlet";
 import { useGetAllEmployeesByEmployerIdQuery } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
 import { buildRowMapper, buildTemplate } from "../util";
-import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
-import { useGetAwaitingPayrollQuery } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
 
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
@@ -27,12 +25,6 @@ function _OneClickPayments({ employerId, dispatch }) {
   const { data, error, isLoading } =
     useGetAllEmployeesByEmployerIdQuery(employerId);
 
-  const {
-    data: d,
-    error: e,
-    isLoading: il,
-  } = useGetAwaitingPayrollQuery(employerId);
-  console.log({ d, e, il });
   const employeesData = data?.body ?? [];
   const templateData = buildTemplate(FIELDS, employeesData, getYesterdayDate());
   return (
@@ -52,7 +44,6 @@ function _OneClickPayments({ employerId, dispatch }) {
           // );
         }}
       />
-      {/*<Dashlet title={"Payments"}></Dashlet>*/}
     </>
   );
 }
