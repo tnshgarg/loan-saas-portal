@@ -161,7 +161,8 @@ const EditableCell = ({
   value: initialValue,
   row: { index, values },
   column,
-  updateMyData, // This is a custom function that we supplied to our table instance
+  updateMyData,
+  disableEdits,
 }) => {
   let isDeleted = false;
   if (values.status) isDeleted = values.status[FS.DELETED];
@@ -210,6 +211,7 @@ const EditableCell = ({
         </>
       ) : (
         <EditableText
+          disabled={disableEdits}
           value={value}
           intent={intent}
           onChange={onChange}
@@ -284,6 +286,7 @@ function Table({
   skipPageReset,
   fieldMap,
   stats,
+  disableEdits,
 }) {
   // Use the state and functions returned from useTable to build your UI
   const {
@@ -312,6 +315,7 @@ function Table({
       autoResetPage: !skipPageReset,
       fieldMap,
       ...reduxActions,
+      disableEdits,
     },
     usePagination
   );
@@ -519,7 +523,9 @@ function BrowserEdiTable({
   deletes,
   selection,
   module,
+  disableEdits,
 }) {
+  console.log(tableName);
   const prefixColumns = [],
     suffixColumns = [];
   if (deletes) {
@@ -593,6 +599,7 @@ function BrowserEdiTable({
         filters={errorFilters}
         skipPageReset={skipPageReset}
         stats={stats}
+        disableEdits={disableEdits}
       />
     </Styles>
   );
