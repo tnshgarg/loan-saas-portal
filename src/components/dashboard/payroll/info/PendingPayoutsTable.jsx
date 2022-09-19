@@ -61,6 +61,7 @@ export function PendingPayoutsTable({
           </Button>
           <Spacer />
           <SavePayoutButton
+            employerId={employerId}
             tableName={key}
             module={"payouts-pending"}
             loading={loading}

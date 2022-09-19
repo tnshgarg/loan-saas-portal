@@ -20,13 +20,19 @@ export function createPayoutHash(item) {
   return md5(rawStr);
 }
 
-function _SavePayoutButton({ data, tableName, module, loading }) {
+function _SavePayoutButton({ data, employerId, tableName, module, loading }) {
   const [updatePayouts, { isLoading }] = useUpdatePayoutsMutation();
   const updates = [];
   const deletes = [];
   data.forEach((item) => {
     if (item.status[FS.DELETED]) deletes.push(item["_id"]);
-    else if (createPayoutHash(item) !== item.initialHash) updates.push(item);
+    else if (createPayoutHash(item) !== item.initialHash) {
+      const mutableItem = Object.assign({}, item);
+      delete mutableItem.rowNumber;
+      delete mutableItem.status;
+      delete mutableItem.initialHash;
+      updates.push(mutableItem);
+    }
   });
   const hasUpdates = updates.length + deletes.length;
   return (
@@ -37,7 +43,7 @@ function _SavePayoutButton({ data, tableName, module, loading }) {
         icon={hasUpdates ? "floppy-disk" : "tick"}
         intent={hasUpdates ? Intent.SUCCESS : Intent.NONE}
         onClick={() => {
-          updatePayouts({ updates, deletes });
+          updatePayouts({ updates, deletes, employerId });
         }}
       >
         {hasUpdates ? `Save ${updates.length} Changes` : "No Changes"}
