@@ -25,6 +25,8 @@ export default function Metrics({
   secondary,
   secondaryConfig,
 }) {
+  primary = primary ?? {};
+  secondary = secondary ?? [];
   return (
     <Card elevation={Elevation.TWO} className={styles.cardRoot}>
       <H5 className={styles.heading}>
