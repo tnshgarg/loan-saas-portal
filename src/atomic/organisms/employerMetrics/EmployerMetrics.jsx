@@ -2,18 +2,13 @@ import React from "react";
 import { capitalize } from "lodash";
 
 //Molecules
-import Metrics from "../../molecules/metrics/metrics";
-
-//Styles
-import styles from './employerMetrics.module.css';
+import Metrics, { MetricsContainer } from "../../molecules/metrics/metrics";
 
 export default function EmployerMetrics({ data, primaryKey, config }) {
-  const {labels, secondaryConfig} = config;
-  console.log({labels})
+  const { labels, secondaryConfig } = config;
+  console.log({ labels, data, config });
   return (
-    <div
-      className={styles.metricsWrapper}
-    >
+    <MetricsContainer>
       {data?.body &&
         Object.keys(data?.body).map((key) => {
           const metricData = data?.body;
@@ -36,6 +31,6 @@ export default function EmployerMetrics({ data, primaryKey, config }) {
             />
           );
         })}
-    </div>
+    </MetricsContainer>
   );
 }

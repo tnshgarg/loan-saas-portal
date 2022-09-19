@@ -21,6 +21,7 @@ export function MetricsContainer(props) {
 
 export default function Metrics({
   title,
+  icon,
   primary,
   secondary,
   secondaryConfig,
@@ -31,21 +32,23 @@ export default function Metrics({
     <Card elevation={Elevation.TWO} className={styles.cardRoot}>
       <H5 className={styles.heading}>
         <Button className="pt-large">
-          <Icon icon="chart" size={20} />
+          <Icon icon={icon ?? "chart"} size={20} />
         </Button>
         <span>{title}</span>
       </H5>
       <div className={styles.primaryContainer}>
-        <Tag
-          minimal={true}
-          intent={Intent.SUCCESS}
-          large={true}
-          icon={<Icon icon="tick" size={15} />}
-        >
-          <span className={styles.tag}>
-            {primary.title} : {primary.count}
-          </span>
-        </Tag>
+        {primary.component ?? (
+          <Tag
+            minimal={true}
+            intent={Intent.SUCCESS}
+            large={true}
+            icon={<Icon icon="tick" size={15} />}
+          >
+            <span className={styles.tag}>
+              {primary.title} : {primary.count}
+            </span>
+          </Tag>
+        )}
       </div>
       <Divider className={styles.divider} />
       <div className={styles.secondaryContainer}>

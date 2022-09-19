@@ -1,6 +1,4 @@
 .cardRoot {
-  width: 25%;
-  margin-right: 20px;
 }
 
 .heading {
@@ -16,12 +14,12 @@
 }
 
 .primaryContainer {
-  display: flex;
-  align-items: center;
+  width: 100%;
   justify-content: end;
   font-weight: 600;
   font-size: 1.2rem;
-  margin: 0.7rem 0
+  margin: 0.7rem 0;
+  height: 2.5em;
 }
 
 .tag {
@@ -41,9 +39,9 @@
 }
 
 .metricsContainer {
-  display: flex;
-  margin-bottom: 2rem;
-  margin-left: 2.7em;
-  margin-right: 2.7em;
-  justify-content: flex-start;
+  padding: 0 2.7em 2.7em 2.7em;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2.7em;
 }
