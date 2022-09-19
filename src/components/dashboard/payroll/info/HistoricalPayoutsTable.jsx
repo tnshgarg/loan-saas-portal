@@ -1,9 +1,12 @@
-import { H4, NonIdealState } from "@blueprintjs/core";
+import { NonIdealState, ProgressBar } from "@blueprintjs/core";
 import BrowserEdiTable from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
-import { FIELDS, ONE_CLICK_HEADERS } from "../oneClickPayments/paymentFields";
+import { FIELDS } from "../oneClickPayments/paymentFields";
 import { noValidation } from "../../employee/onboarding/validations";
 import { REQUIRED_SUFFIX } from "../util";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMoneyCheck } from "@fortawesome/free-solid-svg-icons";
+import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 
 const HISTORICAL_PAYOUTS_HEADERS = FIELDS.concat([
   {
@@ -17,12 +20,15 @@ const HISTORICAL_PAYOUTS_HEADERS = FIELDS.concat([
   accessor: column.field,
 }));
 
-export function HistoricalPayoutsTable({ data, date, dispatch }) {
-  console.log({ historical: data });
-  let { data: historicalPayouts, meta } = (data && data.body) ?? {
-    data: [],
-    meta: {},
-  };
+export function HistoricalPayoutsTable({
+  data: historicalPayouts,
+  year,
+  month,
+  loading,
+  dispatch,
+}) {
+  const key = `payout-info-historical-${year}-${month}`;
+
   if (historicalPayouts.length) {
     console.log(historicalPayouts);
     dispatch(
@@ -35,27 +41,34 @@ export function HistoricalPayoutsTable({ data, date, dispatch }) {
           return mutableItem;
         }),
         fields: HISTORICAL_PAYOUTS_HEADERS,
-        fileName: `payout-info-historical-${date.year}`,
-        module: `payroll`,
+        fileName: key,
+        module: `payouts-historical`,
       })
     );
   }
   return (
-    <>
-      <H4>Pending Payouts</H4>
-      {historicalPayouts && historicalPayouts.length ? (
-        <BrowserEdiTable
-          tableName={`payout-info-historical-${date.year}`}
-          module={"payroll"}
-        />
-      ) : (
-        <NonIdealState
-          icon={"property"}
-          title={"No Payouts"}
-          description={<>Looks like no entries for payouts</>}
-          layout={"horizontal"}
-        />
-      )}
-    </>
+    <Dashlet icon={<FontAwesomeIcon icon={faMoneyCheck} />} title={"History"}>
+      <>
+        {loading ? (
+          <div style={{ padding: "3em" }}>
+            <ProgressBar animate stripes />
+          </div>
+        ) : historicalPayouts && historicalPayouts.length ? (
+          <BrowserEdiTable
+            disableEdits={true}
+            key={key}
+            tableName={key}
+            module={"payouts-historical"}
+          />
+        ) : (
+          <NonIdealState
+            icon={"property"}
+            title={"No Payouts"}
+            description={<>Looks like no entries for payouts</>}
+            layout={"horizontal"}
+          />
+        )}
+      </>
+    </Dashlet>
   );
 }
