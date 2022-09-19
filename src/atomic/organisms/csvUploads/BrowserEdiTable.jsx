@@ -239,12 +239,14 @@ const DeleteActionCell = ({
     }
   };
   return (
-    <Icon
-      minimal
-      icon={status[FS.DELETED] ? "undo" : "trash"}
-      onClick={onClick}
-      color={Colors.GRAY1}
-    />
+    <div style={{ textAlign: "center", padding: 0, margin: 0 }}>
+      <Icon
+        minimal
+        icon={status[FS.DELETED] ? "undo" : "trash"}
+        onClick={onClick}
+        color={Colors.GRAY1}
+      />
+    </div>
   );
 };
 
@@ -264,12 +266,14 @@ const SelectActionCell = ({
     }
   };
   return (
-    <Checkbox
-      minimal={true}
-      disabled={status[FS.DELETED]}
-      checked={status[FS.SELECTED]}
-      onChange={onChange}
-    />
+    <div style={{ textAlign: "center", padding: 0, margin: 0 }}>
+      <Checkbox
+        minimal={true}
+        disabled={status[FS.DELETED]}
+        checked={status[FS.SELECTED]}
+        onChange={onChange}
+      />
+    </div>
   );
 };
 // Set our editable cell renderer as the default Cell renderer
@@ -489,8 +493,9 @@ function Table({
   );
 }
 
-const mapStateToProps = (state, ownProps) => {
+export const CSVUploadsStateMapper = (state, ownProps) => {
   const { tableName, module } = ownProps;
+  console.log({ tableName, module });
   const {
     csvUploads: {
       [module]: {
@@ -605,4 +610,4 @@ function BrowserEdiTable({
   );
 }
 
-export default connect(mapStateToProps)(BrowserEdiTable);
+export default connect(CSVUploadsStateMapper)(BrowserEdiTable);
