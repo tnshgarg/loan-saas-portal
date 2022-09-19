@@ -4,12 +4,14 @@ import { Card, Divider, Elevation, H3, Icon } from "@blueprintjs/core";
 export const CARD_STYLING = {
   marginLeft: "2.7em",
   marginRight: "2.7em",
+  marginBottom: "2.7em",
 };
 
 export const HEADER_CLASS = `${styles.column} ${styles.header}`;
 export const ACTIONS_CLASS = `${styles.column} ${styles.actions}`;
 
 export function Dashlet({ title, icon, actions, children }) {
+  console.log({ title, children });
   return (
     <Card style={CARD_STYLING} elevation={Elevation.THREE}>
       <div className={styles.row}>
@@ -23,8 +25,14 @@ export function Dashlet({ title, icon, actions, children }) {
           <div className={styles.alignRight}>{actions}</div>
         </div>
       </div>
-      <Divider />
-      {children}
+      {children ? (
+        <>
+          <Divider />
+          {children}
+        </>
+      ) : (
+        <></>
+      )}
     </Card>
   );
 }
