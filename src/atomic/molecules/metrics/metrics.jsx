@@ -6,7 +6,6 @@ import {
   Divider,
   Elevation,
   H3,
-  H5,
   Icon,
   Intent,
   Tag,
@@ -42,7 +41,7 @@ export default function Metrics({
   secondary = secondary ?? [];
   secondaryConfig = secondaryConfig ?? {};
   return (
-    <Card elevation={Elevation.TWO}>
+    <Card elevation={Elevation.TWO} style={{ position: "relative" }}>
       <Button
         large
         disabled
