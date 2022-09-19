@@ -1,14 +1,23 @@
-import { H4, NonIdealState } from "@blueprintjs/core";
+import { Button, Intent, NonIdealState, ProgressBar } from "@blueprintjs/core";
 import BrowserEdiTable from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import { ONE_CLICK_HEADERS } from "../oneClickPayments/paymentFields";
+import { useProcessPayoutsMutation } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
+import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
+import { Spacer } from "../../../../atomic/atoms/layouts/alignment";
+import { createPayoutHash, SavePayoutButton } from "./SavePayoutButton";
 
-export function PendingPayoutsTable({ data, date, dispatch }) {
-  console.log({ pending: data });
-  let { data: pendingPayouts, meta } = (data && data.body) ?? {
-    data: [],
-    meta: {},
-  };
+export function PendingPayoutsTable({
+  data: pendingPayouts,
+  employerId,
+  year,
+  month,
+  loading,
+  dispatch,
+}) {
+  const [sendPayoutConfirmation, { isLoading: isProcessing }] =
+    useProcessPayoutsMutation();
+  const key = `payout-info-pending-${year}-${month}`;
   if (pendingPayouts.length) {
     console.log(pendingPayouts);
     dispatch(
@@ -18,24 +27,59 @@ export function PendingPayoutsTable({ data, date, dispatch }) {
           mutableItem.payrollStatus = mutableItem.status;
           delete mutableItem.status;
           mutableItem.status = {};
+          mutableItem.initialHash = createPayoutHash(item);
           return mutableItem;
         }),
         fields: ONE_CLICK_HEADERS,
-        fileName: `payout-info-pending-${date.year}`,
-        module: `payroll`,
+        fileName: key,
+        module: `payouts-pending`,
       })
     );
   }
+
+  const processPayouts = () => {
+    sendPayoutConfirmation({
+      employerId,
+      year: year,
+      month: month,
+    });
+  };
+
   return (
-    <>
-      <H4>Pending Payouts</H4>
+    <Dashlet
+      icon={"time"}
+      title={"Pending"}
+      actions={
+        <>
+          <Button
+            icon={"bank-account"}
+            intent={Intent.PRIMARY}
+            onClick={processPayouts}
+            loading={loading || isProcessing}
+          >
+            Process Payout
+          </Button>
+          <Spacer />
+          <SavePayoutButton
+            tableName={key}
+            module={"payouts-pending"}
+            loading={loading}
+          />
+        </>
+      }
+    >
       {pendingPayouts && pendingPayouts.length ? (
         <BrowserEdiTable
-          tableName={`payout-info-pending-${date.year}`}
-          module={"payroll"}
+          key={key}
+          tableName={key}
+          module={"payouts-pending"}
           deletes={true}
           selection={true}
         />
+      ) : loading ? (
+        <div style={{ padding: "3em" }}>
+          <ProgressBar animate stripes />
+        </div>
       ) : (
         <NonIdealState
           icon={"property"}
@@ -49,6 +93,6 @@ export function PendingPayoutsTable({ data, date, dispatch }) {
           layout={"horizontal"}
         />
       )}
-    </>
+    </Dashlet>
   );
 }
