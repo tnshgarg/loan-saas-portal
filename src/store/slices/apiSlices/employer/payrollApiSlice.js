@@ -55,8 +55,19 @@ export const employerPayrollApi = createApi({
       }),
       invalidatesTags: ["Payouts"],
     }),
+    updatePayouts: builder.mutation({
+      query: (body) => ({
+        url: `/payouts`,
+        method: "PATCH",
+        body: body, // fetchBaseQuery automatically adds `content-type: application/json` to the Headers and calls `JSON.stringify(patch)`
+      }),
+      invalidatesTags: ["Payouts"],
+    }),
   }),
 });
 
-export const { useGetPayoutsQuery, useProcessPayoutsMutation } =
-  employerPayrollApi;
+export const {
+  useGetPayoutsQuery,
+  useProcessPayoutsMutation,
+  useUpdatePayoutsMutation,
+} = employerPayrollApi;
