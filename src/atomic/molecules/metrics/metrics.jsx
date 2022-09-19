@@ -11,12 +11,25 @@ import {
 import React from "react";
 import styles from "./metrics.module.css";
 
-export default function Metrics({ title, primary, secondary, secondaryConfig }) {
+export function MetricsContainer(props) {
+  return (
+    <div className={styles.metricsContainer} {...props}>
+      {props.children}
+    </div>
+  );
+}
+
+export default function Metrics({
+  title,
+  primary,
+  secondary,
+  secondaryConfig,
+}) {
   return (
     <Card elevation={Elevation.TWO} className={styles.cardRoot}>
       <H5 className={styles.heading}>
         <Button className="pt-large">
-          <Icon icon="chart" iconSize={20} />
+          <Icon icon="chart" size={20} />
         </Button>
         <span>{title}</span>
       </H5>
@@ -35,17 +48,17 @@ export default function Metrics({ title, primary, secondary, secondaryConfig }) 
       <Divider className={styles.divider} />
       <div className={styles.secondaryContainer}>
         {secondary.map((item) => {
-          let tagProps = {}
-          let secondaryConfigKey = secondaryConfig[item.title]
-          if(secondaryConfigKey){
+          let tagProps = {};
+          let secondaryConfigKey = secondaryConfig[item.title];
+          if (secondaryConfigKey) {
             tagProps = {
               intent: Intent[secondaryConfigKey.intent],
-              icon: <Icon icon={secondaryConfigKey.icon} size={15} />
-            }
+              icon: <Icon icon={secondaryConfigKey.icon} size={15} />,
+            };
           }
           return (
             <Tag
-              style={{marginRight: '10px'}}
+              style={{ marginRight: "10px" }}
               round={false}
               minimal={true}
               intent={Intent.PRIMARY}
