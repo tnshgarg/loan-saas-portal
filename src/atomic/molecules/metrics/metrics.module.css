@@ -1,25 +1,22 @@
 .cardRoot {
+
 }
 
 .heading {
-  display: flex;
-  align-items: center;
+  text-align: right;
   justify-content: space-between;
   margin-bottom: 0;
-}
-
-.heading span {
-  color: gray;
-  font-size: 18px;
+  margin-left: 75px;
 }
 
 .primaryContainer {
-  width: 100%;
   justify-content: end;
+  text-align: right;
   font-weight: 600;
   font-size: 1.2rem;
   margin: 0.7rem 0;
   height: 2.5em;
+  margin-left: 75px;
 }
 
 .tag {

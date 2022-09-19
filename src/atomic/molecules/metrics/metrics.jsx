@@ -1,8 +1,11 @@
 import {
   Button,
   Card,
+  Classes,
+  Colors,
   Divider,
   Elevation,
+  H3,
   H5,
   Icon,
   Intent,
@@ -19,39 +22,70 @@ export function MetricsContainer(props) {
   );
 }
 
+function makeClasses(classes) {
+  return Object.entries(classes).reduce((classString, [classname, exists]) => {
+    if (exists) classString += ` ${classname}`;
+    return classString;
+  }, "");
+}
+
 export default function Metrics({
   title,
   icon,
+  intent,
   primary,
   secondary,
   secondaryConfig,
+  loading,
 }) {
   primary = primary ?? {};
   secondary = secondary ?? [];
+  secondaryConfig = secondaryConfig ?? {};
   return (
-    <Card elevation={Elevation.TWO} className={styles.cardRoot}>
-      <H5 className={styles.heading}>
-        <Button className="pt-large">
-          <Icon icon={icon ?? "chart"} size={20} />
-        </Button>
-        <span>{title}</span>
-      </H5>
-      <div className={styles.primaryContainer}>
+    <Card elevation={Elevation.TWO}>
+      <Button
+        large
+        disabled
+        intent={intent}
+        style={{ position: "absolute", float: "left", borderRadius: "0.3em" }}
+        className={makeClasses({ [Classes.SKELETON]: loading })}
+      >
+        <Icon icon={icon ?? "chart"} size={40} />
+      </Button>
+      <div
+        className={makeClasses({
+          [styles.heading]: true,
+          [Classes.SKELETON]: loading,
+        })}
+      >
+        <H3 style={{ color: Colors.GRAY1 }}>{title}</H3>
+      </div>
+      <div
+        className={makeClasses({
+          [styles.primaryContainer]: true,
+          [Classes.SKELETON]: loading,
+        })}
+      >
         {primary.component ?? (
-          <Tag
-            minimal={true}
-            intent={Intent.SUCCESS}
-            large={true}
+          <H3
+            style={{
+              color: primary.color ?? Colors.GREEN1,
+              display: "inline-block",
+            }}
             icon={<Icon icon="tick" size={15} />}
           >
-            <span className={styles.tag}>
-              {primary.title} : {primary.count}
-            </span>
-          </Tag>
+            {primary.count}
+            <br />
+            <span className={styles.tag}>{primary.title}</span>
+          </H3>
         )}
       </div>
       <Divider className={styles.divider} />
-      <div className={styles.secondaryContainer}>
+      <div
+        className={
+          styles.secondaryContainer + " " + (loading ? Classes.SKELETON : " ")
+        }
+      >
         {secondary.map((item) => {
           let tagProps = {};
           let secondaryConfigKey = secondaryConfig[item.title];
@@ -66,9 +100,9 @@ export default function Metrics({
               style={{ marginRight: "10px" }}
               round={false}
               minimal={true}
-              intent={Intent.PRIMARY}
+              intent={item.intent ?? Intent.PRIMARY}
               large={true}
-              icon={<Icon icon="tag" size={15} />}
+              icon={item.icon ?? <Icon icon="tag" size={15} />}
               {...tagProps}
             >
               <span className={styles.tag}>
