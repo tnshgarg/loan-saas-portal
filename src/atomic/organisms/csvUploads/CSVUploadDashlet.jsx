@@ -228,6 +228,7 @@ function _CSVUploadDashlet({
                   fileName={file?.object?.name}
                   module={module}
                   disableButton={cloudUploadDisabled}
+                  loading={loading}
                   onClick={(e) => {
                     !file.object
                       ? alert("Please select a file to upload")
@@ -260,6 +261,7 @@ function _CSVUploadDashlet({
         {file.object || savedFileName ? (
           <>
             <BrowserEdiTable
+              key={savedFileName ?? file.object.name}
               setter={setDataGetter}
               deletes={true}
               tableName={file?.object?.name}
