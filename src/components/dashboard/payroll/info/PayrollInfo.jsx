@@ -36,12 +36,15 @@ export function _PayrollInfo({ employerId, dispatch }) {
     PENDING: [],
     HISTORY: [],
   };
+
   // techdebt: error handling
   const { data, isLoading, refetch, isFetching } = useGetPayoutsQuery({
     id: employerId,
     year: year,
     month: month,
   });
+  let meta = data?.body?.meta;
+
   if (data && data.body && data.body.data) {
     data.body.data.forEach((item) => {
       entries["ALL"].push(item);
@@ -76,7 +79,7 @@ export function _PayrollInfo({ employerId, dispatch }) {
         loading={isLoading || isFetching}
       />
       <PendingPayoutsTable
-        {...{ employerId, year, month, dispatch }}
+        {...{ employerId, year, month, dispatch, meta }}
         data={entries["PENDING"]}
       />
       <HistoricalPayoutsTable
