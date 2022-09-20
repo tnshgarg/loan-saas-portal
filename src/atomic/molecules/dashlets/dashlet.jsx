@@ -1,5 +1,5 @@
 import styles from "./dashlet.module.css";
-import { Card, Divider, Elevation, H3, Icon } from "@blueprintjs/core";
+import { Card, Divider, Elevation, H3, Icon, Spinner } from "@blueprintjs/core";
 
 export const CARD_STYLING = {
   marginLeft: "2.7em",
@@ -10,7 +10,7 @@ export const CARD_STYLING = {
 export const HEADER_CLASS = `${styles.column} ${styles.header}`;
 export const ACTIONS_CLASS = `${styles.column} ${styles.actions}`;
 
-export function Dashlet({ title, icon, actions, children }) {
+export function Dashlet({ title, icon, actions, children, loading }) {
   console.log({ title, children });
   return (
     <Card style={CARD_STYLING} elevation={Elevation.THREE}>
@@ -25,7 +25,12 @@ export function Dashlet({ title, icon, actions, children }) {
           <div className={styles.alignRight}>{actions}</div>
         </div>
       </div>
-      {children ? (
+      {loading ? (
+        <>
+          <Divider />
+          <Spinner style={{ paddingTop: "1em" }} size={65} />
+        </>
+      ) : children ? (
         <>
           <Divider />
           {children}

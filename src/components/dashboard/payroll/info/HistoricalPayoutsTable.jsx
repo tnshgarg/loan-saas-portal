@@ -47,7 +47,11 @@ export function HistoricalPayoutsTable({
     );
   }
   return (
-    <Dashlet icon={<FontAwesomeIcon icon={faMoneyCheck} />} title={"History"}>
+    <Dashlet
+      icon={<FontAwesomeIcon icon={faMoneyCheck} />}
+      title={"History"}
+      loading={loading}
+    >
       <>
         {loading ? (
           <div style={{ padding: "3em" }}>

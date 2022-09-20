@@ -61,6 +61,7 @@ export function PendingPayoutsTable({
     <Dashlet
       icon={"time"}
       title={"Pending"}
+      loading={loading}
       actions={
         <>
           {/*techdebt: move this to another component*/}

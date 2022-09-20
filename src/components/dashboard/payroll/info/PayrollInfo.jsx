@@ -81,10 +81,12 @@ export function _PayrollInfo({ employerId, dispatch }) {
       <PendingPayoutsTable
         {...{ employerId, year, month, dispatch, meta }}
         data={entries["PENDING"]}
+        loading={isLoading || isFetching}
       />
       <HistoricalPayoutsTable
         {...{ year, month, dispatch }}
         data={entries["HISTORY"]}
+        loading={isLoading || isFetching}
       />
     </>
   );
