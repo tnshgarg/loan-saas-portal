@@ -1,4 +1,11 @@
-import { Button, Intent, NonIdealState, ProgressBar } from "@blueprintjs/core";
+import {
+  Card,
+  H4,
+  Intent,
+  NonIdealState,
+  ProgressBar,
+  Tag,
+} from "@blueprintjs/core";
 import BrowserEdiTable from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import { ONE_CLICK_HEADERS } from "../oneClickPayments/paymentFields";
@@ -6,9 +13,12 @@ import { useProcessPayoutsMutation } from "../../../../store/slices/apiSlices/em
 import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 import { Spacer } from "../../../../atomic/atoms/layouts/alignment";
 import { createPayoutHash, SavePayoutButton } from "./SavePayoutButton";
+import { ProcessPayoutsButton } from "./ProcessPayoutsButton";
+import { VirtualAccountInfo } from "./VirtualAccountInfo";
 
 export function PendingPayoutsTable({
   data: pendingPayouts,
+  meta,
   employerId,
   year,
   month,
@@ -18,6 +28,7 @@ export function PendingPayoutsTable({
   const [sendPayoutConfirmation, { isLoading: isProcessing }] =
     useProcessPayoutsMutation();
   const key = `payout-info-pending-${year}-${month}`;
+  const virtual_account = meta?.virtual_account;
   if (pendingPayouts.length) {
     console.log(pendingPayouts);
     dispatch(
@@ -36,29 +47,45 @@ export function PendingPayoutsTable({
       })
     );
   }
-
-  const processPayouts = () => {
-    sendPayoutConfirmation({
-      employerId,
-      year: year,
-      month: month,
-    });
-  };
-
+  const totalAmount = pendingPayouts.reduce(
+    (total, item) => total + item.amountPayable,
+    0
+  );
+  const sufficientFunds =
+    totalAmount > 0 && totalAmount < virtual_account.balance;
   return (
     <Dashlet
       icon={"time"}
       title={"Pending"}
       actions={
         <>
-          <Button
-            icon={"bank-account"}
-            intent={Intent.PRIMARY}
-            onClick={processPayouts}
-            loading={loading || isProcessing}
-          >
-            Process Payout
-          </Button>
+          {/*techdebt: move this to another component*/}
+          {totalAmount ? (
+            sufficientFunds ? (
+              <Tag minimal intent={Intent.SUCCESS} icon={"tick"}>
+                {totalAmount.toINR()} is available in account
+              </Tag>
+            ) : (
+              <Tag minimal intent={Intent.DANGER} icon={"cross"}>
+                {(totalAmount - virtual_account.balance).toINR()} needs to be
+                transferred
+              </Tag>
+            )
+          ) : (
+            <Tag minimal icon={"clean"}>
+              No Pending Payouts
+            </Tag>
+          )}
+          <Spacer />
+          <ProcessPayoutsButton
+            employerId={employerId}
+            tableName={key}
+            month={month}
+            year={year}
+            module={"payouts-pending"}
+            loading={loading}
+            disabled={!sufficientFunds}
+          />
           <Spacer />
           <SavePayoutButton
             employerId={employerId}
@@ -69,6 +96,17 @@ export function PendingPayoutsTable({
         </>
       }
     >
+      <Card>
+        <H4> Virtual Account Details </H4>
+        {virtual_account && null ? (
+          <VirtualAccountInfo {...virtual_account} />
+        ) : (
+          <NonIdealState icon={"error"}>
+            There seems to be an issue with your virtual account contact
+            <a href="mailto:support@unipe.co">support@unipe.co</a>
+          </NonIdealState>
+        )}
+      </Card>
       {pendingPayouts && pendingPayouts.length ? (
         <BrowserEdiTable
           key={key}
