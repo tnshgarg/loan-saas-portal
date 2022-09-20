@@ -1,7 +1,6 @@
 import { connect } from "react-redux";
 import { Button, Intent } from "@blueprintjs/core";
 import { CSVUploadsStateMapper } from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
-import { useProcessPayoutsMutation } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
 import { FS } from "../../employee/onboarding/validations";
 
 function _ProcessPayoutsButton({
@@ -13,8 +12,8 @@ function _ProcessPayoutsButton({
   module,
   loading,
   disabled,
+  updateHook: processPayouts,
 }) {
-  const [processPayouts, { isLoading }] = useProcessPayoutsMutation();
   const onClick = () => {
     const payload = {
       employerId,
@@ -25,13 +24,13 @@ function _ProcessPayoutsButton({
     if (selected.length) {
       payload.payouts = selected.map((item) => item._id);
     }
-    processPayouts(selected);
+    processPayouts(payload);
   };
   return (
     <>
       <Button
-        disabled={loading || isLoading || disabled}
-        loading={isLoading}
+        disabled={loading || disabled}
+        loading={loading}
         icon={"bank-account"}
         intent={Intent.PRIMARY}
         onClick={onClick}

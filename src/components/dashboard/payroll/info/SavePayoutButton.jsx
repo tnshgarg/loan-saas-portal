@@ -3,7 +3,6 @@ import { Button, Intent } from "@blueprintjs/core";
 import { CSVUploadsStateMapper } from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
 import md5 from "md5";
 import { FS } from "../../employee/onboarding/validations";
-import { useUpdatePayoutsMutation } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
 
 export function createPayoutHash(item) {
   let rawStr = "";
@@ -20,8 +19,14 @@ export function createPayoutHash(item) {
   return md5(rawStr);
 }
 
-function _SavePayoutButton({ data, employerId, tableName, module, loading }) {
-  const [updatePayouts, { isLoading }] = useUpdatePayoutsMutation();
+function _SavePayoutButton({
+  data,
+  employerId,
+  tableName,
+  module,
+  loading,
+  saveHook: updatePayouts,
+}) {
   const updates = [];
   const deletes = [];
   data.forEach((item) => {
@@ -38,8 +43,8 @@ function _SavePayoutButton({ data, employerId, tableName, module, loading }) {
   return (
     <>
       <Button
-        disabled={loading || isLoading || !hasUpdates}
-        loading={isLoading}
+        disabled={loading || !hasUpdates}
+        loading={loading}
         icon={hasUpdates ? "floppy-disk" : "tick"}
         intent={hasUpdates ? Intent.SUCCESS : Intent.NONE}
         onClick={() => {

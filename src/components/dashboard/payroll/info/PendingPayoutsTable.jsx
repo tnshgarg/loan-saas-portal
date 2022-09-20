@@ -9,7 +9,10 @@ import {
 import BrowserEdiTable from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import { ONE_CLICK_HEADERS } from "../oneClickPayments/paymentFields";
-import { useProcessPayoutsMutation } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
+import {
+  useProcessPayoutsMutation,
+  useUpdatePayoutsMutation,
+} from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
 import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 import { Spacer } from "../../../../atomic/atoms/layouts/alignment";
 import { createPayoutHash, SavePayoutButton } from "./SavePayoutButton";
@@ -27,6 +30,7 @@ export function PendingPayoutsTable({
 }) {
   const [sendPayoutConfirmation, { isLoading: isProcessing }] =
     useProcessPayoutsMutation();
+  const [updatePayouts, { isLoading: isSaving }] = useUpdatePayoutsMutation();
   const key = `payout-info-pending-${year}-${month}`;
   const virtual_account = meta?.virtual_account;
   if (pendingPayouts.length) {
@@ -83,8 +87,9 @@ export function PendingPayoutsTable({
             month={month}
             year={year}
             module={"payouts-pending"}
-            loading={loading}
+            loading={loading || isProcessing}
             disabled={!sufficientFunds}
+            updateHook={sendPayoutConfirmation}
           />
           <Spacer />
           <SavePayoutButton
@@ -92,13 +97,14 @@ export function PendingPayoutsTable({
             tableName={key}
             module={"payouts-pending"}
             loading={loading}
+            saveHook={updatePayouts}
           />
         </>
       }
     >
       <Card>
         <H4> Virtual Account Details </H4>
-        {virtual_account && null ? (
+        {virtual_account ? (
           <VirtualAccountInfo {...virtual_account} />
         ) : (
           <NonIdealState icon={"error"}>
@@ -107,7 +113,11 @@ export function PendingPayoutsTable({
           </NonIdealState>
         )}
       </Card>
-      {pendingPayouts && pendingPayouts.length ? (
+      {loading || isProcessing || isSaving ? (
+        <div style={{ padding: "3em" }}>
+          <ProgressBar animate stripes />
+        </div>
+      ) : pendingPayouts && pendingPayouts.length ? (
         <BrowserEdiTable
           key={key}
           tableName={key}
@@ -115,22 +125,21 @@ export function PendingPayoutsTable({
           deletes={true}
           selection={true}
         />
-      ) : loading ? (
-        <div style={{ padding: "3em" }}>
-          <ProgressBar animate stripes />
-        </div>
       ) : (
-        <NonIdealState
-          icon={"property"}
-          title={"No Pending Payouts"}
-          description={
-            <>
-              Looks like no entries are pending confirmation, please upload
-              payouts or check the history tab
-            </>
-          }
-          layout={"horizontal"}
-        />
+        <>
+          <br />
+          <NonIdealState
+            icon={"property"}
+            title={"No Pending Payouts"}
+            description={
+              <>
+                Looks like no entries are pending confirmation, please upload
+                payouts or check the history tab
+              </>
+            }
+            layout={"horizontal"}
+          />
+        </>
       )}
     </Dashlet>
   );
