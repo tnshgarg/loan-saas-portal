@@ -6,14 +6,17 @@ import {
   ButtonGroup,
   Checkbox,
   Colors,
+  ControlGroup,
   EditableText,
   HTMLSelect,
   HTMLTable,
   Icon,
+  InputGroup,
   Intent,
   Navbar,
   NavbarGroup,
   Tag,
+  Text,
 } from "@blueprintjs/core";
 import { connect } from "react-redux";
 
@@ -66,7 +69,7 @@ const Styles = styled.div`
   }
 `;
 
-function Pagination({
+export function Pagination({
   pageOptions,
   pageIndex,
   gotoPage,
@@ -94,7 +97,7 @@ function Pagination({
               setPageSize(Number(e.target.value));
             }}
           >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
+            {[3, 10, 20, 30, 40, 50].map((pageSize) => (
               <option
                 key={pageSize}
                 value={pageSize}
@@ -120,9 +123,21 @@ function Pagination({
           />
           <NavbarGroup>
             <small>
-              Page{" "}
               <strong>
-                {pageIndex + 1} of {pageOptions.length}
+                <ControlGroup>
+                  <Text>&nbsp;&nbsp; Page &nbsp;&nbsp; </Text>
+                  <InputGroup
+                    type={"text"}
+                    style={{ width: "2em", height: "1.3em", display: "inline" }}
+                    placeholder={pageIndex + 1}
+                    onBlur={(e) => {
+                      console.log(e);
+                      gotoPage(parseInt(e.target.value) - 1);
+                    }}
+                    rightElement={<span></span>}
+                  />
+                  <Text>&nbsp;&nbsp; of {pageOptions.length}</Text>
+                </ControlGroup>
               </strong>{" "}
             </small>
           </NavbarGroup>
