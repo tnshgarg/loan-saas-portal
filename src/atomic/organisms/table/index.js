@@ -18,6 +18,7 @@ import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import TableFilter from "react-table-filter";
 import generateExcel from "zipcelx";
 import "react-table-filter/lib/styles.css";
+import { getExcel } from "../../../utils/excelHandling";
 
 const Table = ({
   columns,
@@ -174,7 +175,7 @@ const Table = ({
   }, [data]);
 
   const updateFilterHandler = (newData, filterConfiguration) => {
-    console.log({filterConfiguration})
+    console.log({ filterConfiguration });
     setFilteredData(newData);
   };
 
@@ -183,76 +184,9 @@ const Table = ({
     addCallback();
   };
 
-  function getHeader(column) {
-    if (column.parent) {
-      return [
-        {
-          value: column.parent.Header + " " + column.Header,
-          type: "string",
-        },
-      ];
-    } else {
-      return [
-        {
-          value: column.Header,
-          type: "string",
-        },
-      ];
-    }
-  }
-
-  function getExcel() {
-    const d = new Date();
-
-    const config = {
-      filename: d.toString().split("GMT")[0].trim(),
-      sheet: {
-        data: [],
-      },
-    };
-
-    const dataSet = config.sheet.data;
-
-    headerGroups.forEach((headerGroup) => {
-      const headerRow = [];
-      if (headerGroup.headers) {
-        headerGroup.headers.forEach((column) => {
-          if (column?.accessor) {
-            headerRow.push(...getHeader(column));
-          }
-        });
-      }
-      headerRow.length && dataSet.push(headerRow);
-    });
-
-    if (rows.length > 0) {
-      rows.forEach((row) => {
-        const dataRow = [];
-
-        Object.values(row.values).forEach((value) =>
-          dataRow.push({
-            value,
-            type: typeof value === "number" ? "number" : "string",
-          })
-        );
-
-        dataSet.push(dataRow);
-      });
-    } else {
-      dataSet.push([
-        {
-          value: "No data",
-          type: "string",
-        },
-      ]);
-    }
-
-    return generateExcel(config);
-  }
-
   if (handlers) {
     handlers["download-excel"] = () => {
-      getExcel();
+      getExcel(headerGroups, rows);
     };
   }
 
