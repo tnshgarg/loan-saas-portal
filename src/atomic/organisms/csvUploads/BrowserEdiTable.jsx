@@ -212,6 +212,7 @@ const EditableCell = ({
       ) : (
         <EditableText
           disabled={disableEdits}
+          placeholder={disableEdits ? "" : null}
           value={value}
           intent={intent}
           onChange={onChange}
