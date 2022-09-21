@@ -14,6 +14,7 @@ export const reg = {
   EMAIL: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
   PAN: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
   AADHAAR: /^\d{12}$/,
+  ACCNUMBER: /^[A-Z0-9]{6,25}$/,
   IFSC: /^[A-Z]{4}0[A-Z0-9]{6}$/,
   FIN_NUMBER: /^\d+(,\d+)*(\.\d{1,2})*$/,
   AMOUNT: /^\d+(,\d+)*(\.\d*)?$/,
@@ -33,6 +34,7 @@ export const dateValidation = "dateValidation";
 export const dojValidation = "dojValidation";
 export const aadhaarValidation = "aadhaarValidation";
 export const panValidation = "panValidation";
+export const accNumberValidation = "accNumberValidation";
 export const ifscValidation = "ifscValidation";
 export const currencyValidation = "currencyValidation";
 export const noValidation = "noValidation";
@@ -50,6 +52,7 @@ export const VALIDATIONS = {
   [dojValidation]: regexValidation(reg.DATE, FS.ERROR),
   [aadhaarValidation]: regexValidation(reg.AADHAAR, FS.WARN),
   [panValidation]: regexValidation(reg.PAN, FS.WARN),
+  [accNumberValidation]: regexValidation(reg.ACCNUMBER, FS.WARN),
   [ifscValidation]: regexValidation(reg.IFSC, FS.WARN),
   [currencyValidation]: regexValidation(reg.FIN_NUMBER, FS.ERROR),
   [noValidation]: () => FS.VALID,

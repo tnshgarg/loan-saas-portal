@@ -3,6 +3,7 @@ import {
   Card,
   Classes,
   Dialog,
+  Divider,
   Elevation,
   H3,
   H5,
@@ -102,7 +103,7 @@ const TabularViewTab = ({ handlers }) => {
         pan,
         bank,
         _id,
-        status,
+        isActive,
       } = employee;
       return {
         "Employee ID": employerEmployeeId,
@@ -113,7 +114,7 @@ const TabularViewTab = ({ handlers }) => {
         "Date of Birth (dd/mm/yyyy)": dob,
         "Job Title": designation,
         _id: _id,
-        "Employment Status": capitalize(status),
+        "Employment Status": isActive ? "ACTIVE" : "INACTIVE",
         "Aadhaar Number": aadhaar?.number,
         "Aadhaar Status": aadhaar?.verifyStatus ?? "PENDING",
         "PAN Number": pan?.number,

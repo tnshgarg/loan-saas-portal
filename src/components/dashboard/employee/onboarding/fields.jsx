@@ -5,6 +5,7 @@ import {
   dojValidation,
   emailValidation,
   genderValidation,
+  accNumberValidation,
   ifscValidation,
   noValidation,
   panValidation,
@@ -41,7 +42,7 @@ export const FIELDS = [
   },
   {
     header: "Employee ID" + REQUIRED_SUFFIX,
-    field: "employeeId",
+    field: "employerEmployeeId",
     default: true,
     required: true,
     validations: requiredValidation,
@@ -107,7 +108,7 @@ export const FIELDS = [
     header: "Bank Account Number",
     field: "accountNumber",
     required: false,
-    validations: noValidation,
+    validations: accNumberValidation,
     group: FG.BANK_AC,
   },
   {

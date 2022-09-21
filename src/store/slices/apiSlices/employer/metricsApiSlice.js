@@ -25,11 +25,9 @@ export const employerMetricsApi = createApi({
     getEmployerMetricsById: builder.query({
       query: ({ employerId, subCategory, category }) =>
         `/metrics?category=${category}&id=${employerId}&subCategory=${subCategory}`,
-      providesTags:(subCategory) => [{ type: "EmployerMetrics", subCategory }],
+      providesTags: (subCategory) => [{ type: "EmployerMetrics", subCategory }],
     }),
   }),
 });
 
-export const {
-  useGetEmployerMetricsByIdQuery,
-} = employerMetricsApi;
+export const { useGetEmployerMetricsByIdQuery } = employerMetricsApi;
