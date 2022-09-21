@@ -37,37 +37,39 @@ const App = () => {
   });
 
   return (
-    <Router history={history}>
-      <BaseLayout>
-        <br />
-        <br />
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/confirm-sign-up" element={<ConfirmSignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route
-            path="/confirm-reset-password"
-            element={<ConfirmResetPassword />}
-          />
-          <Route path="/employer/overview" element={<Overview />} />
-          <Route path="/employer/register-form" element={<RegisterForm />} />
-          <Route path="/employees/onboard" element={<Onboard />} />
-          <Route path="/employees/panel" element={<EmployeesPanel />} />
-          <Route path="/attendance/import" element={<AttendanceUpload />} />
-          <Route
-            path="/payroll/one-click-payout"
-            element={<OneClickPayments />}
-          />
-          <Route path="/payroll/salary" element={<SalaryUpload />} />
-          <Route path="/payroll/info" element={<PayrollInfo />} />
-          <Route path="/payroll/transactions" element={<PayrollInfo />} />
+    <div>
+      <Router history={history}>
+        <BaseLayout>
+          <br />
+          <br />
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/confirm-sign-up" element={<ConfirmSignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route
+              path="/confirm-reset-password"
+              element={<ConfirmResetPassword />}
+            />
+            <Route path="/employer/overview" element={<Overview />} />
+            <Route path="/employer/register-form" element={<RegisterForm />} />
+            <Route path="/employees/onboard" element={<Onboard />} />
+            <Route path="/employees/panel" element={<EmployeesPanel />} />
+            <Route path="/attendance/import" element={<AttendanceUpload />} />
+            <Route
+              path="/payroll/one-click-payout"
+              element={<OneClickPayments />}
+            />
+            <Route path="/payroll/salary" element={<SalaryUpload />} />
+            <Route path="/payroll/info" element={<PayrollInfo />} />
+            <Route path="/payroll/transactions" element={<PayrollInfo />} />
 
-          <Route path="*" element={<Invalid />} />
-        </Routes>
-      </BaseLayout>
-    </Router>
+            <Route path="*" element={<Invalid />} />
+          </Routes>
+        </BaseLayout>
+      </Router>
+    </div>
   );
 };
 

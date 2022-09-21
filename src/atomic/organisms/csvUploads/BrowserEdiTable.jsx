@@ -459,7 +459,7 @@ function Table({
           maxHeight: "55vh",
           overflow: "auto",
           margin: "auto",
-          width: "fit-content",
+          width: "100%",
         }}
       >
         <HTMLTable
@@ -497,11 +497,11 @@ function Table({
           {/*  <code>{JSON.stringify(state, null, 2)}</code>*/}
           {/*</pre>*/}
         </HTMLTable>
-        <div>
-          <div style={{ textAlign: "right" }}>
-            <div style={{ display: "inline-block" }}>
-              <Pagination {...paginationProps} />
-            </div>
+      </div>
+      <div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ display: "inline-block" }}>
+            <Pagination {...paginationProps} />
           </div>
         </div>
       </div>

@@ -28,8 +28,7 @@ export default function BaseLayout(props) {
         style={{
           paddingLeft: sidebar.width,
           paddingTop: navbar.height,
-          paddingBottom: "5em",
-          maxHeight: `calc(100vh - 1.5em)`,
+          maxHeight: `calc(100vh)`,
           overflowY: "auto",
           overflowX: "hidden",
         }}
