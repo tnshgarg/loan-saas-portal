@@ -71,7 +71,7 @@ const TabularViewTab = ({ handlers }) => {
 
   const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
   const { data, isLoading, error, refetch } = responseFromQuery;
-
+  console.log({ data, isLoading, error, refetch });
   const responseFromLazyQuery = useLazyGetAllEmployeesByEmployerIdQuery();
   const [
     trigger,
@@ -90,8 +90,9 @@ const TabularViewTab = ({ handlers }) => {
 
   const setFetchedRowsFromBody = (body) => {
     const fetchedRowsData = body.map((employee) => {
+      console.log({ employee });
       const {
-        employeeId,
+        employerEmployeeId,
         name,
         mobile,
         email,
@@ -104,7 +105,7 @@ const TabularViewTab = ({ handlers }) => {
         status,
       } = employee;
       return {
-        "Employee ID": employeeId,
+        "Employee ID": employerEmployeeId,
         Name: name,
         "Mobile Number": mobile,
         "Onboarding Status": checkOverallStatus(aadhaar, pan, bank),
@@ -114,12 +115,12 @@ const TabularViewTab = ({ handlers }) => {
         _id: _id,
         "Employment Status": capitalize(status),
         "Aadhaar Number": aadhaar?.number,
-        "Aadhaar Status": aadhaar.verifyStatus,
+        "Aadhaar Status": aadhaar?.verifyStatus ?? "PENDING",
         "PAN Number": pan?.number,
-        "PAN Status": pan.verifyStatus,
+        "PAN Status": pan?.verifyStatus ?? "PENDING",
         "Account Number": bank?.accountNumber,
         "IFSC Code": bank?.ifsc,
-        "Account Status": bank.verifyStatus,
+        "Account Status": bank?.verifyStatus ?? "PENDING",
       };
     });
     setFetchedRows(fetchedRowsData);
@@ -224,6 +225,7 @@ const TabularViewTab = ({ handlers }) => {
   handlers["refresh"] = () => {
     refetch();
   };
+  console.log(fetchedRows);
   return (
     <>
       {isLoading ? (
@@ -321,11 +323,11 @@ const TabularTabsComponent = () => {
   };
   return (
     <>
-        <EmployerMetrics
-            data={data}
-            primaryKey={"SUCCESS"}
-            config={metricsConfig}
-        />
+      <EmployerMetrics
+        data={data}
+        primaryKey={"SUCCESS"}
+        config={metricsConfig}
+      />
       <Dashlet
         icon={"people"}
         title={"Employee Records"}

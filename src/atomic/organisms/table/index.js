@@ -186,7 +186,10 @@ const Table = ({
 
   if (handlers) {
     handlers["download-excel"] = () => {
-      getExcel(headerGroups, rows);
+      getExcel(
+        headerGroups,
+        rows.map((row) => row.original)
+      );
     };
   }
 

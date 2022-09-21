@@ -58,7 +58,9 @@ export function getExcel(headerGroups, rows, sheetName = "export") {
     rows.forEach((row) => {
       const dataRow = [];
       accessors.forEach((accessor) => {
-        const value = row[accessor];
+        const value =
+          typeof accessor === "function" ? accessor(row) : row[accessor];
+
         dataRow.push({
           value,
           type: typeof value === "number" ? "number" : "string",
