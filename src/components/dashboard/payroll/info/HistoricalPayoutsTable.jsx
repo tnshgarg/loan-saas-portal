@@ -7,6 +7,7 @@ import { REQUIRED_SUFFIX } from "../util";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoneyCheck } from "@fortawesome/free-solid-svg-icons";
 import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
+import { getExcel } from "../../../../utils/excelHandling";
 
 const HISTORICAL_PAYOUTS_HEADERS = FIELDS.concat([
   {
@@ -20,6 +21,11 @@ const HISTORICAL_PAYOUTS_HEADERS = FIELDS.concat([
     validations: noValidation,
   },
   {
+    header: "URN",
+    field: "bankReferenceNumber",
+    validations: noValidation,
+  },
+  {
     header: "Payout Status",
     field: "payoutStatus",
     validations: noValidation,
@@ -29,11 +35,6 @@ const HISTORICAL_PAYOUTS_HEADERS = FIELDS.concat([
     field: "errorReason",
     validations: noValidation,
   },
-  {
-    header: "URN",
-    field: "bankReferenceNumber",
-    validations: noValidation,
-  },
 ]).map((column) => ({
   ...column,
   Header: column.header.replace(REQUIRED_SUFFIX, ""),
@@ -41,25 +42,25 @@ const HISTORICAL_PAYOUTS_HEADERS = FIELDS.concat([
 }));
 
 export function HistoricalPayoutsTable({
-  data: historicalPayouts,
+  data,
   year,
   month,
   loading,
   dispatch,
 }) {
   const key = `payout-info-historical-${year}-${month}`;
-
+  const historicalPayouts = data.map((item) => {
+    const mutableItem = Object.assign({}, item);
+    mutableItem.payoutStatus = mutableItem.status;
+    delete mutableItem.status;
+    mutableItem.status = {};
+    return mutableItem;
+  });
   if (historicalPayouts.length) {
-    console.log(historicalPayouts);
+    console.log({ historicalPayouts });
     dispatch(
       initCSVUpload({
-        data: historicalPayouts.map((item) => {
-          const mutableItem = Object.assign({}, item);
-          mutableItem.payoutStatus = mutableItem.status;
-          delete mutableItem.status;
-          mutableItem.status = {};
-          return mutableItem;
-        }),
+        data: historicalPayouts,
         fields: HISTORICAL_PAYOUTS_HEADERS,
         fileName: key,
         module: `payouts-historical`,
@@ -71,6 +72,23 @@ export function HistoricalPayoutsTable({
       icon={<FontAwesomeIcon icon={faMoneyCheck} />}
       title={"History"}
       loading={loading}
+      actions={
+        <>
+          <Button
+            icon={"saved"}
+            intent={Intent.SUCCESS}
+            onClick={() =>
+              getExcel(
+                [{ headers: HISTORICAL_PAYOUTS_HEADERS }],
+                historicalPayouts,
+                "Payouts"
+              )
+            }
+          >
+            Download Excel
+          </Button>
+        </>
+      }
     >
       <>
         {loading ? (
