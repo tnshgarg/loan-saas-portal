@@ -1,4 +1,4 @@
-import { NonIdealState, ProgressBar } from "@blueprintjs/core";
+import { Button, Intent, NonIdealState, ProgressBar } from "@blueprintjs/core";
 import BrowserEdiTable from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import { FIELDS } from "../oneClickPayments/paymentFields";
@@ -10,8 +10,28 @@ import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 
 const HISTORICAL_PAYOUTS_HEADERS = FIELDS.concat([
   {
+    header: "Account Number",
+    field: "accountNumber",
+    validations: noValidation,
+  },
+  {
+    header: "IFSC",
+    field: "ifsc",
+    validations: noValidation,
+  },
+  {
     header: "Payout Status",
     field: "payoutStatus",
+    validations: noValidation,
+  },
+  {
+    header: "Remarks",
+    field: "errorReason",
+    validations: noValidation,
+  },
+  {
+    header: "URN",
+    field: "bankReferenceNumber",
     validations: noValidation,
   },
 ]).map((column) => ({
