@@ -2,8 +2,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { EMPLOYER_BASE_API_URL, TIMEOUT } from "../../../../utils/apiUrls";
 
 // Define a service using a base URL and expected endpoints
-export const employerAddressApi = createApi({
-  reducerPath: "employerAddress",
+export const employerMetricsApi = createApi({
+  reducerPath: "employerMetrics",
   baseQuery: fetchBaseQuery({
     baseUrl: EMPLOYER_BASE_API_URL,
     prepareHeaders: (headers, { getState }) => {
@@ -18,26 +18,16 @@ export const employerAddressApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["EmployerAddress"],
+  tagTypes: ["EmployerMetrics"],
   keepUnusedDataFor: TIMEOUT,
   endpoints: (builder) => ({
     // Define endpoints here
-    getEmployerAddressById: builder.query({
-      query: (id) => `/address?id=${id}`,
-      providesTags: ["EmployerAddress"],
-    }),
-    updateEmployerAddress: builder.mutation({
-      query: (body) => ({
-        url: `/address`,
-        method: "POST",
-        body: body, // fetchBaseQuery automatically adds `content-type: application/json` to the Headers and calls `JSON.stringify(patch)`
-      }),
-      invalidatesTags: ["EmployerAddress"],
+    getEmployerMetricsById: builder.query({
+      query: ({ employerId, subCategory, category }) =>
+        `/metrics?category=${category}&id=${employerId}&subCategory=${subCategory}`,
+      providesTags: (subCategory) => [{ type: "EmployerMetrics", subCategory }],
     }),
   }),
 });
 
-export const {
-  useGetEmployerAddressByIdQuery,
-  useUpdateEmployerAddressMutation,
-} = employerAddressApi;
+export const { useGetEmployerMetricsByIdQuery } = employerMetricsApi;

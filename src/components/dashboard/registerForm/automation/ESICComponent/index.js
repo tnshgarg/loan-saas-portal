@@ -1,9 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useAlert } from "react-alert";
 
 //Components
-import Table from "../../../../common/Table";
+import Table from "../../../../../atomic/organisms/table";
 
 import EditableDropdown from "./EditableDropdown";
 import {
@@ -14,6 +13,8 @@ import {
   useGetEmployerCredentialsByIdQuery,
   useUpdateEmployerCredentialsMutation,
 } from "../../../../../store/slices/apiSlices/employer/credentialsApiSlice";
+import { Intent } from "@blueprintjs/core";
+import { AppToaster } from "../../../../../contexts/ToastContext";
 
 export default function ESICComponent() {
   const columns = React.useMemo(
@@ -54,8 +55,6 @@ export default function ESICComponent() {
   const [esicForm, setEsicForm] = React.useState({});
   const [data, setData] = React.useState(Object.values(esicForm));
   const [skipPageReset, setSkipPageReset] = React.useState(false);
-
-  const alert = useAlert();
 
   const initialForm = {
     state: "Andaman and Nicobar",
@@ -125,12 +124,18 @@ export default function ESICComponent() {
   ) => {
     setSkipPageReset(true);
     if (!updatedRow.state || !updatedRow.employerCode || !updatedRow.password) {
-      alert.error("Please fill in all the fields");
+      AppToaster.show({
+        intent: Intent.DANGER,
+        message: "Please fill in all the fields",
+      });
       return;
     }
     var checkNumber = new RegExp(/^[0-9]+$/);
     if (!checkNumber.test(updatedRow.employerCode)) {
-      alert.error("Please input valid Employer Code");
+      AppToaster.show({
+        intent: Intent.DANGER,
+        message: "Please input valid Employer Code",
+      });
       callback && callback();
       return;
     }
@@ -154,17 +159,26 @@ export default function ESICComponent() {
       })
         .then(() => {
           callback && callback();
-          alert.success(VALUES_UPDATED);
+          AppToaster.show({
+            intent: Intent.SUCCESS,
+            message: VALUES_UPDATED,
+          });
         })
         .catch((error) => {
           console.log(error);
           const message = error.response?.data?.message ?? "Some error occured";
-          alert.error(message);
+          AppToaster.show({
+            intent: Intent.DANGER,
+            message,
+          });
         });
     } else {
       callback && callback();
       setEditableRowIndex(null);
-      alert.error(NO_CHANGE_ERROR);
+      AppToaster.show({
+        intent: Intent.DANGER,
+        message: NO_CHANGE_ERROR,
+      });
     }
   };
 
@@ -188,7 +202,7 @@ export default function ESICComponent() {
         updateData={updateData}
         initialState={{ hiddenColumns: ["isOther"] }}
         inputTypes={inputTypes}
-        addLabel={'Add Another State'}
+        addLabel={"Add Another State"}
         showAddBtn={true}
       />
     </>

@@ -2,12 +2,15 @@ import {
   aadhaarValidation,
   currencyValidation,
   dateValidation,
+  dojValidation,
   emailValidation,
   genderValidation,
+  accNumberValidation,
   ifscValidation,
   noValidation,
   panValidation,
   phoneValidation,
+  requiredValidation,
 } from "./validations";
 
 export const FIELD_GROUP = {
@@ -20,27 +23,29 @@ export const FIELD_GROUP = {
   BANK_AC: "Bank A/c",
 };
 const FG = FIELD_GROUP;
+const REQUIRED_SUFFIX = " (Required)";
 
-// FIELDS are order Sensetive
+// FIELDS are order Sensitive
 export const FIELDS = [
   {
-    header: "Name",
+    header: "Name" + REQUIRED_SUFFIX,
     field: "name",
-    required: false,
-    validations: noValidation,
+    validations: requiredValidation,
     group: FG.PERSISTENT,
   },
   {
-    header: "Mobile Number",
+    header: "Mobile Number" + REQUIRED_SUFFIX,
     field: "mobile",
+    required: true,
     validations: phoneValidation,
     group: FG.PERSISTENT,
   },
   {
-    header: "Employee ID",
-    field: "employeeId",
+    header: "Employee ID" + REQUIRED_SUFFIX,
+    field: "employerEmployeeId",
     default: true,
-    required: false,
+    required: true,
+    validations: requiredValidation,
     group: FG.PERSISTENT,
   },
   {
@@ -72,10 +77,10 @@ export const FIELDS = [
     group: FG.PERSONAL_DETAILS,
   },
   {
-    header: "Date of Joining (dd/mm/yyyy)",
+    header: "Date of Joining (dd/mm/yyyy)" + REQUIRED_SUFFIX,
     field: "doj",
-    required: false,
-    validations: dateValidation,
+    required: true,
+    validations: dojValidation,
     group: FG.EMPLOYMENT,
   },
   {
@@ -103,7 +108,7 @@ export const FIELDS = [
     header: "Bank Account Number",
     field: "accountNumber",
     required: false,
-    validations: noValidation,
+    validations: accNumberValidation,
     group: FG.BANK_AC,
   },
   {
@@ -114,30 +119,23 @@ export const FIELDS = [
     group: FG.BANK_AC,
   },
   {
-    header: "Name of Principal Employer",
-    field: "prEmpName",
+    header: "Designation" + REQUIRED_SUFFIX,
+    field: "designation",
+    required: true,
+    validations: requiredValidation,
+    group: FG.EMPLOYMENT,
+  },
+  {
+    header: "Department (Optional)",
+    field: "department",
     required: false,
     validations: noValidation,
     group: FG.EMPLOYMENT,
   },
   {
-    header: "Job Title",
-    field: "title",
-    required: false,
-    validations: noValidation,
-    group: FG.EMPLOYMENT,
-  },
-  {
-    header: "Business Unit (Optional)",
-    field: "bUnit",
-    required: false,
-    validations: noValidation,
-    group: FG.EMPLOYMENT,
-  },
-  {
-    header: "Annual CTC",
+    header: "Annual CTC" + REQUIRED_SUFFIX,
     field: "aCTC",
-    required: false,
+    required: true,
     validations: currencyValidation,
     group: FG.EMPLOYMENT,
   },
@@ -293,6 +291,8 @@ export const FIELD_MAP = FIELDS.reduce((map, column) => {
   return map;
 }, {});
 
+export const DATE_FIELDS = ["dob", "doj"];
+
 /**
  * HEADER_GROUPS is a react-table feature, which allows creating of column groups
  */
@@ -317,11 +317,15 @@ export const HEADER_GROUPS = FIELDS.reduce((groups, column) => {
   return groups;
 }, []);
 
+export const HEADER_LIST = FIELDS.map((column) => column.header);
 export function transformHeadersToFields(list) {
+  console.log({ transformHeadersToFields: true, list });
   return list.map((item) => {
     return Object.entries(HEADERS_MAP).reduce(
       (transformedObject, [header, column]) => {
-        transformedObject[column.field] = item[header];
+        const trimmedHeader = header.replace(REQUIRED_SUFFIX, "").trim();
+        // console.log({ header, column, item });
+        transformedObject[column.field] = item[header] ?? item[trimmedHeader];
         return transformedObject;
       },
       {}

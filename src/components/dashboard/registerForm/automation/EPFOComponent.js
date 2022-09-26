@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
-import { useAlert } from "react-alert";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,7 +6,7 @@ import {
   VALUES_UPDATED,
 } from "../../../../utils/messageStrings";
 import { setPfForm } from "../../../../store/slices/registerFormSlice";
-import FormInput from "../../../common/FormInput";
+import FormInput from "../../../../atomic/atoms/forms/FormInput";
 import withUpdateAlert from "../../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../../contexts/updateAlertContext";
 import UpdateAlert from "../../../common/UpdateAlert";
@@ -15,11 +14,11 @@ import {
   useGetEmployerCredentialsByIdQuery,
   useUpdateEmployerCredentialsMutation,
 } from "../../../../store/slices/apiSlices/employer/credentialsApiSlice";
+import { Intent } from "@blueprintjs/core";
+import { AppToaster } from "../../../../contexts/ToastContext";
 
 const EPFOComponent = () => {
   const dispatch = useDispatch();
-  const alert = useAlert();
-
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
@@ -85,19 +84,28 @@ const EPFOComponent = () => {
         .then((response) => {
           const status = response.data.status;
           if (status === 200) {
-            alert.success(VALUES_UPDATED);
+            AppToaster.show({
+              intent: Intent.SUCCESS,
+              message: VALUES_UPDATED,
+            });
             setDisabled(true);
             setValue({ ...value, isOpen: false });
           }
         })
         .catch((error) => {
           const message = error.response?.data?.message ?? "Some error occured";
-          alert.error(message);
+          AppToaster.show({
+            intent: Intent.DANGER,
+            message,
+          });
         });
     } else {
       setValue({ ...value, isOpen: false });
       setDisabled(true);
-      alert.error(NO_CHANGE_ERROR);
+      AppToaster.show({
+        intent: Intent.DANGER,
+        message: NO_CHANGE_ERROR,
+      });
     }
   }; // your form submit function which will invoke after successful validation
 

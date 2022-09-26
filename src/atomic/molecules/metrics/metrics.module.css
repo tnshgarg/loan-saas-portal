@@ -1,0 +1,41 @@
+.cardRoot {
+  width: 25%;
+  margin-right: 20px;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+
+.heading span {
+  color: gray;
+  font-size: 18px;
+}
+
+.primaryContainer {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin: 0.7rem 0rem
+}
+
+.tag {
+  font-size: 13px;
+  font-weight: 600
+}
+
+.secondaryContainer {
+  display: flex;
+  margin-top: 12px;
+  margin-right: 10px;
+}
+
+.divider {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}

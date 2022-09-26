@@ -1,4 +1,18 @@
-import { Card, Dialog, Elevation } from "@blueprintjs/core";
+import {
+  Button,
+  Card,
+  Classes,
+  Dialog,
+  Divider,
+  Elevation,
+  H3,
+  H5,
+  H6,
+  Icon,
+  Intent,
+  Spinner,
+  Tag,
+} from "@blueprintjs/core";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
@@ -7,22 +21,18 @@ import {
   useGetAllEmployeesByEmployerIdQuery,
   useLazyGetAllEmployeesByEmployerIdQuery,
 } from "../../../store/slices/apiSlices/employees/employeesApiSlice";
-import Table from "../../common/Table";
+import { useGetEmployerMetricsByIdQuery } from "../../../store/slices/apiSlices/employer/metricsApiSlice";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
-import { capitalize, isObject } from "lodash";
-
-const REGISTER_FORM_CARD_STYLING = {
-  width: "90%",
-  marginRight: "auto",
-  marginLeft: "auto",
-  overflow: "scroll",
-};
-
-const TABLE_CARD_STYLING = {
-  overflow: "scroll",
-  borderRadius: "0px",
-};
+import { isObject } from "lodash";
+import styles from "./styles/onboard.module.css";
+import {
+  ACTIONS_CLASS,
+  CARD_STYLING,
+  HEADER_CLASS,
+} from "./onboarding/Onboard";
+import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
+import Table from "../../../atomic/organisms/table";
 
 const MODAL_STYLING = {
   marginTop: "7.5rem",
@@ -60,12 +70,12 @@ function fuzzyTextFilterFn(rows, id, filterValue) {
 
 fuzzyTextFilterFn.autoRemove = (val) => !val;
 
-const TabularViewTab = () => {
+const TabularViewTab = ({ handlers }) => {
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
   const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
-  const { data, isLoading, error } = responseFromQuery;
+  const { data, isLoading, error, refetch } = responseFromQuery;
 
   const responseFromLazyQuery = useLazyGetAllEmployeesByEmployerIdQuery();
   const [
@@ -86,28 +96,28 @@ const TabularViewTab = () => {
   const setFetchedRowsFromBody = (body) => {
     const fetchedRowsData = body.map((employee) => {
       const {
-        employeeId,
+        employerEmployeeId,
         name,
         mobile,
         email,
         dob,
-        title,
+        designation,
         aadhaar,
         pan,
         bank,
         _id,
-        status,
+        isActive,
       } = employee;
       return {
-        "Employee ID": employeeId,
+        "Employee ID": employerEmployeeId,
         Name: name,
         "Mobile Number": mobile,
-        "Verification Status": checkOverallStatus(aadhaar, pan, bank),
+        "Onboarding Status": checkOverallStatus(aadhaar, pan, bank),
         Email: email,
         "Date of Birth (dd/mm/yyyy)": dob,
-        "Job Title": title,
+        "Job Title": designation,
         _id: _id,
-        Status: capitalize(status),
+        "Employment Status": isActive ? "ACTIVE" : "INACTIVE",
         "Aadhaar Number": aadhaar?.number,
         "Aadhaar Status": aadhaar.verifyStatus,
         "PAN Number": pan?.number,
@@ -122,7 +132,7 @@ const TabularViewTab = () => {
 
   useEffect(() => {
     if (data) {
-      const body = data.body ?? [];
+      const body = data?.body ?? [];
       setFetchedRowsFromBody(body);
     }
   }, [data]);
@@ -200,12 +210,14 @@ const TabularViewTab = () => {
 
   const cellProps = (cell) => {
     let bgColor = "white";
-    if (cell.value.includes("SUCCESS")) {
-      bgColor = "rgb(204, 255, 216, 0.5)";
-    } else if (cell.value.includes("PENDING")) {
-      bgColor = "rgb(247, 252, 162, 0.5)";
-    } else if (cell.value.includes("ERROR")) {
-      bgColor = "rgb(255, 215, 213, 0.5)";
+    if (cell?.value) {
+      if (cell.value.includes("SUCCESS")) {
+        bgColor = "rgb(204, 255, 216, 0.5)";
+      } else if (cell.value.includes("PENDING")) {
+        bgColor = "rgb(247, 252, 162, 0.5)";
+      } else if (cell.value.includes("ERROR")) {
+        bgColor = "rgb(255, 215, 213, 0.5)";
+      }
     }
 
     return {
@@ -214,41 +226,88 @@ const TabularViewTab = () => {
       },
     };
   };
+  handlers["refresh"] = () => {
+    refetch();
+  };
   return (
     <>
-      <Table
-        columns={columns}
-        defaultColumn={defaultColumn}
-        data={fetchedRows}
-        handleRowClick={handleRowClick}
-        showPagination={true}
-        filterTypes={filterTypes}
-        showEditColumn={false}
-        showFilter={true}
-        hoverEffect={true}
-        cellProps={cellProps}
-      />
-      <Dialog
-        isOpen={isDialogOpen}
-        onClose={handleDialogClose}
-        title="Employee Details"
-        style={MODAL_STYLING}
-      >
-        <Card interactive={true} elevation={Elevation.THREE}>
-          <EmployeeModal
-            currEmployeeId={currEmployeeId}
-            setDidDialogChange={setDidDialogChange}
+      {isLoading ? (
+        <Spinner style={{ marginTop: "2em", marginBottom: "2em" }} size={54} />
+      ) : error ? (
+        <Tag icon={"error"} intent={Intent.DANGER} large minimal>
+          {error}
+        </Tag>
+      ) : (
+        <>
+          <Table
+            columns={[
+              {
+                Header: "S/N",
+                id: "row",
+                Cell: ({ row }) => {
+                  return <div>{row.index + 1}</div>;
+                },
+              },
+              ...columns,
+            ]}
+            defaultColumn={defaultColumn}
+            data={fetchedRows}
+            handleRowClick={handleRowClick}
+            showPagination={true}
+            filterTypes={filterTypes}
+            showEditColumn={false}
+            showFilter={true}
+            hoverEffect={true}
+            cellProps={cellProps}
+            showDownload={false}
+            handlers={handlers}
           />
-        </Card>
-      </Dialog>
+          <Dialog
+            isOpen={isDialogOpen}
+            onClose={handleDialogClose}
+            title="Employee Details"
+            style={MODAL_STYLING}
+          >
+            <Card interactive={true} elevation={Elevation.THREE}>
+              <EmployeeModal
+                currEmployeeId={currEmployeeId}
+                setDidDialogChange={setDidDialogChange}
+              />
+            </Card>
+          </Dialog>
+        </>
+      )}
     </>
   );
 };
 
 const TabularTabsComponent = () => {
   const auth = useSelector((state) => state.auth);
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
   const navigate = useNavigate();
+
+  const { data } = useGetEmployerMetricsByIdQuery({
+    employerId,
+    category: "metrics",
+    subCategory: "onboarding",
+  });
+
+  const metricsConfig = {
+    labels: {
+      employees: "Employees",
+      aadhaar: "Aadhaar KYC",
+      pan: "PAN KYC",
+      bank: "Bank KYC",
+    },
+    secondaryConfig: {
+      Error: {
+        intent: "DANGER",
+        icon: "error",
+      },
+    },
+  };
 
   useEffect(() => {
     if (auth === undefined || auth === {} || !auth.isLoggedIn) {
@@ -259,14 +318,45 @@ const TabularTabsComponent = () => {
     }
   }, [auth, navigate]);
 
+  const handlers = {};
+  const createHandler = (e) => {
+    return () => {
+      if (handlers[e]) handlers[e]();
+    };
+  };
   return (
     <>
-      <Card
-        style={REGISTER_FORM_CARD_STYLING}
-        interactive={false}
-        elevation={Elevation.THREE}
-      >
-        <TabularViewTab />
+      <EmployerMetrics
+        data={data}
+        primaryKey={"SUCCESS"}
+        config={metricsConfig}
+      />
+      <Card style={CARD_STYLING} elevation={Elevation.THREE}>
+        <div className={styles.row}>
+          <div className={HEADER_CLASS}>
+            <H3>
+              {" "}
+              <Icon icon={"people"} size={"1em"} /> Employee Records
+            </H3>
+          </div>
+          <div className={ACTIONS_CLASS}>
+            <div className={styles.alignRight}>
+              <Button icon={"refresh"} onClick={createHandler("refresh")}>
+                Refresh
+              </Button>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <Button
+                icon={"saved"}
+                intent={Intent.SUCCESS}
+                onClick={createHandler("download-excel")}
+              >
+                Download Excel
+              </Button>
+            </div>
+          </div>
+        </div>
+        <Divider />
+        <TabularViewTab handlers={handlers} />
       </Card>
     </>
   );

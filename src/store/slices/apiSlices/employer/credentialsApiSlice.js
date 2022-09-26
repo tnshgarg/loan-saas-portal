@@ -8,7 +8,7 @@ export const employerCredentialsApi = createApi({
     baseUrl: EMPLOYER_BASE_API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token =
-        getState().auth.user.signInUserSession.idToken.jwtToken ?? "";
+        getState().auth.user?.signInUserSession.idToken.jwtToken ?? "";
 
       // If we have a token set in state, let's assume that we should be passing it.
       if (token) {

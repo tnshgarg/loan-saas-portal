@@ -11,10 +11,19 @@ import {
   Intent,
   Navbar,
   NavbarGroup,
+  Tag,
 } from "@blueprintjs/core";
 import { connect } from "react-redux";
-import { updateCSVRow } from "../../../../store/slices/csvUploadSlice.ts";
-import { FS, VALIDATIONS } from "./validations";
+
+import {
+  FS,
+  VALIDATIONS,
+} from "../../../components/dashboard/employee/onboarding/validations";
+import { coalesce } from "../../../utils/array";
+import {
+  toggleFilter,
+  updateCSVRow,
+} from "../../../store/slices/csvUploadSlice.ts";
 
 const intentMap = {
   [FS.WARN]: Intent.WARNING,
@@ -146,7 +155,7 @@ const EditableCell = ({
   updateMyData, // This is a custom function that we supplied to our table instance
 }) => {
   // We need to keep and update the state of the cell normally
-  const [value, setValue] = React.useState(initialValue);
+  const [value, setValue] = React.useState(initialValue || "");
 
   let validLevel = FS.VALID;
   if (VALIDATIONS[column.validations]) {
@@ -154,6 +163,10 @@ const EditableCell = ({
   }
 
   const intent = intentMap[validLevel] || Intent.NONE;
+  const backgroundColor = {
+    [Intent.WARNING]: "rgb(247, 252, 162, 0.5)",
+    [Intent.DANGER]: "rgb(255, 215, 213, 0.5)",
+  }[intent];
   const onChange = (e) => {
     setValue(e);
   };
@@ -173,13 +186,21 @@ const EditableCell = ({
   }, [initialValue]);
 
   return (
-    <EditableText
-      value={value}
-      intent={intent}
-      onChange={onChange}
-      onConfirm={onBlur}
-      onEdit={onFocus}
-    />
+    <div
+      style={{
+        backgroundColor,
+        margin: "-6px -8px -6px -8px",
+        padding: " 6px  8px  6px  8px",
+      }}
+    >
+      <EditableText
+        value={value}
+        intent={intent}
+        onChange={onChange}
+        onConfirm={onBlur}
+        onEdit={onFocus}
+      />
+    </div>
   );
 };
 
@@ -192,8 +213,11 @@ function Table({
   columns,
   data,
   updateMyData,
+  filterMyData,
+  filters,
   skipPageReset,
   fieldMap,
+  stats,
 }) {
   // Use the state and functions returned from useTable to build your UI
   const {
@@ -251,16 +275,12 @@ function Table({
     return groups;
   }, []);
 
-  // tech debt useEffec shallow compare
+  // tech debt useEffect shallow compare
   useEffect(() => {
     const hiddenHeaders = {};
     let hiddenColumns = [];
     visibilityToolbar.forEach((item) => {
       hiddenHeaders[item.Header] = true;
-      console.log({
-        headerItem: item,
-        cct: item.columns.map((i) => i.accessor),
-      });
       hiddenColumns = hiddenColumns.concat(item.columns.map((i) => i.accessor));
     });
     setVisibility({ hiddenHeaders, hiddenColumns });
@@ -279,16 +299,55 @@ function Table({
         );
       }
     });
-    console.log({hiddenColumns})
     setVisibility({ ...visibility, hiddenColumns });
     setHiddenColumns(hiddenColumns);
   };
   return (
     <div>
+      <div style={{ textAlign: "center", paddingBottom: "1em" }}>
+        {stats[FS.ERROR] ? (
+          <>
+            <Tag
+              large
+              minimal={!filters.includes(FS.ERROR)}
+              interactive={true}
+              intent={Intent.DANGER}
+              icon={"error"}
+              rightIcon={filters.includes(FS.ERROR) ? "cross" : ""}
+              onClick={() => filterMyData(FS.ERROR)}
+            >
+              {stats[FS.ERROR]} problems need immediate attention
+            </Tag>
+            &nbsp;&nbsp;
+          </>
+        ) : (
+          ""
+        )}
+        {stats[FS.WARN] ? (
+          <>
+            <Tag
+              large={true}
+              minimal={!filters.includes(FS.WARN)}
+              interactive={true}
+              intent={Intent.WARNING}
+              icon={"warning-sign"}
+              rightIcon={filters.includes(FS.WARN) ? "cross" : ""}
+              onClick={() => filterMyData(FS.WARN)}
+            >
+              {stats[FS.WARN]} fields are incorrect, but can be fixed later
+            </Tag>
+          </>
+        ) : (
+          ""
+        )}
+      </div>
       {visibilityToolbar ? (
         <>
-          Choose Columns to view:{" "}
           <ButtonGroup>
+            <Button disabled={true} minimal={true}>
+              {" "}
+              Choose Columns to view{" "}
+            </Button>
             {visibilityToolbar.map((item) => (
               <Button
                 active={!visibility.hiddenHeaders[item.Header]}
@@ -299,11 +358,13 @@ function Table({
               </Button>
             ))}
           </ButtonGroup>
+          <br />
+          <small>&nbsp;</small>
         </>
       ) : (
         ""
       )}
-      <div style={{ maxHeight: "55vh", width: "100%", overflow: "scroll" }}>
+      <div style={{ maxHeight: "55vh", width: "100%", overflow: "auto" }}>
         <HTMLTable
           bordered={true}
           condensed={true}
@@ -340,9 +401,11 @@ function Table({
           {/*</pre>*/}
         </HTMLTable>
       </div>
-      <div style={{ textAlign: "right" }}>
-        <div style={{ display: "inline-block" }}>
-          <Pagination {...paginationProps} />
+      <div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ display: "inline-block" }}>
+            <Pagination {...paginationProps} />
+          </div>
         </div>
       </div>
     </div>
@@ -350,30 +413,47 @@ function Table({
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const { tableName } = ownProps;
-  console.log(state, ownProps);
+  const { tableName, panelName } = ownProps;
+  const {
+    csvUploads: {[panelName]: {[tableName] : {errorFilters = [], filteredData = [], data = [], fields = [], stats = {}} = {}} = {} },
+  } = state;
   return {
-    data: state.csvUploads.data[tableName] || [],
-    columns: state.csvUploads.fields[tableName] || [],
+    data: coalesce([filteredData , data , []]),
+    columns: fields ,
+    stats: stats ,
+    errorFilters: errorFilters ,
   };
 };
 
-function BrowserEdiTable({ data, columns, tableName, dispatch, setter }) {
+function BrowserEdiTable({
+  data,
+  columns,
+  tableName,
+  dispatch,
+  setter,
+  stats,
+  errorFilters,
+  panelName
+}) {
   const columnsMemo = React.useMemo(() => columns, [columns]);
   const dataMemo = React.useMemo(() => data, [data]);
+  console.log({dataMemo})
   const [skipPageReset, setSkipPageReset] = React.useState(false);
   setter(() => data);
   React.useEffect(() => {
     setSkipPageReset(false);
   }, [data]);
 
-  console.log({ columnsMemo, dataMemo });
   const updateMyData = (rowIndex, columnId, value) => {
     // We also turn on the flag to not reset the page
     setSkipPageReset(true);
-    dispatch(updateCSVRow({ tableName, rowIndex, columnId, value }));
+    dispatch(updateCSVRow({ tableName, rowIndex, columnId, value, panelName }));
   };
-  console.log({ columns });
+
+  const filterMyData = (errorFilter) => {
+    dispatch(toggleFilter({ tableName, errorFilter, panelName }));
+  };
+
   return (
     <Styles>
       <Table
@@ -381,7 +461,10 @@ function BrowserEdiTable({ data, columns, tableName, dispatch, setter }) {
         data={dataMemo}
         hasGroups={true}
         updateMyData={updateMyData}
+        filterMyData={filterMyData}
+        filters={errorFilters}
         skipPageReset={skipPageReset}
+        stats={stats}
       />
     </Styles>
   );

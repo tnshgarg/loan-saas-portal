@@ -1,5 +1,4 @@
 import Amplify from "aws-amplify";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
@@ -21,6 +20,8 @@ import { TabularView } from "./components/dashboard/employee/TabularView";
 import { history } from "./utils/history";
 import BaseLayout from "./layout/base";
 import { Onboard } from "./components/dashboard/employee/onboarding/Onboard";
+import { AttendanceUpload } from "./components/dashboard/attendance/attendanceUpload";
+import { PayrollUpload } from "./components/dashboard/payroll/payrollUpload/PayrollUpload";
 
 const App = () => {
   useEffect(() => {
@@ -51,6 +52,8 @@ const App = () => {
           <Route path="/employer/overview" element={<Overview />} />
           <Route path="/employer/register-form" element={<RegisterForm />} />
           <Route path="/employees/onboard" element={<Onboard />} />
+          <Route path="/attendance/import" element={<AttendanceUpload />} />
+          <Route path="/payroll/payout" element={<PayrollUpload />} />
           <Route path="/employees/panel" element={<TabularView />} />
           <Route path="*" element={<Invalid />} />
         </Routes>

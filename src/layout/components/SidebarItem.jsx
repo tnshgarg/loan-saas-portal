@@ -1,11 +1,20 @@
-import { Colors, Icon, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
+import {
+  Colors,
+  Icon,
+  Menu,
+  MenuDivider,
+  MenuItem,
+  Card,
+} from "@blueprintjs/core";
 import { THEME } from "../../theme/base";
 import { Popover2 } from "@blueprintjs/popover2";
-import { Card } from "@aws-amplify/ui-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-const { sidebar: { iconSize, iconPadding }, cornerRadius } = THEME;
+const {
+  sidebar: { iconSize, iconPadding },
+  cornerRadius,
+} = THEME;
 
 function SidebarMenu(props) {
   const { title, items, parent } = props;
@@ -13,13 +22,16 @@ function SidebarMenu(props) {
   return (
     <Card style={{ borderRadius: cornerRadius }}>
       <Menu key={parent}>
-        {title ? (<MenuDivider title={title} />) : ""}
-        {(items || []).map(item => (
-          <MenuItem icon={item.icon} text={item.name} onClick={() => {
-            navigate(`${parent}${item.route}`, { replace: true });
-          }} />
-        ))
-        }
+        {title ? <MenuDivider title={title} /> : ""}
+        {(items || []).map((item) => (
+          <MenuItem
+            icon={item.icon}
+            text={item.name}
+            onClick={() => {
+              navigate(`${parent}${item.route}`, { replace: true });
+            }}
+          />
+        ))}
       </Menu>
     </Card>
   );
@@ -30,16 +42,21 @@ function PopupMenuWrapper(props) {
   const navigate = useNavigate();
   if (items && items.length)
     return (
-      <Popover2 interactionKind={"hover"} content={<SidebarMenu parent={route} title={name} items={items} />}
-                usePortal={false}>
+      <Popover2
+        interactionKind={"hover"}
+        content={<SidebarMenu parent={route} title={name} items={items} />}
+        usePortal={false}
+      >
         {children}
       </Popover2>
     );
   return (
-    <div onClick={() => {
-      navigate(route, { replace: true });
-    }}
-         style={{ cursor: "pointer" }}>
+    <div
+      onClick={() => {
+        navigate(route, { replace: true });
+      }}
+      style={{ cursor: "pointer" }}
+    >
       {children}
     </div>
   );
@@ -59,17 +76,25 @@ export default function SidebarItem(props) {
       <PopupMenuWrapper items={children} name={name} route={route}>
         <div
           style={{
-            "backgroundColor": hovered ? Colors.GRAY1 : (isActive ? Colors.GREEN5 : ""),
+            backgroundColor: hovered
+              ? Colors.GRAY1
+              : isActive
+              ? Colors.GREEN5
+              : "",
             padding: iconPadding,
-            borderRadius: cornerRadius
+            borderRadius: cornerRadius,
           }}
           onMouseEnter={toggleHover}
           onMouseLeave={toggleHover}
         >
           <Icon icon={icon} size={iconSize} />
-          {showTitle ?
-            (<p><small>{name}</small></p>) : ""
-          }
+          {showTitle ? (
+            <p>
+              <small>{name}</small>
+            </p>
+          ) : (
+            ""
+          )}
         </div>
       </PopupMenuWrapper>
     </div>
