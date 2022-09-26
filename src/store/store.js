@@ -11,6 +11,7 @@ import CSVUploadReducer from "./slices/csvUploadSlice.ts";
 import employeeReducer from "./slices/employeeSlice";
 import messageReducer from "./slices/messageSlice";
 import registerFormReducer from "./slices/registerFormSlice";
+import { employerPayrollApi } from "./slices/apiSlices/employer/payrollApiSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     employee: employeeReducer,
     csvUploads: CSVUploadReducer,
     [employerAddressApi.reducerPath]: employerAddressApi.reducer,
+    [employerPayrollApi.reducerPath]: employerPayrollApi.reducer,
     [employerTaxApi.reducerPath]: employerTaxApi.reducer,
     [employerCredentialsApi.reducerPath]: employerCredentialsApi.reducer,
     [allEmployeesBasicDetails.reducerPath]: allEmployeesBasicDetails.reducer,
@@ -35,6 +37,7 @@ export const store = configureStore({
       },
     })
       .concat(employerAddressApi.middleware)
+      .concat(employerPayrollApi.middleware)
       .concat(employerTaxApi.middleware)
       .concat(employerCredentialsApi.middleware)
       .concat(allEmployeesBasicDetails.middleware)

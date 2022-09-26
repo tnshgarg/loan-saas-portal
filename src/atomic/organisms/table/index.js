@@ -18,6 +18,8 @@ import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import TableFilter from "react-table-filter";
 import generateExcel from "zipcelx";
 import "react-table-filter/lib/styles.css";
+import { getExcel } from "../../../utils/excelHandling";
+import { Pagination } from "../csvUploads/BrowserEdiTable";
 
 const Table = ({
   columns,
@@ -174,7 +176,7 @@ const Table = ({
   }, [data]);
 
   const updateFilterHandler = (newData, filterConfiguration) => {
-    console.log({filterConfiguration})
+    console.log({ filterConfiguration });
     setFilteredData(newData);
   };
 
@@ -183,76 +185,12 @@ const Table = ({
     addCallback();
   };
 
-  function getHeader(column) {
-    if (column.parent) {
-      return [
-        {
-          value: column.parent.Header + " " + column.Header,
-          type: "string",
-        },
-      ];
-    } else {
-      return [
-        {
-          value: column.Header,
-          type: "string",
-        },
-      ];
-    }
-  }
-
-  function getExcel() {
-    const d = new Date();
-
-    const config = {
-      filename: d.toString().split("GMT")[0].trim(),
-      sheet: {
-        data: [],
-      },
-    };
-
-    const dataSet = config.sheet.data;
-
-    headerGroups.forEach((headerGroup) => {
-      const headerRow = [];
-      if (headerGroup.headers) {
-        headerGroup.headers.forEach((column) => {
-          if (column?.accessor) {
-            headerRow.push(...getHeader(column));
-          }
-        });
-      }
-      headerRow.length && dataSet.push(headerRow);
-    });
-
-    if (rows.length > 0) {
-      rows.forEach((row) => {
-        const dataRow = [];
-
-        Object.values(row.values).forEach((value) =>
-          dataRow.push({
-            value,
-            type: typeof value === "number" ? "number" : "string",
-          })
-        );
-
-        dataSet.push(dataRow);
-      });
-    } else {
-      dataSet.push([
-        {
-          value: "No data",
-          type: "string",
-        },
-      ]);
-    }
-
-    return generateExcel(config);
-  }
-
   if (handlers) {
     handlers["download-excel"] = () => {
-      getExcel();
+      getExcel(
+        headerGroups,
+        rows.map((row) => row.original)
+      );
     };
   }
 
@@ -275,6 +213,18 @@ const Table = ({
     [showFilter]
   );
 
+  const paginationProps = {
+    pageOptions,
+    pageIndex,
+    gotoPage,
+    canPreviousPage,
+    nextPage,
+    canNextPage,
+    pageCount,
+    previousPage,
+    pageSize,
+    setPageSize,
+  };
   return (
     <>
       {showAddBtn && (
@@ -329,69 +279,12 @@ const Table = ({
           </tbody>
         </table>
         {showPagination && (
-          <div className="pagination">
-            <span className="per_page">Rows per page</span>
-            <select
-              value={pageSize}
-              onChange={(e) => {
-                setPageSize(Number(e.target.value));
-              }}
-            >
-              {[5, 10, 20, 30, 40, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </select>
-            <span
-              style={{
-                marginLeft: "1%",
-                marginRight: "0.5%",
-                marginTop: "0.2%",
-              }}
-            >
-              Page{" "}
-              <span>
-                {pageIndex + 1} of {pageOptions.length}
-              </span>
-            </span>
-            <div className="nav_container">
-              <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-                <Icon className="nav_icons" icon="double-chevron-left" />
-              </button>
-              <button
-                onClick={() => previousPage()}
-                disabled={!canPreviousPage}
-              >
-                <Icon className="nav_icons" icon="chevron-left" />
-              </button>
-              <button onClick={() => nextPage()} disabled={!canNextPage}>
-                <Icon className="nav_icons" icon="chevron-right" />
-              </button>
-              <button
-                onClick={() => gotoPage(pageCount - 1)}
-                disabled={!canNextPage}
-              >
-                <Icon className="nav_icons" icon="double-chevron-right" />
-              </button>
+          <div className={"pagination"}>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ display: "inline-block" }}>
+                <Pagination {...paginationProps} />
+              </div>
             </div>
-            <span
-              style={{
-                marginLeft: "0.5%",
-                marginRight: "0.5%",
-              }}
-            >
-              Go to page:
-              <input
-                type="number"
-                defaultValue={pageIndex + 1}
-                onChange={(e) => {
-                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                  gotoPage(page);
-                }}
-                style={{ width: "50px" }}
-              />
-            </span>
           </div>
         )}
         {showDownload && (
@@ -477,46 +370,8 @@ const Styles = styled.div`
     }
   }
   .pagination {
+    text-align: right;
     color: rgba(0, 0, 0, 0.54) !important;
-    justify-content: flex-end;
-    padding: 1rem 0.5rem;
-    align-items: center;
-    .per_page {
-      margin: 0px 4px;
-    }
-    select {
-      cursor: pointer;
-      height: 24px;
-      max-width: 100%;
-      user-select: none;
-      padding-left: 8px;
-      padding-right: 5px;
-      box-sizing: content-box;
-      font-size: inherit;
-      color: inherit;
-      border: none;
-      background-color: transparent;
-      direction: ltr;
-      flex-shrink: 0;
-    }
-    .nav_container {
-      margin: 0px 10px;
-    }
-    .down_icon {
-      padding-right: 5px;
-    }
-    button {
-      outline: none;
-      border: 0px;
-      .nav_icons {
-        padding: 0px 5px;
-      }
-    }
-    input {
-      border: 1px solid rgba(0, 0, 0, 0.3);
-      margin-left: 5px;
-      padding: 2px 5px;
-      text-align: center;
-    }
+    padding: 1em 0.5em;
   }
 `;

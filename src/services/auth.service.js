@@ -10,6 +10,7 @@ const signUp = (
   employee_count,
   designation
 ) => {
+  if (!phone_number.startsWith("+91")) phone_number = "+91" + phone_number;
   return Auth.signUp({
     username: username,
     password,

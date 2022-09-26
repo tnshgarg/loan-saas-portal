@@ -43,7 +43,7 @@ export function ToastContextProvider({ children }) {
           />
         </>
       ),
-      onDismiss: (didTimeoutExpire) => {
+      onDismiss: () => {
         window.clearInterval(progressToastInterval);
         config?.onDismiss && config?.onDismiss();
       },
@@ -68,7 +68,7 @@ export function ToastContextProvider({ children }) {
   return (
     <ToastContext.Provider value={{ config, handleProgressToast, setConfig }}>
       {children}
-      <>{<Toaster {...config} ref={toastRef} />}</>;
+      <>{<Toaster {...config} ref={toastRef} />}</>
     </ToastContext.Provider>
   );
 }

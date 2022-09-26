@@ -1,27 +1,22 @@
 .cardRoot {
-  width: 25%;
-  margin-right: 20px;
+
 }
 
 .heading {
-  display: flex;
-  align-items: center;
+  text-align: right;
   justify-content: space-between;
   margin-bottom: 0;
-}
-
-.heading span {
-  color: gray;
-  font-size: 18px;
+  margin-left: 75px;
 }
 
 .primaryContainer {
-  display: flex;
-  align-items: center;
   justify-content: end;
+  text-align: right;
   font-weight: 600;
   font-size: 1.2rem;
-  margin: 0.7rem 0rem
+  margin: 0.7rem 0;
+  height: 2.5em;
+  margin-left: 75px;
 }
 
 .tag {
@@ -38,4 +33,12 @@
 .divider {
   margin-left: 0 !important;
   margin-right: 0 !important;
+}
+
+.metricsContainer {
+  padding: 0 2.7em 2.7em 2.7em;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2.7em;
 }

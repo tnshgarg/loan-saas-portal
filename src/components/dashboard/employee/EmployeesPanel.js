@@ -24,15 +24,11 @@ import {
 import { useGetEmployerMetricsByIdQuery } from "../../../store/slices/apiSlices/employer/metricsApiSlice";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
-import { isObject } from "lodash";
-import styles from "./styles/onboard.module.css";
-import {
-  ACTIONS_CLASS,
-  CARD_STYLING,
-  HEADER_CLASS,
-} from "./onboarding/Onboard";
+import { capitalize, isObject, upperFirst } from "lodash";
+import Metrics from "../../../atomic/molecules/metrics/metrics";
 import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
 import Table from "../../../atomic/organisms/table";
+import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
 
 const MODAL_STYLING = {
   marginTop: "7.5rem",
@@ -76,7 +72,7 @@ const TabularViewTab = ({ handlers }) => {
 
   const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
   const { data, isLoading, error, refetch } = responseFromQuery;
-
+  console.log({ data, isLoading, error, refetch });
   const responseFromLazyQuery = useLazyGetAllEmployeesByEmployerIdQuery();
   const [
     trigger,
@@ -95,6 +91,7 @@ const TabularViewTab = ({ handlers }) => {
 
   const setFetchedRowsFromBody = (body) => {
     const fetchedRowsData = body.map((employee) => {
+      console.log({ employee });
       const {
         employerEmployeeId,
         name,
@@ -119,12 +116,12 @@ const TabularViewTab = ({ handlers }) => {
         _id: _id,
         "Employment Status": isActive ? "ACTIVE" : "INACTIVE",
         "Aadhaar Number": aadhaar?.number,
-        "Aadhaar Status": aadhaar.verifyStatus,
+        "Aadhaar Status": aadhaar?.verifyStatus ?? "PENDING",
         "PAN Number": pan?.number,
-        "PAN Status": pan.verifyStatus,
+        "PAN Status": pan?.verifyStatus ?? "PENDING",
         "Account Number": bank?.accountNumber,
         "IFSC Code": bank?.ifsc,
-        "Account Status": bank.verifyStatus,
+        "Account Status": bank?.verifyStatus ?? "PENDING",
       };
     });
     setFetchedRows(fetchedRowsData);
@@ -229,6 +226,7 @@ const TabularViewTab = ({ handlers }) => {
   handlers["refresh"] = () => {
     refetch();
   };
+  console.log(fetchedRows);
   return (
     <>
       {isLoading ? (
@@ -331,35 +329,29 @@ const TabularTabsComponent = () => {
         primaryKey={"SUCCESS"}
         config={metricsConfig}
       />
-      <Card style={CARD_STYLING} elevation={Elevation.THREE}>
-        <div className={styles.row}>
-          <div className={HEADER_CLASS}>
-            <H3>
-              {" "}
-              <Icon icon={"people"} size={"1em"} /> Employee Records
-            </H3>
-          </div>
-          <div className={ACTIONS_CLASS}>
-            <div className={styles.alignRight}>
-              <Button icon={"refresh"} onClick={createHandler("refresh")}>
-                Refresh
-              </Button>
-              &nbsp;&nbsp;&nbsp;&nbsp;
-              <Button
-                icon={"saved"}
-                intent={Intent.SUCCESS}
-                onClick={createHandler("download-excel")}
-              >
-                Download Excel
-              </Button>
-            </div>
-          </div>
-        </div>
-        <Divider />
+      <Dashlet
+        icon={"people"}
+        title={"Employee Records"}
+        actions={
+          <>
+            <Button icon={"refresh"} onClick={createHandler("refresh")}>
+              Refresh
+            </Button>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <Button
+              icon={"saved"}
+              intent={Intent.SUCCESS}
+              onClick={createHandler("download-excel")}
+            >
+              Download Excel
+            </Button>
+          </>
+        }
+      >
         <TabularViewTab handlers={handlers} />
-      </Card>
+      </Dashlet>
     </>
   );
 };
 
-export const TabularView = TabularTabsComponent;
+export const EmployeesPanel = TabularTabsComponent;

@@ -3,6 +3,10 @@
 @import "~@blueprintjs/icons/lib/css/blueprint-icons.css";
 @import "~@fortawesome/fontawesome-free/css/all.css";
 @import "~@blueprintjs/popover2/lib/css/blueprint-popover2.css";
+@import "~@blueprintjs/select/lib/css/blueprint-select.css";
+@import "~@blueprintjs/datetime/lib/css/blueprint-datetime.css";
+@import "~@blueprintjs/datetime2/lib/css/blueprint-datetime2.css";
+
 
 
 *:focus {
@@ -14,3 +18,7 @@
     padding: 0.3em;
 }
 
+#root {
+    margin: 0;
+    padding: 0;
+}
