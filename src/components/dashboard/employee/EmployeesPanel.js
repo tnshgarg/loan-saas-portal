@@ -1,14 +1,8 @@
 import {
   Button,
   Card,
-  Classes,
   Dialog,
-  Divider,
   Elevation,
-  H3,
-  H5,
-  H6,
-  Icon,
   Intent,
   Spinner,
   Tag,
@@ -24,8 +18,7 @@ import {
 import { useGetEmployerMetricsByIdQuery } from "../../../store/slices/apiSlices/employer/metricsApiSlice";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
-import { capitalize, isObject, upperFirst } from "lodash";
-import Metrics from "../../../atomic/molecules/metrics/metrics";
+import { isObject } from "lodash";
 import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
 import Table from "../../../atomic/organisms/table";
 import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
@@ -94,7 +87,7 @@ const TabularViewTab = ({ handlers }) => {
       console.log({ employee });
       const {
         employerEmployeeId,
-        name,
+        employeeName,
         mobile,
         email,
         dob,
@@ -107,7 +100,7 @@ const TabularViewTab = ({ handlers }) => {
       } = employee;
       return {
         "Employee ID": employerEmployeeId,
-        Name: name,
+        Name: employeeName,
         "Mobile Number": mobile,
         "Onboarding Status": checkOverallStatus(aadhaar, pan, bank),
         Email: email,

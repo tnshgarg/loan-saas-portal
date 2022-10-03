@@ -56,7 +56,7 @@ export function PendingPayoutsTable({
     0
   );
   const sufficientFunds =
-    totalAmount > 0 && totalAmount < virtual_account.balance;
+    totalAmount > 0 && totalAmount < virtual_account?.balance;
   return (
     <Dashlet
       icon={"time"}
@@ -72,7 +72,7 @@ export function PendingPayoutsTable({
               </Tag>
             ) : (
               <Tag minimal intent={Intent.DANGER} icon={"cross"}>
-                {(totalAmount - virtual_account.balance).toINR()} needs to be
+                {(totalAmount - virtual_account?.balance).toINR()} needs to be
                 transferred
               </Tag>
             )
