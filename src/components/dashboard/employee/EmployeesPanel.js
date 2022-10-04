@@ -1,34 +1,71 @@
 import {
   Button,
   Card,
-  Classes,
   Dialog,
-  Divider,
   Elevation,
-  H3,
-  H5,
-  H6,
-  Icon,
   Intent,
   Spinner,
   Tag,
 } from "@blueprintjs/core";
+import { isObject } from "lodash";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
+import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
+import Table from "../../../atomic/organisms/table";
 import {
   useGetAllEmployeesByEmployerIdQuery,
   useLazyGetAllEmployeesByEmployerIdQuery,
 } from "../../../store/slices/apiSlices/employees/employeesApiSlice";
-import { useGetEmployerMetricsByIdQuery } from "../../../store/slices/apiSlices/employer/metricsApiSlice";
+import { groupBy } from "../../../utils/groupByUtil";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
-import { capitalize, isObject, upperFirst } from "lodash";
-import Metrics from "../../../atomic/molecules/metrics/metrics";
-import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
-import Table from "../../../atomic/organisms/table";
-import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
+
+const checkOverallStatus = (aadhaar, pan, bank) => {
+  return aadhaar?.verifyStatus === "SUCCESS" &&
+    pan?.verifyStatus === "SUCCESS" &&
+    bank?.verifyStatus === "SUCCESS"
+    ? "SUCCESS"
+    : "PENDING";
+};
+
+const reformatEmployeeData = (employeeData) => {
+  return employeeData.map((employee) => {
+    const {
+      employerEmployeeId,
+      employeeName,
+      mobile,
+      email,
+      dob,
+      designation,
+      aadhaar,
+      pan,
+      bank,
+      _id,
+      isActive,
+    } = employee;
+    return {
+      "Employee ID": employerEmployeeId,
+      Name: employeeName,
+      "Mobile Number": mobile,
+      "Onboarding Status": checkOverallStatus(aadhaar, pan, bank),
+      Email: email,
+      "Date of Birth (dd/mm/yyyy)": dob,
+      "Job Title": designation,
+      _id: _id,
+      "Employment Status": isActive ? "ACTIVE" : "INACTIVE",
+      "Aadhaar Number": aadhaar?.number,
+      "Aadhaar Status": aadhaar?.verifyStatus ?? "PENDING",
+      "PAN Number": pan?.number,
+      "PAN Status": pan?.verifyStatus ?? "PENDING",
+      "Account Number": bank?.accountNumber,
+      "IFSC Code": bank?.ifsc,
+      "Account Status": bank?.verifyStatus ?? "PENDING",
+    };
+  });
+};
 
 const MODAL_STYLING = {
   marginTop: "7.5rem",
@@ -81,49 +118,8 @@ const TabularViewTab = ({ handlers }) => {
 
   const [fetchedRows, setFetchedRows] = useState([]);
 
-  const checkOverallStatus = (aadhaar, pan, bank) => {
-    return aadhaar?.verifyStatus === "SUCCESS" &&
-      pan?.verifyStatus === "SUCCESS" &&
-      bank?.verifyStatus === "SUCCESS"
-      ? "SUCCESS"
-      : "PENDING";
-  };
-
   const setFetchedRowsFromBody = (body) => {
-    const fetchedRowsData = body.map((employee) => {
-      console.log({ employee });
-      const {
-        employerEmployeeId,
-        name,
-        mobile,
-        email,
-        dob,
-        designation,
-        aadhaar,
-        pan,
-        bank,
-        _id,
-        isActive,
-      } = employee;
-      return {
-        "Employee ID": employerEmployeeId,
-        Name: name,
-        "Mobile Number": mobile,
-        "Onboarding Status": checkOverallStatus(aadhaar, pan, bank),
-        Email: email,
-        "Date of Birth (dd/mm/yyyy)": dob,
-        "Job Title": designation,
-        _id: _id,
-        "Employment Status": isActive ? "ACTIVE" : "INACTIVE",
-        "Aadhaar Number": aadhaar?.number,
-        "Aadhaar Status": aadhaar?.verifyStatus ?? "PENDING",
-        "PAN Number": pan?.number,
-        "PAN Status": pan?.verifyStatus ?? "PENDING",
-        "Account Number": bank?.accountNumber,
-        "IFSC Code": bank?.ifsc,
-        "Account Status": bank?.verifyStatus ?? "PENDING",
-      };
-    });
+    const fetchedRowsData = reformatEmployeeData(body);
     setFetchedRows(fetchedRowsData);
   };
 
@@ -286,15 +282,42 @@ const TabularTabsComponent = () => {
 
   const navigate = useNavigate();
 
-  const { data } = useGetEmployerMetricsByIdQuery({
-    employerId,
-    category: "metrics",
-    subCategory: "onboarding",
-  });
+  const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
+  const { data } = responseFromQuery;
+  const [metricsData, setMetricsData] = useState({});
+
+  useEffect(() => {
+    if (data) {
+      const body = data?.body ?? [];
+      const fetchedRowsData = reformatEmployeeData(body);
+      const onboardingAggregationResult = groupBy(
+        fetchedRowsData,
+        "Onboarding Status"
+      );
+      const aadhaarAggregationResult = groupBy(
+        fetchedRowsData,
+        "Aadhaar Status"
+      );
+      const panAggregationResult = groupBy(fetchedRowsData, "PAN Status");
+      const bankAccountAggregationResult = groupBy(
+        fetchedRowsData,
+        "Account Status"
+      );
+      const metricDataObject = {
+        body: {
+          employees: onboardingAggregationResult,
+          aadhaar: aadhaarAggregationResult,
+          pan: panAggregationResult,
+          bank: bankAccountAggregationResult,
+        },
+      };
+      setMetricsData(metricDataObject);
+    }
+  }, [data]);
 
   const metricsConfig = {
     labels: {
-      employees: "Employees",
+      employees: "Onboarding Status",
       aadhaar: "Aadhaar KYC",
       pan: "PAN KYC",
       bank: "Bank KYC",
@@ -325,7 +348,7 @@ const TabularTabsComponent = () => {
   return (
     <>
       <EmployerMetrics
-        data={data}
+        data={metricsData}
         primaryKey={"SUCCESS"}
         config={metricsConfig}
       />
