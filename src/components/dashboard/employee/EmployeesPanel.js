@@ -19,7 +19,7 @@ import {
   useGetAllEmployeesByEmployerIdQuery,
   useLazyGetAllEmployeesByEmployerIdQuery,
 } from "../../../store/slices/apiSlices/employees/employeesApiSlice";
-import { groupBy } from "../../../utils/groupByUtil";
+import { groupByKeyCount } from "../../../utils/groupByKeyCountUtil";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
 
@@ -290,16 +290,19 @@ const TabularTabsComponent = () => {
     if (data) {
       const body = data?.body ?? [];
       const fetchedRowsData = reformatEmployeeData(body);
-      const onboardingAggregationResult = groupBy(
+      const onboardingAggregationResult = groupByKeyCount(
         fetchedRowsData,
         "Onboarding Status"
       );
-      const aadhaarAggregationResult = groupBy(
+      const aadhaarAggregationResult = groupByKeyCount(
         fetchedRowsData,
         "Aadhaar Status"
       );
-      const panAggregationResult = groupBy(fetchedRowsData, "PAN Status");
-      const bankAccountAggregationResult = groupBy(
+      const panAggregationResult = groupByKeyCount(
+        fetchedRowsData,
+        "PAN Status"
+      );
+      const bankAccountAggregationResult = groupByKeyCount(
         fetchedRowsData,
         "Account Status"
       );
