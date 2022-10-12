@@ -19,7 +19,7 @@ import {
   useGetAllEmployeesByEmployerIdQuery,
   useLazyGetAllEmployeesByEmployerIdQuery,
 } from "../../../store/slices/apiSlices/employees/employeesApiSlice";
-import { groupByKeyCount } from "../../../utils/groupByKeyCountUtil";
+import { groupByKeyCount } from "../../../utils/aggregates";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
 
