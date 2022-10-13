@@ -52,7 +52,7 @@ export function PendingPayoutsTable({
     );
   }
   const totalAmount = pendingPayouts.reduce(
-    (total, item) => total + item.amountPayable,
+    (total, item) => total + item.amount,
     0
   );
   const sufficientFunds =

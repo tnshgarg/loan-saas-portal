@@ -1,5 +1,5 @@
-import React from "react";
 import { capitalize } from "lodash";
+import React from "react";
 
 //Molecules
 import Metrics, { MetricsContainer } from "../../molecules/metrics/metrics";
