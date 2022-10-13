@@ -1,11 +1,11 @@
 import {
   aadhaarValidation,
+  accNumberValidation,
   currencyValidation,
   dateValidation,
   dojValidation,
   emailValidation,
   genderValidation,
-  accNumberValidation,
   ifscValidation,
   noValidation,
   panValidation,
@@ -19,7 +19,7 @@ export const FIELD_GROUP = {
   EMPLOYMENT: "Employment",
   COMPLIANCE: "Compliance",
   NOMINEE: "Nominee",
-  IDENTIFICATION: "Identifiation",
+  IDENTIFICATION: "Identification",
   BANK_AC: "Bank A/c",
 };
 const FG = FIELD_GROUP;
