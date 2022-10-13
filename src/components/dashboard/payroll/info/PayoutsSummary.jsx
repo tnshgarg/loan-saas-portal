@@ -17,7 +17,7 @@ export function PayoutsSummary({ data, loading }) {
     data.forEach((item) => {
       metrics[item.status] = (metrics[item.status] ?? 0) + 1;
       totals[item.status] =
-        (totals[item.status] ?? 0) + parseInt(item["amountPayable"]);
+        (totals[item.status] ?? 0) + parseInt(item["amount"]);
     });
   }
   console.log("metrics", metrics, totals);
