@@ -12,7 +12,7 @@ export function createPayoutHash(item) {
     "mobile",
     "year",
     "month",
-    "amountPayable",
+    "amount",
   ]) {
     rawStr += (item[field] ?? "").toString();
   }

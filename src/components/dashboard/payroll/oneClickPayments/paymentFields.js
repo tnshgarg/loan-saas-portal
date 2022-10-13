@@ -39,7 +39,7 @@ export const FIELDS = [
   },
   {
     header: "Amount Payable" + REQUIRED_SUFFIX,
-    field: "amountPayable",
+    field: "amount",
     validations: amountValidation,
   },
 ];
