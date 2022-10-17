@@ -20,11 +20,6 @@ function mapStateToProps(state) {
 
 const DISBURSEMENT_FIELDS = [
   {
-    header: "Employee Id",
-    field: "employerEmployeeId",
-    validations: noValidation,
-  },
-  {
     header: "Employee Name",
     field: "name",
     validations: noValidation,

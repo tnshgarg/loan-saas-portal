@@ -43,6 +43,7 @@ export const employerEWAApi = createApi({
         if (responseData.body) {
           responseData.body = JSON.parse(responseData.body);
         }
+        console.log(responseData.body);
         return responseData;
       },
       providesTags: ["EWA"],
