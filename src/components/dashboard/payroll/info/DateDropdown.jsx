@@ -20,7 +20,7 @@ export const DateDropdown = (props) => {
   const date = new Date();
   const options = [];
   let year = date.getFullYear();
-  let month = date.getMonth();
+  let month = date.getMonth() + 1;
   for (let i = 0; i < 12; i++) {
     options.push({
       value: year * 100 + month,

@@ -1,4 +1,5 @@
 import {
+  Button,
   ControlGroup,
   Intent,
   Label,
@@ -7,6 +8,7 @@ import {
   Text,
 } from "@blueprintjs/core";
 import { useState } from "react";
+import { useFetchInstrumentMutation } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
 
 const Field = ({ label, contents }) => (
   <>
@@ -20,12 +22,15 @@ const Field = ({ label, contents }) => (
 );
 
 export function VirtualAccountInfo({
-  account_number,
-  account_status,
+  employerId,
+  accountNumber: account_number,
+  verifyStatus: account_status,
   balance,
   ifsc,
-  updated_at,
+  balance_updated_on: updated_at,
 }) {
+  const [fetchInstrument, { isLoading: isFetching }] =
+    useFetchInstrumentMutation();
   const [mask, setMasked] = useState(true);
   const intentMap = {
     PENDING: Intent.WARNING,
@@ -35,8 +40,17 @@ export function VirtualAccountInfo({
     account_number = "**********" + account_number.slice(10);
     ifsc = "**********" + ifsc.slice(8);
   }
+  const refetchInstrument = () => {
+    fetchInstrument({ employerId });
+  };
   return (
-    <div>
+    <div style={{ position: "relative" }}>
+      <Button
+        icon={"refresh"}
+        minimal
+        style={{ position: "absolute", top: "-3em", right: "-1em" }}
+        onClick={refetchInstrument}
+      />
       <ControlGroup fill={true}>
         <Field label={"Bank Account Number"} contents={account_number} />
         <Field label={"IFSC"} contents={ifsc} />

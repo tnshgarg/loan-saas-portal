@@ -24,6 +24,7 @@ import { AttendanceUpload } from "./components/dashboard/attendance/attendanceUp
 import { SalaryUpload } from "./components/dashboard/payroll/salaryManagement/SalaryUpload";
 import { PayrollInfo } from "./components/dashboard/payroll/info/PayrollInfo";
 import { OneClickPayments } from "./components/dashboard/payroll/oneClickPayments/PaymentUpload";
+import { Disbursements } from "./components/dashboard/ewa/details";
 
 const App = () => {
   useEffect(() => {
@@ -64,6 +65,8 @@ const App = () => {
             <Route path="/payroll/salary" element={<SalaryUpload />} />
             <Route path="/payroll/info" element={<PayrollInfo />} />
             <Route path="/payroll/transactions" element={<PayrollInfo />} />
+
+            <Route path="/ewa/info" element={<Disbursements />} />
 
             <Route path="*" element={<Invalid />} />
           </Routes>
