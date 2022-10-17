@@ -29,7 +29,7 @@ const REQUIRED_SUFFIX = " (Required)";
 export const FIELDS = [
   {
     header: "Name" + REQUIRED_SUFFIX,
-    field: "name",
+    field: "employeeName",
     validations: requiredValidation,
     group: FG.PERSISTENT,
   },
