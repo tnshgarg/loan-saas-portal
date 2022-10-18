@@ -4,7 +4,7 @@ export const employeeFieldsToTabsMap = {
   Profile: {
     category: "profile",
     fields: {
-      name: "Name",
+      employeeName: "Employee Name",
       mobile: "Mobile Number",
       altMobile: "Alternate Mobile Number",
       email: "Email",
