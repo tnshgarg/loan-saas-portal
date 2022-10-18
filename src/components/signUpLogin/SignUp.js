@@ -10,7 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
-import { numberOfEmployees } from "../../utils/numberOfEmployees";
+import { companyTypes, numberOfEmployees } from "../../utils/numberOfEmployees";
 import { registerUser } from "../../store/slices/authSlice";
 import ErrorDialog from "../../atomic/atoms/alerts/ErrorDialog";
 import FormInput from "../../atomic/atoms/forms/FormInput";
@@ -41,6 +41,7 @@ export const SignUp = () => {
       phone_number,
       name,
       company_name,
+      company_type,
       employee_count,
       designation,
     } = data;
@@ -53,6 +54,7 @@ export const SignUp = () => {
         `+91${phone_number}`,
         name,
         company_name,
+        company_type,
         employee_count,
         designation
       )
@@ -256,25 +258,57 @@ export const SignUp = () => {
                     errorMessage: "Designation cannot be empty",
                   }}
                 />
-                <label>Number of Employees</label>
-                <Controller
-                  control={control}
-                  defaultValue={numberOfEmployees[0]}
-                  name="employee_count"
-                  render={({ field }) => (
-                    <Select
-                      inputRef={field.ref}
-                      classNamePrefix="addl-class"
-                      options={numberOfEmployees}
-                      value={numberOfEmployees.find(
-                        (c) => c.value === field.value
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "auto auto",
+                    columnGap: "2em",
+                  }}
+                >
+                  <div>
+                    {" "}
+                    <label>Type of Company</label>
+                    <Controller
+                      control={control}
+                      defaultValue={companyTypes[0]}
+                      name="company_type"
+                      render={({ field }) => (
+                        <Select
+                          inputRef={field.ref}
+                          classNamePrefix="addl-class"
+                          options={companyTypes}
+                          value={companyTypes.find(
+                            (c) => c.value === field.value
+                          )}
+                          onChange={(val) => {
+                            field.onChange(val.value);
+                          }}
+                        />
                       )}
-                      onChange={(val) => {
-                        field.onChange(val.value);
-                      }}
                     />
-                  )}
-                />
+                  </div>
+                  <div>
+                    <label>Number of Employees</label>
+                    <Controller
+                      control={control}
+                      defaultValue={numberOfEmployees[0]}
+                      name="employee_count"
+                      render={({ field }) => (
+                        <Select
+                          inputRef={field.ref}
+                          classNamePrefix="addl-class"
+                          options={numberOfEmployees}
+                          value={numberOfEmployees.find(
+                            (c) => c.value === field.value
+                          )}
+                          onChange={(val) => {
+                            field.onChange(val.value);
+                          }}
+                        />
+                      )}
+                    />
+                  </div>
+                </div>
               </Card>
             }
           />

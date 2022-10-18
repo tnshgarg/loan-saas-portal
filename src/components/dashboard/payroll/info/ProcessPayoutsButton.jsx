@@ -19,6 +19,7 @@ function _ProcessPayoutsButton({
       employerId,
       year,
       month,
+      timestamp: new Date().toISOString(),
     };
     const selected = data.filter((item) => item.status[FS.SELECTED]);
     if (selected.length) {

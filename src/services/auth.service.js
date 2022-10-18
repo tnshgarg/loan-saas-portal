@@ -7,6 +7,7 @@ const signUp = (
   phone_number,
   name,
   company_name,
+  company_type,
   employee_count,
   designation
 ) => {
@@ -19,6 +20,7 @@ const signUp = (
       phone_number: phone_number,
       name: name,
       "custom:company_name": company_name,
+      "custom:company_type": company_type,
       "custom:employee_count": employee_count,
       "custom:designation": designation,
     },

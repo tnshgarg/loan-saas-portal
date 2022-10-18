@@ -12,6 +12,8 @@ import {
   faFileArrowUp,
   faCalculator,
   faMoneyBill,
+  faPaperPlane,
+  faWallet,
 } from "@fortawesome/free-solid-svg-icons";
 import { THEME } from "../theme/base";
 
@@ -87,6 +89,18 @@ const NAV_MENU = [
       {
         name: "Payout Details",
         icon: <MenuIcon icon={faMoneyCheck} />,
+        route: "/info",
+      },
+    ],
+  },
+  {
+    name: "EWA",
+    icon: <SidebarIcon icon={faPaperPlane} />,
+    route: "/ewa",
+    children: [
+      {
+        name: "Disbursements",
+        icon: <MenuIcon icon={faWallet} />,
         route: "/info",
       },
     ],

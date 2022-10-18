@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   H4,
   Intent,
@@ -10,6 +11,7 @@ import BrowserEdiTable from "../../../../atomic/organisms/csvUploads/BrowserEdiT
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import { ONE_CLICK_HEADERS } from "../oneClickPayments/paymentFields";
 import {
+  useFetchInstrumentMutation,
   useProcessPayoutsMutation,
   useUpdatePayoutsMutation,
 } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
@@ -31,6 +33,8 @@ export function PendingPayoutsTable({
   const [sendPayoutConfirmation, { isLoading: isProcessing }] =
     useProcessPayoutsMutation();
   const [updatePayouts, { isLoading: isSaving }] = useUpdatePayoutsMutation();
+  const [fetchInstrument, { isLoading: isFetching }] =
+    useFetchInstrumentMutation();
   const key = `payout-info-pending-${year}-${month}`;
   const virtual_account = meta?.virtual_account;
   if (pendingPayouts.length) {
@@ -55,8 +59,14 @@ export function PendingPayoutsTable({
     (total, item) => total + item.amount,
     0
   );
+
+  const refetchInstrument = () => {
+    fetchInstrument({
+      employerId,
+    });
+  };
   const sufficientFunds =
-    totalAmount > 0 && totalAmount < virtual_account.balance;
+    totalAmount > 0 && totalAmount < virtual_account?.balance;
   return (
     <Dashlet
       icon={"time"}
@@ -68,12 +78,13 @@ export function PendingPayoutsTable({
           {totalAmount ? (
             sufficientFunds ? (
               <Tag minimal intent={Intent.SUCCESS} icon={"tick"}>
-                {totalAmount.toINR()} is available in account
+                {(totalAmount || 0).toINR()} is available in account
               </Tag>
             ) : (
               <Tag minimal intent={Intent.DANGER} icon={"cross"}>
-                {(totalAmount - virtual_account.balance).toINR()} needs to be
-                transferred
+                shortfall of{" "}
+                {(totalAmount - (virtual_account?.balance ?? 0)).toINR()} INR in
+                Account
               </Tag>
             )
           ) : (
@@ -106,11 +117,13 @@ export function PendingPayoutsTable({
       <Card>
         <H4> Virtual Account Details </H4>
         {virtual_account ? (
-          <VirtualAccountInfo {...virtual_account} />
+          <VirtualAccountInfo {...virtual_account} employerId={employerId} />
         ) : (
           <NonIdealState icon={"error"}>
             There seems to be an issue with your virtual account contact
             <a href="mailto:support@unipe.co">support@unipe.co</a>
+            or
+            <Button onClick={refetchInstrument}>Try Refreshing Details</Button>
           </NonIdealState>
         )}
       </Card>
@@ -135,7 +148,7 @@ export function PendingPayoutsTable({
             description={
               <>
                 Looks like no entries are pending confirmation, please upload
-                payouts or check the history tab
+                payouts or check the history xtab
               </>
             }
             layout={"horizontal"}

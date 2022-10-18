@@ -54,6 +54,7 @@ export const registerUser =
     phone_number,
     name,
     company_name,
+    company_type,
     employee_count,
     designation
   ) =>
@@ -66,6 +67,7 @@ export const registerUser =
       phone_number,
       name,
       company_name,
+      company_type,
       employee_count,
       designation
     ).then(

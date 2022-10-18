@@ -602,26 +602,33 @@ function BrowserEdiTable({
   const deselectRow = (rowIndex) => {
     dispatch(deselectCSVRow({ tableName, rowIndex, module }));
   };
-
+  let empty = false;
+  if (!data || !data.length) {
+    empty = true;
+  }
   return (
     <Styles>
-      <Table
-        columns={columnsMemo}
-        data={dataMemo}
-        hasGroups={true}
-        reduxActions={{
-          updateMyData,
-          filterMyData,
-          deleteRow,
-          restoreRow,
-          selectRow,
-          deselectRow,
-        }}
-        filters={errorFilters}
-        skipPageReset={skipPageReset}
-        stats={stats}
-        disableEdits={disableEdits}
-      />
+      {empty ? (
+        ""
+      ) : (
+        <Table
+          columns={columnsMemo}
+          data={dataMemo}
+          hasGroups={true}
+          reduxActions={{
+            updateMyData,
+            filterMyData,
+            deleteRow,
+            restoreRow,
+            selectRow,
+            deselectRow,
+          }}
+          filters={errorFilters}
+          skipPageReset={skipPageReset}
+          stats={stats}
+          disableEdits={disableEdits}
+        />
+      )}
     </Styles>
   );
 }

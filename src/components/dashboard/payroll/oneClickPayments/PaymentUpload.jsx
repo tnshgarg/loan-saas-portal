@@ -30,8 +30,8 @@ function _OneClickPayments({ employerId, dispatch }) {
   return (
     <>
       <CSVUploadDashlet
-        title={"Payroll"}
-        module={"payroll"}
+        title={"Payouts"}
+        module={"payout"}
         templateDownloadProps={{ loading: isLoading, templateData }}
         fields={ONE_CLICK_HEADERS}
         preProcessing={headerMapper}
