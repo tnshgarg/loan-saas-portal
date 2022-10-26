@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
-import { read, utils } from "xlsx";
-import { connect } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
 import { Collapse, Intent, NonIdealState, Tag } from "@blueprintjs/core";
 import * as Papa from "papaparse";
+import { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { read, utils } from "xlsx";
+import { FS } from "../../../components/dashboard/employee/onboarding/validations";
+import { VerifyAndUploadEmployees } from "../../../components/dashboard/employee/onboarding/verifyAndUploadEmployees";
 import { useToastContext } from "../../../contexts/ToastContext";
 import { initCSVUpload } from "../../../store/slices/csvUploadSlice.ts";
-import { Dashlet } from "../../molecules/dashlets/dashlet";
-import { TemplateDownloadButton } from "../../atoms/forms/TemplateDownloadButton";
 import { CSVFileInput } from "../../atoms/forms/CSVFileInput";
-import { VerifyAndUploadEmployees } from "../../../components/dashboard/employee/onboarding/verifyAndUploadEmployees";
+import { TemplateDownloadButton } from "../../atoms/forms/TemplateDownloadButton";
+import { Dashlet } from "../../molecules/dashlets/dashlet";
 import BrowserEdiTable from "./BrowserEdiTable";
-import { FS } from "../../../components/dashboard/employee/onboarding/validations";
 
 export const MAX_SIZE = 1024 * 1024 * 5;
 
@@ -63,7 +63,7 @@ function _CSVUploadDashlet({
   const [loading, setLoading] = useState(false);
   const [cloudUploadDisabled, setCloudUploadDisabled] = useState(false);
 
-  const S3_BUCKET = `employer-${process.env.REACT_APP_STAGE}-raw`;
+  const S3_BUCKET = `${process.env.REACT_APP_STAGE}-employer-raw`;
   const REGION = process.env.REACT_APP_S3_REGION;
 
   const credentials = {
