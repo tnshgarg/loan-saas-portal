@@ -295,6 +295,20 @@ export const CSVUploadsSlice = createSlice({
       });
       stats[FS.DELETED] = (stats[FS.DELETED] || 1) - 1;
     },
+    setActiveFileName: (state, action) => {
+      const {
+        payload: { fileName, module },
+      } = action;
+      if (!state[module]) state[module] = { activeFileName: "", allData: {} };
+      state[module]["activeFileName"] = fileName;
+    },
+    clearActiveFileName: (state, action) => {
+      const {
+        payload: { module },
+      } = action;
+      if (!state[module]) state[module] = { activeFileName: "", allData: {} };
+      state[module]["activeFileName"] = "";
+    },
     // WIP: discuss and add
     // deleteCSVRow: (state, action) => {
     //   //pass
@@ -310,6 +324,8 @@ export const {
   restoreCSVRow,
   selectCSVRow,
   deselectCSVRow,
+  setActiveFileName,
+  clearActiveFileName,
 } = CSVUploadsSlice.actions;
 
 export default CSVUploadsSlice.reducer;
