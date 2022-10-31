@@ -71,6 +71,10 @@ function _CSVUploadDashlet({
     secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
   };
 
+  const [csvUploadButtonIntent, setCsvUploadButtonIntent] = useState(
+    Intent.PRIMARY
+  );
+
   //Hacky
   const getter = {};
   const setDataGetter = (data) => {
@@ -200,6 +204,7 @@ function _CSVUploadDashlet({
         ...prevState,
         onDismiss: onToastDismiss,
       }));
+      setCsvUploadButtonIntent(Intent.NONE);
     }
   }, [file.object, onToastDismiss, savedFileName, setConfig]);
 
@@ -218,7 +223,7 @@ function _CSVUploadDashlet({
             <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <CSVFileInput
               icon="add-to-folder"
-              intent={Intent.PRIMARY}
+              intent={csvUploadButtonIntent}
               onChange={handleChange}
             />
             {file.object ? (
