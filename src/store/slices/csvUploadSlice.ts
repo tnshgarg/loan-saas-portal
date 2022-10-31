@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { DATE_FIELDS } from "../../components/dashboard/employee/onboarding/fields";
-import { convertExcelSerialToDateString } from "../../utils/excelHandling";
 import {
   FS,
   reg,
   VALIDATIONS,
 } from "../../components/dashboard/employee/onboarding/validations.js";
+import { convertExcelSerialToDateString } from "../../utils/excelHandling";
 
 interface TableData {
   [tableName: string]: [
@@ -77,16 +77,19 @@ function defaultPanelValues(): PanelValues {
 
 interface RootState {
   [module: string]: {
-    [fileName: string]: {
-      data: TableData;
-      filteredData: TableData;
-      fields: TableFields;
-      fieldMap: any;
-      updates: TableData;
-      errors: TableErrors;
-      pagination: TablePagination;
-      stats: TableStats;
-      errorFilters: Array<Number>;
+    activeFileName: string;
+    allData: {
+      [fileName: string]: {
+        data: TableData;
+        filteredData: TableData;
+        fields: TableFields;
+        fieldMap: any;
+        updates: TableData;
+        errors: TableErrors;
+        pagination: TablePagination;
+        stats: TableStats;
+        errorFilters: Array<Number>;
+      };
     };
   };
 }
@@ -109,25 +112,28 @@ export const CSVUploadsSlice = createSlice({
   reducers: {
     initCSVUpload: (state, action) => {
       const { data, fileName, fields, module } = action.payload;
-      if (!state[module]) state[module] = {};
+      if (!state[module]) state[module] = { activeFileName: "", allData: {} };
 
-      state[module][fileName] = defaultPanelValues() as any;
-      state[module][fileName].fields = fields;
-      state[module][fileName].errorFilters = [];
+      state[module]["allData"][fileName] = defaultPanelValues() as any;
+      state[module]["allData"][fileName].fields = fields;
+      state[module]["allData"][fileName].errorFilters = [];
       // techdebt: fix type issues
-      state[module][fileName].filteredData = [] as any;
-      state[module][fileName].fieldMap = fields.reduce((res, field) => {
-        if (field.columns) {
-          field.columns.reduce((res, field) => {
+      state[module]["allData"][fileName].filteredData = [] as any;
+      state[module]["allData"][fileName].fieldMap = fields.reduce(
+        (res, field) => {
+          if (field.columns) {
+            field.columns.reduce((res, field) => {
+              res[field.field] = field.validations;
+              return res;
+            }, res);
+          } else {
             res[field.field] = field.validations;
-            return res;
-          }, res);
-        } else {
-          res[field.field] = field.validations;
-        }
-        return res;
-      }, {});
-      state[module][fileName].stats = getStatusDict();
+          }
+          return res;
+        },
+        {}
+      );
+      state[module]["allData"][fileName].stats = getStatusDict();
       data.forEach((row, index: number) => {
         const rowEntries = Object.entries(row);
         console.log(row);
@@ -146,28 +152,29 @@ export const CSVUploadsSlice = createSlice({
             }
           }
           let errState = FS.VALID;
-          if (state[module][fileName].fieldMap[key]) {
-            errState = VALIDATIONS[state[module][fileName].fieldMap[key]](
-              value || ""
-            );
+          if (state[module]["allData"][fileName].fieldMap[key]) {
+            errState = VALIDATIONS[
+              state[module]["allData"][fileName].fieldMap[key]
+            ](value || "");
           }
-          state[module][fileName].stats[errState] += 1;
+          state[module]["allData"][fileName].stats[errState] += 1;
           row.status[errState] += 1;
         });
       });
-      state[module][fileName].data = data;
+      state[module]["allData"][fileName].data = data;
     },
     updateCSVRow: (state, action) => {
       const {
         payload: { tableName, rowIndex, columnId, value, module },
       } = action;
       const { data, errorFilters, filteredData, stats } =
-        state[module][tableName];
+        state[module]["allData"][tableName];
       let row = data[rowIndex];
       if (errorFilters.length) {
         row = data[filteredData[rowIndex].rowNumber];
       }
-      const validate = VALIDATIONS[state[module][tableName].fieldMap[columnId]];
+      const validate =
+        VALIDATIONS[state[module]["allData"][tableName].fieldMap[columnId]];
       const currentState = validate(row[columnId] || "");
       row[columnId] = value;
       const updatedState = validate(row[columnId] || "");
@@ -175,7 +182,9 @@ export const CSVUploadsSlice = createSlice({
         stats[currentState] -= 1;
         stats[updatedState] += 1;
 
-        console.assert(state[module][tableName].stats[currentState] >= 0);
+        console.assert(
+          state[module]["allData"][tableName].stats[currentState] >= 0
+        );
 
         row.status[currentState] -= 1;
         row.status[updatedState] += 1;
@@ -192,7 +201,8 @@ export const CSVUploadsSlice = createSlice({
         payload: { tableName, errorFilter, module },
       } = action;
 
-      const { data, filteredData, errorFilters } = state[module][tableName];
+      const { data, filteredData, errorFilters } =
+        state[module]["allData"][tableName];
 
       var filterIndex = errorFilters.indexOf(errorFilter);
       if (filterIndex === -1) {
@@ -210,7 +220,9 @@ export const CSVUploadsSlice = createSlice({
 
       const {
         [module]: {
-          [tableName]: { data, errorFilters, filteredData, stats },
+          allData: {
+            [tableName]: { data, errorFilters, filteredData, stats },
+          },
         },
       } = state;
       let row = data[rowIndex];
@@ -227,7 +239,9 @@ export const CSVUploadsSlice = createSlice({
 
       const {
         [module]: {
-          [tableName]: { data, errorFilters, filteredData, stats },
+          allData: {
+            [tableName]: { data, errorFilters, filteredData, stats },
+          },
         },
       } = state;
       let row = data[rowIndex];
@@ -244,7 +258,9 @@ export const CSVUploadsSlice = createSlice({
       console.log(state);
       const {
         [module]: {
-          [tableName]: { data, errorFilters, filteredData, stats },
+          allData: {
+            [tableName]: { data, errorFilters, filteredData, stats },
+          },
         },
       } = state;
       let row = data[rowIndex];
@@ -264,7 +280,9 @@ export const CSVUploadsSlice = createSlice({
 
       const {
         [module]: {
-          [tableName]: { data, errorFilters, filteredData, stats },
+          allData: {
+            [tableName]: { data, errorFilters, filteredData, stats },
+          },
         },
       } = state;
       let row = data[rowIndex];

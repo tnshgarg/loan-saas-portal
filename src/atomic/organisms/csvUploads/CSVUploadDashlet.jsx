@@ -19,9 +19,9 @@ export const MAX_SIZE = 1024 * 1024 * 5;
 
 const mapOnboardPropsToState = (state, ownProps) => {
   const { module } = ownProps;
-  console.log({ csvUploads: state.csvUploads[module] });
-  const savedFileName = state?.csvUploads[module]
-    ? Object.keys(state.csvUploads[module])[0]
+  console.log({ csvUploads: state?.["csvUploads"]?.[module]?.["allData"] });
+  const savedFileName = state?.["csvUploads"]?.[module]?.["allData"]
+    ? Object.keys(state.csvUploads[module]["allData"])[0]
     : "";
   return {
     employerId: state.auth.user?.attributes.sub || "",
