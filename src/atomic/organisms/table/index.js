@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
 import PropTypes from "prop-types";
+import React, { useContext } from "react";
 import {
   useFilters,
   usePagination,
@@ -10,16 +10,15 @@ import {
 import styled from "styled-components";
 
 //Components
-import EditableCell from "./EditableCell";
-import { Button, Icon, Intent } from "@blueprintjs/core";
-import UpdateAlert from "../../../components/common/UpdateAlert";
-import withUpdateAlert from "../../../hoc/withUpdateAlert";
-import UpdateAlertContext from "../../../contexts/updateAlertContext";
+import { Button, Intent } from "@blueprintjs/core";
 import TableFilter from "react-table-filter";
-import generateExcel from "zipcelx";
 import "react-table-filter/lib/styles.css";
+import UpdateAlert from "../../../components/common/UpdateAlert";
+import UpdateAlertContext from "../../../contexts/updateAlertContext";
+import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import { getExcel } from "../../../utils/excelHandling";
 import { Pagination } from "../csvUploads/BrowserEdiTable";
+import EditableCell from "./EditableCell";
 
 const Table = ({
   columns,
@@ -44,6 +43,7 @@ const Table = ({
   showDownload = false,
   cellProps = () => ({}),
   handlers,
+  noDataComponent,
 }) => {
   const [editableRowIndex, setEditableRowIndex] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -250,6 +250,11 @@ const Table = ({
               </HeaderRowWrapper>
             ))}
           </thead>
+
+          {!(showPagination ? page : rows).length &&
+            noDataComponent &&
+            noDataComponent()}
+
           <tbody {...getTableBodyProps()}>
             {(showPagination ? page : rows).map((row, i) => {
               prepareRow(row);
@@ -278,6 +283,7 @@ const Table = ({
             })}
           </tbody>
         </table>
+
         {showPagination && (
           <div className={"pagination"}>
             <div style={{ textAlign: "right" }}>
