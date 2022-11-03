@@ -114,12 +114,12 @@ export const CSVUploadsSlice = createSlice({
       const { data, fileName, fields, module } = action.payload;
       if (!state[module]) state[module] = { activeFileName: "", tableData: {} };
 
-      state[module]["tableData"][fileName] = defaultPanelValues() as any;
-      state[module]["tableData"][fileName].fields = fields;
-      state[module]["tableData"][fileName].errorFilters = [];
+      state[module].tableData[fileName] = defaultPanelValues() as any;
+      state[module].tableData[fileName].fields = fields;
+      state[module].tableData[fileName].errorFilters = [];
       // techdebt: fix type issues
-      state[module]["tableData"][fileName].filteredData = [] as any;
-      state[module]["tableData"][fileName].fieldMap = fields.reduce(
+      state[module].tableData[fileName].filteredData = [] as any;
+      state[module].tableData[fileName].fieldMap = fields.reduce(
         (res, field) => {
           if (field.columns) {
             field.columns.reduce((res, field) => {
@@ -133,7 +133,7 @@ export const CSVUploadsSlice = createSlice({
         },
         {}
       );
-      state[module]["tableData"][fileName].stats = getStatusDict();
+      state[module].tableData[fileName].stats = getStatusDict();
       data.forEach((row, index: number) => {
         const rowEntries = Object.entries(row);
         console.log(row);
@@ -152,29 +152,29 @@ export const CSVUploadsSlice = createSlice({
             }
           }
           let errState = FS.VALID;
-          if (state[module]["tableData"][fileName].fieldMap[key]) {
+          if (state[module].tableData[fileName].fieldMap[key]) {
             errState = VALIDATIONS[
-              state[module]["tableData"][fileName].fieldMap[key]
+              state[module].tableData[fileName].fieldMap[key]
             ](value || "");
           }
-          state[module]["tableData"][fileName].stats[errState] += 1;
+          state[module].tableData[fileName].stats[errState] += 1;
           row.status[errState] += 1;
         });
       });
-      state[module]["tableData"][fileName].data = data;
+      state[module].tableData[fileName].data = data;
     },
     updateCSVRow: (state, action) => {
       const {
         payload: { tableName, rowIndex, columnId, value, module },
       } = action;
       const { data, errorFilters, filteredData, stats } =
-        state[module]["tableData"][tableName];
+        state[module].tableData[tableName];
       let row = data[rowIndex];
       if (errorFilters.length) {
         row = data[filteredData[rowIndex].rowNumber];
       }
       const validate =
-        VALIDATIONS[state[module]["tableData"][tableName].fieldMap[columnId]];
+        VALIDATIONS[state[module].tableData[tableName].fieldMap[columnId]];
       const currentState = validate(row[columnId] || "");
       row[columnId] = value;
       const updatedState = validate(row[columnId] || "");
@@ -183,7 +183,7 @@ export const CSVUploadsSlice = createSlice({
         stats[updatedState] += 1;
 
         console.assert(
-          state[module]["tableData"][tableName].stats[currentState] >= 0
+          state[module].tableData[tableName].stats[currentState] >= 0
         );
 
         row.status[currentState] -= 1;
@@ -202,7 +202,7 @@ export const CSVUploadsSlice = createSlice({
       } = action;
 
       const { data, filteredData, errorFilters } =
-        state[module]["tableData"][tableName];
+        state[module].tableData[tableName];
 
       var filterIndex = errorFilters.indexOf(errorFilter);
       if (filterIndex === -1) {
