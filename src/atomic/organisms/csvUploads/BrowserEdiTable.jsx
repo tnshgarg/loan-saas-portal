@@ -547,7 +547,6 @@ function BrowserEdiTable({
   selection,
   module,
   disableEdits,
-  noDataComponent,
 }) {
   console.log(tableName);
   const prefixColumns = [],
@@ -630,7 +629,6 @@ function BrowserEdiTable({
           skipPageReset={skipPageReset}
           stats={stats}
           disableEdits={disableEdits}
-          noDataComponent={noDataComponent}
         />
       )}
     </Styles>
