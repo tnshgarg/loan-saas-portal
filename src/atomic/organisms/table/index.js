@@ -317,6 +317,7 @@ Table.defaultProps = {
   handleSubmit: PropTypes.func.isRequired,
   setData: PropTypes.func.isRequired,
   skipPageReset: PropTypes.bool.isRequired,
+  noDataComponent: () => {},
 };
 
 const Styles = styled.div`
