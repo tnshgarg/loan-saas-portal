@@ -106,6 +106,18 @@ function populateFilteredData(data: any, errorFilters: any, filteredData: any) {
   });
 }
 
+const extractCurrentTableDataFromState = ({ module, tableName, state }) => {
+  const {
+    [module]: {
+      tableData: {
+        [tableName]: { data, errorFilters, filteredData, stats },
+      },
+    },
+  } = state;
+
+  return { data, errorFilters, filteredData, stats };
+};
+
 export const CSVUploadsSlice = createSlice({
   name: "CSVUploads",
   initialState: CSV_UPLOADS_INITIAL_STATE,
@@ -218,13 +230,9 @@ export const CSVUploadsSlice = createSlice({
         payload: { tableName, rowIndex, module },
       } = action;
 
-      const {
-        [module]: {
-          tableData: {
-            [tableName]: { data, errorFilters, filteredData, stats },
-          },
-        },
-      } = state;
+      const { data, errorFilters, filteredData, stats } =
+        extractCurrentTableDataFromState({ module, tableName, state });
+
       let row = data[rowIndex];
       if (errorFilters.length) {
         row = data[filteredData[rowIndex].rowNumber];
@@ -237,13 +245,9 @@ export const CSVUploadsSlice = createSlice({
         payload: { tableName, rowIndex, module },
       } = action;
 
-      const {
-        [module]: {
-          tableData: {
-            [tableName]: { data, errorFilters, filteredData, stats },
-          },
-        },
-      } = state;
+      const { data, errorFilters, filteredData, stats } =
+        extractCurrentTableDataFromState({ module, tableName, state });
+
       let row = data[rowIndex];
       if (errorFilters.length) {
         row = data[filteredData[rowIndex].rowNumber];
@@ -256,13 +260,9 @@ export const CSVUploadsSlice = createSlice({
         payload: { tableName, rowIndex, module },
       } = action;
       console.log(state);
-      const {
-        [module]: {
-          tableData: {
-            [tableName]: { data, errorFilters, filteredData, stats },
-          },
-        },
-      } = state;
+      const { data, errorFilters, filteredData, stats } =
+        extractCurrentTableDataFromState({ module, tableName, state });
+
       let row = data[rowIndex];
       if (errorFilters.length) {
         row = data[filteredData[rowIndex].rowNumber];
@@ -278,13 +278,9 @@ export const CSVUploadsSlice = createSlice({
         payload: { tableName, rowIndex, module },
       } = action;
 
-      const {
-        [module]: {
-          tableData: {
-            [tableName]: { data, errorFilters, filteredData, stats },
-          },
-        },
-      } = state;
+      const { data, errorFilters, filteredData, stats } =
+        extractCurrentTableDataFromState({ module, tableName, state });
+
       let row = data[rowIndex];
       if (errorFilters.length) {
         row = data[filteredData[rowIndex].rowNumber];
