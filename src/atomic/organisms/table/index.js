@@ -170,6 +170,8 @@ const Table = ({
     }
   );
 
+  const tableRows = showPagination ? page : rows;
+
   React.useEffect(() => {
     showFilter && filterRef?.current?.reset(data, true);
     setFilteredData(data);
@@ -251,12 +253,10 @@ const Table = ({
             ))}
           </thead>
 
-          {!(showPagination ? page : rows).length &&
-            noDataComponent &&
-            noDataComponent()}
+          {!tableRows.length && noDataComponent && noDataComponent()}
 
           <tbody {...getTableBodyProps()}>
-            {(showPagination ? page : rows).map((row, i) => {
+            {tableRows.map((row, i) => {
               prepareRow(row);
               return (
                 <>
