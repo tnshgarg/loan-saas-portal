@@ -515,7 +515,7 @@ export const CSVUploadsStateMapper = (state, ownProps) => {
   const {
     csvUploads: {
       [module]: {
-        allData: {
+        tableData: {
           [tableName]: {
             errorFilters = [],
             filteredData = [],

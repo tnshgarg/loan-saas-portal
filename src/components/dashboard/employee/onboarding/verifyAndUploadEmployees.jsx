@@ -7,7 +7,7 @@ const mapStateToProps = (state, ownProps) => {
   const { fileName, module } = ownProps;
   const {
     csvUploads: {
-      [module]: { allData: { [fileName]: { stats = {} } = {} } = {} } = {},
+      [module]: { tableData: { [fileName]: { stats = {} } = {} } = {} } = {},
     } = {},
   } = state;
 
