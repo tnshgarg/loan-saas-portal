@@ -300,14 +300,14 @@ export const CSVUploadsSlice = createSlice({
         payload: { fileName, module },
       } = action;
       if (!state[module]) state[module] = { activeFileName: "", tableData: {} };
-      state[module]["activeFileName"] = fileName;
+      state[module].activeFileName = fileName;
     },
     clearActiveFileName: (state, action) => {
       const {
         payload: { module },
       } = action;
       if (!state[module]) state[module] = { activeFileName: "", tableData: {} };
-      state[module]["activeFileName"] = "";
+      state[module].activeFileName = "";
     },
     // WIP: discuss and add
     // deleteCSVRow: (state, action) => {
