@@ -4,6 +4,7 @@ import {
   Dialog,
   Elevation,
   Intent,
+  NonIdealState,
   Spinner,
   Tag,
 } from "@blueprintjs/core";
@@ -219,6 +220,18 @@ const TabularViewTab = ({ handlers }) => {
       },
     };
   };
+
+  const noDataComponent = () => {
+    return (
+      <NonIdealState
+        icon={"property"}
+        title={"No Employees"}
+        description={<>Looks like no entries for employees</>}
+        layout={"horizontal"}
+      />
+    );
+  };
+
   handlers["refresh"] = () => {
     refetch();
   };
@@ -255,6 +268,7 @@ const TabularViewTab = ({ handlers }) => {
             cellProps={cellProps}
             showDownload={false}
             handlers={handlers}
+            noDataComponent={noDataComponent}
           />
           <Dialog
             isOpen={isDialogOpen}

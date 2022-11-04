@@ -1,6 +1,3 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import { usePagination, useTable } from "react-table";
 import {
   Button,
   ButtonGroup,
@@ -18,13 +15,15 @@ import {
   Tag,
   Text,
 } from "@blueprintjs/core";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { usePagination, useTable } from "react-table";
+import styled from "styled-components";
 
 import {
   FS,
   VALIDATIONS,
 } from "../../../components/dashboard/employee/onboarding/validations";
-import { coalesce } from "../../../utils/array";
 import {
   deleteCSVRow,
   deselectCSVRow,
@@ -33,6 +32,7 @@ import {
   toggleFilter,
   updateCSVRow,
 } from "../../../store/slices/csvUploadSlice.ts";
+import { coalesce } from "../../../utils/array";
 
 const intentMap = {
   [FS.WARN]: Intent.WARNING,
@@ -515,12 +515,14 @@ export const CSVUploadsStateMapper = (state, ownProps) => {
   const {
     csvUploads: {
       [module]: {
-        [tableName]: {
-          errorFilters = [],
-          filteredData = [],
-          data = [],
-          fields = [],
-          stats = {},
+        tableData: {
+          [tableName]: {
+            errorFilters = [],
+            filteredData = [],
+            data = [],
+            fields = [],
+            stats = {},
+          } = {},
         } = {},
       } = {},
     },

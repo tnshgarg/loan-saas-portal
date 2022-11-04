@@ -1,15 +1,15 @@
-import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
+import { Button } from "@blueprintjs/core";
 import { faMoneyCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "@blueprintjs/core";
-import { connect } from "react-redux";
 import { useState } from "react";
+import { connect } from "react-redux";
+import { Spacer } from "../../../../atomic/atoms/layouts/alignment";
+import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
+import { useGetPayoutsQuery } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
 import { DateDropdown } from "./DateDropdown";
-import { PendingPayoutsTable } from "./PendingPayoutsTable";
 import { HistoricalPayoutsTable } from "./HistoricalPayoutsTable";
 import { PayoutsSummary } from "./PayoutsSummary";
-import { Spacer } from "../../../../atomic/atoms/layouts/alignment";
-import { useGetPayoutsQuery } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
+import { PendingPayoutsTable } from "./PendingPayoutsTable";
 
 // tech-debt: move to utilities or atoms
 
@@ -23,7 +23,7 @@ export function _PayrollInfo({ employerId, dispatch }) {
   const today = new Date();
   const [{ year, month }, setDate] = useState({
     year: today.getFullYear(),
-    month: today.getMonth(),
+    month: today.getMonth() + 1,
   });
 
   const dateChanged = (updatedDate) => {
