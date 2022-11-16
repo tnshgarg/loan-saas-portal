@@ -89,7 +89,7 @@ function _CSVUploadDashlet({
   const setActiveCSVName = (fileName) => {
     dispatch(setActiveFileName({ fileName, module }));
   };
-  const clearActiveCSVName = (fileName) => {
+  const clearActiveCSVName = () => {
     dispatch(clearActiveFileName({ module }));
   };
 
@@ -98,12 +98,14 @@ function _CSVUploadDashlet({
     let erroredData = tableData.filter((row) => row.status[FS.ERROR] >= 1);
 
     const tableCSV = Papa.unparse(
-      tableData.map((row) => {
-        let csvRow = Object.assign({}, row);
-        delete csvRow.status;
-        delete csvRow.rowNumber;
-        return csvRow;
-      })
+      tableData
+        .filter((row) => !row.status[FS.DELETED])
+        .map((row) => {
+          let csvRow = Object.assign({}, row);
+          delete csvRow.status;
+          delete csvRow.rowNumber;
+          return csvRow;
+        })
     );
     console.log({ tableCSV });
     const csvFile = new Blob([tableCSV], { type: "text/csv" });
@@ -178,7 +180,7 @@ function _CSVUploadDashlet({
         module: module,
       })
     );
-    dispatch(setActiveCSVName(file.object.name));
+    setActiveCSVName(file.object.name);
   };
 
   const handleChange = (e) => {
@@ -220,6 +222,7 @@ function _CSVUploadDashlet({
       }));
       setCsvUploadButtonIntent(Intent.NONE);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file.object, onToastDismiss, savedFileName, setConfig]);
 
   return (
