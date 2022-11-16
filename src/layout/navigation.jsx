@@ -83,14 +83,14 @@ const NAV_MENU = [
     route: "/payroll",
     children: [
       {
-        name: "One Click Payout",
-        icon: <MenuIcon icon={faReceipt} />,
-        route: "/one-click-payout",
-      },
-      {
         name: "Employee Salary",
         icon: <MenuIcon icon={faMoneyBill1Wave} />,
         route: "/employee-salary",
+      },
+      {
+        name: "One Click Payout",
+        icon: <MenuIcon icon={faReceipt} />,
+        route: "/one-click-payout",
       },
       {
         name: "Payout Processing",
