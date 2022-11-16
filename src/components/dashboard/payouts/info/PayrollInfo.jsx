@@ -80,6 +80,7 @@ export function _PayrollInfo({ employerId, dispatch }) {
                   Provider
                   <Spacer />
                   <HTMLSelect
+                    value={provider}
                     options={["cashfree", "razorpay"]}
                     onChange={(item) => setProvider(item.target.value)}
                   />
