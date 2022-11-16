@@ -1,5 +1,3 @@
-import { HEADERS_MAP } from "./salaryManagement/fields";
-
 export const REQUIRED_SUFFIX = " (Required)";
 
 export function buildRowMapper(headerMap, defaultValue) {

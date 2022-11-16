@@ -22,8 +22,6 @@ export function createPayoutHash(item) {
 function _SavePayoutButton({
   data,
   employerId,
-  tableName,
-  module,
   loading,
   saveHook: updatePayouts,
 }) {
