@@ -8,8 +8,7 @@ function _ProcessPayoutsButton({
   employerId,
   month,
   year,
-  tableName,
-  module,
+  provider,
   loading,
   disabled,
   updateHook: processPayouts,
@@ -25,6 +24,7 @@ function _ProcessPayoutsButton({
     if (selected.length) {
       payload.payouts = selected.map((item) => item._id);
     }
+    payload["provider"] = provider;
     processPayouts(payload);
   };
   return (

@@ -1,14 +1,22 @@
-import { Button } from "@blueprintjs/core";
+import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 import { faMoneyCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  Button,
+  Card,
+  HTMLSelect,
+  Intent,
+  PopoverPosition,
+} from "@blueprintjs/core";
 import { useState } from "react";
 import { connect } from "react-redux";
 import { Spacer } from "../../../../atomic/atoms/layouts/alignment";
-import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 import { useGetPayoutsQuery } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
 import { DateDropdown } from "./DateDropdown";
 import { HistoricalPayoutsTable } from "./HistoricalPayoutsTable";
 import { PayoutsSummary } from "./PayoutsSummary";
+import { useGetPayoutsQuery } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
+import { Popover2 } from "@blueprintjs/popover2";
 import { PendingPayoutsTable } from "./PendingPayoutsTable";
 
 // tech-debt: move to utilities or atoms
@@ -36,12 +44,13 @@ export function _PayrollInfo({ employerId, dispatch }) {
     PENDING: [],
     HISTORY: [],
   };
-
+  const [provider, setProvider] = useState("cashfree");
   // techdebt: error handling
   const { data, isLoading, refetch, isFetching } = useGetPayoutsQuery({
     id: employerId,
     year: year,
     month: month,
+    provider,
   });
   let meta = data?.body?.meta;
 
@@ -65,6 +74,22 @@ export function _PayrollInfo({ employerId, dispatch }) {
         title={"Payout Details"}
         actions={
           <>
+            <Popover2
+              position={PopoverPosition.BOTTOM}
+              content={
+                <Card>
+                  Provider
+                  <Spacer />
+                  <HTMLSelect
+                    options={["cashfree", "razorpay"]}
+                    onChange={(item) => setProvider(item.target.value)}
+                  />
+                </Card>
+              }
+            >
+              <Button intent={Intent.NONE} icon={"cog"} />
+            </Popover2>
+            <Spacer />
             <DateDropdown onChange={dateChanged} />
             <Spacer />
             <Button icon={"refresh"} loading={false} onClick={dataRefetch}>
@@ -79,7 +104,7 @@ export function _PayrollInfo({ employerId, dispatch }) {
         loading={isLoading || isFetching}
       />
       <PendingPayoutsTable
-        {...{ employerId, year, month, dispatch, meta }}
+        {...{ employerId, year, month, dispatch, meta, provider }}
         data={entries["PENDING"]}
         loading={isLoading || isFetching}
       />

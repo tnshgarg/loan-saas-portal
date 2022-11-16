@@ -29,8 +29,7 @@ export function VirtualAccountInfo({
   ifsc,
   balance_updated_on: updated_at,
 }) {
-  const [fetchInstrument, { isLoading: isFetching }] =
-    useFetchInstrumentMutation();
+  const [fetchInstrument] = useFetchInstrumentMutation();
   const [mask, setMasked] = useState(true);
   const intentMap = {
     PENDING: Intent.WARNING,
@@ -43,6 +42,7 @@ export function VirtualAccountInfo({
   const refetchInstrument = () => {
     fetchInstrument({ employerId });
   };
+
   return (
     <div style={{ position: "relative" }}>
       <Button

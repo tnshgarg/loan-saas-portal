@@ -9,7 +9,7 @@ import {
 } from "@blueprintjs/core";
 import BrowserEdiTable from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
-import { ONE_CLICK_HEADERS } from "../oneClickPayments/paymentFields";
+import { ONE_CLICK_HEADERS } from "../employeeSalary/employeeSalaryFields";
 import {
   useFetchInstrumentMutation,
   useProcessPayoutsMutation,
@@ -29,12 +29,12 @@ export function PendingPayoutsTable({
   month,
   loading,
   dispatch,
+  provider,
 }) {
   const [sendPayoutConfirmation, { isLoading: isProcessing }] =
     useProcessPayoutsMutation();
   const [updatePayouts, { isLoading: isSaving }] = useUpdatePayoutsMutation();
-  const [fetchInstrument, { isLoading: isFetching }] =
-    useFetchInstrumentMutation();
+  const [fetchInstrument] = useFetchInstrumentMutation();
   const key = `payout-info-pending-${year}-${month}`;
   const virtual_account = meta?.virtual_account;
   if (pendingPayouts.length) {
@@ -67,6 +67,18 @@ export function PendingPayoutsTable({
   };
   const sufficientFunds =
     totalAmount > 0 && totalAmount < virtual_account?.balance;
+  const providerLabel = {
+    cashfree: (
+      <Tag intent={Intent.WARNING} minimal large>
+        Cashfree
+      </Tag>
+    ),
+    razorpay: (
+      <Tag intent={Intent.PRIMARY} minimal large>
+        Razorpay
+      </Tag>
+    ),
+  };
   return (
     <Dashlet
       icon={"time"}
@@ -75,29 +87,32 @@ export function PendingPayoutsTable({
       actions={
         <>
           {/*techdebt: move this to another component*/}
-          {totalAmount ? (
-            sufficientFunds ? (
-              <Tag minimal intent={Intent.SUCCESS} icon={"tick"}>
-                {(totalAmount || 0).toINR()} is available in account
-              </Tag>
+          <div style={{ display: "inline-block" }}>
+            {totalAmount ? (
+              sufficientFunds ? (
+                <Tag minimal intent={Intent.SUCCESS} icon={"tick"}>
+                  {(totalAmount || 0).toINR()} is available in account
+                </Tag>
+              ) : (
+                <Tag minimal intent={Intent.DANGER} icon={"cross"}>
+                  shortfall of{" "}
+                  {(totalAmount - (virtual_account?.balance ?? 0)).toINR()} INR
+                  in Account
+                </Tag>
+              )
             ) : (
-              <Tag minimal intent={Intent.DANGER} icon={"cross"}>
-                shortfall of{" "}
-                {(totalAmount - (virtual_account?.balance ?? 0)).toINR()} INR in
-                Account
+              <Tag minimal icon={"clean"}>
+                No Pending Payouts
               </Tag>
-            )
-          ) : (
-            <Tag minimal icon={"clean"}>
-              No Pending Payouts
-            </Tag>
-          )}
+            )}
+          </div>
           <Spacer />
           <ProcessPayoutsButton
             employerId={employerId}
             tableName={key}
             month={month}
             year={year}
+            provider={provider}
             module={"payouts-pending"}
             loading={loading || isProcessing}
             disabled={!sufficientFunds}
@@ -115,7 +130,7 @@ export function PendingPayoutsTable({
       }
     >
       <Card>
-        <H4> Virtual Account Details </H4>
+        <H4> Payout Account Details {providerLabel[provider]}</H4>
         {virtual_account ? (
           <VirtualAccountInfo {...virtual_account} employerId={employerId} />
         ) : (

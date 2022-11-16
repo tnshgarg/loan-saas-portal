@@ -1,7 +1,7 @@
 import { Button, Intent, NonIdealState, ProgressBar } from "@blueprintjs/core";
 import BrowserEdiTable from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
-import { FIELDS } from "../oneClickPayments/paymentFields";
+import { FIELDS } from "../employeeSalary/employeeSalaryFields";
 import { noValidation } from "../../employee/onboarding/validations";
 import { REQUIRED_SUFFIX } from "../util";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
