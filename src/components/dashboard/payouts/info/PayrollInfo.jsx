@@ -15,7 +15,6 @@ import { useGetPayoutsQuery } from "../../../../store/slices/apiSlices/employer/
 import { DateDropdown } from "./DateDropdown";
 import { HistoricalPayoutsTable } from "./HistoricalPayoutsTable";
 import { PayoutsSummary } from "./PayoutsSummary";
-import { useGetPayoutsQuery } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
 import { Popover2 } from "@blueprintjs/popover2";
 import { PendingPayoutsTable } from "./PendingPayoutsTable";
 
