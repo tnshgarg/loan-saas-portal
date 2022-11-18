@@ -77,6 +77,14 @@ export const FIELDS = [
     group: FG.PERSONAL_DETAILS,
   },
   {
+    header: "Principal Employer",
+    field: "principalEmployer",
+    default: false,
+    required: false,
+    validations: noValidation,
+    group: FG.EMPLOYMENT,
+  },
+  {
     header: "Date of Joining (dd/mm/yyyy)" + REQUIRED_SUFFIX,
     field: "doj",
     required: true,

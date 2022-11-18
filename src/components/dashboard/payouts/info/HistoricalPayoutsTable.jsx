@@ -31,8 +31,8 @@ const HISTORICAL_PAYOUTS_HEADERS = FIELDS.concat([
     validations: noValidation,
   },
   {
-    header: "Remarks",
-    field: "errorReason",
+    header: "Message",
+    field: "message",
     validations: noValidation,
   },
 ]).map((column) => ({
@@ -52,6 +52,7 @@ export function HistoricalPayoutsTable({
   const historicalPayouts = data.map((item) => {
     const mutableItem = Object.assign({}, item);
     mutableItem.payoutStatus = mutableItem.status;
+    mutableItem.message = mutableItem?.context?.message;
     delete mutableItem.status;
     mutableItem.status = {};
     return mutableItem;
