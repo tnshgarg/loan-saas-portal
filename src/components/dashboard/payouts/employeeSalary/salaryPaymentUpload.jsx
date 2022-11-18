@@ -10,11 +10,12 @@ import { buildRowMapper, buildTemplate } from "../util";
 
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
-function getYesterdayDate() {
-  let yeterday = new Date(Date.now() - ONE_DAY);
+function getDefaultValues() {
+  let yesterday = new Date(Date.now() - ONE_DAY);
   return {
-    year: yeterday.getFullYear().toString(),
-    month: yeterday.getMonth().toString().padStart(2, "0"),
+    year: yesterday.getFullYear().toString(),
+    month: yesterday.getMonth().toString().padStart(2, "0"),
+    remarks: `salary for ${yesterday.toISOString().substring(0, 7)}`,
   };
 }
 
@@ -26,7 +27,7 @@ function _EmployeeSalaryPayments({ employerId }) {
     useGetAllEmployeesByEmployerIdQuery(employerId);
   if (error) console.error(error);
   const employeesData = data?.body ?? [];
-  const templateData = buildTemplate(FIELDS, employeesData, getYesterdayDate());
+  const templateData = buildTemplate(FIELDS, employeesData, getDefaultValues());
   return (
     <>
       <CSVUploadDashlet

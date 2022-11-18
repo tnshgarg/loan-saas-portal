@@ -1,8 +1,10 @@
 import {
   amountValidation,
+  emailValidation,
   monthValidation,
   noValidation,
   phoneValidation,
+  requiredValidation,
   yearValidation,
 } from "../../employee/onboarding/validations";
 import { buildHeaderMap, REQUIRED_SUFFIX } from "../util";
@@ -12,7 +14,7 @@ export const FIELDS = [
   {
     header: "Account Holder Name" + REQUIRED_SUFFIX,
     field: "accountHolderName",
-    validations: noValidation,
+    validations: requiredValidation,
   },
   {
     header: "Account Number" + REQUIRED_SUFFIX,
@@ -22,7 +24,7 @@ export const FIELDS = [
   {
     header: "IFSC" + REQUIRED_SUFFIX,
     field: "ifsc",
-    validations: noValidation,
+    validations: requiredValidation,
   },
   {
     header: "Mobile Number" + REQUIRED_SUFFIX,
@@ -33,13 +35,13 @@ export const FIELDS = [
   {
     header: "Email" + REQUIRED_SUFFIX,
     field: "email",
-    validations: phoneValidation,
+    validations: emailValidation,
     prefetch: true,
   },
   {
     header: "Address" + REQUIRED_SUFFIX,
     field: "address",
-    validations: phoneValidation,
+    validations: requiredValidation,
     prefetch: true,
   },
   {
@@ -58,8 +60,8 @@ export const FIELDS = [
     validations: noValidation,
   },
   {
-    header: "Employee Id",
-    field: "employerEmployeeId",
+    header: "Remarks",
+    field: "remarks",
     validations: noValidation,
     prefetch: true,
   },

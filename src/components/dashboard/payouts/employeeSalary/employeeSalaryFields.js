@@ -1,6 +1,7 @@
 import {
   amountValidation,
   monthValidation,
+  noValidation,
   phoneValidation,
   requiredValidation,
   yearValidation,
@@ -41,6 +42,12 @@ export const FIELDS = [
     header: "Amount Payable" + REQUIRED_SUFFIX,
     field: "amount",
     validations: amountValidation,
+  },
+  {
+    header: "Remarks",
+    field: "remarks",
+    validations: noValidation,
+    prefetch: true,
   },
 ];
 
