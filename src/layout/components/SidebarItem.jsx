@@ -72,16 +72,13 @@ export default function SidebarItem(props) {
   };
   // techdebt: code repetition
   return (
-    <div style={{ textAlign: "center", padding: "1em" }}>
+    <div style={{ textAlign: "center", padding: "0em" }}>
       <PopupMenuWrapper items={children} name={name} route={route}>
         <div
           style={{
-            backgroundColor: hovered
-              ? Colors.GRAY1
-              : isActive
-              ? Colors.GREEN5
-              : "",
+            color: hovered ? Colors.GRAY1 : isActive ? Colors.GREEN5 : "",
             padding: iconPadding,
+            marginBottom: "1em",
             borderRadius: cornerRadius,
           }}
           onMouseEnter={toggleHover}

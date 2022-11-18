@@ -1,11 +1,11 @@
 import {
   aadhaarValidation,
+  accNumberValidation,
   currencyValidation,
   dateValidation,
   dojValidation,
   emailValidation,
   genderValidation,
-  accNumberValidation,
   ifscValidation,
   noValidation,
   panValidation,
@@ -19,7 +19,7 @@ export const FIELD_GROUP = {
   EMPLOYMENT: "Employment",
   COMPLIANCE: "Compliance",
   NOMINEE: "Nominee",
-  IDENTIFICATION: "Identifiation",
+  IDENTIFICATION: "Identification",
   BANK_AC: "Bank A/c",
 };
 const FG = FIELD_GROUP;
@@ -29,7 +29,7 @@ const REQUIRED_SUFFIX = " (Required)";
 export const FIELDS = [
   {
     header: "Name" + REQUIRED_SUFFIX,
-    field: "name",
+    field: "employeeName",
     validations: requiredValidation,
     group: FG.PERSISTENT,
   },
@@ -318,14 +318,16 @@ export const HEADER_GROUPS = FIELDS.reduce((groups, column) => {
 }, []);
 
 export const HEADER_LIST = FIELDS.map((column) => column.header);
+
 export function transformHeadersToFields(list) {
   console.log({ transformHeadersToFields: true, list });
   return list.map((item) => {
     return Object.entries(HEADERS_MAP).reduce(
       (transformedObject, [header, column]) => {
         const trimmedHeader = header.replace(REQUIRED_SUFFIX, "").trim();
-        // console.log({ header, column, item });
-        transformedObject[column.field] = item[header] ?? item[trimmedHeader];
+        console.log({ header, column, item });
+        transformedObject[column.field] =
+          item[header] ?? item[trimmedHeader] ?? "";
         return transformedObject;
       },
       {}

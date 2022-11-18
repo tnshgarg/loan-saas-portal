@@ -1,38 +1,71 @@
 import {
   Button,
   Card,
-  Classes,
   Dialog,
-  Divider,
   Elevation,
-  H3,
-  H5,
-  H6,
-  Icon,
   Intent,
   Spinner,
   Tag,
 } from "@blueprintjs/core";
+import { isObject } from "lodash";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
+import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
+import Table from "../../../atomic/organisms/table";
 import {
   useGetAllEmployeesByEmployerIdQuery,
   useLazyGetAllEmployeesByEmployerIdQuery,
 } from "../../../store/slices/apiSlices/employees/employeesApiSlice";
-import { useGetEmployerMetricsByIdQuery } from "../../../store/slices/apiSlices/employer/metricsApiSlice";
+import { groupByKeyCount } from "../../../utils/aggregates";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
-import { isObject } from "lodash";
-import styles from "./styles/onboard.module.css";
-import {
-  ACTIONS_CLASS,
-  CARD_STYLING,
-  HEADER_CLASS,
-} from "./onboarding/Onboard";
-import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
-import Table from "../../../atomic/organisms/table";
+
+const checkOverallStatus = (aadhaar, pan, bank) => {
+  return aadhaar?.verifyStatus === "SUCCESS" &&
+    pan?.verifyStatus === "SUCCESS" &&
+    bank?.verifyStatus === "SUCCESS"
+    ? "SUCCESS"
+    : "PENDING";
+};
+
+const reformatEmployeeData = (employeeData) => {
+  return employeeData.map((employee) => {
+    const {
+      employerEmployeeId,
+      employeeName,
+      mobile,
+      email,
+      dob,
+      designation,
+      aadhaar,
+      pan,
+      bank,
+      _id,
+      isActive,
+    } = employee;
+    return {
+      "Employee ID": employerEmployeeId,
+      Name: employeeName,
+      "Mobile Number": mobile,
+      "Onboarding Status": checkOverallStatus(aadhaar, pan, bank),
+      Email: email,
+      "Date of Birth (dd/mm/yyyy)": dob,
+      "Job Title": designation,
+      _id: _id,
+      "Employment Status": isActive ? "ACTIVE" : "INACTIVE",
+      "Aadhaar Number": aadhaar?.number,
+      "Aadhaar Status": aadhaar?.verifyStatus ?? "PENDING",
+      "PAN Number": pan?.number,
+      "PAN Status": pan?.verifyStatus ?? "PENDING",
+      "Account Number": bank?.accountNumber,
+      "IFSC Code": bank?.ifsc,
+      "Account Status": bank?.verifyStatus ?? "PENDING",
+    };
+  });
+};
 
 const MODAL_STYLING = {
   marginTop: "7.5rem",
@@ -76,7 +109,7 @@ const TabularViewTab = ({ handlers }) => {
 
   const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
   const { data, isLoading, error, refetch } = responseFromQuery;
-
+  console.log({ data, isLoading, error, refetch });
   const responseFromLazyQuery = useLazyGetAllEmployeesByEmployerIdQuery();
   const [
     trigger,
@@ -85,48 +118,8 @@ const TabularViewTab = ({ handlers }) => {
 
   const [fetchedRows, setFetchedRows] = useState([]);
 
-  const checkOverallStatus = (aadhaar, pan, bank) => {
-    return aadhaar?.verifyStatus === "SUCCESS" &&
-      pan?.verifyStatus === "SUCCESS" &&
-      bank?.verifyStatus === "SUCCESS"
-      ? "SUCCESS"
-      : "PENDING";
-  };
-
   const setFetchedRowsFromBody = (body) => {
-    const fetchedRowsData = body.map((employee) => {
-      const {
-        employerEmployeeId,
-        name,
-        mobile,
-        email,
-        dob,
-        designation,
-        aadhaar,
-        pan,
-        bank,
-        _id,
-        isActive,
-      } = employee;
-      return {
-        "Employee ID": employerEmployeeId,
-        Name: name,
-        "Mobile Number": mobile,
-        "Onboarding Status": checkOverallStatus(aadhaar, pan, bank),
-        Email: email,
-        "Date of Birth (dd/mm/yyyy)": dob,
-        "Job Title": designation,
-        _id: _id,
-        "Employment Status": isActive ? "ACTIVE" : "INACTIVE",
-        "Aadhaar Number": aadhaar?.number,
-        "Aadhaar Status": aadhaar.verifyStatus,
-        "PAN Number": pan?.number,
-        "PAN Status": pan.verifyStatus,
-        "Account Number": bank?.accountNumber,
-        "IFSC Code": bank?.ifsc,
-        "Account Status": bank.verifyStatus,
-      };
-    });
+    const fetchedRowsData = reformatEmployeeData(body);
     setFetchedRows(fetchedRowsData);
   };
 
@@ -229,6 +222,7 @@ const TabularViewTab = ({ handlers }) => {
   handlers["refresh"] = () => {
     refetch();
   };
+  console.log(fetchedRows);
   return (
     <>
       {isLoading ? (
@@ -288,15 +282,45 @@ const TabularTabsComponent = () => {
 
   const navigate = useNavigate();
 
-  const { data } = useGetEmployerMetricsByIdQuery({
-    employerId,
-    category: "metrics",
-    subCategory: "onboarding",
-  });
+  const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
+  const { data } = responseFromQuery;
+  const [metricsData, setMetricsData] = useState({});
+
+  useEffect(() => {
+    if (data) {
+      const body = data?.body ?? [];
+      const fetchedRowsData = reformatEmployeeData(body);
+      const onboardingAggregationResult = groupByKeyCount(
+        fetchedRowsData,
+        "Onboarding Status"
+      );
+      const aadhaarAggregationResult = groupByKeyCount(
+        fetchedRowsData,
+        "Aadhaar Status"
+      );
+      const panAggregationResult = groupByKeyCount(
+        fetchedRowsData,
+        "PAN Status"
+      );
+      const bankAccountAggregationResult = groupByKeyCount(
+        fetchedRowsData,
+        "Account Status"
+      );
+      const metricDataObject = {
+        body: {
+          employees: onboardingAggregationResult,
+          aadhaar: aadhaarAggregationResult,
+          pan: panAggregationResult,
+          bank: bankAccountAggregationResult,
+        },
+      };
+      setMetricsData(metricDataObject);
+    }
+  }, [data]);
 
   const metricsConfig = {
     labels: {
-      employees: "Employees",
+      employees: "Onboarding Status",
       aadhaar: "Aadhaar KYC",
       pan: "PAN KYC",
       bank: "Bank KYC",
@@ -327,39 +351,33 @@ const TabularTabsComponent = () => {
   return (
     <>
       <EmployerMetrics
-        data={data}
+        data={metricsData}
         primaryKey={"SUCCESS"}
         config={metricsConfig}
       />
-      <Card style={CARD_STYLING} elevation={Elevation.THREE}>
-        <div className={styles.row}>
-          <div className={HEADER_CLASS}>
-            <H3>
-              {" "}
-              <Icon icon={"people"} size={"1em"} /> Employee Records
-            </H3>
-          </div>
-          <div className={ACTIONS_CLASS}>
-            <div className={styles.alignRight}>
-              <Button icon={"refresh"} onClick={createHandler("refresh")}>
-                Refresh
-              </Button>
-              &nbsp;&nbsp;&nbsp;&nbsp;
-              <Button
-                icon={"saved"}
-                intent={Intent.SUCCESS}
-                onClick={createHandler("download-excel")}
-              >
-                Download Excel
-              </Button>
-            </div>
-          </div>
-        </div>
-        <Divider />
+      <Dashlet
+        icon={"people"}
+        title={"Employee Records"}
+        actions={
+          <>
+            <Button icon={"refresh"} onClick={createHandler("refresh")}>
+              Refresh
+            </Button>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <Button
+              icon={"saved"}
+              intent={Intent.SUCCESS}
+              onClick={createHandler("download-excel")}
+            >
+              Download Excel
+            </Button>
+          </>
+        }
+      >
         <TabularViewTab handlers={handlers} />
-      </Card>
+      </Dashlet>
     </>
   );
 };
 
-export const TabularView = TabularTabsComponent;
+export const EmployeesPanel = TabularTabsComponent;

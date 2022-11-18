@@ -54,10 +54,12 @@ export const registerUser =
     phone_number,
     name,
     company_name,
+    company_type,
     employee_count,
     designation
   ) =>
   (dispatch) => {
+    username = username.replace("+", "_");
     return AuthService.signUp(
       username,
       password,
@@ -65,6 +67,7 @@ export const registerUser =
       phone_number,
       name,
       company_name,
+      company_type,
       employee_count,
       designation
     ).then(

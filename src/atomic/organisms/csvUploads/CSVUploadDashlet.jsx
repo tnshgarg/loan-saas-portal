@@ -1,27 +1,27 @@
-import { useEffect, useState } from "react";
-import { read, utils } from "xlsx";
-import { connect } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
 import { Collapse, Intent, NonIdealState, Tag } from "@blueprintjs/core";
 import * as Papa from "papaparse";
+import { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { read, utils } from "xlsx";
+import { FS } from "../../../components/dashboard/employee/onboarding/validations";
+import { VerifyAndUploadEmployees } from "../../../components/dashboard/employee/onboarding/verifyAndUploadEmployees";
 import { useToastContext } from "../../../contexts/ToastContext";
 import { initCSVUpload } from "../../../store/slices/csvUploadSlice.ts";
-import { Dashlet } from "../../molecules/dashlets/dashlet";
-import { TemplateDownloadButton } from "../../atoms/forms/TemplateDownloadButton";
 import { CSVFileInput } from "../../atoms/forms/CSVFileInput";
-import { VerifyAndUploadEmployees } from "../../../components/dashboard/employee/onboarding/verifyAndUploadEmployees";
+import { TemplateDownloadButton } from "../../atoms/forms/TemplateDownloadButton";
+import { Dashlet } from "../../molecules/dashlets/dashlet";
 import BrowserEdiTable from "./BrowserEdiTable";
-import { FS } from "../../../components/dashboard/employee/onboarding/validations";
 
 export const MAX_SIZE = 1024 * 1024 * 5;
 
 const mapOnboardPropsToState = (state, ownProps) => {
-  const { panelName } = ownProps;
-  console.log({ csvUploads: state.csvUploads[panelName] });
-  const savedFileName = state?.csvUploads[panelName]
-    ? Object.keys(state.csvUploads[panelName])[0]
+  const { module } = ownProps;
+  console.log({ csvUploads: state.csvUploads[module] });
+  const savedFileName = state?.csvUploads[module]
+    ? Object.keys(state.csvUploads[module])[0]
     : "";
   return {
     employerId: state.auth.user?.attributes.sub || "",
@@ -31,7 +31,6 @@ const mapOnboardPropsToState = (state, ownProps) => {
 
 function _CSVUploadDashlet({
   title,
-  label,
   templateData,
   templateDownloadProps,
   fields,
@@ -39,7 +38,7 @@ function _CSVUploadDashlet({
   dispatch,
   preProcessing,
   onToastDismiss,
-  panelName,
+  module,
   savedFileName,
 }) {
   const navigate = useNavigate();
@@ -64,7 +63,7 @@ function _CSVUploadDashlet({
   const [loading, setLoading] = useState(false);
   const [cloudUploadDisabled, setCloudUploadDisabled] = useState(false);
 
-  const S3_BUCKET = `employer-${process.env.REACT_APP_STAGE}-raw`;
+  const S3_BUCKET = `${process.env.REACT_APP_STAGE}-employer-raw`;
   const REGION = process.env.REACT_APP_S3_REGION;
 
   const credentials = {
@@ -80,22 +79,27 @@ function _CSVUploadDashlet({
 
   const handleFileUpload = async () => {
     const tableData = getter["data"]();
-    let erroredData = [];
-    console.log({tableData})
-    tableData.map((row) => {
-      if (row.status[FS.ERROR] >= 1) {
-        erroredData.push({ ...row });
-      }
-    });
-    const tableCSV = Papa.unparse(tableData);
-    console.log({tableCSV})
+    let erroredData = tableData.filter((row) => row.status[FS.ERROR] >= 1);
+
+    const tableCSV = Papa.unparse(
+      tableData.map((row) => {
+        let csvRow = Object.assign({}, row);
+        delete csvRow.status;
+        delete csvRow.rowNumber;
+        return csvRow;
+      })
+    );
+    console.log({ tableCSV });
     const csvFile = new Blob([tableCSV], { type: "text/csv" });
     const timestamp = new Date().getTime();
 
     const params = {
       Body: csvFile,
       Bucket: S3_BUCKET,
-      Key: `${employerId}/${panelName}/${timestamp}_${file.object.name.replace(/\W/g, "_")}`,
+      Key: `${employerId}/${module}/${timestamp}_${file.object.name.replace(
+        /\W/g,
+        "_"
+      )}`,
     };
 
     try {
@@ -122,7 +126,7 @@ function _CSVUploadDashlet({
               data: erroredData,
               fileName: file.object.name,
               fields,
-              panelName,
+              module,
             })
           );
         } else {
@@ -154,7 +158,7 @@ function _CSVUploadDashlet({
         data: preProcessing(data),
         fileName: file.object.name,
         fields,
-        panelName: panelName,
+        module: module,
       })
     );
   };
@@ -172,13 +176,13 @@ function _CSVUploadDashlet({
   };
 
   useEffect(() => {
-    if(savedFileName) {
+    if (savedFileName) {
       setFile({ object: { name: savedFileName }, validations: [] });
     }
-  },[savedFileName])
+  }, [savedFileName]);
 
   useEffect(() => {
-    if ((file?.object?.name && file?.object?.size)) {
+    if (file?.object?.name && file?.object?.size) {
       const reader = new FileReader();
       reader.onload = (event) => {
         const wb = read(event.target.result, {
@@ -196,7 +200,7 @@ function _CSVUploadDashlet({
         ...prevState,
         onDismiss: onToastDismiss,
       }));
-    } 
+    }
   }, [file.object, onToastDismiss, savedFileName, setConfig]);
 
   return (
@@ -222,13 +226,15 @@ function _CSVUploadDashlet({
                 <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 <VerifyAndUploadEmployees
                   fileName={file?.object?.name}
-                  panelName={panelName}
+                  module={module}
                   disableButton={cloudUploadDisabled}
+                  loading={loading}
                   onClick={(e) => {
                     !file.object
                       ? alert("Please select a file to upload")
                       : uploadCSV(e);
                   }}
+                  buttonText={`Add ${title}`}
                 />
               </>
             ) : (
@@ -255,9 +261,11 @@ function _CSVUploadDashlet({
         {file.object || savedFileName ? (
           <>
             <BrowserEdiTable
+              key={savedFileName ?? file.object.name}
               setter={setDataGetter}
+              deletes={true}
               tableName={file?.object?.name}
-              panelName={panelName}
+              module={module}
             />
           </>
         ) : !uploadStatus ? (

@@ -11,6 +11,8 @@ import CSVUploadReducer from "./slices/csvUploadSlice.ts";
 import employeeReducer from "./slices/employeeSlice";
 import messageReducer from "./slices/messageSlice";
 import registerFormReducer from "./slices/registerFormSlice";
+import { employerPayrollApi } from "./slices/apiSlices/employer/payrollApiSlice";
+import { employerEWAApi } from "./slices/apiSlices/employer/ewaApiSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,11 +22,13 @@ export const store = configureStore({
     employee: employeeReducer,
     csvUploads: CSVUploadReducer,
     [employerAddressApi.reducerPath]: employerAddressApi.reducer,
+    [employerPayrollApi.reducerPath]: employerPayrollApi.reducer,
+    [employerEWAApi.reducerPath]: employerEWAApi.reducer,
     [employerTaxApi.reducerPath]: employerTaxApi.reducer,
     [employerCredentialsApi.reducerPath]: employerCredentialsApi.reducer,
     [allEmployeesBasicDetails.reducerPath]: allEmployeesBasicDetails.reducer,
     [employeeDetails.reducerPath]: employeeDetails.reducer,
-    [employerMetricsApi.reducerPath]: employerMetricsApi.reducer
+    [employerMetricsApi.reducerPath]: employerMetricsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -34,12 +38,14 @@ export const store = configureStore({
         ignoredPaths: ["auth.user"],
       },
     })
+      .concat(employerEWAApi.middleware)
       .concat(employerAddressApi.middleware)
+      .concat(employerPayrollApi.middleware)
       .concat(employerTaxApi.middleware)
       .concat(employerCredentialsApi.middleware)
       .concat(allEmployeesBasicDetails.middleware)
       .concat(employeeDetails.middleware)
-      .concat(employerMetricsApi.middleware)
+      .concat(employerMetricsApi.middleware),
 });
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors

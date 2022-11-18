@@ -8,7 +8,7 @@ const { sidebar } = THEME;
 
 export function AppSidebar() {
   const sideItems = NAV_MENU.map((navItem) => (
-    <SidebarItem key={navItem.route} {...navItem} />
+    <SidebarItem key={navItem.route} {...navItem} showTitle={true} />
   ));
   return (
     <div

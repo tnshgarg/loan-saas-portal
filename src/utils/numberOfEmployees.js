@@ -27,3 +27,14 @@ export const numberOfEmployees = [
     label: ">10000",
   },
 ];
+
+export const companyTypes = [
+  { label: "Individual", value: "INDIVIDUAL" },
+  { label: "Proprietorship", value: "PROPRIETORSHIP" },
+  { label: "Partnership", value: "PARTNERSHIP" },
+  { label: "Private LTD", value: "PRIVATE_LTD" },
+  { label: "Public LTD", value: "PUBLIC_LTD" },
+  { label: "LLP", value: "LLP" },
+  { label: "HUF", value: "HUF" },
+  { label: "OPC", value: "OPC" },
+];

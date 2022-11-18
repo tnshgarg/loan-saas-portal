@@ -7,7 +7,7 @@ export function AttendanceUpload() {
   return (
     <CSVUploadDashlet
       title={"Employee Attendance"}
-      label={"attendance_details"}
+      module={"attendance"}
       templateData={[HEADER_LIST]}
       fields={HEADER_GROUPS}
       preProcessing={transformHeadersToFields}
