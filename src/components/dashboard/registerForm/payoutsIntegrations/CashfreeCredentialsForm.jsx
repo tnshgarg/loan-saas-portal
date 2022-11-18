@@ -192,16 +192,17 @@ function _CashfreeCredentialsForm({ employerId }) {
               disabled: disabled,
             }}
           />
-
-          <Button
-            disabled={errors.clientId || errors.clientSecret}
-            type="button"
-            onClick={() =>
-              disabled ? setDisabled(false) : onSubmit({ ...getValues() })
-            }
-          >
-            {disabled ? "Edit" : "Submit"}
-          </Button>
+          <div style={{ textAlign: "right" }}>
+            <Button
+              disabled={errors.clientId || errors.clientSecret}
+              type="button"
+              onClick={() =>
+                disabled ? setDisabled(false) : onSubmit({ ...getValues() })
+              }
+            >
+              {disabled ? "Edit" : "Submit"}
+            </Button>
+          </div>
         </form>
       </div>
     </>

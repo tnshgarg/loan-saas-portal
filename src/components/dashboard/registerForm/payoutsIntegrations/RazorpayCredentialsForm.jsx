@@ -203,15 +203,17 @@ function _RazorpayCredentialsForm({ employerId }) {
               }}
             />
           </Collapse>
-          <Button
-            disabled={errors.username || errors.password}
-            type="button"
-            onClick={() =>
-              disabled ? setDisabled(false) : onSubmit({ ...getValues() })
-            }
-          >
-            {disabled ? "Edit" : "Submit"}
-          </Button>
+          <div style={{ textAlign: "right" }}>
+            <Button
+              disabled={errors.username || errors.password}
+              type="button"
+              onClick={() =>
+                disabled ? setDisabled(false) : onSubmit({ ...getValues() })
+              }
+            >
+              {disabled ? "Edit" : "Submit"}
+            </Button>
+          </div>
         </form>
       </div>
     </>
