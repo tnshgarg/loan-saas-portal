@@ -1,7 +1,7 @@
 import { Button, Intent, NonIdealState, ProgressBar } from "@blueprintjs/core";
 import BrowserEdiTable from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
-import { FIELDS } from "../oneClickPayments/paymentFields";
+import { FIELDS } from "../employeeSalary/employeeSalaryFields";
 import { noValidation } from "../../employee/onboarding/validations";
 import { REQUIRED_SUFFIX } from "../util";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -31,8 +31,8 @@ const HISTORICAL_PAYOUTS_HEADERS = FIELDS.concat([
     validations: noValidation,
   },
   {
-    header: "Remarks",
-    field: "errorReason",
+    header: "Message",
+    field: "message",
     validations: noValidation,
   },
 ]).map((column) => ({
@@ -52,6 +52,7 @@ export function HistoricalPayoutsTable({
   const historicalPayouts = data.map((item) => {
     const mutableItem = Object.assign({}, item);
     mutableItem.payoutStatus = mutableItem.status;
+    mutableItem.message = mutableItem?.context?.message;
     delete mutableItem.status;
     mutableItem.status = {};
     return mutableItem;

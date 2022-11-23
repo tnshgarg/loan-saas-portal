@@ -6,6 +6,7 @@ import { faMoneyCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // techdebt: move to a utils/addons file
+// eslint-disable-next-line no-extend-native
 Number.prototype.toINR = function () {
   return this.toFixed(2).replace(/(\d)(?=(\d{2})+\d\.)/g, "$1,");
 };

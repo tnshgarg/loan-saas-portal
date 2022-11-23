@@ -45,18 +45,20 @@ const reformatEmployeeData = (employeeData) => {
       pan,
       bank,
       _id,
-      isActive,
+      active,
+      principalEmployer,
     } = employee;
     return {
       "Employee ID": employerEmployeeId,
       Name: employeeName,
       "Mobile Number": mobile,
+      "Principal Employer": principalEmployer,
       "Onboarding Status": checkOverallStatus(aadhaar, pan, bank),
       Email: email,
       "Date of Birth (dd/mm/yyyy)": dob,
       "Job Title": designation,
       _id: _id,
-      "Employment Status": isActive ? "ACTIVE" : "INACTIVE",
+      "Employment Status": active ? "ACTIVE" : "INACTIVE",
       "Aadhaar Number": aadhaar?.number,
       "Aadhaar Status": aadhaar?.verifyStatus ?? "PENDING",
       "PAN Number": pan?.number,
@@ -205,11 +207,11 @@ const TabularViewTab = ({ handlers }) => {
   const cellProps = (cell) => {
     let bgColor = "white";
     if (cell?.value) {
-      if (cell.value.includes("SUCCESS")) {
+      if (["SUCCESS", "ACTIVE"].includes(cell.value)) {
         bgColor = "rgb(204, 255, 216, 0.5)";
       } else if (cell.value.includes("PENDING")) {
         bgColor = "rgb(247, 252, 162, 0.5)";
-      } else if (cell.value.includes("ERROR")) {
+      } else if (["ERROR", "INACTIVE"].includes(cell.value)) {
         bgColor = "rgb(255, 215, 213, 0.5)";
       }
     }

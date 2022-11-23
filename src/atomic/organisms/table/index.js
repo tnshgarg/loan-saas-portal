@@ -273,7 +273,7 @@ const Table = ({
                           id={cell.getCellProps().key}
                           {...cell.getCellProps(cellProps(cell))}
                         >
-                          {cell.render("Cell")}
+                          <span className="heading">{cell.render("Cell")}</span>
                         </td>
                       );
                     })}
@@ -349,20 +349,22 @@ const Styles = styled.div`
       color: rgba(0, 0, 0, 0.87);
       font-weight: 500;
       background: white;
-      box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
-      .heading {
-        white-space: nowrap !important;
-        overflow: visible;
-        width: 78%;
-        display: inline-block;
-      }
     }
     th,
     td {
+      overflow: hidden;
       white-space: normal !important;
       margin: 0;
-      padding: 0.5rem 2rem;
+      padding: 0.5rem 1rem;
+      .heading {
+        overflow: hidden;
+        white-space: nowrap;
+        display: inline-block;
+        width: 7em;
+        text-overflow: ellipsis;
+      }
       p {
+        line-break: auto;
         margin-bottom: 0px;
       }
       :last-child {
@@ -373,6 +375,12 @@ const Styles = styled.div`
       }
       .other-form-input {
         margin-top: 15px;
+      }
+    }
+    th:first-child,
+    td:first-child {
+      .heading {
+        width: 2em;
       }
     }
   }

@@ -14,7 +14,7 @@ import {
   useGetEmployerCredentialsByIdQuery,
   useUpdateEmployerCredentialsMutation,
 } from "../../../../store/slices/apiSlices/employer/credentialsApiSlice";
-import { Intent } from "@blueprintjs/core";
+import { Button, Intent } from "@blueprintjs/core";
 import { AppToaster } from "../../../../contexts/ToastContext";
 
 const EPFOComponent = () => {
@@ -170,12 +170,14 @@ const EPFOComponent = () => {
             disabled: disabled,
           }}
         />
-        <input
-          disabled={errors.username || errors.password}
-          type="button"
-          value={disabled ? "Edit" : "Submit"}
-          onClick={disabled ? toggleDisabled : hydrateUpdateAlert}
-        />
+        <div style={{ textAlign: "right" }}>
+          <Button
+            disabled={errors.username || errors.password}
+            type="button"
+            text={disabled ? "Edit" : "Submit"}
+            onClick={disabled ? toggleDisabled : hydrateUpdateAlert}
+          />
+        </div>
       </form>
       <UpdateAlert />
     </div>

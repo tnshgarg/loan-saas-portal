@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import {
@@ -12,7 +12,7 @@ import UpdateAlert from "../../common/UpdateAlert";
 import Select from "react-select";
 import { NO_CHANGE_ERROR } from "../../../utils/messageStrings";
 import states from "../../../utils/states";
-import { Intent } from "@blueprintjs/core";
+import { Button, Intent } from "@blueprintjs/core";
 import { AppToaster } from "../../../contexts/ToastContext";
 
 const AddressForm = () => {
@@ -182,7 +182,7 @@ const AddressForm = () => {
                 required: true,
                 minLength: 1,
                 pattern: {
-                  value: /^[a-zA-Z0-9!@#$&()`.+,/"-\w\s+]*$/,
+                  value: /^[a-zA-Z0-9!@#$&()`.+,/"\-\w\s]*$/,
                 },
               }}
               errors={errors}
@@ -230,13 +230,14 @@ const AddressForm = () => {
                 errorMessage: "Pincode must be 6 digits",
               }}
             />
-
-            <input
-              disabled={Object.values(errors).length}
-              type="button"
-              value={"Submit"}
-              onClick={hydrateUpdateAlert}
-            />
+            <div style={{ textAlign: "right" }}>
+              <Button
+                disabled={Object.values(errors).length}
+                type="button"
+                text={"Submit"}
+                onClick={hydrateUpdateAlert}
+              />
+            </div>
           </form>
           <UpdateAlert />
         </div>
