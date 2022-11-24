@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../../store/slices/authSlice";
 import ErrorDialog from "../../atomic/atoms/alerts/ErrorDialog";
 import FormInput from "../../atomic/atoms/forms/FormInput";
-import unipeLogo from "../../theme/logo_full.png";
+import unipeLogo from "../../theme/logo_new.png";
 
 const LOGIN_CARD_STYLING = {
   width: "35%",
