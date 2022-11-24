@@ -4,6 +4,7 @@ import {
   Dialog,
   Elevation,
   Intent,
+  NonIdealState,
   Spinner,
   Tag,
 } from "@blueprintjs/core";
@@ -44,7 +45,7 @@ const reformatEmployeeData = (employeeData) => {
       pan,
       bank,
       _id,
-      isActive,
+      active,
     } = employee;
     return {
       "Employee ID": employerEmployeeId,
@@ -55,7 +56,7 @@ const reformatEmployeeData = (employeeData) => {
       "Date of Birth (dd/mm/yyyy)": dob,
       "Job Title": designation,
       _id: _id,
-      "Employment Status": isActive ? "ACTIVE" : "INACTIVE",
+      "Employment Status": active ? "ACTIVE" : "INACTIVE",
       "Aadhaar Number": aadhaar?.number,
       "Aadhaar Status": aadhaar?.verifyStatus ?? "PENDING",
       "PAN Number": pan?.number,
@@ -204,11 +205,11 @@ const TabularViewTab = ({ handlers }) => {
   const cellProps = (cell) => {
     let bgColor = "white";
     if (cell?.value) {
-      if (cell.value.includes("SUCCESS")) {
+      if (["SUCCESS", "ACTIVE"].includes(cell.value)) {
         bgColor = "rgb(204, 255, 216, 0.5)";
       } else if (cell.value.includes("PENDING")) {
         bgColor = "rgb(247, 252, 162, 0.5)";
-      } else if (cell.value.includes("ERROR")) {
+      } else if (["ERROR", "INACTIVE"].includes(cell.value)) {
         bgColor = "rgb(255, 215, 213, 0.5)";
       }
     }
@@ -219,6 +220,18 @@ const TabularViewTab = ({ handlers }) => {
       },
     };
   };
+
+  const noDataComponent = () => {
+    return (
+      <NonIdealState
+        icon={"property"}
+        title={"No Employees"}
+        description={<>Looks like no entries for employees</>}
+        layout={"horizontal"}
+      />
+    );
+  };
+
   handlers["refresh"] = () => {
     refetch();
   };
@@ -255,6 +268,7 @@ const TabularViewTab = ({ handlers }) => {
             cellProps={cellProps}
             showDownload={false}
             handlers={handlers}
+            noDataComponent={noDataComponent}
           />
           <Dialog
             isOpen={isDialogOpen}

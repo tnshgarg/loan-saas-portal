@@ -17,10 +17,11 @@ function buildTemplate(employeesData) {
   return [headers, ...rows];
 }
 
-function _PayrollUpload({ employerId, dispatch }) {
+function _PayrollUpload({ employerId }) {
   // techdebt: fetches on render, can lead to unnecessary API calls
   const { data, error, isLoading } =
     useGetAllEmployeesByEmployerIdQuery(employerId);
+  if (error) console.log(error);
   const employeesData = data?.body ?? [];
   const templateData = buildTemplate(employeesData);
   console.log(templateData);
@@ -43,7 +44,7 @@ function _PayrollUpload({ employerId, dispatch }) {
   );
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
   return {
     employerId: state.auth.user?.attributes.sub,
   };

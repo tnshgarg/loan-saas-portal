@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWallet } from "@fortawesome/free-solid-svg-icons";
-import { DateDropdown } from "../payroll/info/DateDropdown";
+import { DateDropdown } from "../payouts/info/DateDropdown";
 import { Spacer } from "../../../atomic/atoms/layouts/alignment";
 import { Button, NonIdealState, ProgressBar } from "@blueprintjs/core";
 import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
@@ -10,7 +10,7 @@ import { useGetDisbursementsQuery } from "../../../store/slices/apiSlices/employ
 import BrowserEdiTable from "../../../atomic/organisms/csvUploads/BrowserEdiTable";
 import { initCSVUpload } from "../../../store/slices/csvUploadSlice.ts";
 import { noValidation } from "../employee/onboarding/validations";
-import { REQUIRED_SUFFIX } from "../payroll/util";
+import { REQUIRED_SUFFIX } from "../payouts/util";
 
 function mapStateToProps(state) {
   return {

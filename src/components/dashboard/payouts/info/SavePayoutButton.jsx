@@ -22,8 +22,6 @@ export function createPayoutHash(item) {
 function _SavePayoutButton({
   data,
   employerId,
-  tableName,
-  module,
   loading,
   saveHook: updatePayouts,
 }) {
@@ -39,19 +37,19 @@ function _SavePayoutButton({
       updates.push(mutableItem);
     }
   });
-  const hasUpdates = updates.length + deletes.length;
+  const updateCount = updates.length + deletes.length;
   return (
     <>
       <Button
-        disabled={loading || !hasUpdates}
+        disabled={loading || !updateCount}
         loading={loading}
-        icon={hasUpdates ? "floppy-disk" : "tick"}
-        intent={hasUpdates ? Intent.SUCCESS : Intent.NONE}
+        icon={updateCount ? "floppy-disk" : "tick"}
+        intent={updateCount ? Intent.SUCCESS : Intent.NONE}
         onClick={() => {
           updatePayouts({ updates, deletes, employerId });
         }}
       >
-        {hasUpdates ? `Save ${updates.length} Changes` : "No Changes"}
+        {updateCount ? `Save ${updateCount} Changes` : "No Changes"}
       </Button>
     </>
   );

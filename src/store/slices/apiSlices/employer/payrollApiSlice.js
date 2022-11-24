@@ -23,8 +23,8 @@ export const employerPayrollApi = createApi({
   endpoints: (builder) => ({
     // Define endpoints here
     getPayouts: builder.query({
-      query: ({ id, year, month, status = [] }) => {
-        const path = `/payouts?id=${id}&year=${year}&month=${month}`;
+      query: ({ id, year, month, status = [], provider = "cashfree" }) => {
+        const path = `/payouts?id=${id}&year=${year}&month=${month}&provider=${provider}`;
         if (!id || !year || !month)
           throw Error(
             `none of these can be null ${JSON.stringify({
