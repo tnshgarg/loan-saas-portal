@@ -17,18 +17,18 @@ const FIELD_GROUPS = {
 };
 const FG = FIELD_GROUPS;
 // FIELDS are order Sensitive
-const INPUT_DAYS = [
-  "Month Calendar Days",
-  "Earned Days",
-  "Arrear Calender Days",
-  "Arrear Days",
-  "Notice Pay Days",
-  "Notice Recovery Days",
-  "Leave Encashment Days",
-  "LOP reversals Days",
-  "Holiday Pay Days",
-  "Severance Pay Days",
-];
+// const INPUT_DAYS = [
+//   "Month Calendar Days",
+//   "Earned Days",
+//   "Arrear Calender Days",
+//   "Arrear Days",
+//   "Notice Pay Days",
+//   "Notice Recovery Days",
+//   "Leave Encashment Days",
+//   "LOP reversals Days",
+//   "Holiday Pay Days",
+//   "Severance Pay Days",
+// ];
 export const FIELDS = [
   {
     header: "Emp ID",

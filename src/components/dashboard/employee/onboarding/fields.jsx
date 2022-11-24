@@ -133,8 +133,22 @@ export const FIELDS = [
     group: FG.EMPLOYMENT,
   },
   {
+    header: "Principal Employer",
+    field: "principalEmployer",
+    required: false,
+    validations: noValidation,
+    group: FG.EMPLOYMENT,
+  },
+  {
     header: "Annual CTC" + REQUIRED_SUFFIX,
     field: "aCTC",
+    required: true,
+    validations: currencyValidation,
+    group: FG.EMPLOYMENT,
+  },
+  {
+    header: "Monthly Inhand Salary" + REQUIRED_SUFFIX,
+    field: "mInHandSalary",
     required: true,
     validations: currencyValidation,
     group: FG.EMPLOYMENT,

@@ -1,9 +1,10 @@
+import { Button, Intent } from "@blueprintjs/core";
 import { useRef } from "react";
-import { Button } from "@blueprintjs/core";
 
 export function CSVFileInput({ icon, intent, onChange, onInput }) {
   // Create a reference to the hidden file input element
   const hiddenFileInput = useRef(null);
+
   return (
     <>
       <Button
@@ -11,7 +12,7 @@ export function CSVFileInput({ icon, intent, onChange, onInput }) {
         intent={intent}
         onClick={(e) => hiddenFileInput.current.click(e)}
       >
-        Upload File
+        {intent === Intent.PRIMARY ? "Upload File" : "Upload Another File"}
       </Button>
       <div style={{ display: "none" }}>
         <input

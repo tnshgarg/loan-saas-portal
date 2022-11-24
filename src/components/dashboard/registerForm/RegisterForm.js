@@ -5,6 +5,7 @@ import { Card, Elevation, Tab, Tabs } from "@blueprintjs/core";
 import AddressForm from "./AddressForm";
 import TaxSetupForm from "./TaxSetupForm";
 import AutomationForm from "./automation/AutomationForm";
+import PayoutsIntegrationTabs from "./payoutsIntegrations/PayoutsIntegrationTabs";
 
 const REGISTER_FORM_CARD_STYLING = {
   width: "80%",
@@ -33,9 +34,21 @@ const RegisterFormContent = () => {
         <Tabs id="registerForm" defaultSelectedTabId="1">
           <Tab id="1" title="1. Company Details " panel={<AddressForm />} />
           <Tab id="2" title="2. Tax Setup" panel={<TaxSetupForm />} />
-          <Tab id="3" title="3. Compliance Automation" panel={<AutomationForm />} />
+          <Tab
+            id="3"
+            title="3. Compliance Automation"
+            panel={<AutomationForm />}
+          />
+          <Tab
+            id="4"
+            title="4. Payouts Integration"
+            panel={<PayoutsIntegrationTabs />}
+          />
         </Tabs>
       </Card>
+      <br />
+      <br />
+      <br />
     </>
   );
 };

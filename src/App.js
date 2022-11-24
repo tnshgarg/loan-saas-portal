@@ -21,10 +21,11 @@ import { history } from "./utils/history";
 import BaseLayout from "./layout/base";
 import { Onboard } from "./components/dashboard/employee/onboarding/Onboard";
 import { AttendanceUpload } from "./components/dashboard/attendance/attendanceUpload";
-import { SalaryUpload } from "./components/dashboard/payroll/salaryManagement/SalaryUpload";
-import { PayrollInfo } from "./components/dashboard/payroll/info/PayrollInfo";
-import { OneClickPayments } from "./components/dashboard/payroll/oneClickPayments/PaymentUpload";
+import { SalaryUpload } from "./components/dashboard/payouts/salaryManagement/SalaryUpload";
+import { PayrollInfo } from "./components/dashboard/payouts/info/PayrollInfo";
+import { EmployeeSalaryPayments } from "./components/dashboard/payouts/employeeSalary/salaryPaymentUpload";
 import { Disbursements } from "./components/dashboard/ewa/details";
+import { OneClickPayouts } from "./components/dashboard/payouts/oneClickPayouts/oneClickPayoutsUpload";
 
 const App = () => {
   useEffect(() => {
@@ -60,7 +61,11 @@ const App = () => {
             <Route path="/attendance/import" element={<AttendanceUpload />} />
             <Route
               path="/payroll/one-click-payout"
-              element={<OneClickPayments />}
+              element={<OneClickPayouts />}
+            />
+            <Route
+              path="/payroll/employee-salary"
+              element={<EmployeeSalaryPayments />}
             />
             <Route path="/payroll/salary" element={<SalaryUpload />} />
             <Route path="/payroll/info" element={<PayrollInfo />} />

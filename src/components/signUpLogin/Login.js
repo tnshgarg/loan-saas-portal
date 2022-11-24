@@ -29,7 +29,7 @@ export const Login = () => {
   const [successful, setSuccessful] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  localStorage.clear();
   const { message } = useSelector((state) => state.message);
 
   const handleResetPasswordOnClick = () => {

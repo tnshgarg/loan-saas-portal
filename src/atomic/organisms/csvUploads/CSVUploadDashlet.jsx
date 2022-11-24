@@ -9,7 +9,11 @@ import { read, utils } from "xlsx";
 import { FS } from "../../../components/dashboard/employee/onboarding/validations";
 import { VerifyAndUploadEmployees } from "../../../components/dashboard/employee/onboarding/verifyAndUploadEmployees";
 import { useToastContext } from "../../../contexts/ToastContext";
-import { initCSVUpload } from "../../../store/slices/csvUploadSlice.ts";
+import {
+  clearActiveFileName,
+  initCSVUpload,
+  setActiveFileName,
+} from "../../../store/slices/csvUploadSlice.ts";
 import { CSVFileInput } from "../../atoms/forms/CSVFileInput";
 import { TemplateDownloadButton } from "../../atoms/forms/TemplateDownloadButton";
 import { Dashlet } from "../../molecules/dashlets/dashlet";
@@ -19,10 +23,11 @@ export const MAX_SIZE = 1024 * 1024 * 5;
 
 const mapOnboardPropsToState = (state, ownProps) => {
   const { module } = ownProps;
-  console.log({ csvUploads: state.csvUploads[module] });
-  const savedFileName = state?.csvUploads[module]
-    ? Object.keys(state.csvUploads[module])[0]
-    : "";
+  console.log({
+    csvUploads: state?.["csvUploads"]?.[module]?.["activeFileName"],
+  });
+  const savedFileName =
+    state?.["csvUploads"]?.[module]?.["activeFileName"] ?? "";
   return {
     employerId: state.auth.user?.attributes.sub || "",
     savedFileName,
@@ -71,10 +76,21 @@ function _CSVUploadDashlet({
     secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
   };
 
+  const [csvUploadButtonIntent, setCsvUploadButtonIntent] = useState(
+    Intent.PRIMARY
+  );
+
   //Hacky
   const getter = {};
   const setDataGetter = (data) => {
     getter["data"] = data;
+  };
+
+  const setActiveCSVName = (fileName) => {
+    dispatch(setActiveFileName({ fileName, module }));
+  };
+  const clearActiveCSVName = () => {
+    dispatch(clearActiveFileName({ module }));
   };
 
   const handleFileUpload = async () => {
@@ -82,12 +98,14 @@ function _CSVUploadDashlet({
     let erroredData = tableData.filter((row) => row.status[FS.ERROR] >= 1);
 
     const tableCSV = Papa.unparse(
-      tableData.map((row) => {
-        let csvRow = Object.assign({}, row);
-        delete csvRow.status;
-        delete csvRow.rowNumber;
-        return csvRow;
-      })
+      tableData
+        .filter((row) => !row.status[FS.DELETED])
+        .map((row) => {
+          let csvRow = Object.assign({}, row);
+          delete csvRow.status;
+          delete csvRow.rowNumber;
+          return csvRow;
+        })
     );
     console.log({ tableCSV });
     const csvFile = new Blob([tableCSV], { type: "text/csv" });
@@ -138,6 +156,7 @@ function _CSVUploadDashlet({
           intent: "SUCCESS",
           icon: "tick",
         });
+        clearActiveCSVName(file.object.name);
         setUploadStatus(true);
         handleProgressToast(file?.object?.name, 900000);
       }
@@ -161,6 +180,7 @@ function _CSVUploadDashlet({
         module: module,
       })
     );
+    setActiveCSVName(file.object.name);
   };
 
   const handleChange = (e) => {
@@ -200,7 +220,9 @@ function _CSVUploadDashlet({
         ...prevState,
         onDismiss: onToastDismiss,
       }));
+      setCsvUploadButtonIntent(Intent.NONE);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file.object, onToastDismiss, savedFileName, setConfig]);
 
   return (
@@ -218,7 +240,7 @@ function _CSVUploadDashlet({
             <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <CSVFileInput
               icon="add-to-folder"
-              intent={Intent.PRIMARY}
+              intent={csvUploadButtonIntent}
               onChange={handleChange}
             />
             {file.object ? (

@@ -10,7 +10,7 @@ import FormInput from "../../../atomic/atoms/forms/FormInput";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import UpdateAlert from "../../common/UpdateAlert";
-import { Intent } from "@blueprintjs/core";
+import { Button, Intent } from "@blueprintjs/core";
 import { AppToaster } from "../../../contexts/ToastContext";
 
 const TaxSetupForm = () => {
@@ -148,7 +148,7 @@ const TaxSetupForm = () => {
               validations={{
                 required: true,
                 pattern: {
-                  value: /^((^[a-zA-Z]{4}[0-9]{5}[a-zA-Z]{1}?$))$/,
+                  value: /^(^[a-zA-Z]{4}[0-9]{5}[a-zA-Z]{1}?$)$/,
                 },
               }}
               errors={errors}
@@ -199,12 +199,14 @@ const TaxSetupForm = () => {
                   "Please enter a valid GSTIN number with 15 characters",
               }}
             />
-            <input
-              disabled={Object.values(errors).length}
-              type="button"
-              value={"Submit"}
-              onClick={hydrateUpdateAlert}
-            />
+            <div style={{ textAlign: "right" }}>
+              <Button
+                disabled={Object.values(errors).length}
+                type="button"
+                text={"Submit"}
+                onClick={hydrateUpdateAlert}
+              />
+            </div>
           </form>
           <UpdateAlert />
         </div>

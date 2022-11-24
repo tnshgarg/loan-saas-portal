@@ -14,6 +14,7 @@ import {
   faMoneyBill,
   faPaperPlane,
   faWallet,
+  faReceipt,
 } from "@fortawesome/free-solid-svg-icons";
 import { THEME } from "../theme/base";
 
@@ -77,17 +78,22 @@ const NAV_MENU = [
     ],
   },
   {
-    name: "Payroll",
+    name: "Payouts",
     icon: <SidebarIcon icon={faMoneyBillWave} />,
     route: "/payroll",
     children: [
       {
-        name: "One Click Payout",
+        name: "Employee Salary",
         icon: <MenuIcon icon={faMoneyBill1Wave} />,
+        route: "/employee-salary",
+      },
+      {
+        name: "One Click Payout",
+        icon: <MenuIcon icon={faReceipt} />,
         route: "/one-click-payout",
       },
       {
-        name: "Payout Details",
+        name: "Payout Processing",
         icon: <MenuIcon icon={faMoneyCheck} />,
         route: "/info",
       },

@@ -6,6 +6,7 @@ export const tableColumns = [
   "Email",
   "Date of Birth (dd/mm/yyyy)",
   "Job Title",
+  "Principal Employer",
   "Employment Status",
   {
     Header: "Aadhaar",

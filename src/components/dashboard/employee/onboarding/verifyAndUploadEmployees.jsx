@@ -1,12 +1,14 @@
 import { Button, Classes, Dialog, Intent, Tag } from "@blueprintjs/core";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { FS } from "./validations";
-import React, { useState } from "react";
 
 const mapStateToProps = (state, ownProps) => {
   const { fileName, module } = ownProps;
   const {
-    csvUploads: { [module]: { [fileName]: { stats = {} } = {} } = {} } = {},
+    csvUploads: {
+      [module]: { tableData: { [fileName]: { stats = {} } = {} } = {} } = {},
+    } = {},
   } = state;
 
   const fileStats = stats ?? {};
