@@ -46,13 +46,11 @@ const reformatEmployeeData = (employeeData) => {
       bank,
       _id,
       active,
-      principalEmployer,
     } = employee;
     return {
       "Employee ID": employerEmployeeId,
       Name: employeeName,
       "Mobile Number": mobile,
-      "Principal Employer": principalEmployer,
       "Onboarding Status": checkOverallStatus(aadhaar, pan, bank),
       Email: email,
       "Date of Birth (dd/mm/yyyy)": dob,
