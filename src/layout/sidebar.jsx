@@ -2,7 +2,7 @@ import { Classes, Colors, Drawer, Position } from "@blueprintjs/core";
 import { THEME } from "../theme/base";
 import NAV_MENU from "./navigation";
 import SidebarItem from "./components/SidebarItem";
-import unipeLogo from "../theme/logo_small.png";
+import unipeLogo from "../theme/logo_icon.png";
 
 const { sidebar } = THEME;
 
@@ -35,7 +35,7 @@ export function AppSidebar() {
             textAlign: "center",
             width: sidebar.width,
             padding: "1em",
-            backgroundColor: Colors.GREEN5,
+            backgroundColor: Colors.DARK_GRAY2,
             marginBottom: "1em",
           }}
         >
