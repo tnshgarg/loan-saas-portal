@@ -33,6 +33,7 @@ import {
   updateCSVRow,
 } from "../../../store/slices/csvUploadSlice.ts";
 import { coalesce } from "../../../utils/array";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 const intentMap = {
   [FS.WARN]: Intent.WARNING,
@@ -454,14 +455,7 @@ function Table({
       ) : (
         ""
       )}
-      <div
-        style={{
-          maxHeight: "55vh",
-          overflow: "auto",
-          margin: "auto",
-          width: "100%",
-        }}
-      >
+      <PerfectScrollbar>
         <HTMLTable
           bordered={true}
           condensed={true}
@@ -497,7 +491,7 @@ function Table({
           {/*  <code>{JSON.stringify(state, null, 2)}</code>*/}
           {/*</pre>*/}
         </HTMLTable>
-      </div>
+      </PerfectScrollbar>
       <div>
         <div style={{ textAlign: "right" }}>
           <div style={{ display: "inline-block" }}>
