@@ -223,12 +223,14 @@ const TabularViewTab = ({ handlers }) => {
 
   const noDataComponent = () => {
     return (
-      <NonIdealState
-        icon={"property"}
-        title={"No Employees"}
-        description={<>Looks like no entries for employees</>}
-        layout={"horizontal"}
-      />
+      <div style={{ height: "20vh", width: "100%" }}>
+        <NonIdealState
+          icon={"property"}
+          title={"No Employees"}
+          description={<>Looks like no entries for employees</>}
+          layout={"horizontal"}
+        />
+      </div>
     );
   };
 

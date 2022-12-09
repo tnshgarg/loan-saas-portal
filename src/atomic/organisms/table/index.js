@@ -19,6 +19,7 @@ import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import { getExcel } from "../../../utils/excelHandling";
 import { Pagination } from "../csvUploads/BrowserEdiTable";
 import EditableCell from "./EditableCell";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 const Table = ({
   columns,
@@ -240,49 +241,57 @@ const Table = ({
         </Button>
       )}
       <Styles hoverEffect={hoverEffect}>
-        <table {...getTableProps()}>
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <HeaderRowWrapper {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()} filterkey={column.id}>
-                    <span className="heading">{column.render("Header")}</span>
-                  </th>
+        <div>
+          <PerfectScrollbar>
+            <table {...getTableProps()}>
+              <thead>
+                {headerGroups.map((headerGroup) => (
+                  <HeaderRowWrapper {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column) => (
+                      <th filterkey={column.id} {...column.getHeaderProps()}>
+                        <p className="heading">{column.render("Header")}</p>
+                      </th>
+                    ))}
+                  </HeaderRowWrapper>
                 ))}
-              </HeaderRowWrapper>
-            ))}
-          </thead>
+              </thead>
 
-          {!tableRows.length && noDataComponent && noDataComponent()}
+              {!tableRows.length && noDataComponent && noDataComponent()}
 
-          <tbody {...getTableBodyProps()}>
-            {tableRows.map((row, i) => {
-              prepareRow(row);
-              return (
-                <>
-                  <tr
-                    {...row.getRowProps()}
-                    onClick={() => {
-                      handleRowClick(row.original);
-                    }}
-                    id={row.getRowProps().key}
-                  >
-                    {row.cells.map((cell) => {
-                      return (
-                        <td
-                          id={cell.getCellProps().key}
-                          {...cell.getCellProps(cellProps(cell))}
-                        >
-                          <span className="heading">{cell.render("Cell")}</span>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                </>
-              );
-            })}
-          </tbody>
-        </table>
+              <tbody {...getTableBodyProps()}>
+                {tableRows.map((row, i) => {
+                  prepareRow(row);
+                  let extraProps = {};
+                  if (handleRowClick) {
+                    extraProps["onClick"] = () => handleRowClick(row.original);
+                  }
+                  return (
+                    <>
+                      <tr
+                        {...row.getRowProps()}
+                        id={row.getRowProps().key}
+                        key={row.getRowProps().key}
+                        {...extraProps}
+                      >
+                        {row.cells.map((cell) => {
+                          return (
+                            <td
+                              id={cell.getCellProps().key}
+                              key={cell.getCellProps().key}
+                              {...cell.getCellProps(cellProps(cell))}
+                            >
+                              <p className="content">{cell.render("Cell")}</p>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    </>
+                  );
+                })}
+              </tbody>
+            </table>
+          </PerfectScrollbar>
+        </div>
 
         {showPagination && (
           <div className={"pagination"}>
@@ -333,9 +342,9 @@ const Styles = styled.div`
     position: relative;
     overflow: auto;
     height: 100%;
-    display: block;
     border-collapse: collapse;
     height: 55vh;
+    border: 1px solid rgba(0, 0, 0, 0.12);
     tr {
       cursor: pointer;
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -352,16 +361,15 @@ const Styles = styled.div`
     }
     th,
     td {
-      overflow: hidden;
+      border-right: 1px solid rgba(0, 0, 0, 0.12);
       white-space: normal !important;
       margin: 0;
-      padding: 0.5rem 1rem;
+      padding: 0.1rem 1rem;
       .heading {
-        overflow: hidden;
-        white-space: nowrap;
-        display: inline-block;
-        width: 7em;
-        text-overflow: ellipsis;
+        margin-right: 1em;
+      }
+
+      .content {
       }
       p {
         line-break: auto;
@@ -375,12 +383,6 @@ const Styles = styled.div`
       }
       .other-form-input {
         margin-top: 15px;
-      }
-    }
-    th:first-child,
-    td:first-child {
-      .heading {
-        width: 2em;
       }
     }
   }
