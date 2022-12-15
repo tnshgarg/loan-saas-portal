@@ -44,7 +44,7 @@ export const InputGroupDate = ({
       placeholder={placeholder}
       value={dateValue}
       disabled={disabled}
-      minDate={new Date(1900, 0, 0)}
+      minDate={new Date(1900, 0)}
     />
   );
 };
