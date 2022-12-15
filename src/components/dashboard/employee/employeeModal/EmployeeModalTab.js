@@ -1,15 +1,15 @@
 import { Alert, Intent } from "@blueprintjs/core";
-import Select from "react-select";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { NO_CHANGE_ERROR } from "../../../../utils/messageStrings";
+import Select from "react-select";
+import FormInput from "../../../../atomic/atoms/forms/FormInput";
+import { AppToaster } from "../../../../contexts/ToastContext";
 import {
   useGetEmployeeDetailsByEmployeeIdQuery,
   useUpdateEmployeeDetailsMutation,
 } from "../../../../store/slices/apiSlices/employee/employeeDetailsApiSlice";
-import FormInput from "../../../../atomic/atoms/forms/FormInput";
-import { AppToaster } from "../../../../contexts/ToastContext";
+import { NO_CHANGE_ERROR } from "../../../../utils/messageStrings";
 
 export const EmployeeModalTab = ({
   category,
@@ -34,8 +34,9 @@ export const EmployeeModalTab = ({
     handleSubmit,
     reset,
     control,
-    getValues,
     watch,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -254,6 +255,8 @@ export const EmployeeModalTab = ({
                     errorMessage: `Please enter ${labelKey} for selected employee`,
                     disabled: disabled,
                   }}
+                  setValue={setValue}
+                  getValues={getValues}
                 />
               );
             })}
