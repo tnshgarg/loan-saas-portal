@@ -32,7 +32,7 @@ const EditableCell = ({
       onChange={onChange}
       onBlur={onBlur}
       pattern={inputTypes[id].pattern}
-      autocomplete="new-password"
+      autoComplete="new-password"
     />
   ) : (
     <p>
