@@ -23,11 +23,13 @@ function mapStateToProps(state) {
 let isFirstUpdate = true;
 
 function _CashfreeCredentialsForm({ employerId }) {
-  const { status, data, isFetching, isLoading } =
+  let res = {};
+  const { status, data, isFetching, isLoading } = (res =
     useGetEmployerCredentialsByIdQuery({
       employerId,
       portal: "cashfree",
-    });
+    }));
+  console.log(res);
   const {
     body: {
       client_id: clientIdInitial,
@@ -46,7 +48,7 @@ function _CashfreeCredentialsForm({ employerId }) {
     getValues,
     handleSubmit,
     setValue: setFormValue,
-    formState: { errors },
+    formState: { isDirty, errors },
   } = useForm({
     mode: "all",
     defaultValues: {
@@ -54,16 +56,10 @@ function _CashfreeCredentialsForm({ employerId }) {
       clientSecret,
     },
   });
-  if (status === "fulfilled") {
-    if (!clientId) {
-      if (!disabled) setDisabled(false);
-    } else {
-      if (isFirstUpdate) {
-        setFormValue("clientId", clientId);
-        setFormValue("clientSecret", clientSecret);
-        isFirstUpdate = false;
-      }
-    }
+
+  if (!isDirty) {
+    setFormValue("clientId", clientId);
+    setFormValue("clientSecret", clientSecret);
   }
   const onSubmit = (data) => {
     const isEqual =
