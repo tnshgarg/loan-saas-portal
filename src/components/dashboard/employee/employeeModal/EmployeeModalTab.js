@@ -6,7 +6,7 @@ import Select from "react-select";
 import FormInput from "../../../../atomic/atoms/forms/FormInput";
 import { AppToaster } from "../../../../contexts/ToastContext";
 import {
-  useGetEmployeeDetailsByEmployeeIdQuery,
+  useGetEmployeeDetailsQuery,
   useUpdateEmployeeDetailsMutation,
 } from "../../../../store/slices/apiSlices/employee/employeeDetailsApiSlice";
 import { NO_CHANGE_ERROR } from "../../../../utils/messageStrings";
@@ -20,7 +20,7 @@ export const EmployeeModalTab = ({
   type,
   inputTypes,
 }) => {
-  const responseFromQuery = useGetEmployeeDetailsByEmployeeIdQuery({
+  const responseFromQuery = useGetEmployeeDetailsQuery({
     id: currEmployeeId,
     employmentId: currEmploymentId,
     category,
