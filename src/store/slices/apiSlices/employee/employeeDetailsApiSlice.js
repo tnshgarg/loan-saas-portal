@@ -23,8 +23,8 @@ export const employeeDetails = createApi({
   endpoints: (builder) => ({
     // Define endpoints here
     getEmployeeDetailsByEmployeeId: builder.query({
-      query: ({ id, category, subCategory }) => {
-        return `/employee?id=${id}&category=${category}&subCategory=${subCategory}`;
+      query: ({ id, employmentId, category, subCategory }) => {
+        return `/employee?id=${id}&category=${category}&subCategory=${subCategory}&employmentId=${employmentId}`;
       },
       providesTags: (id) => [{ type: "EmployeeDetails", id }],
     }),

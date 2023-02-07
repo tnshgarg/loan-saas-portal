@@ -1,26 +1,28 @@
 import { Alert, Intent } from "@blueprintjs/core";
-import Select from "react-select";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { NO_CHANGE_ERROR } from "../../../../utils/messageStrings";
+import Select from "react-select";
+import FormInput from "../../../../atomic/atoms/forms/FormInput";
+import { AppToaster } from "../../../../contexts/ToastContext";
 import {
   useGetEmployeeDetailsByEmployeeIdQuery,
   useUpdateEmployeeDetailsMutation,
 } from "../../../../store/slices/apiSlices/employee/employeeDetailsApiSlice";
-import FormInput from "../../../../atomic/atoms/forms/FormInput";
-import { AppToaster } from "../../../../contexts/ToastContext";
+import { NO_CHANGE_ERROR } from "../../../../utils/messageStrings";
 
 export const EmployeeModalTab = ({
   category,
   fields,
   currEmployeeId,
+  currEmploymentId,
   setDidDialogChange,
   type,
   inputTypes,
 }) => {
   const responseFromQuery = useGetEmployeeDetailsByEmployeeIdQuery({
     id: currEmployeeId,
+    employmentId: currEmploymentId,
     category,
     subCategory: type,
   });
@@ -132,6 +134,7 @@ export const EmployeeModalTab = ({
     const finalEmployeeUpdateObjectToSend = {
       ...employeeUpdateObjectToSend,
       id: currEmployeeId,
+      employmentId: currEmploymentId,
       category: category,
     };
 
