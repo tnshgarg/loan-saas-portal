@@ -9,7 +9,10 @@ import {
   useGetEmployeeDetailsQuery,
   useUpdateEmployeeDetailsMutation,
 } from "../../../../store/slices/apiSlices/employee/employeeDetailsApiSlice";
-import { NO_CHANGE_ERROR } from "../../../../utils/messageStrings";
+import {
+  DOJ_DOE_BOTH_CHANGED_ERROR,
+  NO_CHANGE_ERROR,
+} from "../../../../utils/messageStrings";
 
 export const EmployeeModalTab = ({
   category,
@@ -173,7 +176,23 @@ export const EmployeeModalTab = ({
         {}
       );
       setChangesInEmployeeDetails(changedEmployeeDetails);
-      setIsAlertOpen(true);
+
+      const conflictingDateKeys = [
+        "Date of Joining (dd/mm/yyyy)",
+        "Date of Exit (dd/mm/yyyy)",
+      ];
+      if (
+        conflictingDateKeys.every((key) =>
+          Object.keys(changedEmployeeDetails).includes(key)
+        )
+      ) {
+        AppToaster.show({
+          intent: Intent.DANGER,
+          message: DOJ_DOE_BOTH_CHANGED_ERROR,
+        });
+      } else {
+        setIsAlertOpen(true);
+      }
     } else {
       AppToaster.show({
         intent: Intent.DANGER,
