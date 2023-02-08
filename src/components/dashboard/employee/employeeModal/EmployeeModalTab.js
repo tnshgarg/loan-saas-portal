@@ -10,6 +10,7 @@ import {
   useUpdateEmployeeDetailsMutation,
 } from "../../../../store/slices/apiSlices/employee/employeeDetailsApiSlice";
 import {
+  DOJ_CHANGED_BUT_DOE_ALREADY_PRESENT_ERROR,
   DOJ_DOE_BOTH_CHANGED_ERROR,
   NO_CHANGE_ERROR,
 } from "../../../../utils/messageStrings";
@@ -189,6 +190,14 @@ export const EmployeeModalTab = ({
         AppToaster.show({
           intent: Intent.DANGER,
           message: DOJ_DOE_BOTH_CHANGED_ERROR,
+        });
+      } else if (
+        changedEmployeeDetails.hasOwnProperty(conflictingDateKeys[0]) &&
+        formDataInitial[conflictingDateKeys[1]]
+      ) {
+        AppToaster.show({
+          intent: Intent.DANGER,
+          message: DOJ_CHANGED_BUT_DOE_ALREADY_PRESENT_ERROR,
         });
       } else {
         setIsAlertOpen(true);
