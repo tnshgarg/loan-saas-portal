@@ -36,8 +36,9 @@ export const EmployeeModalTab = ({
     handleSubmit,
     reset,
     control,
-    getValues,
     watch,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -257,6 +258,8 @@ export const EmployeeModalTab = ({
                     errorMessage: `Please enter ${labelKey} for selected employee`,
                     disabled: disabled,
                   }}
+                  setValue={setValue}
+                  getValues={getValues}
                 />
               );
             })}
