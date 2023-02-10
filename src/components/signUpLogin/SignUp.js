@@ -270,7 +270,7 @@ export const SignUp = () => {
                     <label>Type of Company</label>
                     <Controller
                       control={control}
-                      defaultValue={companyTypes[0]}
+                      defaultValue={companyTypes[0]["value"]}
                       name="company_type"
                       render={({ field }) => (
                         <Select
