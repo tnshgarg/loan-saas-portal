@@ -292,6 +292,9 @@ export const SignUp = () => {
                       register={register}
                       validations={{
                         required: true,
+                        pattern: {
+                          value: /^(0|[1-9]\d*)(\.\d+)?$/,
+                        },
                       }}
                       errors={errors}
                       field={"employee_count"}
@@ -300,7 +303,8 @@ export const SignUp = () => {
                         type: "text",
                         label: "Number of Employees",
                         placeholder: "Number of Employees",
-                        errorMessage: "Number of Employees cannot be empty",
+                        errorMessage:
+                          "Number of Employees should be a non-empty number",
                       }}
                     />
                   </div>
