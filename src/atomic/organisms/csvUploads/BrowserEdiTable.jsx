@@ -374,7 +374,7 @@ function Table({
       hiddenHeaders[item.Header] = true;
       hiddenColumns = hiddenColumns.concat(item.columns.map((i) => i.accessor));
     });
-    hiddenHeaders["All"] = true;
+    hiddenHeaders["All"] = false;
     setVisibility({ hiddenHeaders, hiddenColumns });
   }, [JSON.stringify(visibilityToolbar)]);
 
