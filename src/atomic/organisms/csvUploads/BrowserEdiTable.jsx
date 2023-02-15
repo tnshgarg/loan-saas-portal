@@ -409,8 +409,10 @@ function Table({
               interactive={true}
               intent={Intent.DANGER}
               icon={"error"}
-              rightIcon={filters.includes(FS.ERROR) ? "cross" : ""}
-              onClick={() => filterMyData(FS.ERROR)}
+              rightIcon={
+                <input type="checkbox" checked={filters.includes(FS.ERROR)} />
+              }
+              onClick={() => reduxActions.filterMyData(FS.ERROR)}
             >
               {stats[FS.ERROR]} problems need immediate attention
             </Tag>
@@ -427,8 +429,10 @@ function Table({
               interactive={true}
               intent={Intent.WARNING}
               icon={"warning-sign"}
-              rightIcon={filters.includes(FS.WARN) ? "cross" : ""}
-              onClick={() => filterMyData(FS.WARN)}
+              rightIcon={
+                <input type="checkbox" checked={filters.includes(FS.WARN)} />
+              }
+              onClick={() => reduxActions.filterMyData(FS.WARN)}
             >
               {stats[FS.WARN]} fields are incorrect, but can be fixed later
             </Tag>
