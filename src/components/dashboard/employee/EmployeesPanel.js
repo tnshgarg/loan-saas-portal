@@ -17,8 +17,8 @@ import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
 import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
 import Table from "../../../atomic/organisms/table";
 import {
-  useGetAllEmployeesByEmployerIdQuery,
-  useLazyGetAllEmployeesByEmployerIdQuery,
+  useGetAllEmployeesPanelByEmployerIdQuery,
+  useLazyGetAllEmployeesPanelByEmployerIdQuery,
 } from "../../../store/slices/apiSlices/employees/employeesApiSlice";
 import { groupByKeyCount } from "../../../utils/aggregates";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
@@ -108,10 +108,11 @@ const TabularViewTab = ({ handlers }) => {
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
-  const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
+  const responseFromQuery =
+    useGetAllEmployeesPanelByEmployerIdQuery(employerId);
   const { data, isLoading, error, refetch } = responseFromQuery;
   console.log({ data, isLoading, error, refetch });
-  const responseFromLazyQuery = useLazyGetAllEmployeesByEmployerIdQuery();
+  const responseFromLazyQuery = useLazyGetAllEmployeesPanelByEmployerIdQuery();
   const [
     trigger,
     { data: lazyData, isLoading: lazyIsLoading, error: lazyError },
@@ -298,7 +299,8 @@ const TabularTabsComponent = () => {
 
   const navigate = useNavigate();
 
-  const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
+  const responseFromQuery =
+    useGetAllEmployeesPanelByEmployerIdQuery(employerId);
   const { data } = responseFromQuery;
   const [metricsData, setMetricsData] = useState({});
 

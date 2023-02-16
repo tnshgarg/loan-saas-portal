@@ -1,8 +1,8 @@
+import { useDispatch } from "react-redux";
+import { CSVUploadDashlet } from "../../../../atomic/organisms/csvUploads/CSVUploadDashlet";
+import { allEmployeesPanelDetails } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
 import styles from "../styles/onboard.module.css";
 import { HEADER_GROUPS, HEADER_LIST, transformHeadersToFields } from "./fields";
-import { CSVUploadDashlet } from "../../../../atomic/organisms/csvUploads/CSVUploadDashlet";
-import { allEmployeesBasicDetails } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
-import { useDispatch } from "react-redux";
 // techdebt: move this to another styling/theme file
 export const CARD_STYLING = {
   marginLeft: "2.7em",
@@ -24,8 +24,8 @@ export function Onboard() {
       preProcessing={transformHeadersToFields}
       onToastDismiss={() => {
         dispatch(
-          allEmployeesBasicDetails.util.invalidateTags([
-            "AllEmployeesBasicDetails",
+          allEmployeesPanelDetails.util.invalidateTags([
+            "AllEmployeesPanelDetails",
           ])
         );
       }}
