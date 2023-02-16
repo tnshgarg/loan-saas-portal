@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { employeeDetails } from "./slices/apiSlices/employee/employeeDetailsApiSlice";
+import { allEmployeesEmploymentDetails } from "./slices/apiSlices/employees/employmentApiSlice";
 import { allEmployeesPanelDetails } from "./slices/apiSlices/employees/panelApiSlice";
 import { employerAddressApi } from "./slices/apiSlices/employer/addressApiSlice";
 import { employerCredentialsApi } from "./slices/apiSlices/employer/credentialsApiSlice";
@@ -27,6 +28,8 @@ export const store = configureStore({
     [employerTaxApi.reducerPath]: employerTaxApi.reducer,
     [employerCredentialsApi.reducerPath]: employerCredentialsApi.reducer,
     [allEmployeesPanelDetails.reducerPath]: allEmployeesPanelDetails.reducer,
+    [allEmployeesEmploymentDetails.reducerPath]:
+      allEmployeesEmploymentDetails.reducer,
     [employeeDetails.reducerPath]: employeeDetails.reducer,
     [employerMetricsApi.reducerPath]: employerMetricsApi.reducer,
   },
@@ -44,6 +47,7 @@ export const store = configureStore({
       .concat(employerTaxApi.middleware)
       .concat(employerCredentialsApi.middleware)
       .concat(allEmployeesPanelDetails.middleware)
+      .concat(allEmployeesEmploymentDetails.middleware)
       .concat(employeeDetails.middleware)
       .concat(employerMetricsApi.middleware),
 });
