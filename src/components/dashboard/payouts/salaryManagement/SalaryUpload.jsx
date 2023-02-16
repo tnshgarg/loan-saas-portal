@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { CSVUploadDashlet } from "../../../../atomic/organisms/csvUploads/CSVUploadDashlet";
-import { useGetAllEmployeesPanelByEmployerIdQuery } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
+import { useGetAllEmployeesPanelByEmployerIdQuery } from "../../../../store/slices/apiSlices/employees/panelApiSlice";
 import { buildRowMapper } from "../util";
 import { HEADERS_MAP, HEADER_GROUPS, TEMPLATE_FIELDS } from "./fields";
 

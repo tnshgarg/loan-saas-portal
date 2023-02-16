@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { CSVUploadDashlet } from "../../../../atomic/organisms/csvUploads/CSVUploadDashlet";
-import { allEmployeesPanelDetails } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
+import { allEmployeesPanelDetails } from "../../../../store/slices/apiSlices/employees/panelApiSlice";
 import styles from "../styles/onboard.module.css";
 import { HEADER_GROUPS, HEADER_LIST, transformHeadersToFields } from "./fields";
 // techdebt: move this to another styling/theme file

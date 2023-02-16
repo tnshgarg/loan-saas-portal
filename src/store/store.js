@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { employeeDetails } from "./slices/apiSlices/employee/employeeDetailsApiSlice";
-import { allEmployeesPanelDetails } from "./slices/apiSlices/employees/employeesApiSlice";
+import { allEmployeesPanelDetails } from "./slices/apiSlices/employees/panelApiSlice";
 import { employerAddressApi } from "./slices/apiSlices/employer/addressApiSlice";
 import { employerCredentialsApi } from "./slices/apiSlices/employer/credentialsApiSlice";
 import { employerEWAApi } from "./slices/apiSlices/employer/ewaApiSlice";

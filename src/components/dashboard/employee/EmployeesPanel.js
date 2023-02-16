@@ -19,7 +19,7 @@ import Table from "../../../atomic/organisms/table";
 import {
   useGetAllEmployeesPanelByEmployerIdQuery,
   useLazyGetAllEmployeesPanelByEmployerIdQuery,
-} from "../../../store/slices/apiSlices/employees/employeesApiSlice";
+} from "../../../store/slices/apiSlices/employees/panelApiSlice";
 import { groupByKeyCount } from "../../../utils/aggregates";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
