@@ -21,7 +21,7 @@ function _EmployeesBulkUpdatesPanel({ employerId }) {
     <>
       <CSVUploadDashlet
         title={"Bulk Updates"}
-        module={"bulk-updates"}
+        module={"employment"}
         templateDownloadProps={{ loading: isLoading, templateData }}
         fields={BULK_UPDATES_HEADERS}
         preProcessing={headerMapper}
