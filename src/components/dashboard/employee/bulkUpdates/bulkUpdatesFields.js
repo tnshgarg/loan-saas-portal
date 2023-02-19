@@ -1,6 +1,6 @@
 import {
   currencyValidation,
-  dateValidation,
+  doeValidation,
   phoneValidation,
   requiredValidation,
 } from "../../employee/onboarding/validations";
@@ -30,7 +30,7 @@ export const FIELDS = [
     header: "Date of Exit (dd/mm/yyyy)",
     field: "doe",
     required: false,
-    validations: dateValidation,
+    validations: doeValidation,
   },
   {
     header: "Designation" + REQUIRED_SUFFIX,
