@@ -11,18 +11,21 @@ export const FIELDS = [
   {
     header: "Employee Name" + REQUIRED_SUFFIX,
     field: "employeeName",
+    required: true,
     validations: requiredValidation,
     prefetch: true,
   },
   {
     header: "Mobile Number" + REQUIRED_SUFFIX,
     field: "mobile",
+    required: true,
     validations: phoneValidation,
     prefetch: true,
   },
   {
     header: "Employee ID" + REQUIRED_SUFFIX,
     field: "employerEmployeeId",
+    required: true,
     validations: requiredValidation,
     prefetch: true,
   },
@@ -31,6 +34,7 @@ export const FIELDS = [
     field: "doe",
     required: false,
     validations: doeValidation,
+    prefetch: true,
   },
   {
     header: "Designation" + REQUIRED_SUFFIX,
