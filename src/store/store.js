@@ -4,15 +4,16 @@ import { employeeDetails } from "./slices/apiSlices/employee/employeeDetailsApiS
 import { allEmployeesBasicDetails } from "./slices/apiSlices/employees/employeesApiSlice";
 import { employerAddressApi } from "./slices/apiSlices/employer/addressApiSlice";
 import { employerCredentialsApi } from "./slices/apiSlices/employer/credentialsApiSlice";
-import { employerTaxApi } from "./slices/apiSlices/employer/taxApiSlice";
+import { employerEWAApi } from "./slices/apiSlices/employer/ewaApiSlice";
 import { employerMetricsApi } from "./slices/apiSlices/employer/metricsApiSlice";
+import { employerPayrollApi } from "./slices/apiSlices/employer/payrollApiSlice";
+import { employerTaxApi } from "./slices/apiSlices/employer/taxApiSlice";
+import { uploadedFiles } from "./slices/apiSlices/files/filesApiSlice";
 import authReducer from "./slices/authSlice";
 import CSVUploadReducer from "./slices/csvUploadSlice.ts";
 import employeeReducer from "./slices/employeeSlice";
 import messageReducer from "./slices/messageSlice";
 import registerFormReducer from "./slices/registerFormSlice";
-import { employerPayrollApi } from "./slices/apiSlices/employer/payrollApiSlice";
-import { employerEWAApi } from "./slices/apiSlices/employer/ewaApiSlice";
 
 export const store = configureStore({
   reducer: {
@@ -29,6 +30,7 @@ export const store = configureStore({
     [allEmployeesBasicDetails.reducerPath]: allEmployeesBasicDetails.reducer,
     [employeeDetails.reducerPath]: employeeDetails.reducer,
     [employerMetricsApi.reducerPath]: employerMetricsApi.reducer,
+    [uploadedFiles.reducerPath]: uploadedFiles.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -45,7 +47,8 @@ export const store = configureStore({
       .concat(employerCredentialsApi.middleware)
       .concat(allEmployeesBasicDetails.middleware)
       .concat(employeeDetails.middleware)
-      .concat(employerMetricsApi.middleware),
+      .concat(employerMetricsApi.middleware)
+      .concat(uploadedFiles.middleware),
 });
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors
