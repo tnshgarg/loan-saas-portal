@@ -6,7 +6,11 @@ const EMPLOYEE_MODAL_STYLING = {
   marginRight: "auto",
   marginLeft: "auto",
 };
-export const EmployeeModal = ({ currEmployeeId, setDidDialogChange }) => {
+export const EmployeeModal = ({
+  currEmployeeId,
+  currEmploymentId,
+  setDidDialogChange,
+}) => {
   return (
     <>
       <Card
@@ -30,6 +34,7 @@ export const EmployeeModal = ({ currEmployeeId, setDidDialogChange }) => {
                         title={key}
                         value={value}
                         currEmployeeId={currEmployeeId}
+                        currEmploymentId={currEmploymentId}
                         setDidDialogChange={setDidDialogChange}
                       />
                     }
@@ -46,6 +51,7 @@ export const EmployeeModal = ({ currEmployeeId, setDidDialogChange }) => {
                         category={category}
                         fields={fields}
                         currEmployeeId={currEmployeeId}
+                        currEmploymentId={currEmploymentId}
                         setDidDialogChange={setDidDialogChange}
                       />
                     }
@@ -63,6 +69,7 @@ export const EmployeeModal = ({ currEmployeeId, setDidDialogChange }) => {
 const SubTabs = ({
   value,
   currEmployeeId,
+  currEmploymentId,
   setDidDialogChange,
 }) => {
   const { fields, category, types, inputTypes } = value;
@@ -79,6 +86,7 @@ const SubTabs = ({
                 category={category}
                 fields={fieldsList}
                 currEmployeeId={currEmployeeId}
+                currEmploymentId={currEmploymentId}
                 setDidDialogChange={setDidDialogChange}
                 type={types[key]}
                 inputTypes={inputTypes[key]}

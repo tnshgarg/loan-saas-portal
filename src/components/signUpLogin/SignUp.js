@@ -5,16 +5,16 @@ import {
   Intent,
   MultistepDialog,
 } from "@blueprintjs/core";
+import { Tooltip2 } from "@blueprintjs/popover2";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
-import { companyTypes, numberOfEmployees } from "../../utils/numberOfEmployees";
-import { registerUser } from "../../store/slices/authSlice";
 import ErrorDialog from "../../atomic/atoms/alerts/ErrorDialog";
 import FormInput from "../../atomic/atoms/forms/FormInput";
-import { Tooltip2 } from "@blueprintjs/popover2";
+import { registerUser } from "../../store/slices/authSlice";
+import { companyTypes } from "../../utils/numberOfEmployees";
 
 export const SignUp = () => {
   var md5 = require("md5");
@@ -270,7 +270,7 @@ export const SignUp = () => {
                     <label>Type of Company</label>
                     <Controller
                       control={control}
-                      defaultValue={companyTypes[0]}
+                      defaultValue={companyTypes[0]["value"]}
                       name="company_type"
                       render={({ field }) => (
                         <Select
@@ -288,24 +288,24 @@ export const SignUp = () => {
                     />
                   </div>
                   <div>
-                    <label>Number of Employees</label>
-                    <Controller
-                      control={control}
-                      defaultValue={numberOfEmployees[0]}
-                      name="employee_count"
-                      render={({ field }) => (
-                        <Select
-                          inputRef={field.ref}
-                          classNamePrefix="addl-class"
-                          options={numberOfEmployees}
-                          value={numberOfEmployees.find(
-                            (c) => c.value === field.value
-                          )}
-                          onChange={(val) => {
-                            field.onChange(val.value);
-                          }}
-                        />
-                      )}
+                    <FormInput
+                      register={register}
+                      validations={{
+                        required: true,
+                        pattern: {
+                          value: /^(0|[1-9]\d*)(\.\d+)?$/,
+                        },
+                      }}
+                      errors={errors}
+                      field={"employee_count"}
+                      inputProps={{
+                        icon: "id-number",
+                        type: "text",
+                        label: "Number of Employees",
+                        placeholder: "Number of Employees",
+                        errorMessage:
+                          "Number of Employees should be a non-empty number",
+                      }}
                     />
                   </div>
                 </div>
