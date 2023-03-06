@@ -20,6 +20,7 @@ import { connect } from "react-redux";
 import { usePagination, useTable } from "react-table";
 import styled from "styled-components";
 
+import PerfectScrollbar from "react-perfect-scrollbar";
 import {
   FS,
   VALIDATIONS,
@@ -33,7 +34,6 @@ import {
   updateCSVRow,
 } from "../../../store/slices/csvUploadSlice.ts";
 import { coalesce } from "../../../utils/array";
-import PerfectScrollbar from "react-perfect-scrollbar";
 
 const intentMap = {
   [FS.WARN]: Intent.WARNING,
@@ -374,6 +374,7 @@ function Table({
       hiddenHeaders[item.Header] = true;
       hiddenColumns = hiddenColumns.concat(item.columns.map((i) => i.accessor));
     });
+    hiddenHeaders["All"] = false;
     setVisibility({ hiddenHeaders, hiddenColumns });
   }, [JSON.stringify(visibilityToolbar)]);
 
@@ -383,16 +384,20 @@ function Table({
     });
     visibility.hiddenHeaders[header] = false;
     let hiddenColumns = [];
-    Object.entries(visibility.hiddenHeaders).forEach(([k, v]) => {
-      if (v) {
-        hiddenColumns = hiddenColumns.concat(
-          headerMap[k].map((i) => i.accessor)
-        );
-      }
-    });
+    if (header !== "All") {
+      Object.entries(visibility.hiddenHeaders).forEach(([k, v]) => {
+        if (v && k !== "All") {
+          hiddenColumns = hiddenColumns.concat(
+            headerMap[k].map((i) => i.accessor)
+          );
+        }
+      });
+    }
+
     setVisibility({ ...visibility, hiddenColumns });
     setHiddenColumns(hiddenColumns);
   };
+
   return (
     <div>
       <div style={{ textAlign: "center", paddingBottom: "1em" }}>
@@ -404,8 +409,10 @@ function Table({
               interactive={true}
               intent={Intent.DANGER}
               icon={"error"}
-              rightIcon={filters.includes(FS.ERROR) ? "cross" : ""}
-              onClick={() => filterMyData(FS.ERROR)}
+              rightIcon={
+                <input type="checkbox" checked={filters.includes(FS.ERROR)} />
+              }
+              onClick={() => reduxActions.filterMyData(FS.ERROR)}
             >
               {stats[FS.ERROR]} problems need immediate attention
             </Tag>
@@ -422,8 +429,10 @@ function Table({
               interactive={true}
               intent={Intent.WARNING}
               icon={"warning-sign"}
-              rightIcon={filters.includes(FS.WARN) ? "cross" : ""}
-              onClick={() => filterMyData(FS.WARN)}
+              rightIcon={
+                <input type="checkbox" checked={filters.includes(FS.WARN)} />
+              }
+              onClick={() => reduxActions.filterMyData(FS.WARN)}
             >
               {stats[FS.WARN]} fields are incorrect, but can be fixed later
             </Tag>
@@ -439,6 +448,14 @@ function Table({
               {" "}
               Choose Columns to view{" "}
             </Button>
+            <Button
+              active={!visibility.hiddenHeaders["All"]}
+              onClick={() => toggleVisibility("All")}
+            >
+              {" "}
+              {"All"}{" "}
+            </Button>
+
             {visibilityToolbar.map((item) => (
               <Button
                 active={!visibility.hiddenHeaders[item.Header]}
