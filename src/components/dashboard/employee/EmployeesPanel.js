@@ -46,6 +46,7 @@ const reformatEmployeeData = (employeeData) => {
       bank,
       _id,
       active,
+      principalEmployer,
     } = employee;
     return {
       "Employee ID": employerEmployeeId,
@@ -64,6 +65,7 @@ const reformatEmployeeData = (employeeData) => {
       "Account Number": bank?.accountNumber,
       "IFSC Code": bank?.ifsc,
       "Account Status": bank?.verifyStatus ?? "PENDING",
+      "Principal Employer": principalEmployer,
     };
   });
 };
