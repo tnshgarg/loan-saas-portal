@@ -45,6 +45,7 @@ const reformatEmployeeData = (employeeData) => {
       pan,
       bank,
       _id,
+      employmentId,
       active,
       principalEmployer,
     } = employee;
@@ -57,6 +58,7 @@ const reformatEmployeeData = (employeeData) => {
       "Date of Birth (dd/mm/yyyy)": dob,
       "Job Title": designation,
       _id: _id,
+      employmentId: employmentId,
       "Employment Status": active ? "ACTIVE" : "INACTIVE",
       "Aadhaar Number": aadhaar?.number,
       "Aadhaar Status": aadhaar?.verifyStatus ?? "PENDING",
@@ -190,11 +192,13 @@ const TabularViewTab = ({ handlers }) => {
   const [didDialogChange, setDidDialogChange] = useState(false);
 
   const [currEmployeeId, setCurrEmployeeId] = useState(null);
+  const [currEmploymentId, setCurrEmploymentId] = useState(null);
 
   const handleRowClick = (currentRow) => {
-    const { _id } = currentRow;
+    const { _id, employmentId } = currentRow;
     setIsDialogOpen(true);
     setCurrEmployeeId(_id);
+    setCurrEmploymentId(employmentId);
   };
 
   const handleDialogClose = () => {
@@ -284,6 +288,7 @@ const TabularViewTab = ({ handlers }) => {
             <Card interactive={true} elevation={Elevation.THREE}>
               <EmployeeModal
                 currEmployeeId={currEmployeeId}
+                currEmploymentId={currEmploymentId}
                 setDidDialogChange={setDidDialogChange}
               />
             </Card>
