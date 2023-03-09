@@ -1,17 +1,17 @@
+import { Button, Intent } from "@blueprintjs/core";
 import React, { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import FormInput from "../../../atomic/atoms/forms/FormInput";
+import { AppToaster } from "../../../contexts/ToastContext";
+import UpdateAlertContext from "../../../contexts/updateAlertContext";
+import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import {
   useGetEmployerTaxByIdQuery,
   useUpdateEmployerTaxMutation,
 } from "../../../store/slices/apiSlices/employer/taxApiSlice";
 import { NO_CHANGE_ERROR, VALUES_UPDATED } from "../../../utils/messageStrings";
-import FormInput from "../../../atomic/atoms/forms/FormInput";
-import withUpdateAlert from "../../../hoc/withUpdateAlert";
-import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import UpdateAlert from "../../common/UpdateAlert";
-import { Button, Intent } from "@blueprintjs/core";
-import { AppToaster } from "../../../contexts/ToastContext";
 
 const TaxSetupForm = () => {
   const { value, setValue } = useContext(UpdateAlertContext);
@@ -130,6 +130,25 @@ const TaxSetupForm = () => {
               validations={{
                 required: true,
                 pattern: {
+                  value:
+                    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+                },
+              }}
+              errors={errors}
+              field={"gstin"}
+              inputProps={{
+                icon: "id-number",
+                label: "GSTIN",
+                placeholder: "Please enter company's GSTIN number",
+                errorMessage:
+                  "Please enter a valid GSTIN number with 15 characters",
+              }}
+            />
+            <FormInput
+              register={register}
+              validations={{
+                required: false,
+                pattern: {
                   value: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
                 },
               }}
@@ -146,7 +165,7 @@ const TaxSetupForm = () => {
             <FormInput
               register={register}
               validations={{
-                required: true,
+                required: false,
                 pattern: {
                   value: /^(^[a-zA-Z]{4}[0-9]{5}[a-zA-Z]{1}?$)$/,
                 },
@@ -180,25 +199,7 @@ const TaxSetupForm = () => {
                   "Please enter a valid CIN number with 21 characters",
               }}
             />
-            <FormInput
-              register={register}
-              validations={{
-                required: true,
-                pattern: {
-                  value:
-                    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
-                },
-              }}
-              errors={errors}
-              field={"gstin"}
-              inputProps={{
-                icon: "id-number",
-                label: "GSTIN",
-                placeholder: "Please enter company's GSTIN number",
-                errorMessage:
-                  "Please enter a valid GSTIN number with 15 characters",
-              }}
-            />
+
             <div style={{ textAlign: "right" }}>
               <Button
                 disabled={Object.values(errors).length}

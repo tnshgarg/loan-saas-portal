@@ -1,21 +1,22 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAddressBook,
   faBuildingColumns,
+  faCalculator,
   faCalendarDays,
   faChartLine,
-  faMoneyBillWave,
-  faMoneyBill1Wave,
-  faMoneyCheck,
-  faUsers,
-  faListCheck,
   faFileArrowUp,
-  faCalculator,
+  faFilePen,
+  faListCheck,
   faMoneyBill,
+  faMoneyBill1Wave,
+  faMoneyBillWave,
+  faMoneyCheck,
   faPaperPlane,
-  faWallet,
   faReceipt,
+  faUsers,
+  faWallet,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { THEME } from "../theme/base";
 
 const {
@@ -74,6 +75,11 @@ const NAV_MENU = [
         name: "Panel",
         icon: <MenuIcon icon={faAddressBook} />,
         route: "/panel",
+      },
+      {
+        name: "Bulk Updates",
+        icon: <MenuIcon icon={faFilePen} />,
+        route: "/bulk-updates",
       },
     ],
   },

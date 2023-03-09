@@ -1,12 +1,12 @@
+import { connect } from "react-redux";
+import { CSVUploadDashlet } from "../../../../atomic/organisms/csvUploads/CSVUploadDashlet";
+import { useGetAllEmployeesPanelByEmployerIdQuery } from "../../../../store/slices/apiSlices/employees/panelApiSlice";
+import { buildRowMapper, buildTemplate } from "../util";
 import {
   FIELDS,
   ONE_CLICK_HEADERS,
   ONE_CLICK_PAYMENTS_HEADER_MAP,
 } from "./employeeSalaryFields";
-import { connect } from "react-redux";
-import { CSVUploadDashlet } from "../../../../atomic/organisms/csvUploads/CSVUploadDashlet";
-import { useGetAllEmployeesByEmployerIdQuery } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
-import { buildRowMapper, buildTemplate } from "../util";
 
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
@@ -24,7 +24,7 @@ const headerMapper = buildRowMapper(ONE_CLICK_PAYMENTS_HEADER_MAP, "");
 function _EmployeeSalaryPayments({ employerId }) {
   // techdebt: fetches on render, can lead to unnecessary API calls
   const { data, error, isLoading } =
-    useGetAllEmployeesByEmployerIdQuery(employerId);
+    useGetAllEmployeesPanelByEmployerIdQuery(employerId);
   if (error) console.error(error);
   const employeesData = data?.body ?? [];
   const templateData = buildTemplate(FIELDS, employeesData, getDefaultValues());

@@ -2,8 +2,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { EMPLOYER_BASE_API_URL, TIMEOUT } from "../../../../utils/apiUrls";
 
 // Define a service using a base URL and expected endpoints
-export const allEmployeesBasicDetails = createApi({
-  reducerPath: "allEmployeesBasicDetails",
+export const allEmployeesPanelDetails = createApi({
+  reducerPath: "allEmployeesPanelDetails",
   baseQuery: fetchBaseQuery({
     baseUrl: EMPLOYER_BASE_API_URL,
     prepareHeaders: (headers, { getState }) => {
@@ -18,18 +18,18 @@ export const allEmployeesBasicDetails = createApi({
       return headers;
     },
   }),
-  tagTypes: ["AllEmployeesBasicDetails"],
+  tagTypes: ["AllEmployeesPanelDetails"],
   keepUnusedDataFor: TIMEOUT,
   endpoints: (builder) => ({
     // Define endpoints here
-    getAllEmployeesByEmployerId: builder.query({
-      query: (id) => `/employees?id=${id}`,
-      providesTags: ["AllEmployeesBasicDetails"],
+    getAllEmployeesPanelByEmployerId: builder.query({
+      query: (id) => `/employees?id=${id}&category=panel`,
+      providesTags: ["AllEmployeesPanelDetails"],
     }),
   }),
 });
 
 export const {
-  useGetAllEmployeesByEmployerIdQuery,
-  useLazyGetAllEmployeesByEmployerIdQuery,
-} = allEmployeesBasicDetails;
+  useGetAllEmployeesPanelByEmployerIdQuery,
+  useLazyGetAllEmployeesPanelByEmployerIdQuery,
+} = allEmployeesPanelDetails;
