@@ -17,15 +17,16 @@ import {
 
 import { EmployeesPanel } from "./components/dashboard/employee/EmployeesPanel";
 
-import { history } from "./utils/history";
-import BaseLayout from "./layout/base";
-import { Onboard } from "./components/dashboard/employee/onboarding/Onboard";
 import { AttendanceUpload } from "./components/dashboard/attendance/attendanceUpload";
-import { SalaryUpload } from "./components/dashboard/payouts/salaryManagement/SalaryUpload";
-import { PayrollInfo } from "./components/dashboard/payouts/info/PayrollInfo";
-import { EmployeeSalaryPayments } from "./components/dashboard/payouts/employeeSalary/salaryPaymentUpload";
+import { EmployeesBulkUpdatesPanel } from "./components/dashboard/employee/bulkUpdates/bulkUpdatesPanel";
+import { Onboard } from "./components/dashboard/employee/onboarding/Onboard";
 import { Disbursements } from "./components/dashboard/ewa/details";
+import { EmployeeSalaryPayments } from "./components/dashboard/payouts/employeeSalary/salaryPaymentUpload";
+import { PayrollInfo } from "./components/dashboard/payouts/info/PayrollInfo";
 import { OneClickPayouts } from "./components/dashboard/payouts/oneClickPayouts/oneClickPayoutsUpload";
+import { SalaryUpload } from "./components/dashboard/payouts/salaryManagement/SalaryUpload";
+import BaseLayout from "./layout/base";
+import { history } from "./utils/history";
 
 const App = () => {
   useEffect(() => {
@@ -58,6 +59,10 @@ const App = () => {
             <Route path="/employer/register-form" element={<RegisterForm />} />
             <Route path="/employees/onboard" element={<Onboard />} />
             <Route path="/employees/panel" element={<EmployeesPanel />} />
+            <Route
+              path="/employees/bulk-updates"
+              element={<EmployeesBulkUpdatesPanel />}
+            />
             <Route path="/attendance/import" element={<AttendanceUpload />} />
             <Route
               path="/payroll/one-click-payout"

@@ -10,6 +10,8 @@ export const FS = FIELD_STATUS;
 // noinspection
 export const reg = {
   DATE: /^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/,
+  DATE_EMPTY_ALLOWED:
+    /^$|^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/,
   PHONE: /^(\+\d{1,3}[- ]?)?\d{10}$/,
   EMAIL: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
   PAN: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
@@ -32,6 +34,7 @@ export const phoneValidation = "phoneValidation";
 export const emailValidation = "emailValidation";
 export const dateValidation = "dateValidation";
 export const dojValidation = "dojValidation";
+export const doeValidation = "doeValidation";
 export const aadhaarValidation = "aadhaarValidation";
 export const panValidation = "panValidation";
 export const accNumberValidation = "accNumberValidation";
@@ -50,6 +53,7 @@ export const VALIDATIONS = {
   [emailValidation]: regexValidation(reg.EMAIL, FS.WARN),
   [dateValidation]: regexValidation(reg.DATE, FS.WARN),
   [dojValidation]: regexValidation(reg.DATE, FS.ERROR),
+  [doeValidation]: regexValidation(reg.DATE_EMPTY_ALLOWED, FS.ERROR),
   [aadhaarValidation]: regexValidation(reg.AADHAAR, FS.WARN),
   [panValidation]: regexValidation(reg.PAN, FS.WARN),
   [accNumberValidation]: regexValidation(reg.ACCNUMBER, FS.WARN),
