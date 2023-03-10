@@ -133,10 +133,10 @@ export const FIELDS = [
     group: FG.EMPLOYMENT,
   },
   {
-    header: "Principal Employer",
+    header: "Principal Employer" + REQUIRED_SUFFIX,
     field: "principalEmployer",
-    required: false,
-    validations: noValidation,
+    required: true,
+    validations: requiredValidation,
     group: FG.EMPLOYMENT,
   },
   {
