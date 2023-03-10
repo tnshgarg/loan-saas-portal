@@ -21,9 +21,11 @@ export const InputGroupDate = ({
   };
 
   const handleDateChange = (currentDateValue) => {
-    setDateValue(currentDateValue);
-    const formattedCurrentDateValue = formatDate(parseISO(currentDateValue));
-    setValue(field, formattedCurrentDateValue);
+    if (currentDateValue) {
+      setDateValue(currentDateValue);
+      const formattedCurrentDateValue = formatDate(parseISO(currentDateValue));
+      setValue(field, formattedCurrentDateValue);
+    }
   };
 
   useEffect(() => {
