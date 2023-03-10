@@ -78,10 +78,10 @@ function _VerifyAndUploadEmployees(props) {
         </div>
         <div className={Classes.DIALOG_FOOTER}>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-            <Button intent={Intent.DANGER} onClick={overrideDialogSubmit}>
-              Upload Immediately
+            <Button intent={Intent.PRIMARY} onClick={closeOverrideDialog}>
+              {" "}
+              Fix Errors{" "}
             </Button>
-            <Button onClick={closeOverrideDialog}> Fix Errors </Button>
           </div>
         </div>
       </Dialog>
