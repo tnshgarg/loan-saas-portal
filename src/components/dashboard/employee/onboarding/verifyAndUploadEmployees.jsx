@@ -1,6 +1,7 @@
 import { Button, Classes, Dialog, Intent, Tag } from "@blueprintjs/core";
 import React, { useState } from "react";
 import { connect } from "react-redux";
+import { toggleFilter } from "../../../../store/slices/csvUploadSlice.ts";
 import { FS } from "./validations";
 
 const mapStateToProps = (state, ownProps) => {
@@ -25,15 +26,26 @@ function _VerifyAndUploadEmployees(props) {
     onClick: parentOnClick,
     errors,
     buttonText,
+    dispatch,
+    tableName,
+    module,
   } = props ?? {};
 
   const [overrideDialog, setOverrideDialog] = useState(false);
+
+  const filterMyData = (errorFilter) => {
+    const shouldRemoveFilter = false;
+    dispatch(
+      toggleFilter({ tableName, errorFilter, module, shouldRemoveFilter })
+    );
+  };
 
   const openOverrideDialog = () => {
     setOverrideDialog(true);
   };
 
   const closeOverrideDialog = () => {
+    filterMyData(FS.ERROR);
     setOverrideDialog(false);
   };
 
@@ -74,7 +86,7 @@ function _VerifyAndUploadEmployees(props) {
           your company.
           <br />
           <br />
-          <i>Note: these employees will not be able to register on the APP</i>
+          <i>Note: File with errors cannot be uploaded</i>
         </div>
         <div className={Classes.DIALOG_FOOTER}>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>

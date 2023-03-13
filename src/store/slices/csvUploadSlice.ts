@@ -210,7 +210,7 @@ export const CSVUploadsSlice = createSlice({
     },
     toggleFilter: (state, action) => {
       const {
-        payload: { tableName, errorFilter, module },
+        payload: { tableName, errorFilter, module, shouldRemoveFilter = true },
       } = action;
 
       const { data, filteredData, errorFilters } =
@@ -219,7 +219,7 @@ export const CSVUploadsSlice = createSlice({
       var filterIndex = errorFilters.indexOf(errorFilter);
       if (filterIndex === -1) {
         errorFilters.push(errorFilter);
-      } else {
+      } else if (shouldRemoveFilter) {
         errorFilters.splice(filterIndex, 1);
       }
       // reusing the same `filteredData` to maintain object reference

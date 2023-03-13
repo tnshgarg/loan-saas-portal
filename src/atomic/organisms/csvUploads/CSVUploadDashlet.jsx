@@ -257,6 +257,7 @@ function _CSVUploadDashlet({
                       : uploadCSV(e);
                   }}
                   buttonText={`Add ${title}`}
+                  tableName={file?.object?.name}
                 />
               </>
             ) : (
