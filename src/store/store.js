@@ -1,7 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { employeeDetails } from "./slices/apiSlices/employee/employeeDetailsApiSlice";
-import { allEmployeesBasicDetails } from "./slices/apiSlices/employees/employeesApiSlice";
+import { allEmployeesEmploymentDetails } from "./slices/apiSlices/employees/employmentApiSlice";
+import { allEmployeesPanelDetails } from "./slices/apiSlices/employees/panelApiSlice";
 import { employerAddressApi } from "./slices/apiSlices/employer/addressApiSlice";
 import { employerCredentialsApi } from "./slices/apiSlices/employer/credentialsApiSlice";
 import { employerEWAApi } from "./slices/apiSlices/employer/ewaApiSlice";
@@ -27,7 +28,9 @@ export const store = configureStore({
     [employerEWAApi.reducerPath]: employerEWAApi.reducer,
     [employerTaxApi.reducerPath]: employerTaxApi.reducer,
     [employerCredentialsApi.reducerPath]: employerCredentialsApi.reducer,
-    [allEmployeesBasicDetails.reducerPath]: allEmployeesBasicDetails.reducer,
+    [allEmployeesPanelDetails.reducerPath]: allEmployeesPanelDetails.reducer,
+    [allEmployeesEmploymentDetails.reducerPath]:
+      allEmployeesEmploymentDetails.reducer,
     [employeeDetails.reducerPath]: employeeDetails.reducer,
     [employerMetricsApi.reducerPath]: employerMetricsApi.reducer,
     [uploadedFiles.reducerPath]: uploadedFiles.reducer,
@@ -45,7 +48,8 @@ export const store = configureStore({
       .concat(employerPayrollApi.middleware)
       .concat(employerTaxApi.middleware)
       .concat(employerCredentialsApi.middleware)
-      .concat(allEmployeesBasicDetails.middleware)
+      .concat(allEmployeesPanelDetails.middleware)
+      .concat(allEmployeesEmploymentDetails.middleware)
       .concat(employeeDetails.middleware)
       .concat(employerMetricsApi.middleware)
       .concat(uploadedFiles.middleware),

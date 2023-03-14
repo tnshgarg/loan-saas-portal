@@ -1,8 +1,8 @@
-import { HEADER_GROUPS, HEADERS_MAP, TEMPLATE_FIELDS } from "./fields";
 import { connect } from "react-redux";
 import { CSVUploadDashlet } from "../../../../atomic/organisms/csvUploads/CSVUploadDashlet";
-import { useGetAllEmployeesByEmployerIdQuery } from "../../../../store/slices/apiSlices/employees/employeesApiSlice";
+import { useGetAllEmployeesPanelByEmployerIdQuery } from "../../../../store/slices/apiSlices/employees/panelApiSlice";
 import { buildRowMapper } from "../util";
+import { HEADERS_MAP, HEADER_GROUPS, TEMPLATE_FIELDS } from "./fields";
 
 function buildTemplate(employeesData) {
   const headers = TEMPLATE_FIELDS.map((field) => field.header);
@@ -20,7 +20,7 @@ function buildTemplate(employeesData) {
 function _PayrollUpload({ employerId }) {
   // techdebt: fetches on render, can lead to unnecessary API calls
   const { data, error, isLoading } =
-    useGetAllEmployeesByEmployerIdQuery(employerId);
+    useGetAllEmployeesPanelByEmployerIdQuery(employerId);
   if (error) console.log(error);
   const employeesData = data?.body ?? [];
   const templateData = buildTemplate(employeesData);

@@ -17,9 +17,9 @@ import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
 import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
 import Table from "../../../atomic/organisms/table";
 import {
-  useGetAllEmployeesByEmployerIdQuery,
-  useLazyGetAllEmployeesByEmployerIdQuery,
-} from "../../../store/slices/apiSlices/employees/employeesApiSlice";
+  useGetAllEmployeesPanelByEmployerIdQuery,
+  useLazyGetAllEmployeesPanelByEmployerIdQuery,
+} from "../../../store/slices/apiSlices/employees/panelApiSlice";
 import { groupByKeyCount } from "../../../utils/aggregates";
 import { EmployeeModal } from "./employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
@@ -45,7 +45,9 @@ const reformatEmployeeData = (employeeData) => {
       pan,
       bank,
       _id,
+      employmentId,
       active,
+      principalEmployer,
     } = employee;
     return {
       "Employee ID": employerEmployeeId,
@@ -56,6 +58,7 @@ const reformatEmployeeData = (employeeData) => {
       "Date of Birth (dd/mm/yyyy)": dob,
       "Job Title": designation,
       _id: _id,
+      employmentId: employmentId,
       "Employment Status": active ? "ACTIVE" : "INACTIVE",
       "Aadhaar Number": aadhaar?.number,
       "Aadhaar Status": aadhaar?.verifyStatus ?? "PENDING",
@@ -64,6 +67,7 @@ const reformatEmployeeData = (employeeData) => {
       "Account Number": bank?.accountNumber,
       "IFSC Code": bank?.ifsc,
       "Account Status": bank?.verifyStatus ?? "PENDING",
+      "Principal Employer": principalEmployer,
     };
   });
 };
@@ -108,10 +112,11 @@ const TabularViewTab = ({ handlers }) => {
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
-  const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
+  const responseFromQuery =
+    useGetAllEmployeesPanelByEmployerIdQuery(employerId);
   const { data, isLoading, error, refetch } = responseFromQuery;
   console.log({ data, isLoading, error, refetch });
-  const responseFromLazyQuery = useLazyGetAllEmployeesByEmployerIdQuery();
+  const responseFromLazyQuery = useLazyGetAllEmployeesPanelByEmployerIdQuery();
   const [
     trigger,
     { data: lazyData, isLoading: lazyIsLoading, error: lazyError },
@@ -187,11 +192,13 @@ const TabularViewTab = ({ handlers }) => {
   const [didDialogChange, setDidDialogChange] = useState(false);
 
   const [currEmployeeId, setCurrEmployeeId] = useState(null);
+  const [currEmploymentId, setCurrEmploymentId] = useState(null);
 
   const handleRowClick = (currentRow) => {
-    const { _id } = currentRow;
+    const { _id, employmentId } = currentRow;
     setIsDialogOpen(true);
     setCurrEmployeeId(_id);
+    setCurrEmploymentId(employmentId);
   };
 
   const handleDialogClose = () => {
@@ -281,6 +288,7 @@ const TabularViewTab = ({ handlers }) => {
             <Card interactive={true} elevation={Elevation.THREE}>
               <EmployeeModal
                 currEmployeeId={currEmployeeId}
+                currEmploymentId={currEmploymentId}
                 setDidDialogChange={setDidDialogChange}
               />
             </Card>
@@ -298,7 +306,8 @@ const TabularTabsComponent = () => {
 
   const navigate = useNavigate();
 
-  const responseFromQuery = useGetAllEmployeesByEmployerIdQuery(employerId);
+  const responseFromQuery =
+    useGetAllEmployeesPanelByEmployerIdQuery(employerId);
   const { data } = responseFromQuery;
   const [metricsData, setMetricsData] = useState({});
 

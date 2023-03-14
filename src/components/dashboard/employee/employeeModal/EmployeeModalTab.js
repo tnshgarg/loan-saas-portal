@@ -6,21 +6,27 @@ import Select from "react-select";
 import FormInput from "../../../../atomic/atoms/forms/FormInput";
 import { AppToaster } from "../../../../contexts/ToastContext";
 import {
-  useGetEmployeeDetailsByEmployeeIdQuery,
+  useGetEmployeeDetailsQuery,
   useUpdateEmployeeDetailsMutation,
 } from "../../../../store/slices/apiSlices/employee/employeeDetailsApiSlice";
-import { NO_CHANGE_ERROR } from "../../../../utils/messageStrings";
+import {
+  DOJ_CHANGED_BUT_DOE_ALREADY_PRESENT_ERROR,
+  DOJ_DOE_BOTH_CHANGED_ERROR,
+  NO_CHANGE_ERROR,
+} from "../../../../utils/messageStrings";
 
 export const EmployeeModalTab = ({
   category,
   fields,
   currEmployeeId,
+  currEmploymentId,
   setDidDialogChange,
   type,
   inputTypes,
 }) => {
-  const responseFromQuery = useGetEmployeeDetailsByEmployeeIdQuery({
+  const responseFromQuery = useGetEmployeeDetailsQuery({
     id: currEmployeeId,
+    employmentId: currEmploymentId,
     category,
     subCategory: type,
   });
@@ -133,6 +139,7 @@ export const EmployeeModalTab = ({
     const finalEmployeeUpdateObjectToSend = {
       ...employeeUpdateObjectToSend,
       id: currEmployeeId,
+      employmentId: currEmploymentId,
       category: category,
     };
 
@@ -170,7 +177,31 @@ export const EmployeeModalTab = ({
         {}
       );
       setChangesInEmployeeDetails(changedEmployeeDetails);
-      setIsAlertOpen(true);
+
+      const conflictingDateKeys = [
+        "Date of Joining (dd/mm/yyyy)",
+        "Date of Exit (dd/mm/yyyy)",
+      ];
+      if (
+        conflictingDateKeys.every((key) =>
+          Object.keys(changedEmployeeDetails).includes(key)
+        )
+      ) {
+        AppToaster.show({
+          intent: Intent.DANGER,
+          message: DOJ_DOE_BOTH_CHANGED_ERROR,
+        });
+      } else if (
+        changedEmployeeDetails.hasOwnProperty(conflictingDateKeys[0]) &&
+        formDataInitial[conflictingDateKeys[1]]
+      ) {
+        AppToaster.show({
+          intent: Intent.DANGER,
+          message: DOJ_CHANGED_BUT_DOE_ALREADY_PRESENT_ERROR,
+        });
+      } else {
+        setIsAlertOpen(true);
+      }
     } else {
       AppToaster.show({
         intent: Intent.DANGER,

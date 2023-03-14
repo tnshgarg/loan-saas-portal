@@ -22,9 +22,9 @@ export const employeeDetails = createApi({
   keepUnusedDataFor: TIMEOUT,
   endpoints: (builder) => ({
     // Define endpoints here
-    getEmployeeDetailsByEmployeeId: builder.query({
-      query: ({ id, category, subCategory }) => {
-        return `/employee?id=${id}&category=${category}&subCategory=${subCategory}`;
+    getEmployeeDetails: builder.query({
+      query: ({ id, employmentId, category, subCategory }) => {
+        return `/employee?id=${id}&category=${category}&subCategory=${subCategory}&employmentId=${employmentId}`;
       },
       providesTags: (id) => [{ type: "EmployeeDetails", id }],
     }),
@@ -40,7 +40,7 @@ export const employeeDetails = createApi({
 });
 
 export const {
-  useGetEmployeeDetailsByEmployeeIdQuery,
-  useLazyGetEmployeeDetailsByEmployeeIdQuery,
+  useGetEmployeeDetailsQuery,
+  useLazyGetEmployeeDetailsQuery,
   useUpdateEmployeeDetailsMutation,
 } = employeeDetails;
