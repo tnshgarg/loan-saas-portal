@@ -7,6 +7,11 @@ import {
 } from "../../components/dashboard/employee/onboarding/validations.js";
 import { convertExcelSerialToDateString } from "../../utils/excelHandling";
 
+export const FILTER_OP = {
+  ADD: true,
+  REMOVE: false,
+}
+
 interface TableData {
   [tableName: string]: [
     {
@@ -225,6 +230,26 @@ export const CSVUploadsSlice = createSlice({
       // reusing the same `filteredData` to maintain object reference
       populateFilteredData(data, errorFilters, filteredData);
     },
+    setFilter: (state, action) => {
+      const {
+        payload: { tableName, errorFilter, module, operation },
+      } = action;
+
+      const { data, filteredData, errorFilters } =
+        state[module].tableData[tableName];
+      var filterIndex = errorFilters.indexOf(errorFilter);
+      var filterStatus = filterIndex > -1;
+
+      if (operation != filterStatus) {
+        if (operation == FILTER_OP.ADD) {
+          errorFilters.push(errorFilter);
+        } else {
+          errorFilters.splice(filterIndex, 1);
+        }
+      }
+      // reusing the same `filteredData` to maintain object reference
+      populateFilteredData(data, errorFilters, filteredData);
+    },
     selectCSVRow: (state, action) => {
       const {
         payload: { tableName, rowIndex, module },
@@ -316,6 +341,7 @@ export const {
   initCSVUpload,
   updateCSVRow,
   toggleFilter,
+  setFilter,
   deleteCSVRow,
   restoreCSVRow,
   selectCSVRow,

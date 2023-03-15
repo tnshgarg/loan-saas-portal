@@ -256,8 +256,6 @@ const Table = ({
                 ))}
               </thead>
 
-              {!tableRows.length && noDataComponent && noDataComponent()}
-
               <tbody {...getTableBodyProps()}>
                 {tableRows.map((row, i) => {
                   prepareRow(row);
@@ -289,11 +287,13 @@ const Table = ({
                   );
                 })}
               </tbody>
+              
             </table>
+            {!tableRows.length && noDataComponent && noDataComponent()}
           </PerfectScrollbar>
         </div>
 
-        {showPagination && (
+        {showPagination && tableRows.length && (
           <div className={"pagination"}>
             <div style={{ textAlign: "right" }}>
               <div style={{ display: "inline-block" }}>
@@ -301,7 +301,7 @@ const Table = ({
               </div>
             </div>
           </div>
-        )}
+        ) || ""}
         {showDownload && (
           <Button
             intent={Intent.SUCCESS}
@@ -343,7 +343,7 @@ const Styles = styled.div`
     overflow: auto;
     height: 100%;
     border-collapse: collapse;
-    height: 55vh;
+    max-height: 55vh;
     border: 1px solid rgba(0, 0, 0, 0.12);
     tr {
       cursor: pointer;
