@@ -9,6 +9,7 @@ import { employerEWAApi } from "./slices/apiSlices/employer/ewaApiSlice";
 import { employerMetricsApi } from "./slices/apiSlices/employer/metricsApiSlice";
 import { employerPayrollApi } from "./slices/apiSlices/employer/payrollApiSlice";
 import { employerTaxApi } from "./slices/apiSlices/employer/taxApiSlice";
+import { uploadedFiles } from "./slices/apiSlices/files/filesApiSlice";
 import authReducer from "./slices/authSlice";
 import CSVUploadReducer from "./slices/csvUploadSlice.ts";
 import employeeReducer from "./slices/employeeSlice";
@@ -32,6 +33,7 @@ export const store = configureStore({
       allEmployeesEmploymentDetails.reducer,
     [employeeDetails.reducerPath]: employeeDetails.reducer,
     [employerMetricsApi.reducerPath]: employerMetricsApi.reducer,
+    [uploadedFiles.reducerPath]: uploadedFiles.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -49,7 +51,8 @@ export const store = configureStore({
       .concat(allEmployeesPanelDetails.middleware)
       .concat(allEmployeesEmploymentDetails.middleware)
       .concat(employeeDetails.middleware)
-      .concat(employerMetricsApi.middleware),
+      .concat(employerMetricsApi.middleware)
+      .concat(uploadedFiles.middleware),
 });
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors
