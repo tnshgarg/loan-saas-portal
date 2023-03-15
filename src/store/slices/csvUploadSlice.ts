@@ -225,6 +225,23 @@ export const CSVUploadsSlice = createSlice({
       // reusing the same `filteredData` to maintain object reference
       populateFilteredData(data, errorFilters, filteredData);
     },
+    addOrRemoveFilter: (state, action) => {
+      const {
+        payload: { tableName, errorFilter, module, shouldAddFilter },
+      } = action;
+
+      const { data, filteredData, errorFilters } =
+        state[module].tableData[tableName];
+
+      var filterIndex = errorFilters.indexOf(errorFilter);
+      if (shouldAddFilter && filterIndex === -1) {
+        errorFilters.push(errorFilter);
+      } else if (!shouldAddFilter && filterIndex !== -1) {
+        errorFilters.splice(filterIndex, 1);
+      }
+      // reusing the same `filteredData` to maintain object reference
+      populateFilteredData(data, errorFilters, filteredData);
+    },
     selectCSVRow: (state, action) => {
       const {
         payload: { tableName, rowIndex, module },
@@ -316,6 +333,7 @@ export const {
   initCSVUpload,
   updateCSVRow,
   toggleFilter,
+  addOrRemoveFilter,
   deleteCSVRow,
   restoreCSVRow,
   selectCSVRow,
