@@ -1,6 +1,6 @@
 {
   "name": "employer-saas",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@aws-sdk/lib-storage": "^3.157.0",
