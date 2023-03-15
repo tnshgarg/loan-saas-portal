@@ -8,13 +8,14 @@ import {
 } from "../../../store/slices/apiSlices/files/filesApiSlice";
 import { Dashlet } from "../../molecules/dashlets/dashlet";
 import Table from "../table";
-import { tableColumns } from "./viewHistoryPanelTableColumns";
 
+const TABLE_COLUMNS = ["File Name", "Upload Time", "Status"];
 const reformatFilesData = (filesData) => {
   return filesData.map((file) => {
-    const { inputFileName, inputFileStatus, inputFileUrl } = file;
+    const { inputFileName, inputFileStatus, inputFileUrl,uploadedAt } = file;
     return {
       "File Name": inputFileName,
+      "Upload Time": uploadedAt,
       Status: inputFileStatus,
       inputFileUrl,
     };
@@ -51,7 +52,7 @@ function fuzzyTextFilterFn(rows, id, filterValue) {
 
 fuzzyTextFilterFn.autoRemove = (val) => !val;
 
-const ViewHistoryTable = ({ employerId, module, handlers }) => {
+const UploadHistoryTable = ({ employerId, module, handlers }) => {
   const responseFromQuery = useGetUploadedFilesQuery({
     id: employerId,
     module,
@@ -87,7 +88,7 @@ const ViewHistoryTable = ({ employerId, module, handlers }) => {
 
   const columns = useMemo(
     () =>
-      tableColumns.map((header) => {
+      TABLE_COLUMNS.map((header) => {
         if (isObject(header)) {
           return {
             Header: header.Header,
@@ -151,7 +152,7 @@ const ViewHistoryTable = ({ employerId, module, handlers }) => {
 
   const noDataComponent = () => {
     return (
-      <div style={{ height: "20vh", width: "100%" }}>
+      <div style={{ height: "8vh", width: "100%" }}>
         <NonIdealState
           icon={"property"}
           title={"No Files Uploaded"}
@@ -243,7 +244,7 @@ export const ViewHistoryPanel = ({ employerId, module }) => {
           </>
         }
       >
-        <ViewHistoryTable
+        <UploadHistoryTable
           employerId={employerId}
           module={module}
           handlers={handlers}

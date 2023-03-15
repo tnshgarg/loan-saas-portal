@@ -256,8 +256,6 @@ const Table = ({
                 ))}
               </thead>
 
-              {!tableRows.length && noDataComponent && noDataComponent()}
-
               <tbody {...getTableBodyProps()}>
                 {tableRows.map((row, i) => {
                   prepareRow(row);
@@ -289,7 +287,9 @@ const Table = ({
                   );
                 })}
               </tbody>
+              
             </table>
+            {!tableRows.length && noDataComponent && noDataComponent()}
           </PerfectScrollbar>
         </div>
 
@@ -343,7 +343,7 @@ const Styles = styled.div`
     overflow: auto;
     height: 100%;
     border-collapse: collapse;
-    height: 55vh;
+    max-height: 55vh;
     border: 1px solid rgba(0, 0, 0, 0.12);
     tr {
       cursor: pointer;
