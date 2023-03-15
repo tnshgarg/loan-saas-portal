@@ -154,9 +154,9 @@ const UploadHistoryTable = ({ employerId, module, handlers }) => {
     return (
       <div style={{ height: "8vh", width: "100%" }}>
         <NonIdealState
-          icon={"property"}
-          title={"No Files Uploaded"}
-          description={<>Looks like no files have been uploaded</>}
+          icon={"th-disconnect"}
+          title={"No Files Uploaded Yet"}
+          description={"Once you upload files, you will be able to see them here"}
           layout={"horizontal"}
         />
       </div>
@@ -224,7 +224,7 @@ const UploadHistoryTable = ({ employerId, module, handlers }) => {
   );
 };
 
-export const ViewHistoryPanel = ({ employerId, module }) => {
+export const UploadHistoryPanel = ({ employerId, module }) => {
   const handlers = {};
   const createHandler = (e) => {
     return () => {
@@ -234,8 +234,8 @@ export const ViewHistoryPanel = ({ employerId, module }) => {
   return (
     <>
       <Dashlet
-        icon={"cloud-upload"}
-        title={"View Uploaded Files"}
+        icon={"history"}
+        title={"Uploaded Files"}
         actions={
           <>
             <Button icon={"refresh"} onClick={createHandler("refresh")}>

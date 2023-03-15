@@ -18,7 +18,7 @@ import { CSVFileInput } from "../../atoms/forms/CSVFileInput";
 import { TemplateDownloadButton } from "../../atoms/forms/TemplateDownloadButton";
 import { Dashlet } from "../../molecules/dashlets/dashlet";
 import BrowserEdiTable from "./BrowserEdiTable";
-import { ViewHistoryPanel } from "./ViewHistoryPanel";
+import { UploadHistoryPanel } from "./UploadHistoryPanel";
 
 export const MAX_SIZE = 1024 * 1024 * 5;
 
@@ -308,7 +308,7 @@ function _CSVUploadDashlet({
           ""
         )}
       </Dashlet>
-      <ViewHistoryPanel employerId={employerId} module={module} />
+      <UploadHistoryPanel employerId={employerId} module={module} />
     </>
   );
 }
