@@ -293,7 +293,7 @@ const Table = ({
           </PerfectScrollbar>
         </div>
 
-        {showPagination && (
+        {showPagination && tableRows.length && (
           <div className={"pagination"}>
             <div style={{ textAlign: "right" }}>
               <div style={{ display: "inline-block" }}>
@@ -301,7 +301,7 @@ const Table = ({
               </div>
             </div>
           </div>
-        )}
+        ) || ""}
         {showDownload && (
           <Button
             intent={Intent.SUCCESS}
