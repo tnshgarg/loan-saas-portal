@@ -1,7 +1,7 @@
 import { Button, Classes, Dialog, Intent, Tag } from "@blueprintjs/core";
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { addOrRemoveFilter } from "../../../../store/slices/csvUploadSlice.ts";
+import { FILTER_OP, setFilter } from "../../../../store/slices/csvUploadSlice.ts";
 import { FS } from "./validations";
 
 const mapStateToProps = (state, ownProps) => {
@@ -34,9 +34,8 @@ function _VerifyAndUploadEmployees(props) {
   const [overrideDialog, setOverrideDialog] = useState(false);
 
   const filterMyData = (errorFilter) => {
-    const shouldAddFilter = true;
     dispatch(
-      addOrRemoveFilter({ tableName, errorFilter, module, shouldAddFilter })
+      setFilter({ tableName, errorFilter, module, operation: FILTER_OP.ADD  })
     );
   };
 
