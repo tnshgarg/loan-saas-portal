@@ -17,9 +17,9 @@ import UpdateAlert from "../../../components/common/UpdateAlert";
 import UpdateAlertContext from "../../../contexts/updateAlertContext";
 import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import { getExcel } from "../../../utils/excelHandling";
-import { Pagination } from "../csvUploads/BrowserEdiTable";
 import EditableCell from "./EditableCell";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import { Pagination } from "../browserTable/pagination";
 
 const Table = ({
   columns,
@@ -103,68 +103,68 @@ const Table = ({
         return [...columns].concat(
           showEditColumn
             ? {
-                accessor: "edit",
-                id: "edit",
-                Header: "Action",
-                disableSortBy: true,
+              accessor: "edit",
+              id: "edit",
+              Header: "Action",
+              disableSortBy: true,
 
-                Cell: ({
-                  row,
-                  column,
-                  setEditableRowIndex,
-                  setIsOpen,
-                  editableRowIndex,
-                  storeData,
-                  setValue,
-                }) => (
-                  <Button
-                    disabled={
-                      editableRowIndex === null
-                        ? false
-                        : editableRowIndex !== row.index
-                    }
-                    onClick={() => {
-                      const currentIndex = row.index;
-                      if (editableRowIndex !== currentIndex) {
-                        setEditableRowIndex(currentIndex);
-                      } else {
-                        setCurrRow(row);
-                        const updatedRow = row.values;
-                        if (!value.isOpen) {
-                          const initialValues = storeData[updatedRow.state];
-                          const newValues = { ...updatedRow };
-                          delete newValues.isOther;
-                          setValue({
-                            ...value,
-                            isOpen: !value.isOpen,
-                            newValues: newValues,
-                            initialValues: initialValues,
-                            cancelCallback: () => cancelCallback(storeData),
-                            onConfirm: () =>
-                              handleSubmit(
-                                updatedRow,
-                                row,
-                                storeData,
-                                setEditableRowIndex,
-                                () => setValue({ ...value, isOpen: false })
-                              ),
-                          });
-                          return;
-                        }
-                        handleSubmit(
-                          updatedRow,
-                          row,
-                          storeData,
-                          setEditableRowIndex,
-                          () => setValue({ ...value, isOpen: false })
-                        );
+              Cell: ({
+                row,
+                column,
+                setEditableRowIndex,
+                setIsOpen,
+                editableRowIndex,
+                storeData,
+                setValue,
+              }) => (
+                <Button
+                  disabled={
+                    editableRowIndex === null
+                      ? false
+                      : editableRowIndex !== row.index
+                  }
+                  onClick={() => {
+                    const currentIndex = row.index;
+                    if (editableRowIndex !== currentIndex) {
+                      setEditableRowIndex(currentIndex);
+                    } else {
+                      setCurrRow(row);
+                      const updatedRow = row.values;
+                      if (!value.isOpen) {
+                        const initialValues = storeData[updatedRow.state];
+                        const newValues = { ...updatedRow };
+                        delete newValues.isOther;
+                        setValue({
+                          ...value,
+                          isOpen: !value.isOpen,
+                          newValues: newValues,
+                          initialValues: initialValues,
+                          cancelCallback: () => cancelCallback(storeData),
+                          onConfirm: () =>
+                            handleSubmit(
+                              updatedRow,
+                              row,
+                              storeData,
+                              setEditableRowIndex,
+                              () => setValue({ ...value, isOpen: false })
+                            ),
+                        });
+                        return;
                       }
-                    }}
-                  >
-                    {editableRowIndex !== row.index ? "Edit" : "Save"}
-                  </Button>
-                ),
-              }
+                      handleSubmit(
+                        updatedRow,
+                        row,
+                        storeData,
+                        setEditableRowIndex,
+                        () => setValue({ ...value, isOpen: false })
+                      );
+                    }
+                  }}
+                >
+                  {editableRowIndex !== row.index ? "Edit" : "Save"}
+                </Button>
+              ),
+            }
             : []
         );
       });
@@ -287,7 +287,7 @@ const Table = ({
                   );
                 })}
               </tbody>
-              
+
             </table>
             {!tableRows.length && noDataComponent && noDataComponent()}
           </PerfectScrollbar>
@@ -326,7 +326,7 @@ Table.defaultProps = {
   handleSubmit: PropTypes.func.isRequired,
   setData: PropTypes.func.isRequired,
   skipPageReset: PropTypes.bool.isRequired,
-  noDataComponent: () => {},
+  noDataComponent: () => { },
 };
 
 const Styles = styled.div`

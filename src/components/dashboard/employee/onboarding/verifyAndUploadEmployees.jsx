@@ -48,10 +48,6 @@ function _VerifyAndUploadEmployees(props) {
     setOverrideDialog(false);
   };
 
-  const overrideDialogSubmit = () => {
-    setOverrideDialog(false);
-    parentOnClick();
-  };
   const buttonOnClick = errors ? openOverrideDialog : parentOnClick;
   return (
     <>

@@ -1,5 +1,5 @@
 import { Button, Intent, NonIdealState, ProgressBar } from "@blueprintjs/core";
-import BrowserEdiTable from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
+import BrowserTable from "../../../../atomic/organisms/browserTable";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import { FIELDS } from "../employeeSalary/employeeSalaryFields";
 import { noValidation } from "../../employee/onboarding/validations";
@@ -97,7 +97,7 @@ export function HistoricalPayoutsTable({
             <ProgressBar animate stripes />
           </div>
         ) : historicalPayouts && historicalPayouts.length ? (
-          <BrowserEdiTable
+          <BrowserTable
             disableEdits={true}
             key={key}
             tableName={key}

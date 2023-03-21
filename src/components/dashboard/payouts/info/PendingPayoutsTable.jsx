@@ -7,7 +7,7 @@ import {
   ProgressBar,
   Tag,
 } from "@blueprintjs/core";
-import BrowserEdiTable from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
+import BrowserTable from "../../../../atomic/organisms/browserTable";
 import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import { ONE_CLICK_HEADERS } from "../employeeSalary/employeeSalaryFields";
 import {
@@ -147,7 +147,7 @@ export function PendingPayoutsTable({
           <ProgressBar animate stripes />
         </div>
       ) : pendingPayouts && pendingPayouts.length ? (
-        <BrowserEdiTable
+        <BrowserTable
           key={key}
           tableName={key}
           module={"payouts-pending"}

@@ -17,8 +17,8 @@ import {
 import { CSVFileInput } from "../../atoms/forms/CSVFileInput";
 import { TemplateDownloadButton } from "../../atoms/forms/TemplateDownloadButton";
 import { Dashlet } from "../../molecules/dashlets/dashlet";
-import BrowserEdiTable from "./BrowserEdiTable";
 import { UploadHistoryPanel } from "./UploadHistoryPanel";
+import BrowserTable from "../browserTable"
 
 export const MAX_SIZE = 1024 * 1024 * 5;
 
@@ -284,7 +284,7 @@ function _CSVUploadDashlet({
 
         {file.object || savedFileName ? (
           <>
-            <BrowserEdiTable
+            <BrowserTable
               key={savedFileName ?? file.object.name}
               setter={setDataGetter}
               deletes={true}

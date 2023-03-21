@@ -12,48 +12,48 @@ export const FILTER_OP = {
   REMOVE: false,
 }
 
-interface TableData {
-  [tableName: string]: [
-    {
-      [field: string]: null | string | number;
-    }
-  ];
+const BLANK_VALUE = "(Blank)";
+
+function isNaN(value) {
+  return value === null || value === undefined || value === "";
 }
+type TableRow = {
+  [columnName: string]: any,
+  rowNumber: number,
+}
+type TableData = Array<TableRow>;
 
 interface TablePagination {
-  [tableName: string]: {
-    pageSize: number;
-  };
+  pageSize: number;
 }
 
 interface TableFields {
-  [tableName: string]: {
-    [fieldName: string]: {
-      required: boolean;
-      validations: any;
-    };
+  [fieldName: string]: {
+    required: boolean;
+    validations: any;
   };
 }
 
 interface TableErrors {
-  [tableName: string]: {
-    errors: {
-      [fieldName: string]: string;
-    };
-    warnings: {
-      [fieldName: string]: string;
-    };
+  errors: {
+    [fieldName: string]: string;
+  };
+  warnings: {
+    [fieldName: string]: string;
   };
 }
 
 interface TableStats {
-  [tableName: string]: object;
+  [columnName: string]: number;
 }
 
-interface ErrorFilters {
-  [tableName: string]: Array<Number>;
-}
+type ErrorFilters = Array<number>;
 
+interface TableFilters {
+  [columnName: string]: {
+    [value: string]: boolean
+  }
+}
 interface PanelValues {
   data: TableData;
   filteredData: TableData;
@@ -64,6 +64,7 @@ interface PanelValues {
   pagination: TablePagination;
   stats: TableStats;
   errorFilters: ErrorFilters;
+  dataFilters: TableFilters;
 }
 
 function defaultPanelValues(): PanelValues {
@@ -77,6 +78,7 @@ function defaultPanelValues(): PanelValues {
     pagination: {} as TablePagination,
     stats: {} as TableStats,
     errorFilters: [] as ErrorFilters,
+    dataFilters: {} as TableFilters,
   };
 }
 
@@ -94,6 +96,7 @@ interface RootState {
         pagination: TablePagination;
         stats: TableStats;
         errorFilters: Array<Number>;
+        dataFilters: TableFilters;
       };
     };
   };
@@ -101,11 +104,21 @@ interface RootState {
 
 const CSV_UPLOADS_INITIAL_STATE: RootState = {};
 
-function populateFilteredData(data: any, errorFilters: any, filteredData: any) {
+function populateFilteredData(data: any, errorFilters: any, dataFilters: any, filteredData: any) {
   filteredData.splice(0, filteredData.length);
-  data.forEach((row) => {
-    const appliedFilters = errorFilters.filter((f) => !!row.status[f]);
-    if (appliedFilters.length > 0) {
+  data.forEach((row: any) => {
+    const appliedErrorFilters = errorFilters.filter((f: string) => !!row.status[f]);
+    const filterCount = Object.keys(dataFilters).length;
+    let appliedFilters = 0;
+
+    Object.keys(dataFilters).forEach((key) => {
+      if (row[key] && (dataFilters[key][row[key]]) ||
+        ((isNaN(row[key])) && dataFilters[key][BLANK_VALUE])
+      )
+        appliedFilters += 1;
+    })
+    console.log("filteredDataDebug",{row, filterCount,appliedFilters})
+    if ((appliedErrorFilters.length > 0 || errorFilters.length == 0) && filterCount == appliedFilters) {
       filteredData.push(row);
     }
   });
@@ -131,12 +144,11 @@ export const CSVUploadsSlice = createSlice({
       const { data, fileName, fields, module } = action.payload;
       if (!state[module]) state[module] = { activeFileName: "", tableData: {} };
 
-      state[module].tableData[fileName] = defaultPanelValues() as any;
+      state[module].tableData[fileName] = defaultPanelValues();
       state[module].tableData[fileName].fields = fields;
       state[module].tableData[fileName].errorFilters = [];
-      // techdebt: fix type issues
       state[module].tableData[fileName].filteredData = [] as any;
-      state[module].tableData[fileName].fieldMap = fields.reduce(
+      const fieldMap = state[module].tableData[fileName].fieldMap = fields.reduce(
         (res, field) => {
           if (field.columns) {
             field.columns.reduce((res, field) => {
@@ -151,11 +163,13 @@ export const CSVUploadsSlice = createSlice({
         {}
       );
       state[module].tableData[fileName].stats = getStatusDict();
-      data.forEach((row, index: number) => {
+      const dataFilters = state[module].tableData[fileName].dataFilters = {}
+      data.forEach((row: any, index: number) => {
         const rowEntries = Object.entries(row);
         console.log(row);
         row.rowNumber = index;
         row.status = getStatusDict();
+        const fieldExists = Object.keys(fieldMap).reduce((obj, key) => {obj[key] = false; return obj},{})
         rowEntries.forEach(([key, value]: [string, any]) => {
           if (value) {
             if (typeof value === "object") return;
@@ -168,6 +182,17 @@ export const CSVUploadsSlice = createSlice({
                 value = row[key] = convertExcelSerialToDateString(serialTime);
             }
           }
+          fieldExists[key] = true;
+          
+          if (!["status", "rowNumber", "context"].includes(key)) {
+            if (!dataFilters[key])
+              dataFilters[key] = {}
+            if (isNaN(value)) {
+              dataFilters[key][BLANK_VALUE] = true;
+            } else {
+              dataFilters[key][value] = true;
+            }
+          }
           let errState = FS.VALID;
           if (state[module].tableData[fileName].fieldMap[key]) {
             errState = VALIDATIONS[
@@ -177,23 +202,38 @@ export const CSVUploadsSlice = createSlice({
           state[module].tableData[fileName].stats[errState] += 1;
           row.status[errState] += 1;
         });
+        const missingFields = Object.entries(fieldExists).filter(
+          ([key,exists]) => !exists
+          )
+          console.log({missingFields})
+        missingFields.forEach(([key]) => {
+          if (!dataFilters[key])
+            dataFilters[key] = {}
+          dataFilters[key][BLANK_VALUE] = true;
+        })
       });
       state[module].tableData[fileName].data = data;
+      populateFilteredData(data, [], dataFilters, state[module].tableData[fileName].filteredData);
     },
     updateCSVRow: (state, action) => {
       const {
         payload: { tableName, rowIndex, columnId, value, module },
       } = action;
-      const { data, errorFilters, filteredData, stats } =
+      const { data, errorFilters, dataFilters, filteredData, stats } =
         state[module].tableData[tableName];
       let row = data[rowIndex];
-      if (errorFilters.length) {
-        row = data[filteredData[rowIndex].rowNumber];
+      if (filteredData.length) {
+        if (filteredData[rowIndex].rowNumber >= 0)
+          row = data[filteredData[rowIndex].rowNumber]
+        else
+          row = data[-1];
       }
       const validate =
         VALIDATIONS[state[module].tableData[tableName].fieldMap[columnId]];
       const currentState = validate(row[columnId] || "");
       row[columnId] = value;
+      if (isNaN(dataFilters[columnId][value]))
+        dataFilters[columnId][value] = true;
       const updatedState = validate(row[columnId] || "");
       if (currentState !== updatedState) {
         stats[currentState] -= 1;
@@ -202,23 +242,24 @@ export const CSVUploadsSlice = createSlice({
         console.assert(
           state[module].tableData[tableName].stats[currentState] >= 0
         );
-
-        row.status[currentState] -= 1;
-        row.status[updatedState] += 1;
-
-        console.assert(row.status[currentState] >= 0);
-        console.log(currentState, updatedState);
-        if (errorFilters.length) {
-          populateFilteredData(data, errorFilters, filteredData);
+        if (row.status) {
+          row.status[currentState] -= 1;
+          row.status[updatedState] += 1;
+          console.assert(row.status[currentState] >= 0);
+        } else {
+          console.error("row.status is not set", row)
         }
+        console.log(currentState, updatedState);
+
+        populateFilteredData(data, errorFilters, dataFilters, filteredData);
       }
     },
-    toggleFilter: (state, action) => {
+    toggleErrorFilter: (state, action) => {
       const {
         payload: { tableName, errorFilter, module },
       } = action;
 
-      const { data, filteredData, errorFilters } =
+      const { data, filteredData, errorFilters, dataFilters } =
         state[module].tableData[tableName];
 
       var filterIndex = errorFilters.indexOf(errorFilter);
@@ -228,14 +269,14 @@ export const CSVUploadsSlice = createSlice({
         errorFilters.splice(filterIndex, 1);
       }
       // reusing the same `filteredData` to maintain object reference
-      populateFilteredData(data, errorFilters, filteredData);
+      populateFilteredData(data, errorFilters, dataFilters, filteredData);
     },
-    setFilter: (state, action) => {
+    setErrorFilter: (state, action) => {
       const {
         payload: { tableName, errorFilter, module, operation },
       } = action;
 
-      const { data, filteredData, errorFilters } =
+      const { data, filteredData, errorFilters, dataFilters } =
         state[module].tableData[tableName];
       var filterIndex = errorFilters.indexOf(errorFilter);
       var filterStatus = filterIndex > -1;
@@ -248,7 +289,34 @@ export const CSVUploadsSlice = createSlice({
         }
       }
       // reusing the same `filteredData` to maintain object reference
-      populateFilteredData(data, errorFilters, filteredData);
+      populateFilteredData(data, errorFilters, dataFilters, filteredData);
+    },
+    updateFilters: (state, action) => {
+      const {
+        payload: { tableName, module, column, filters },
+      } = action;
+
+      const { data, filteredData, errorFilters, dataFilters } =
+        state[module].tableData[tableName];
+      dataFilters[column] = filters;
+      console.log("updateFilters", dataFilters)
+      populateFilteredData(data, errorFilters, dataFilters, filteredData);
+    },
+    clearFilters: (state, action) => {
+      const {
+        payload: { tableName, module },
+      } = action;
+
+      const { data, filteredData, errorFilters, dataFilters } =
+        state[module].tableData[tableName];
+        while(errorFilters.length)
+          errorFilters.pop()
+        Object.values(dataFilters).forEach((filterState) => {
+          Object.keys(filterState).forEach(key => {
+            filterState[key] = true;
+          })
+        })
+        populateFilteredData(data, errorFilters, dataFilters, filteredData);
     },
     selectCSVRow: (state, action) => {
       const {
@@ -330,24 +398,22 @@ export const CSVUploadsSlice = createSlice({
       if (!state[module]) state[module] = { activeFileName: "", tableData: {} };
       state[module].activeFileName = "";
     },
-    // WIP: discuss and add
-    // deleteCSVRow: (state, action) => {
-    //   //pass
-    // },
   },
 });
 
 export const {
   initCSVUpload,
   updateCSVRow,
-  toggleFilter,
-  setFilter,
+  toggleErrorFilter: toggleFilter,
+  setErrorFilter: setFilter,
   deleteCSVRow,
   restoreCSVRow,
   selectCSVRow,
   deselectCSVRow,
   setActiveFileName,
   clearActiveFileName,
+  updateFilters,
+  clearFilters,
 } = CSVUploadsSlice.actions;
 
 export default CSVUploadsSlice.reducer;

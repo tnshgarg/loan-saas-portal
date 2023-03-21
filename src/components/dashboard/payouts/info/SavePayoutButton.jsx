@@ -1,9 +1,8 @@
 import { connect } from "react-redux";
 import { Button, Intent } from "@blueprintjs/core";
-import { CSVUploadsStateMapper } from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
 import md5 from "md5";
 import { FS } from "../../employee/onboarding/validations";
-
+import { CSVUploadsStateMapper } from "../../../../atomic/organisms/browserTable";
 export function createPayoutHash(item) {
   let rawStr = "";
   for (const field of [

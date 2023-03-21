@@ -198,7 +198,7 @@ const UploadHistoryTable = ({ employerId, module, handlers }) => {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      <Button icon={"saved"} intent={Intent.PRIMARY}>
+                      <Button icon={"download"} intent={Intent.PRIMARY} minimal={true}>
                         Download
                       </Button>
                     </a>

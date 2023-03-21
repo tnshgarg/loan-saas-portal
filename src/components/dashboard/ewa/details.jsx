@@ -7,7 +7,7 @@ import { Button, NonIdealState, ProgressBar } from "@blueprintjs/core";
 import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
 import { useState } from "react";
 import { useGetDisbursementsQuery } from "../../../store/slices/apiSlices/employer/ewaApiSlice";
-import BrowserEdiTable from "../../../atomic/organisms/csvUploads/BrowserEdiTable";
+import BrowserTable from "../../../atomic/organisms/browserTable";
 import { initCSVUpload } from "../../../store/slices/csvUploadSlice.ts";
 import { noValidation } from "../employee/onboarding/validations";
 import { REQUIRED_SUFFIX } from "../payouts/util";
@@ -117,7 +117,7 @@ const _Disbursements = ({ employerId, dispatch }) => {
             <ProgressBar animate stripes />
           </div>
         ) : disbursements && disbursements.length ? (
-          <BrowserEdiTable
+          <BrowserTable
             key={"ewa-info"}
             tableName={key}
             module={DISBURSEMENTS_MODULE}

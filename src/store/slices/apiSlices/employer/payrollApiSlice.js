@@ -41,7 +41,15 @@ export const employerPayrollApi = createApi({
       },
       transformResponse: (responseData) => {
         if (responseData.body) {
-          responseData.body = JSON.parse(responseData.body);
+          const payouts = JSON.parse(responseData.body);
+          payouts.data.forEach((payout) => {
+            if (payout.status) 
+              payout.payoutStatus = payout.status;
+            if (Array.isArray(payout.accountNumber))
+              payout.accountNumber = payout.accountNumber[0]
+          })
+          responseData.body = payouts;
+
         }
         return responseData;
       },
