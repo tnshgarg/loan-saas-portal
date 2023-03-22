@@ -14,6 +14,7 @@ import { EditableCell } from "./cells"
 import { Pagination } from "./pagination"
 import { ColumnFilter } from "./filter";
 import { ErrorFiltersToolbar } from "./errorFilterToolbar";
+import { HeaderGroupsToolbar } from "./headerGroupsToolbar";
 
 const DEFAULT_HANDLER = () => { }
 
@@ -28,7 +29,6 @@ export function Table({
   columns,
   data,
   tableActions,
-  updateErrorFilters,
   errorFilters,
   dataFilters,
   skipPageReset,
@@ -134,37 +134,7 @@ export function Table({
   return (
     <div>
       <ErrorFiltersToolbar stats={stats} tableActions={tableActions} filters={errorFilters || []} />
-      {headerGroupSelectors && headerGroupSelectors.length ? (
-        <>
-          <ButtonGroup>
-            <Button disabled minimal>
-              {" "}
-              Choose Columns to view{" "}
-            </Button>
-            <Button
-              active={!visibility.hiddenHeaders["All"]}
-              onClick={() => toggleVisibility("All")}
-            >
-              {" "}
-              {"All"}{" "}
-            </Button>
-
-            {headerGroupSelectors.map((item) => (
-              <Button
-                active={!visibility.hiddenHeaders[item.Header]}
-                onClick={() => toggleVisibility(item.Header)}
-              >
-                {" "}
-                {item.Header}{" "}
-              </Button>
-            ))}
-          </ButtonGroup>
-          <br />
-          <small>&nbsp;</small>
-        </>
-      ) : (
-        ""
-      )}
+      <HeaderGroupsToolbar headerGroups={headerGroupSelectors} visibility={visibility} onToggle={toggleVisibility}/>
       <PerfectScrollbar>
         <HTMLTable
           bordered={true}
