@@ -137,3 +137,19 @@ export const SelectActionCell = ({
         </div>
     );
 };
+
+export const SerialNumberCell = ({ row: { index } }) => {
+    return <div>{index + 1}</div>;
+}
+
+export const StatusCell = ({ value }) => {
+    let bgColor = "inherit"
+    if (["SUCCESS", "ACTIVE"].includes(value)) {
+        bgColor = "rgb(204, 255, 216, 0.5)";
+    } else if (value.includes("PENDING")) {
+        bgColor = "rgb(247, 252, 162, 0.5)";
+    } else if (["ERROR", "INACTIVE"].includes(value)) {
+        bgColor = "rgb(255, 215, 213, 0.5)";
+    }
+    return (<div style={{ backgroundColor: bgColor, margin: "-0.5em", padding: "0.5em" }}>{value}</div>)
+}

@@ -23,6 +23,7 @@ import {
 import { groupByKeyCount } from "../../../../utils/aggregates";
 import { EmployeeModal } from "../employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
+import { SerialNumberCell, StatusCell } from "../../../../atomic/organisms/browserTable/cells";
 
 const checkOverallStatus = (aadhaar, pan, bank) => {
   return aadhaar?.verifyStatus === "SUCCESS" &&
@@ -73,21 +74,7 @@ const reformatEmployeeData = (employeeData) => {
   });
 };
 
-const SerialNumberCell = ({ row: { index } }) => {
-  return <div>{index + 1}</div>;
-}
 
-const StatusCell = ({ value }) => {
-  let bgColor = "inherit"
-  if (["SUCCESS", "ACTIVE"].includes(value)) {
-    bgColor = "rgb(204, 255, 216, 0.5)";
-  } else if (value.includes("PENDING")) {
-    bgColor = "rgb(247, 252, 162, 0.5)";
-  } else if (["ERROR", "INACTIVE"].includes(value)) {
-    bgColor = "rgb(255, 215, 213, 0.5)";
-  }
-  return (<div style={{ backgroundColor: bgColor, margin: "-0.5em", padding: "0.5em" }}>{value}</div>)
-}
 
 const MODAL_STYLING = {
   marginTop: "7.5rem",

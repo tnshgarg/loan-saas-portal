@@ -1,6 +1,4 @@
 import {
-  Button,
-  ButtonGroup,
   HTMLTable,
   NonIdealState,
 } from "@blueprintjs/core";
@@ -28,6 +26,7 @@ const defaultColumn = {
 export function Table({
   columns,
   data,
+  hasData,
   tableActions,
   errorFilters,
   dataFilters,
@@ -38,6 +37,7 @@ export function Table({
   onRowClick,
 }) {
   // Use the state and functions returned from useTable to build your UI
+  console.log("TableData", data)
   const {
     getTableProps,
     getTableBodyProps,
@@ -130,17 +130,34 @@ export function Table({
     setVisibility({ ...visibility, hiddenColumns });
     setHiddenColumns(hiddenColumns);
   };
+  console.log({ page })
 
+  let emptyDescription = "";
+  if (hasData) {
+    emptyDescription = (
+      <div>
+        Table Has no entries
+        <br />or<br />
+        current filters have no data.
+        <a style={{ "display": "inline" }} onClick={() => tableActions.clearFilters()}>  Try Clearing Filters ?</a>
+      </div>
+      )
+  } else {
+    emptyDescription = (
+      "No data present on server, try refreshing"
+    )
+  }
   return (
     <div>
       <ErrorFiltersToolbar stats={stats} tableActions={tableActions} filters={errorFilters || []} />
-      <HeaderGroupsToolbar headerGroups={headerGroupSelectors} visibility={visibility} onToggle={toggleVisibility}/>
+      <HeaderGroupsToolbar headerGroups={headerGroupSelectors} visibility={visibility} onToggle={toggleVisibility} />
       <PerfectScrollbar>
         <HTMLTable
           bordered={true}
           condensed={true}
           striped={true}
           {...getTableProps()}
+          style={{ marginLeft: "auto", marginRight: "auto" }}
         >
           <thead>
             {headerGroups.map((headerGroup) => (
@@ -181,10 +198,9 @@ export function Table({
       </PerfectScrollbar>
       {!page.length ? (
         <NonIdealState
-          icon="th-filtered"
+          icon={hasData ? "th-filtered" : "th-disconnect"}
           title={"No Rows to Show"}
-          description={<div>Either File is empty or current filters have no data.
-            <a style={{ "display": "inline" }} minimal onClick={() => tableActions.clearFilters()}>  Try Clearing Filters ?</a></div>}
+          description={emptyDescription}
           layout={"vertical"}
         />
       )

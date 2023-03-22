@@ -70,13 +70,13 @@ export const CSVUploadsStateMapper = (state, ownProps) => {
   };
 };
 
-function addRenderers(columns,renderers) {
+function addRenderers(columns, renderers) {
   let updatedColumns = []
   columns.forEach((item) => {
-    let updatedItem = Object.assign({},item)
+    let updatedItem = Object.assign({}, item)
     console.log(updatedItem)
-    if(item.columns) {
-      updatedItem.columns = addRenderers(item.columns,renderers)
+    if (item.columns) {
+      updatedItem.columns = addRenderers(item.columns, renderers)
     } else if (item.accessor && renderers[item.accessor]) {
       updatedItem["Cell"] = renderers[item.accessor]
     }
@@ -103,7 +103,7 @@ function BrowserTable({
 }) {
   const prefixColumns = [];
   const suffixColumns = [];
-  
+
   if (deletes) {
     suffixColumns.push({
       Header: "Delete",
@@ -111,7 +111,7 @@ function BrowserTable({
       Cell: DeleteActionCell,
     });
   }
-  columns = addRenderers(columns,customCells || {})
+  columns = addRenderers(columns, customCells || {})
   if (selection) {
     prefixColumns.push({
       Header: "Select",
@@ -143,22 +143,19 @@ function BrowserTable({
   })
   return (
     <Styles>
-      {empty ? (
-        ""
-      ) : (
-        <Table
-          columns={columnsMemo}
-          data={dataMemo}
-          hasGroups={true}
-          tableActions={tableActions}
-          dataFilters={dataFilters}
-          errorFilters={errorFilters}
-          skipPageReset={skipPageReset}
-          stats={stats}
-          disableEdits={disableEdits}
-          onRowClick={onRowClick}
-        />
-      )}
+      <Table
+        columns={columnsMemo}
+        data={dataMemo}
+        hasData={hasData}
+        hasGroups={true}
+        tableActions={tableActions}
+        dataFilters={dataFilters}
+        errorFilters={errorFilters}
+        skipPageReset={skipPageReset}
+        stats={stats}
+        disableEdits={disableEdits}
+        onRowClick={onRowClick}
+      />
     </Styles>
   );
 }
