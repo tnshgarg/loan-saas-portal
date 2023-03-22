@@ -36,8 +36,8 @@ export const EditableCell = ({
 
     const intent = intentMap[validLevel] || Intent.NONE;
     const backgroundColor = {
-        [Intent.WARNING]: "rgb(247, 252, 162, 0.5)",
-        [Intent.DANGER]: "rgb(255, 215, 213, 0.5)",
+        [Intent.WARNING]: "rgb(247, 252, 162, 0.3)",
+        [Intent.DANGER]: "rgb(255, 215, 213, 0.3)",
     }[intent];
     const onChange = (e) => {
         setValue(e);

@@ -70,7 +70,21 @@ export const CSVUploadsStateMapper = (state, ownProps) => {
   };
 };
 
-function CSVTable({
+function addRenderers(columns,renderers) {
+  let updatedColumns = []
+  columns.forEach((item) => {
+    let updatedItem = Object.assign({},item)
+    console.log(updatedItem)
+    if(item.columns) {
+      updatedItem.columns = addRenderers(item.columns,renderers)
+    } else if (item.accessor && renderers[item.accessor]) {
+      updatedItem["Cell"] = renderers[item.accessor]
+    }
+    updatedColumns.push(updatedItem)
+  })
+  return updatedColumns;
+}
+function BrowserTable({
   data,
   hasData,
   columns,
@@ -84,7 +98,8 @@ function CSVTable({
   selection,
   module,
   disableEdits,
-  onRowClick
+  onRowClick,
+  customCells,
 }) {
   const prefixColumns = [];
   const suffixColumns = [];
@@ -96,7 +111,7 @@ function CSVTable({
       Cell: DeleteActionCell,
     });
   }
-
+  columns = addRenderers(columns,customCells || {})
   if (selection) {
     prefixColumns.push({
       Header: "Select",
@@ -148,4 +163,4 @@ function CSVTable({
   );
 }
 
-export default connect(CSVUploadsStateMapper)(CSVTable);
+export default connect(CSVUploadsStateMapper)(BrowserTable);

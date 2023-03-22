@@ -9,19 +9,19 @@ import {
   Tag,
 } from "@blueprintjs/core";
 import { isObject } from "lodash";
-import { matchSorter } from "match-sorter";
-import { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
-import EmployerMetrics from "../../../atomic/organisms/employerMetrics/EmployerMetrics";
-import Table from "../../../atomic/organisms/table";
+import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
+import BrowserTable from "../../../../atomic/organisms/browserTable";
+import EmployerMetrics from "../../../../atomic/organisms/employerMetrics/EmployerMetrics";
+import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
 import {
   useGetAllEmployeesPanelByEmployerIdQuery,
   useLazyGetAllEmployeesPanelByEmployerIdQuery,
-} from "../../../store/slices/apiSlices/employees/panelApiSlice";
-import { groupByKeyCount } from "../../../utils/aggregates";
-import { EmployeeModal } from "./employeeModal/EmployeeModal";
+} from "../../../../store/slices/apiSlices/employees/panelApiSlice";
+import { groupByKeyCount } from "../../../../utils/aggregates";
+import { EmployeeModal } from "../employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
 
 const checkOverallStatus = (aadhaar, pan, bank) => {
@@ -33,6 +33,7 @@ const checkOverallStatus = (aadhaar, pan, bank) => {
 };
 
 const reformatEmployeeData = (employeeData) => {
+  
   return employeeData.map((employee) => {
     const {
       employerEmployeeId,
@@ -72,46 +73,32 @@ const reformatEmployeeData = (employeeData) => {
   });
 };
 
+const SerialNumberCell = ({ row: { index } }) => {
+  return <div>{index + 1}</div>;
+}
+
+const StatusCell = ({ value }) => {
+  let bgColor = "inherit"
+  if (["SUCCESS", "ACTIVE"].includes(value)) {
+    bgColor = "rgb(204, 255, 216, 0.5)";
+  } else if (value.includes("PENDING")) {
+    bgColor = "rgb(247, 252, 162, 0.5)";
+  } else if (["ERROR", "INACTIVE"].includes(value)) {
+    bgColor = "rgb(255, 215, 213, 0.5)";
+  }
+  return (<div style={{ backgroundColor: bgColor, margin: "-0.5em", padding: "0.5em" }}>{value}</div>)
+}
+
 const MODAL_STYLING = {
   marginTop: "7.5rem",
   marginBottom: "5rem",
   width: "55rem",
 };
 
-const FILTER_INPUT_STYLING = {
-  border: "1px solid rgba(0, 0, 0, 0.3)",
-  marginTop: "5px",
-  padding: "5px 5px",
-};
-
-// Define a default UI for filtering
-function DefaultColumnFilter({
-  column: { filterValue, preFilteredRows, setFilter },
-}) {
-  const count = preFilteredRows.length;
-
-  return (
-    <input
-      style={FILTER_INPUT_STYLING}
-      value={filterValue || ""}
-      onChange={(e) => {
-        setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
-      }}
-      placeholder={`Search ${count} records...`}
-    />
-  );
-}
-
-function fuzzyTextFilterFn(rows, id, filterValue) {
-  return matchSorter(rows, filterValue, { keys: [(row) => row.values[id]] });
-}
-
-fuzzyTextFilterFn.autoRemove = (val) => !val;
-
 const TabularViewTab = ({ handlers }) => {
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
-
+  const dispatch = useDispatch();
   const responseFromQuery =
     useGetAllEmployeesPanelByEmployerIdQuery(employerId);
   const { data, isLoading, error, refetch } = responseFromQuery;
@@ -129,10 +116,29 @@ const TabularViewTab = ({ handlers }) => {
     setFetchedRows(fetchedRowsData);
   };
 
+  const columns = tableColumns.map((header) => {
+    if (isObject(header)) {
+      return {
+        Header: header.Header,
+        columns: header.columns,
+      };
+    }
+    return {
+      Header: header,
+      accessor: header,
+    };
+  })
+
   useEffect(() => {
     if (data) {
       const body = data?.body ?? [];
       setFetchedRowsFromBody(body);
+      dispatch(initCSVUpload({
+        data: reformatEmployeeData(body),
+        fields: columns,
+        fileName: "employees-tabular-view",
+        module: "employees-panel",
+      }))
     }
   }, [data]);
 
@@ -140,53 +146,15 @@ const TabularViewTab = ({ handlers }) => {
     if (lazyData) {
       const body = lazyData.body ?? [];
       setFetchedRowsFromBody(body);
+      dispatch(initCSVUpload({
+        data: reformatEmployeeData(body),
+        fields: columns,
+        fileName: "employees-tabular-view",
+        module: "employees-panel",
+      }))
     }
   }, [lazyData]);
 
-  const columns = useMemo(
-    () =>
-      tableColumns.map((header) => {
-        if (isObject(header)) {
-          return {
-            Header: header.Header,
-            columns: header.columns,
-          };
-        }
-        return {
-          Header: header,
-          accessor: header,
-        };
-      }),
-    []
-  );
-
-  const filterTypes = useMemo(
-    () => ({
-      // Add a new fuzzyTextFilterFn filter type.
-      fuzzyText: fuzzyTextFilterFn,
-      // Or, override the default text filter to use
-      // "startWith"
-      text: (rows, id, filterValue) => {
-        return rows.filter((row) => {
-          const rowValue = row.values[id];
-          return rowValue !== undefined
-            ? String(rowValue)
-                .toLowerCase()
-                .startsWith(String(filterValue).toLowerCase())
-            : true;
-        });
-      },
-    }),
-    []
-  );
-
-  const defaultColumn = useMemo(
-    () => ({
-      // Let's set up our default Filter UI
-      Filter: DefaultColumnFilter,
-    }),
-    []
-  );
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [didDialogChange, setDidDialogChange] = useState(false);
@@ -209,92 +177,54 @@ const TabularViewTab = ({ handlers }) => {
     setDidDialogChange(false);
   };
 
-  const cellProps = (cell) => {
-    let bgColor = "white";
-    if (cell?.value) {
-      if (["SUCCESS", "ACTIVE"].includes(cell.value)) {
-        bgColor = "rgb(204, 255, 216, 0.5)";
-      } else if (cell.value.includes("PENDING")) {
-        bgColor = "rgb(247, 252, 162, 0.5)";
-      } else if (["ERROR", "INACTIVE"].includes(cell.value)) {
-        bgColor = "rgb(255, 215, 213, 0.5)";
-      }
-    }
-
-    return {
-      style: {
-        backgroundColor: bgColor,
-      },
-    };
-  };
-
-  const noDataComponent = () => {
-    return (
-      <div style={{ height: "20vh", width: "100%" }}>
-        <NonIdealState
-          icon={"property"}
-          title={"No Employees"}
-          description={<>Looks like no entries for employees</>}
-          layout={"horizontal"}
-        />
-      </div>
-    );
-  };
-
   handlers["refresh"] = () => {
     refetch();
   };
   console.log(fetchedRows);
+  let component = ""
+  if (isLoading || lazyIsLoading) {
+    component = (<Spinner style={{ marginTop: "2em", marginBottom: "2em" }} size={54} />)
+  } else if (error || lazyError) {
+    component = (<Tag icon={"error"} intent={Intent.DANGER} large minimal>
+      {error || lazyError}
+    </Tag>)
+  } else {
+    component = (
+      <BrowserTable
+        key="employees-tabular-view"
+        module="employees-panel"
+        tableName="employees-tabular-view"
+        disableEdits={true}
+        onRowClick={handleRowClick}
+        customCells={{
+          "S/N": SerialNumberCell,
+          "Aadhaar Status": StatusCell,
+          "PAN Status": StatusCell,
+          "Account Status": StatusCell,
+          "Onboarding Status": StatusCell,
+          "Employment Status": StatusCell,
+        }}
+      />
+    )
+  }
+
   return (
     <>
-      {isLoading ? (
-        <Spinner style={{ marginTop: "2em", marginBottom: "2em" }} size={54} />
-      ) : error ? (
-        <Tag icon={"error"} intent={Intent.DANGER} large minimal>
-          {error}
-        </Tag>
-      ) : (
-        <>
-          <Table
-            columns={[
-              {
-                Header: "S/N",
-                id: "row",
-                Cell: ({ row }) => {
-                  return <div>{row.index + 1}</div>;
-                },
-              },
-              ...columns,
-            ]}
-            defaultColumn={defaultColumn}
-            data={fetchedRows}
-            handleRowClick={handleRowClick}
-            showPagination={true}
-            filterTypes={filterTypes}
-            showEditColumn={false}
-            showFilter={true}
-            hoverEffect={true}
-            cellProps={cellProps}
-            showDownload={false}
-            handlers={handlers}
-            noDataComponent={noDataComponent}
+      {component}
+      <Dialog
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        title="Employee Details"
+        style={MODAL_STYLING}
+      >
+        <Card interactive={true} elevation={Elevation.THREE}>
+          <EmployeeModal
+            currEmployeeId={currEmployeeId}
+            currEmploymentId={currEmploymentId}
+            setDidDialogChange={setDidDialogChange}
           />
-          <Dialog
-            isOpen={isDialogOpen}
-            onClose={handleDialogClose}
-            title="Employee Details"
-            style={MODAL_STYLING}
-          >
-            <Card interactive={true} elevation={Elevation.THREE}>
-              <EmployeeModal
-                currEmployeeId={currEmployeeId}
-                currEmploymentId={currEmploymentId}
-                setDidDialogChange={setDidDialogChange}
-              />
-            </Card>
-          </Dialog>
-        </>
-      )}
+        </Card>
+      </Dialog>
     </>
   );
 };
@@ -310,34 +240,36 @@ const TabularTabsComponent = () => {
     useGetAllEmployeesPanelByEmployerIdQuery(employerId);
   const { data } = responseFromQuery;
   const [metricsData, setMetricsData] = useState({});
-
   useEffect(() => {
     if (data) {
       const body = data?.body ?? [];
-      const fetchedRowsData = reformatEmployeeData(body);
+      const employeeData = reformatEmployeeData(body);
       const onboardingAggregationResult = groupByKeyCount(
-        fetchedRowsData,
+        employeeData,
         "Onboarding Status"
       );
       const aadhaarAggregationResult = groupByKeyCount(
-        fetchedRowsData,
+        employeeData,
         "Aadhaar Status"
       );
       const panAggregationResult = groupByKeyCount(
-        fetchedRowsData,
+        employeeData,
         "PAN Status"
       );
       const bankAccountAggregationResult = groupByKeyCount(
-        fetchedRowsData,
+        employeeData,
         "Account Status"
       );
+      const employmentAggregationResult = groupByKeyCount(
+        employeeData,
+        "Employment Status"
+      );
       const metricDataObject = {
-        body: {
-          employees: onboardingAggregationResult,
-          aadhaar: aadhaarAggregationResult,
-          pan: panAggregationResult,
-          bank: bankAccountAggregationResult,
-        },
+        onboarding: onboardingAggregationResult,
+        aadhaar: aadhaarAggregationResult,
+        pan: panAggregationResult,
+        bank: bankAccountAggregationResult,
+        employment: employmentAggregationResult
       };
       setMetricsData(metricDataObject);
     }

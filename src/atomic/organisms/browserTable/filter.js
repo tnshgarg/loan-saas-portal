@@ -1,6 +1,5 @@
-import { Button, ButtonGroup, Card, Classes, Divider, Icon, InputGroup, Intent, Menu, MenuItem, PopoverPosition, Tag } from "@blueprintjs/core";
+import { Button, Card, Classes, Divider, Icon, InputGroup, Intent, Menu, PopoverPosition } from "@blueprintjs/core";
 import { Popover2 } from "@blueprintjs/popover2";
-import { faL } from "@fortawesome/free-solid-svg-icons";
 import { matchSorter } from "match-sorter";
 import { useState } from "react";
 import { Spacer } from "../../atoms/layouts/alignment";
@@ -85,7 +84,6 @@ export function ColumnFilter({ header, filters, onFilter }) {
     onFilter = onFilter || (() => {})
     let filterEnabled = Object.values(filters).some(x => !x)
     let filterValues = Object.keys(filters)
-    let [popoverOpen, setPopoverOpen] = useState(false)
     if (filterValues.length < 2) {
         return <></>
     }
@@ -109,9 +107,10 @@ export function ColumnFilter({ header, filters, onFilter }) {
                         onChange={onFilter}
                     />
                 }>
-                <Button icon="filter" minimal
-                    intent={filterEnabled ? Intent.PRIMARY : Intent.NONE}
-                    onClick={() => setPopoverOpen(true)}
+                <Button icon={filterEnabled ? "filter-keep" : "filter"} 
+                    minimal
+                    active={filterEnabled} 
+                    intent={filterEnabled ? Intent.SUCCESS : Intent.NONE}
                 />
             </Popover2>
         </div>

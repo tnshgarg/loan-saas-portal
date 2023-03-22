@@ -50,7 +50,7 @@ export const ResetPassword = () => {
   }; // your form submit function which will invoke after successful validation
 
   // console.log(watch("example")); // you can watch individual input by pass the name of the input
-
+  console.log("ResetPasswordForm", {successful,message})
   return (
     <div>
       <Card style={LOGIN_CARD_STYLING} elevation={Elevation.TWO}>

@@ -8,6 +8,7 @@ import {
 } from "../../../components/dashboard/employee/onboarding/validations";
 
 export function ErrorFiltersToolbar({stats,tableActions,filters}) {
+    
     return (
         <div style={{ textAlign: "center", paddingBottom: "1em" }}>
                 {stats[FS.ERROR] ? (

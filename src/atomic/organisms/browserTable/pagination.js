@@ -21,6 +21,8 @@ export function Pagination({
     pageSize,
     setPageSize,
   }) {
+    if (!canNextPage && !canPreviousPage && pageSize <= 10)
+      return (<></>)
     return (
       <div className="pagination">
         <Navbar

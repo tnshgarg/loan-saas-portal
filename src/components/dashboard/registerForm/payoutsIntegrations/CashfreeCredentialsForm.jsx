@@ -20,11 +20,9 @@ function mapStateToProps(state) {
   };
 }
 
-let isFirstUpdate = true;
-
 function _CashfreeCredentialsForm({ employerId }) {
   let res = {};
-  const { status, data, isFetching, isLoading } = (res =
+  const { data, isFetching, isLoading } = (res =
     useGetEmployerCredentialsByIdQuery({
       employerId,
       portal: "cashfree",

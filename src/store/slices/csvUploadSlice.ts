@@ -112,13 +112,15 @@ function populateFilteredData(data: any, errorFilters: any, dataFilters: any, fi
     let appliedFilters = 0;
 
     Object.keys(dataFilters).forEach((key) => {
-      if (row[key] && (dataFilters[key][row[key]]) ||
-        ((isNaN(row[key])) && dataFilters[key][BLANK_VALUE])
+      if (
+        (row[key] && (dataFilters[key][row[key]])) 
+        || 
+        (isNaN(row[key]) && dataFilters[key][BLANK_VALUE])
       )
         appliedFilters += 1;
     })
     console.log("filteredDataDebug",{row, filterCount,appliedFilters})
-    if ((appliedErrorFilters.length > 0 || errorFilters.length == 0) && filterCount == appliedFilters) {
+    if ((appliedErrorFilters.length > 0 || errorFilters.length === 0) && filterCount === appliedFilters) {
       filteredData.push(row);
     }
   });
@@ -281,8 +283,8 @@ export const CSVUploadsSlice = createSlice({
       var filterIndex = errorFilters.indexOf(errorFilter);
       var filterStatus = filterIndex > -1;
 
-      if (operation != filterStatus) {
-        if (operation == FILTER_OP.ADD) {
+      if (operation !== filterStatus) {
+        if (operation === FILTER_OP.ADD) {
           errorFilters.push(errorFilter);
         } else {
           errorFilters.splice(filterIndex, 1);
