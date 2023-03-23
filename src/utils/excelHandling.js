@@ -77,6 +77,6 @@ export function getExcel(headerGroups, rows, sheetName = "export") {
       },
     ]);
   }
-  console.log(config);
+  console.log({config});
   return generateExcel(config);
 }

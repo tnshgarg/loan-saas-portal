@@ -115,7 +115,13 @@ function populateFilteredData(data: any, errorFilters: any, dataFilters: any, fi
       if (
         (row[key] && (dataFilters[key][row[key]])) 
         || 
-        (isNaN(row[key]) && dataFilters[key][BLANK_VALUE])
+        ((isNaN(row[key])) && dataFilters[key][BLANK_VALUE])
+        ||
+        (Array.isArray(row[key]) &&  (
+            (row[key].length == 0 && dataFilters[key][BLANK_VALUE])
+            ||
+            (row[key].map(value => dataFilters[key][value]).reduce((p,v) => v||p, false))
+        ))
       )
         appliedFilters += 1;
     })
@@ -130,12 +136,12 @@ const extractCurrentTableDataFromState = ({ module, tableName, state }) => {
   const {
     [module]: {
       tableData: {
-        [tableName]: { data, errorFilters, filteredData, stats },
+        [tableName]: { data, errorFilters,dataFilters, filteredData, stats },
       },
     },
   } = state;
 
-  return { data, errorFilters, filteredData, stats };
+  return { data, errorFilters,dataFilters, filteredData, stats };
 };
 
 export const CSVUploadsSlice = createSlice({
@@ -174,14 +180,19 @@ export const CSVUploadsSlice = createSlice({
         const fieldExists = Object.keys(fieldMap).reduce((obj, key) => {obj[key] = false; return obj},{})
         rowEntries.forEach(([key, value]: [string, any]) => {
           if (value) {
-            if (typeof value === "object") return;
-            if (!(typeof value === "string" || value instanceof String))
+            if (Array.isArray(value)){
+              console.log("ArrayDebubFilters",{key,value})
+            } else if (typeof value === "object") {
+              return 
+            }
+            else if (!(typeof value === "string" || value instanceof String || Array.isArray(value))) {
               value = String(value);
-            row[key] = value.trim();
-            if (DATE_FIELDS.includes(key) && !reg.DATE.test(value)) {
-              const serialTime = parseInt(value.trim());
-              if (serialTime && !value.includes("/"))
-                value = row[key] = convertExcelSerialToDateString(serialTime);
+              row[key] = value.trim();
+              if (DATE_FIELDS.includes(key) && !reg.DATE.test(value)) {
+                const serialTime = parseInt(value.trim());
+                if (serialTime && !value.includes("/"))
+                  value = row[key] = convertExcelSerialToDateString(serialTime);
+              }
             }
           }
           fieldExists[key] = true;
@@ -191,6 +202,15 @@ export const CSVUploadsSlice = createSlice({
               dataFilters[key] = {}
             if (isNaN(value)) {
               dataFilters[key][BLANK_VALUE] = true;
+            } else if (Array.isArray(value)){
+              console.log("ArrayDebubFilters",{key,value})
+              if (value.length == 0){
+                dataFilters[key][BLANK_VALUE] = true
+              } else {
+                value.forEach((item) => {
+                  dataFilters[key][String(item)] = true
+                })
+              }
             } else {
               dataFilters[key][value] = true;
             }
@@ -252,7 +272,6 @@ export const CSVUploadsSlice = createSlice({
           console.error("row.status is not set", row)
         }
         console.log(currentState, updatedState);
-
         populateFilteredData(data, errorFilters, dataFilters, filteredData);
       }
     },
@@ -325,14 +344,14 @@ export const CSVUploadsSlice = createSlice({
         payload: { tableName, rowIndex, module },
       } = action;
 
-      const { data, errorFilters, filteredData, stats } =
+      const { data, errorFilters,dataFilters, filteredData, stats } =
         extractCurrentTableDataFromState({ module, tableName, state });
 
-      let row = data[rowIndex];
-      if (errorFilters.length) {
-        row = data[filteredData[rowIndex].rowNumber];
-      }
+      let filteredRow = filteredData[rowIndex]
+      let row = data[filteredRow.rowNumber];
       row.status[FS.SELECTED] = true;
+      filteredRow.status = row.status;
+      
       stats[FS.SELECTED] = (stats[FS.SELECTED] || 0) + 1;
     },
     deselectCSVRow: (state, action) => {
@@ -340,14 +359,14 @@ export const CSVUploadsSlice = createSlice({
         payload: { tableName, rowIndex, module },
       } = action;
 
-      const { data, errorFilters, filteredData, stats } =
+      const { data, errorFilters,dataFilters, filteredData, stats } =
         extractCurrentTableDataFromState({ module, tableName, state });
 
-      let row = data[rowIndex];
-      if (errorFilters.length) {
-        row = data[filteredData[rowIndex].rowNumber];
-      }
+      let filteredRow = filteredData[rowIndex]
+      let row = data[filteredRow.rowNumber];
       row.status[FS.SELECTED] = false;
+      filteredRow.status = row.status;
+      
       stats[FS.SELECTED] = (stats[FS.SELECTED] || 1) - 1;
     },
     deleteCSVRow: (state, action) => {
@@ -355,14 +374,15 @@ export const CSVUploadsSlice = createSlice({
         payload: { tableName, rowIndex, module },
       } = action;
       console.log(state);
-      const { data, errorFilters, filteredData, stats } =
+      const { data, filteredData, stats } =
         extractCurrentTableDataFromState({ module, tableName, state });
 
-      let row = data[rowIndex];
-      if (errorFilters.length) {
-        row = data[filteredData[rowIndex].rowNumber];
-      }
+      let filteredRow = filteredData[rowIndex]
+      let row = data[filteredRow.rowNumber];
+      
       row.status[FS.DELETED] = true;
+      filteredRow.status = row.status;
+      
       [FS.ERROR, FS.VALID, FS.WARN].forEach((errState) => {
         stats[errState] -= row.status[errState];
       });
@@ -373,14 +393,13 @@ export const CSVUploadsSlice = createSlice({
         payload: { tableName, rowIndex, module },
       } = action;
 
-      const { data, errorFilters, filteredData, stats } =
+      const { data, errorFilters,dataFilters, filteredData, stats } =
         extractCurrentTableDataFromState({ module, tableName, state });
-
-      let row = data[rowIndex];
-      if (errorFilters.length) {
-        row = data[filteredData[rowIndex].rowNumber];
-      }
+      let filteredRow = filteredData[rowIndex]
+      let row = data[filteredRow.rowNumber];
       delete row.status[FS.DELETED];
+      filteredRow.status = row.status;
+      
       [FS.ERROR, FS.VALID, FS.WARN].forEach((errState) => {
         stats[errState] += row.status[errState];
       });

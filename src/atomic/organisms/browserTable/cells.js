@@ -2,6 +2,7 @@ import React, { } from "react";
 import {
     Checkbox,
     Colors,
+    Divider,
     EditableText,
     Icon,
     Intent,
@@ -146,10 +147,23 @@ export const StatusCell = ({ value }) => {
     let bgColor = "inherit"
     if (["SUCCESS", "ACTIVE"].includes(value)) {
         bgColor = "rgb(204, 255, 216, 0.5)";
-    } else if (value.includes("PENDING")) {
+    } else if (["PENDING"].includes(value)) {
         bgColor = "rgb(247, 252, 162, 0.5)";
     } else if (["ERROR", "INACTIVE"].includes(value)) {
         bgColor = "rgb(255, 215, 213, 0.5)";
     }
     return (<div style={{ backgroundColor: bgColor, margin: "-0.5em", padding: "0.5em" }}>{value}</div>)
+}
+
+export const MultiLineCell = ({ value }) => {
+    return (
+       <div style={{marginBottom: 0}}>
+        {(value || []).map((v,i) => {
+            return (<>
+                <p style={{marginBottom: 0,textOverflow:"ellipsis", whiteSpace: "nowrap"}}>{v}</p>
+                {i+1< value.length ? <Divider/> : ""}
+            </>)
+        })}
+       </div>
+    )
 }

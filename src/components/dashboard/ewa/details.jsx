@@ -3,14 +3,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWallet } from "@fortawesome/free-solid-svg-icons";
 import { DateDropdown } from "../payouts/info/DateDropdown";
 import { Spacer } from "../../../atomic/atoms/layouts/alignment";
-import { Button, NonIdealState, ProgressBar } from "@blueprintjs/core";
+import { Button, Intent, NonIdealState, ProgressBar } from "@blueprintjs/core";
 import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
 import { useState } from "react";
 import { useGetDisbursementsQuery } from "../../../store/slices/apiSlices/employer/ewaApiSlice";
 import BrowserTable from "../../../atomic/organisms/browserTable";
 import { initCSVUpload } from "../../../store/slices/csvUploadSlice.ts";
-import { noValidation } from "../employee/onboarding/validations";
-import { REQUIRED_SUFFIX } from "../payouts/util";
+import { MultiLineCell } from "../../../atomic/organisms/browserTable/cells";
+import { getExcel } from "../../../utils/excelHandling";
 
 function mapStateToProps(state) {
   return {
@@ -20,38 +20,60 @@ function mapStateToProps(state) {
 
 const DISBURSEMENT_FIELDS = [
   {
+    header: "Employee Id",
+    field: "employeeId",
+  },
+  {
+    header: "Principal Employer",
+    field: "principalEmployer",
+  },
+  {
     header: "Employee Name",
     field: "name",
-    validations: noValidation,
   },
   {
     header: "Account Number",
     field: "bankAccountNumber",
-    validations: noValidation,
   },
   {
     header: "Created At",
     field: "createdAt",
-    validations: noValidation,
   },
   {
     header: "Loan Amount",
     field: "loanAmount",
-    validations: noValidation,
   },
   {
     header: "Due Date",
     field: "dueDate",
-    validations: noValidation,
   },
   {
     header: "Status",
     field: "loanStatus",
-    validations: noValidation,
   },
+  {
+    header: "Stage",
+    field: "stage",
+  },
+  {
+    header: "Total Repaid Amount",
+    field: "paidAmount",
+  },{
+    header: "Payment Amount",
+    field: "payoutAmount",
+  },{
+    header: "Payment Status",
+    field: "payoutStatus",
+  },{
+    header: "Payment Time",
+    field: "payoutDate",
+  },{
+    header: "Payment Mode",
+    field: "transferMode",
+  }
 ].map((column) => ({
   ...column,
-  Header: column.header.replace(REQUIRED_SUFFIX, ""),
+  Header: column.header,
   accessor: column.field,
 }));
 
@@ -97,6 +119,12 @@ const _Disbursements = ({ employerId, dispatch }) => {
   const dataRefetch = () => {
     refetch();
   };
+  const downloadExcel = () => {
+    getExcel(
+      [{headers: DISBURSEMENT_FIELDS}],
+      safeDisbursements
+    );
+  }
   return (
     <>
       <Dashlet
@@ -108,6 +136,13 @@ const _Disbursements = ({ employerId, dispatch }) => {
             <Spacer />
             <Button icon={"refresh"} loading={false} onClick={dataRefetch}>
               Refresh data
+            </Button>
+            <Button
+              icon={"saved"}
+              intent={Intent.SUCCESS}
+              onClick={downloadExcel}
+            >
+              Download Excel
             </Button>
           </>
         }
@@ -122,6 +157,12 @@ const _Disbursements = ({ employerId, dispatch }) => {
             tableName={key}
             module={DISBURSEMENTS_MODULE}
             disableEdits={true}
+            customCells={{
+              "transferMode": MultiLineCell,
+              "payoutDate": MultiLineCell,
+              "payoutAmount": MultiLineCell,
+              "payoutStatus": MultiLineCell,
+            }}
           />
         ) : (
           <>
