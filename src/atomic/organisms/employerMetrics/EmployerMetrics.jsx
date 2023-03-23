@@ -58,7 +58,7 @@ export default function EmployerMetrics({ data, primaryKey, config }) {
       />
       <Metrics
         title={"Employment Status"}
-        icon="user"
+        icon="office"
         primary={{
           title: "Active",
           count: employment?.ACTIVE || 0,
@@ -74,7 +74,7 @@ export default function EmployerMetrics({ data, primaryKey, config }) {
         ]}
       />
       <KYCMetrics title="Aadhaar" icon={"id-number"} intent={Intent.SUCCESS} metric={aadhaar} />
-      <KYCMetrics title="PAN" icon={"symbol-rectangle"} intent={Intent.PRIMARY} metric={pan} />
+      <KYCMetrics title="PAN" icon={"rectangle"} intent={Intent.PRIMARY} metric={pan} />
       <KYCMetrics title="Bank" icon={"credit-card"} intent={Intent.WARNING} metric={bank} />
 
     </MetricsContainer>
