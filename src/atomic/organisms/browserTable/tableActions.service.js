@@ -1,11 +1,11 @@
 import { 
-    updateCSVRow,
+    updateBrowserTableRow,
     toggleFilter,
     updateFilters,
-    deleteCSVRow,
-    selectCSVRow,
-    deselectCSVRow,
-    restoreCSVRow,
+    deleteBrowserTableRow,
+    selectBrowserTableRow,
+    deselectBrowserTableRow,
+    restoreBrowserTableRow,
     clearFilters
 } from "../../../store/slices/csvUploadSlice.ts";
 
@@ -14,7 +14,7 @@ export function createTableService({ module, tableName, setSkipPageReset, dispat
         updateMyData: (rowIndex, columnId, value) => {
             // We also turn on the flag to not reset the page;
             setSkipPageReset(true);
-            dispatch(updateCSVRow({ tableName, rowIndex, columnId, value, module }));
+            dispatch(updateBrowserTableRow({ tableName, rowIndex, columnId, value, module }));
         },
         updateErrorFilters: (errorFilter) => {
             setSkipPageReset(true);
@@ -29,19 +29,19 @@ export function createTableService({ module, tableName, setSkipPageReset, dispat
         },
         deleteRow: (rowIndex) => {
             setSkipPageReset(true);
-            dispatch(deleteCSVRow({ tableName, rowIndex, module }));
+            dispatch(deleteBrowserTableRow({ tableName, rowIndex, module }));
         },
         restoreRow: (rowIndex) => {
             setSkipPageReset(true);
-            dispatch(restoreCSVRow({ tableName, rowIndex, module }));
+            dispatch(restoreBrowserTableRow({ tableName, rowIndex, module }));
         },
         selectRow: (rowIndex) => {
             setSkipPageReset(true);
-            dispatch(selectCSVRow({ tableName, rowIndex, module }));
+            dispatch(selectBrowserTableRow({ tableName, rowIndex, module }));
         },
         deselectRow: (rowIndex) => {
             setSkipPageReset(true);
-            dispatch(deselectCSVRow({ tableName, rowIndex, module }));
+            dispatch(deselectBrowserTableRow({ tableName, rowIndex, module }));
         },
     }
 }

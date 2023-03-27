@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import {
   useGetUploadedFilesQuery
 } from "../../../store/slices/apiSlices/files/filesApiSlice";
-import { initCSVUpload } from "../../../store/slices/csvUploadSlice.ts";
+import { initBrowserTable } from "../../../store/slices/csvUploadSlice.ts";
 import { Dashlet } from "../../molecules/dashlets/dashlet";
 import BrowserTable from "../browserTable";
 import { StatusCell } from "../browserTable/cells";
@@ -39,7 +39,7 @@ const UploadHistoryTable = ({ employerId, module, handlers }) => {
   const stateTableName = module + "-uploads-history";
   const dispatch = useDispatch();
   const updateTableRows = (body) => {
-    dispatch(initCSVUpload({
+    dispatch(initBrowserTable({
       data: body.map((val) => Object.assign({}, val)),
       fields: TABLE_COLUMNS,
       fileName: stateTableName,

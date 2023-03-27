@@ -8,7 +8,7 @@ import {
   Tag,
 } from "@blueprintjs/core";
 import BrowserTable from "../../../../atomic/organisms/browserTable";
-import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
+import { initBrowserTable } from "../../../../store/slices/csvUploadSlice.ts";
 import { ONE_CLICK_HEADERS } from "../employeeSalary/employeeSalaryFields";
 import {
   useFetchInstrumentMutation,
@@ -40,8 +40,8 @@ export function PendingPayoutsTable({
   if (pendingPayouts.length) {
     console.log(pendingPayouts);
     dispatch(
-      initCSVUpload({
-        data: pendingPayouts.map((item) => {
+      initBrowserTable({
+        data: pendingPayouts.map((item) => {  
           const mutableItem = Object.assign({}, item);
           mutableItem.payrollStatus = mutableItem.status;
           delete mutableItem.status;

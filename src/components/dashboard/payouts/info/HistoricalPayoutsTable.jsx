@@ -1,6 +1,6 @@
 import { Button, Intent, NonIdealState, ProgressBar } from "@blueprintjs/core";
 import BrowserTable from "../../../../atomic/organisms/browserTable";
-import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
+import { initBrowserTable } from "../../../../store/slices/csvUploadSlice.ts";
 import { FIELDS } from "../employeeSalary/employeeSalaryFields";
 import { noValidation } from "../../employee/onboarding/validations";
 import { REQUIRED_SUFFIX } from "../util";
@@ -60,7 +60,7 @@ export function HistoricalPayoutsTable({
   if (historicalPayouts.length) {
     console.log({ historicalPayouts });
     dispatch(
-      initCSVUpload({
+      initBrowserTable({
         data: historicalPayouts,
         fields: HISTORICAL_PAYOUTS_HEADERS,
         fileName: key,

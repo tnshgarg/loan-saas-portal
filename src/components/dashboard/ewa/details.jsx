@@ -8,7 +8,7 @@ import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
 import { useState } from "react";
 import { useGetDisbursementsQuery } from "../../../store/slices/apiSlices/employer/ewaApiSlice";
 import BrowserTable from "../../../atomic/organisms/browserTable";
-import { initCSVUpload } from "../../../store/slices/csvUploadSlice.ts";
+import { initBrowserTable } from "../../../store/slices/csvUploadSlice.ts";
 import { MultiLineCell } from "../../../atomic/organisms/browserTable/cells";
 import { getExcel } from "../../../utils/excelHandling";
 
@@ -111,7 +111,7 @@ const _Disbursements = ({ employerId, dispatch }) => {
   });
   if (safeDisbursements.length) {
     dispatch(
-      initCSVUpload({
+      initBrowserTable({
         data: safeDisbursements,
         fields: DISBURSEMENT_FIELDS,
         fileName: key,

@@ -11,7 +11,7 @@ import { VerifyAndUploadEmployees } from "../../../components/dashboard/employee
 import { useToastContext } from "../../../contexts/ToastContext";
 import {
   clearActiveFileName,
-  initCSVUpload,
+  initBrowserTable,
   setActiveFileName,
 } from "../../../store/slices/csvUploadSlice.ts";
 import { CSVFileInput } from "../../atoms/forms/CSVFileInput";
@@ -141,7 +141,7 @@ function _CSVUploadDashlet({
           });
           setUploadStatus(true);
           dispatch(
-            initCSVUpload({
+            initBrowserTable({
               data: erroredData,
               fileName: file.object.name,
               fields,
@@ -174,7 +174,7 @@ function _CSVUploadDashlet({
 
   const handleFileImport = (data) => {
     dispatch(
-      initCSVUpload({
+      initBrowserTable({
         data: preProcessing(data),
         fileName: file.object.name,
         fields,

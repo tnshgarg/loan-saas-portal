@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 import BrowserTable from "../../../../atomic/organisms/browserTable";
 import EmployerMetrics from "../../../../atomic/organisms/employerMetrics/EmployerMetrics";
-import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
+import { initBrowserTable } from "../../../../store/slices/csvUploadSlice.ts";
 import {
   useGetAllEmployeesPanelByEmployerIdQuery,
   useLazyGetAllEmployeesPanelByEmployerIdQuery,
@@ -120,7 +120,7 @@ const TabularViewTab = ({ handlers }) => {
     if (data) {
       const body = data?.body ?? [];
       setFetchedRowsFromBody(body);
-      dispatch(initCSVUpload({
+      dispatch(initBrowserTable({
         data: reformatEmployeeData(body),
         fields: columns,
         fileName: "employees-tabular-view",
@@ -133,7 +133,7 @@ const TabularViewTab = ({ handlers }) => {
     if (lazyData) {
       const body = lazyData.body ?? [];
       setFetchedRowsFromBody(body);
-      dispatch(initCSVUpload({
+      dispatch(initBrowserTable({
         data: reformatEmployeeData(body),
         fields: columns,
         fileName: "employees-tabular-view",

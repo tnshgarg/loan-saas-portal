@@ -102,7 +102,7 @@ interface RootState {
   };
 }
 
-const CSV_UPLOADS_INITIAL_STATE: RootState = {};
+const BROWSER_TABULAR_DATA_INITIAL: RootState = {};
 
 function populateFilteredData(data: any, errorFilters: any, dataFilters: any, filteredData: any) {
   filteredData.splice(0, filteredData.length);
@@ -147,11 +147,11 @@ const extractCurrentTableDataFromState = ({ module, tableName, state }) => {
   return { data, errorFilters,dataFilters, filteredData, stats };
 };
 
-export const CSVUploadsSlice = createSlice({
+export const BrowserTabularDataSlice = createSlice({
   name: "CSVUploads",
-  initialState: CSV_UPLOADS_INITIAL_STATE,
+  initialState: BROWSER_TABULAR_DATA_INITIAL,
   reducers: {
-    initCSVUpload: (state, action) => {
+    initBrowserTable: (state, action) => {
       const { data, fileName, fields, module } = action.payload;
       if (!state[module]) state[module] = { activeFileName: "", tableData: {} };
 
@@ -240,7 +240,7 @@ export const CSVUploadsSlice = createSlice({
       state[module].tableData[fileName].data = data;
       populateFilteredData(data, [], dataFilters, state[module].tableData[fileName].filteredData);
     },
-    updateCSVRow: (state, action) => {
+    updateBrowserTableRow: (state, action) => {
       const {
         payload: { tableName, rowIndex, columnId, value, module },
       } = action;
@@ -342,7 +342,7 @@ export const CSVUploadsSlice = createSlice({
         })
         populateFilteredData(data, errorFilters, dataFilters, filteredData);
     },
-    selectCSVRow: (state, action) => {
+    selectBrowserTableRow: (state, action) => {
       const {
         payload: { tableName, rowIndex, module },
       } = action;
@@ -357,7 +357,7 @@ export const CSVUploadsSlice = createSlice({
       
       stats[FS.SELECTED] = (stats[FS.SELECTED] || 0) + 1;
     },
-    deselectCSVRow: (state, action) => {
+    deselectBrowserTableRow: (state, action) => {
       const {
         payload: { tableName, rowIndex, module },
       } = action;
@@ -372,7 +372,7 @@ export const CSVUploadsSlice = createSlice({
       
       stats[FS.SELECTED] = (stats[FS.SELECTED] || 1) - 1;
     },
-    deleteCSVRow: (state, action) => {
+    deleteBrowserTableRow: (state, action) => {
       const {
         payload: { tableName, rowIndex, module },
       } = action;
@@ -391,7 +391,7 @@ export const CSVUploadsSlice = createSlice({
       });
       stats[FS.DELETED] = (stats[FS.DELETED] || 0) + 1;
     },
-    restoreCSVRow: (state, action) => {
+    restoreBrowserTableRow: (state, action) => {
       const {
         payload: { tableName, rowIndex, module },
       } = action;
@@ -426,21 +426,21 @@ export const CSVUploadsSlice = createSlice({
 });
 
 export const {
-  initCSVUpload,
-  updateCSVRow,
+  initBrowserTable,
+  updateBrowserTableRow,
   toggleErrorFilter: toggleFilter,
   setErrorFilter: setFilter,
-  deleteCSVRow,
-  restoreCSVRow,
-  selectCSVRow,
-  deselectCSVRow,
+  deleteBrowserTableRow,
+  restoreBrowserTableRow,
+  selectBrowserTableRow,
+  deselectBrowserTableRow,
   setActiveFileName,
   clearActiveFileName,
   updateFilters,
   clearFilters,
-} = CSVUploadsSlice.actions;
+} = BrowserTabularDataSlice.actions;
 
-export default CSVUploadsSlice.reducer;
+export default BrowserTabularDataSlice.reducer;
 
 function getStatusDict(): any {
   return {
