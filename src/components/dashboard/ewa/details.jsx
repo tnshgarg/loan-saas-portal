@@ -36,8 +36,8 @@ const DISBURSEMENT_FIELDS = [
     field: "bankAccountNumber",
   },
   {
-    header: "Created At",
-    field: "createdAt",
+    header: "Availed At",
+    field: "availedAt",
   },
   {
     header: "Loan Amount",
@@ -52,14 +52,17 @@ const DISBURSEMENT_FIELDS = [
     field: "loanStatus",
   },
   {
-    header: "Stage",
-    field: "stage",
+    header: "Disbursement Date",
+    field: "disbursedAt",
   },
   {
-    header: "Total Repaid Amount",
+    header: "Pending Amount",
+    field: "pendingAmount",
+  },{
+    header: "Total Paid Amount",
     field: "paidAmount",
   },{
-    header: "Payment Amount",
+    header: "Paid Amount",
     field: "payoutAmount",
   },{
     header: "Payment Status",
@@ -102,7 +105,7 @@ const _Disbursements = ({ employerId, dispatch }) => {
   const safeDisbursements = disbursements.map((item) => {
     const mutableItem = Object.assign({}, item);
     mutableItem.loanStatus = mutableItem.status;
-    delete mutableItem.status;
+    mutableItem.pendingAmount = mutableItem.loanAmount - (mutableItem.paidAmount || 0);
     mutableItem.status = {};
     return mutableItem;
   });
@@ -137,8 +140,9 @@ const _Disbursements = ({ employerId, dispatch }) => {
             <Button icon={"refresh"} loading={false} onClick={dataRefetch}>
               Refresh data
             </Button>
+            <Spacer />
             <Button
-              icon={"saved"}
+              icon={"download"}
               intent={Intent.SUCCESS}
               onClick={downloadExcel}
             >

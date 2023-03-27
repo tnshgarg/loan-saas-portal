@@ -113,7 +113,7 @@ function populateFilteredData(data: any, errorFilters: any, dataFilters: any, fi
 
     Object.keys(dataFilters).forEach((key) => {
       if (
-        (row[key] && (dataFilters[key][row[key]])) 
+        (!isNaN(row[key]) && (dataFilters[key][row[key]])) 
         || 
         ((isNaN(row[key])) && dataFilters[key][BLANK_VALUE])
         ||
@@ -124,6 +124,9 @@ function populateFilteredData(data: any, errorFilters: any, dataFilters: any, fi
         ))
       )
         appliedFilters += 1;
+      else {
+        console.log("appliedFilters not",key,row[key])
+      }
     })
     console.log("filteredDataDebug",{row, filterCount,appliedFilters})
     if ((appliedErrorFilters.length > 0 || errorFilters.length === 0) && filterCount === appliedFilters) {
