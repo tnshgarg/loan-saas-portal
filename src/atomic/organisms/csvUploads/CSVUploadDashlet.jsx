@@ -13,7 +13,7 @@ import {
   clearActiveFileName,
   initBrowserTable,
   setActiveFileName,
-} from "../../../store/slices/csvUploadSlice.ts";
+} from "../../../store/slices/browserTableSlice.ts";
 import { CSVFileInput } from "../../atoms/forms/CSVFileInput";
 import { TemplateDownloadButton } from "../../atoms/forms/TemplateDownloadButton";
 import { Dashlet } from "../../molecules/dashlets/dashlet";

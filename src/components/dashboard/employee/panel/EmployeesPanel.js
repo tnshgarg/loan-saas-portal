@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 import BrowserTable from "../../../../atomic/organisms/browserTable";
 import EmployerMetrics from "../../../../atomic/organisms/employerMetrics/EmployerMetrics";
-import { initBrowserTable } from "../../../../store/slices/csvUploadSlice.ts";
+import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts";
 import {
   useGetAllEmployeesPanelByEmployerIdQuery,
   useLazyGetAllEmployeesPanelByEmployerIdQuery,

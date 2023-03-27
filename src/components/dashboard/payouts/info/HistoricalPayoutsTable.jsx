@@ -1,6 +1,6 @@
 import { Button, Intent, NonIdealState, ProgressBar } from "@blueprintjs/core";
 import BrowserTable from "../../../../atomic/organisms/browserTable";
-import { initBrowserTable } from "../../../../store/slices/csvUploadSlice.ts";
+import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts";
 import { FIELDS } from "../employeeSalary/employeeSalaryFields";
 import { noValidation } from "../../employee/onboarding/validations";
 import { REQUIRED_SUFFIX } from "../util";

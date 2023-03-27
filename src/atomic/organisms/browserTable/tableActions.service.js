@@ -7,7 +7,7 @@ import {
     deselectBrowserTableRow,
     restoreBrowserTableRow,
     clearFilters
-} from "../../../store/slices/csvUploadSlice.ts";
+} from "../../../store/slices/browserTableSlice.ts";
 
 export function createTableService({ module, tableName, setSkipPageReset, dispatch}) {
     return {

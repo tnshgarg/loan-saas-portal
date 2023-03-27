@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import {
   useGetUploadedFilesQuery
 } from "../../../store/slices/apiSlices/files/filesApiSlice";
-import { initBrowserTable } from "../../../store/slices/csvUploadSlice.ts";
+import { initBrowserTable } from "../../../store/slices/browserTableSlice.ts";
 import { Dashlet } from "../../molecules/dashlets/dashlet";
 import BrowserTable from "../browserTable";
 import { StatusCell } from "../browserTable/cells";

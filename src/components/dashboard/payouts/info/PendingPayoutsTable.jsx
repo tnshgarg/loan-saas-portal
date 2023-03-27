@@ -8,7 +8,7 @@ import {
   Tag,
 } from "@blueprintjs/core";
 import BrowserTable from "../../../../atomic/organisms/browserTable";
-import { initBrowserTable } from "../../../../store/slices/csvUploadSlice.ts";
+import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts";
 import { ONE_CLICK_HEADERS } from "../employeeSalary/employeeSalaryFields";
 import {
   useFetchInstrumentMutation,
