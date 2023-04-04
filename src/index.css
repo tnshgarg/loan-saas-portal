@@ -23,3 +23,16 @@
     margin: 0;
     padding: 0;
 }
+
+.hoverBackground:hover {
+    background-color: #EDEFF2;
+    border-radius: 0.4em;
+}
+
+.filterBottomMenu {
+    text-align: right;
+}
+
+.filterBottomMenu  li {
+    display: inline;
+}

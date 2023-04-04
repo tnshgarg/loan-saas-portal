@@ -15,7 +15,7 @@ import {
   SignUp,
 } from "./components/signUpLogin/index";
 
-import { EmployeesPanel } from "./components/dashboard/employee/EmployeesPanel";
+import { EmployeesPanel } from "./components/dashboard/employee/panel/EmployeesPanel";
 
 import { AttendanceUpload } from "./components/dashboard/attendance/attendanceUpload";
 import { EmployeesBulkUpdatesPanel } from "./components/dashboard/employee/bulkUpdates/bulkUpdatesPanel";

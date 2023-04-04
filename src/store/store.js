@@ -11,7 +11,7 @@ import { employerPayrollApi } from "./slices/apiSlices/employer/payrollApiSlice"
 import { employerTaxApi } from "./slices/apiSlices/employer/taxApiSlice";
 import { uploadedFiles } from "./slices/apiSlices/files/filesApiSlice";
 import authReducer from "./slices/authSlice";
-import CSVUploadReducer from "./slices/csvUploadSlice.ts";
+import CSVUploadReducer from "./slices/browserTableSlice.ts";
 import employeeReducer from "./slices/employeeSlice";
 import messageReducer from "./slices/messageSlice";
 import registerFormReducer from "./slices/registerFormSlice";

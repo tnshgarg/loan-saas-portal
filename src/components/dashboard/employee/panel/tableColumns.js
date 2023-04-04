@@ -1,13 +1,28 @@
 export const tableColumns = [
+  "S/N",
   "Employee ID",
   "Name",
   "Mobile Number",
   "Onboarding Status",
   "Email",
   "Date of Birth (dd/mm/yyyy)",
-  "Job Title",
-  "Principal Employer",
-  "Employment Status",
+  {
+    Header: "Employment",
+    columns: [
+      {
+        Header: "Principal Employer",
+        accessor: "Principal Employer",
+      },
+      {
+        Header: "Job Title",
+        accessor: "Job Title"
+      },
+      {
+        Header: "Status",
+        accessor: "Employment Status",
+      },
+    ],
+  },
   {
     Header: "Aadhaar",
     columns: [

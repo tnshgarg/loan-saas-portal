@@ -7,8 +7,8 @@ import {
   ProgressBar,
   Tag,
 } from "@blueprintjs/core";
-import BrowserEdiTable from "../../../../atomic/organisms/csvUploads/BrowserEdiTable";
-import { initCSVUpload } from "../../../../store/slices/csvUploadSlice.ts";
+import BrowserTable from "../../../../atomic/organisms/browserTable";
+import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts";
 import { ONE_CLICK_HEADERS } from "../employeeSalary/employeeSalaryFields";
 import {
   useFetchInstrumentMutation,
@@ -40,8 +40,8 @@ export function PendingPayoutsTable({
   if (pendingPayouts.length) {
     console.log(pendingPayouts);
     dispatch(
-      initCSVUpload({
-        data: pendingPayouts.map((item) => {
+      initBrowserTable({
+        data: pendingPayouts.map((item) => {  
           const mutableItem = Object.assign({}, item);
           mutableItem.payrollStatus = mutableItem.status;
           delete mutableItem.status;
@@ -147,7 +147,7 @@ export function PendingPayoutsTable({
           <ProgressBar animate stripes />
         </div>
       ) : pendingPayouts && pendingPayouts.length ? (
-        <BrowserEdiTable
+        <BrowserTable
           key={key}
           tableName={key}
           module={"payouts-pending"}

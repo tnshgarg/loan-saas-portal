@@ -41,7 +41,7 @@ export default function Metrics({
   secondary = secondary ?? [];
   secondaryConfig = secondaryConfig ?? {};
   return (
-    <Card elevation={Elevation.TWO} style={{ position: "relative" }}>
+    <Card elevation={Elevation.TWO} style={{ position: "relative", paddingBottom: "4em" }}>
       <Button
         large
         disabled
@@ -79,37 +79,39 @@ export default function Metrics({
           </H3>
         )}
       </div>
-      <Divider className={styles.divider} />
-      <div
-        className={
-          styles.secondaryContainer + " " + (loading ? Classes.SKELETON : " ")
-        }
-      >
-        {secondary.map((item) => {
-          let tagProps = {};
-          let secondaryConfigKey = secondaryConfig[item.title];
-          if (secondaryConfigKey) {
-            tagProps = {
-              intent: Intent[secondaryConfigKey.intent],
-              icon: <Icon icon={secondaryConfigKey.icon} size={15} />,
-            };
+      <div style={{ position: "absolute", bottom: "0.8em", left: "1em", width: "calc(100% - 2em)" }}>
+        <Divider className={styles.divider} />
+        <div
+          className={
+            styles.secondaryContainer + " " + (loading ? Classes.SKELETON : " ")
           }
-          return (
-            <Tag
-              style={{ marginRight: "10px" }}
-              round={false}
-              minimal={true}
-              intent={item.intent ?? Intent.PRIMARY}
-              large={true}
-              icon={item.icon ?? <Icon icon="tag" size={15} />}
-              {...tagProps}
-            >
-              <span className={styles.tag}>
-                {item.title}: {item.count}
-              </span>
-            </Tag>
-          );
-        })}
+        >
+          {secondary.map((item) => {
+            let tagProps = {};
+            let secondaryConfigKey = secondaryConfig[item.title];
+            if (secondaryConfigKey) {
+              tagProps = {
+                intent: Intent[secondaryConfigKey.intent],
+                icon: <Icon icon={secondaryConfigKey.icon} size={15} />,
+              };
+            }
+            return (
+              <Tag
+                style={{ marginRight: "10px" }}
+                round={false}
+                minimal={true}
+                intent={item.intent ?? Intent.PRIMARY}
+                large={true}
+                icon={item.icon ?? <Icon icon="tag" size={15} />}
+                {...tagProps}
+              >
+                <span className={styles.tag}>
+                  {item.title}: {item.count}
+                </span>
+              </Tag>
+            );
+          })}
+        </div>
       </div>
     </Card>
   );
