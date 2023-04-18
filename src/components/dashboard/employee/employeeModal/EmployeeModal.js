@@ -1,6 +1,6 @@
 import { Card, Elevation, Tab, Tabs } from "@blueprintjs/core";
-import { employeeFieldsToTabsMap } from "./employeeFieldsToTabsMap";
 import { EmployeeModalTab } from "./EmployeeModalTab";
+import { employeeFieldsToTabsMap } from "./employeeFieldsToTabsMap";
 
 const EMPLOYEE_MODAL_STYLING = {
   marginRight: "auto",
@@ -21,7 +21,13 @@ export const EmployeeModal = ({
         <Tabs renderActiveTabPanelOnly id="employeeDetailsParentTab">
           {Object.entries(employeeFieldsToTabsMap).map(
             ([key, value], index) => {
-              const { category, fields, hasSubTabs } = value;
+              const {
+                category,
+                fields,
+                requiredFields,
+                fieldPatterns,
+                hasSubTabs,
+              } = value;
               if (hasSubTabs) {
                 return (
                   <Tab
@@ -50,6 +56,8 @@ export const EmployeeModal = ({
                         key={index + 1}
                         category={category}
                         fields={fields}
+                        requiredFields={requiredFields}
+                        fieldPatterns={fieldPatterns}
                         currEmployeeId={currEmployeeId}
                         currEmploymentId={currEmploymentId}
                         setDidDialogChange={setDidDialogChange}
@@ -72,7 +80,8 @@ const SubTabs = ({
   currEmploymentId,
   setDidDialogChange,
 }) => {
-  const { fields, category, types, inputTypes } = value;
+  const { fields, requiredFields, fieldPatterns, category, types, inputTypes } =
+    value;
   return (
     <Tabs renderActiveTabPanelOnly id="employeeDetails">
       {Object.entries(fields).map(([key, fieldsList], index) => {
@@ -85,6 +94,8 @@ const SubTabs = ({
                 key={index + 1}
                 category={category}
                 fields={fieldsList}
+                requiredFields={requiredFields[key]}
+                fieldPatterns={fieldPatterns[key]}
                 currEmployeeId={currEmployeeId}
                 currEmploymentId={currEmploymentId}
                 setDidDialogChange={setDidDialogChange}

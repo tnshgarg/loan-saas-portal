@@ -18,6 +18,8 @@ import {
 export const EmployeeModalTab = ({
   category,
   fields,
+  requiredFields,
+  fieldPatterns,
   currEmployeeId,
   currEmploymentId,
   setDidDialogChange,
@@ -182,6 +184,7 @@ export const EmployeeModalTab = ({
         "Date of Joining (dd/mm/yyyy)",
         "Date of Exit (dd/mm/yyyy)",
       ];
+
       if (
         conflictingDateKeys.every((key) =>
           Object.keys(changedEmployeeDetails).includes(key)
@@ -231,9 +234,20 @@ export const EmployeeModalTab = ({
             {/* register your input into the hook by invoking the "register" function */}
             {Object.entries(formDataNewFields).map(([key, value]) => {
               const labelKey = formDataNewFieldsToInitialFieldsMap[key];
+              const originalKey = fieldsInverted[labelKey];
+              const formValidations = {};
+
               if (key === "_id") {
                 return <></>;
               }
+
+              if (requiredFields && requiredFields[originalKey]) {
+                formValidations["required"] = requiredFields[originalKey];
+              }
+              if (fieldPatterns && fieldPatterns[originalKey]) {
+                formValidations["pattern"] = fieldPatterns[originalKey];
+              }
+
               if (inputTypes && inputTypes[labelKey]) {
                 let options = [];
                 const dependentOn = inputTypes[labelKey]?.dependentOn ?? false;
@@ -283,11 +297,12 @@ export const EmployeeModalTab = ({
                     icon: "user",
                     label: labelKey,
                     placeholder: `Please enter ${labelKey} for selected employee`,
-                    errorMessage: `Please enter ${labelKey} for selected employee`,
+                    errorMessage: `Please enter ${labelKey} in the correct format`,
                     disabled: disabled,
                   }}
                   setValue={setValue}
                   getValues={getValues}
+                  validations={formValidations}
                 />
               );
             })}
