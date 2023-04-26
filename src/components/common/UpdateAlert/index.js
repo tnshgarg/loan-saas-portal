@@ -25,6 +25,7 @@ export const UpdateAlert = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValues, newValues]);
 
+  
   return (
     <Alert
       cancelButtonText="Cancel"
@@ -40,6 +41,7 @@ export const UpdateAlert = () => {
         change this later.
       </p>
       {Object.entries(updatedObj).map(([key, value]) => {
+        console.log("something", [updatedObj,key,value])
         return (
           <p>
             {capitalize(key)}:{value}

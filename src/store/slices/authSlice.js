@@ -102,10 +102,17 @@ export const confirmSignUp = (username, code) => (dispatch) => {
 export const login = (username, password) => (dispatch) => {
   return AuthService.login(username, password).then(
     (data) => {
+      /* 
+        data.attributes.refEmployerId is set due to old user migration and is only set when we csv-import
+        users
+      */
+     data.attributes.sub = data.attributes["custom:refEmployerId"] || data.attributes.sub
+     console.log({loginD: data})
       const loginData = {
         authToken: data.signInUserSession.idToken.jwtToken,
         employerId: data.attributes.sub,
       };
+      console.log({loginD: loginData})
       dispatch(setLoggedInUser({ user: data }));
       return Promise.resolve(loginData);
     },
