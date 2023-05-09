@@ -4,7 +4,6 @@ import {
   Dialog,
   Elevation,
   Intent,
-  NonIdealState,
   Spinner,
   Tag,
 } from "@blueprintjs/core";
@@ -14,16 +13,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 import BrowserTable from "../../../../atomic/organisms/browserTable";
+import {
+  SerialNumberCell,
+  StatusCell,
+} from "../../../../atomic/organisms/browserTable/cells";
 import EmployerMetrics from "../../../../atomic/organisms/employerMetrics/EmployerMetrics";
-import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts";
 import {
   useGetAllEmployeesPanelByEmployerIdQuery,
   useLazyGetAllEmployeesPanelByEmployerIdQuery,
 } from "../../../../store/slices/apiSlices/employees/panelApiSlice";
+import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts";
 import { groupByKeyCount } from "../../../../utils/aggregates";
 import { EmployeeModal } from "../employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
-import { SerialNumberCell, StatusCell } from "../../../../atomic/organisms/browserTable/cells";
 
 const checkOverallStatus = (aadhaar, pan, bank) => {
   return aadhaar?.verifyStatus === "SUCCESS" &&
@@ -34,7 +36,6 @@ const checkOverallStatus = (aadhaar, pan, bank) => {
 };
 
 const reformatEmployeeData = (employeeData) => {
-  
   return employeeData.map((employee) => {
     const {
       employerEmployeeId,
@@ -74,8 +75,6 @@ const reformatEmployeeData = (employeeData) => {
   });
 };
 
-
-
 const MODAL_STYLING = {
   marginTop: "7.5rem",
   marginBottom: "5rem",
@@ -114,18 +113,20 @@ const TabularViewTab = ({ handlers }) => {
       Header: header,
       accessor: header,
     };
-  })
+  });
 
   useEffect(() => {
     if (data) {
       const body = data?.body ?? [];
       setFetchedRowsFromBody(body);
-      dispatch(initBrowserTable({
-        data: reformatEmployeeData(body),
-        fields: columns,
-        fileName: "employees-tabular-view",
-        module: "employees-panel",
-      }))
+      dispatch(
+        initBrowserTable({
+          data: reformatEmployeeData(body),
+          fields: columns,
+          fileName: "employees-tabular-view",
+          module: "employees-panel",
+        })
+      );
     }
   }, [data]);
 
@@ -133,15 +134,16 @@ const TabularViewTab = ({ handlers }) => {
     if (lazyData) {
       const body = lazyData.body ?? [];
       setFetchedRowsFromBody(body);
-      dispatch(initBrowserTable({
-        data: reformatEmployeeData(body),
-        fields: columns,
-        fileName: "employees-tabular-view",
-        module: "employees-panel",
-      }))
+      dispatch(
+        initBrowserTable({
+          data: reformatEmployeeData(body),
+          fields: columns,
+          fileName: "employees-tabular-view",
+          module: "employees-panel",
+        })
+      );
     }
   }, [lazyData]);
-
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [didDialogChange, setDidDialogChange] = useState(false);
@@ -150,7 +152,7 @@ const TabularViewTab = ({ handlers }) => {
   const [currEmploymentId, setCurrEmploymentId] = useState(null);
 
   const handleRowClick = (currentRow) => {
-    const { _id, employmentId } = currentRow;
+    const { original: { _id, employmentId } = {} } = currentRow;
     setIsDialogOpen(true);
     setCurrEmployeeId(_id);
     setCurrEmploymentId(employmentId);
@@ -168,13 +170,17 @@ const TabularViewTab = ({ handlers }) => {
     refetch();
   };
   console.log(fetchedRows);
-  let component = ""
+  let component = "";
   if (isLoading || lazyIsLoading) {
-    component = (<Spinner style={{ marginTop: "2em", marginBottom: "2em" }} size={54} />)
+    component = (
+      <Spinner style={{ marginTop: "2em", marginBottom: "2em" }} size={54} />
+    );
   } else if (error || lazyError) {
-    component = (<Tag icon={"error"} intent={Intent.DANGER} large minimal>
-      {error || lazyError}
-    </Tag>)
+    component = (
+      <Tag icon={"error"} intent={Intent.DANGER} large minimal>
+        {error || lazyError}
+      </Tag>
+    );
   } else {
     component = (
       <BrowserTable
@@ -192,7 +198,7 @@ const TabularViewTab = ({ handlers }) => {
           "Employment Status": StatusCell,
         }}
       />
-    )
+    );
   }
 
   return (
@@ -239,10 +245,7 @@ const TabularTabsComponent = () => {
         employeeData,
         "Aadhaar Status"
       );
-      const panAggregationResult = groupByKeyCount(
-        employeeData,
-        "PAN Status"
-      );
+      const panAggregationResult = groupByKeyCount(employeeData, "PAN Status");
       const bankAccountAggregationResult = groupByKeyCount(
         employeeData,
         "Account Status"
@@ -256,7 +259,7 @@ const TabularTabsComponent = () => {
         aadhaar: aadhaarAggregationResult,
         pan: panAggregationResult,
         bank: bankAccountAggregationResult,
-        employment: employmentAggregationResult
+        employment: employmentAggregationResult,
       };
       setMetricsData(metricDataObject);
     }
