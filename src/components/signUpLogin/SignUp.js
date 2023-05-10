@@ -113,8 +113,9 @@ export const SignUp = () => {
                   validations={{
                     required: true,
                     validate: {
-                      hash: (v) =>
-                        md5(v) === "a043ed8b42e5e8c38fe5ae27c54c1aa3",
+                      hash: (v) => {
+                        return md5(v) === process.env.REACT_APP_REGISTRATION_ACCESS_KEY
+                      },
                     },
                   }}
                   errors={errors}
