@@ -14,6 +14,8 @@ export const employeeFieldsToTabsMap = {
       maritalStatus:
         "Marital Status (Married, Un-married, Widow/Widower, Divorcee)",
     },
+    requiredFields: {},
+    fieldPatterns: {},
   },
   Employment: {
     category: "employment",
@@ -27,6 +29,8 @@ export const employeeFieldsToTabsMap = {
       mInHandSalary: "Monthly Inhand Salary",
       doe: "Date of Exit (dd/mm/yyyy)",
     },
+    requiredFields: {},
+    fieldPatterns: {},
   },
   "Government Ids": {
     category: "governmentIds",
@@ -44,6 +48,8 @@ export const employeeFieldsToTabsMap = {
         number: "ID Number",
       },
     },
+    requiredFields: {},
+    fieldPatterns: {},
   },
   "Bank Details": {
     category: "bankDetails",
@@ -51,12 +57,19 @@ export const employeeFieldsToTabsMap = {
       accountNumber: "Bank Account Number",
       ifsc: "Bank IFSC Code",
     },
+    requiredFields: { accountNumber: true },
+    fieldPatterns: {
+      accountNumber: /^[0-9]{9,18}$/,
+      ifsc: /^[A-Z]{4}0[A-Z0-9]{6}$/,
+    },
   },
   EPFO: {
     category: "epfo",
     fields: {
       UAN: "PF UAN (Enter if available else leave blank)",
     },
+    requiredFields: {},
+    fieldPatterns: {},
   },
   ESIC: {
     category: "esic",
@@ -65,6 +78,8 @@ export const employeeFieldsToTabsMap = {
       IPNumber:
         "ESIC Number (aka IP Number) (Enter if available else leave blank)",
     },
+    requiredFields: {},
+    fieldPatterns: {},
   },
   "Family Details": {
     category: "relatives",
@@ -109,6 +124,8 @@ export const employeeFieldsToTabsMap = {
         relation: "Nominee Relationship with Employee",
       },
     },
+    requiredFields: {},
+    fieldPatterns: {},
   },
   Addresses: {
     category: "addresses",
@@ -173,5 +190,7 @@ export const employeeFieldsToTabsMap = {
         pin: "Employee Nominee Address Pincode",
       },
     },
+    requiredFields: {},
+    fieldPatterns: {},
   },
 };

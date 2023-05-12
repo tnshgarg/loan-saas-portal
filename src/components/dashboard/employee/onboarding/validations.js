@@ -16,7 +16,7 @@ export const reg = {
   EMAIL: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
   PAN: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
   AADHAAR: /^\d{12}$/,
-  ACCNUMBER: /^[A-Z0-9]{6,25}$/,
+  ACCNUMBER: /^[0-9]{9,18}$/,
   IFSC: /^[A-Z]{4}0[A-Z0-9]{6}$/,
   FIN_NUMBER: /^\d+(,\d+)*(\.\d{1,2})*$/,
   AMOUNT: /^\d+(,\d+)*(\.\d*)?$/,
