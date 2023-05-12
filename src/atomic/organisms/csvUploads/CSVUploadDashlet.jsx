@@ -11,14 +11,14 @@ import { VerifyAndUploadEmployees } from "../../../components/dashboard/employee
 import { useToastContext } from "../../../contexts/ToastContext";
 import {
   clearActiveFileName,
-  initCSVUpload,
+  initBrowserTable,
   setActiveFileName,
-} from "../../../store/slices/csvUploadSlice.ts";
+} from "../../../store/slices/browserTableSlice.ts";
 import { CSVFileInput } from "../../atoms/forms/CSVFileInput";
 import { TemplateDownloadButton } from "../../atoms/forms/TemplateDownloadButton";
 import { Dashlet } from "../../molecules/dashlets/dashlet";
-import BrowserEdiTable from "./BrowserEdiTable";
 import { UploadHistoryPanel } from "./UploadHistoryPanel";
+import BrowserTable from "../browserTable"
 
 export const MAX_SIZE = 1024 * 1024 * 5;
 
@@ -141,7 +141,7 @@ function _CSVUploadDashlet({
           });
           setUploadStatus(true);
           dispatch(
-            initCSVUpload({
+            initBrowserTable({
               data: erroredData,
               fileName: file.object.name,
               fields,
@@ -174,7 +174,7 @@ function _CSVUploadDashlet({
 
   const handleFileImport = (data) => {
     dispatch(
-      initCSVUpload({
+      initBrowserTable({
         data: preProcessing(data),
         fileName: file.object.name,
         fields,
@@ -284,7 +284,7 @@ function _CSVUploadDashlet({
 
         {file.object || savedFileName ? (
           <>
-            <BrowserEdiTable
+            <BrowserTable
               key={savedFileName ?? file.object.name}
               setter={setDataGetter}
               deletes={true}

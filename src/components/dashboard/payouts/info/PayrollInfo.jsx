@@ -30,7 +30,7 @@ export function _PayrollInfo({ employerId, dispatch }) {
   const today = new Date();
   const [{ year, month }, setDate] = useState({
     year: today.getFullYear(),
-    month: today.getMonth() + 1,
+    month: (today.getMonth()),
   });
 
   const dateChanged = (updatedDate) => {

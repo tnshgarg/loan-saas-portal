@@ -14,8 +14,9 @@ import {
   useGetEmployerCredentialsByIdQuery,
   useUpdateEmployerCredentialsMutation,
 } from "../../../../store/slices/apiSlices/employer/credentialsApiSlice";
-import { Button, Intent } from "@blueprintjs/core";
+import { Button, Intent, ProgressBar } from "@blueprintjs/core";
 import { AppToaster } from "../../../../contexts/ToastContext";
+import { Tag } from "@blueprintjs/icons/lib/esm/generated/16px/paths";
 
 const EPFOComponent = () => {
   const dispatch = useDispatch();
@@ -34,9 +35,6 @@ const EPFOComponent = () => {
 
   const [username, setUsername] = useState(usernameInitial);
   const [password, setPassword] = useState(passwordInitial);
-
-  const { jwtToken } =
-    useSelector((state) => state.auth.user?.signInUserSession.idToken) ?? "";
 
   const [updateEmployerCredentials] = useUpdateEmployerCredentialsMutation();
 
@@ -138,6 +136,8 @@ const EPFOComponent = () => {
   return (
     <div>
       <h5>EPFO Portal Credentials</h5>
+      {isLoading ? (<ProgressBar />) : ""}
+      {error ? (<Tag intent={Intent.DANGER}>{error}</Tag>) : ""}
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormInput
           register={register}

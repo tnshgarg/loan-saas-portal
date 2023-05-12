@@ -1,7 +1,7 @@
 import { Button, Classes, Dialog, Intent, Tag } from "@blueprintjs/core";
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { FILTER_OP, setFilter } from "../../../../store/slices/csvUploadSlice.ts";
+import { FILTER_OP, setFilter } from "../../../../store/slices/browserTableSlice.ts";
 import { FS } from "./validations";
 
 const mapStateToProps = (state, ownProps) => {
@@ -48,10 +48,6 @@ function _VerifyAndUploadEmployees(props) {
     setOverrideDialog(false);
   };
 
-  const overrideDialogSubmit = () => {
-    setOverrideDialog(false);
-    parentOnClick();
-  };
   const buttonOnClick = errors ? openOverrideDialog : parentOnClick;
   return (
     <>
