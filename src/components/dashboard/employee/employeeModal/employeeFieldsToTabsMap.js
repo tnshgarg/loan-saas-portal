@@ -16,6 +16,7 @@ export const employeeFieldsToTabsMap = {
     },
     requiredFields: {},
     fieldPatterns: {},
+    readOnlyFields: { mobile: true },
   },
   Employment: {
     category: "employment",
@@ -31,6 +32,7 @@ export const employeeFieldsToTabsMap = {
     },
     requiredFields: {},
     fieldPatterns: {},
+    readOnlyFields: {},
   },
   "Government Ids": {
     category: "governmentIds",
@@ -50,6 +52,7 @@ export const employeeFieldsToTabsMap = {
     },
     requiredFields: {},
     fieldPatterns: {},
+    readOnlyFields: {},
   },
   "Bank Details": {
     category: "bankDetails",
@@ -62,6 +65,7 @@ export const employeeFieldsToTabsMap = {
       accountNumber: /^[0-9]{9,18}$/,
       ifsc: /^[A-Z]{4}0[A-Z0-9]{6}$/,
     },
+    readOnlyFields: {},
   },
   EPFO: {
     category: "epfo",
@@ -70,6 +74,7 @@ export const employeeFieldsToTabsMap = {
     },
     requiredFields: {},
     fieldPatterns: {},
+    readOnlyFields: {},
   },
   ESIC: {
     category: "esic",
@@ -80,6 +85,7 @@ export const employeeFieldsToTabsMap = {
     },
     requiredFields: {},
     fieldPatterns: {},
+    readOnlyFields: {},
   },
   "Family Details": {
     category: "relatives",
@@ -126,6 +132,7 @@ export const employeeFieldsToTabsMap = {
     },
     requiredFields: {},
     fieldPatterns: {},
+    readOnlyFields: {},
   },
   Addresses: {
     category: "addresses",
@@ -192,5 +199,6 @@ export const employeeFieldsToTabsMap = {
     },
     requiredFields: {},
     fieldPatterns: {},
+    readOnlyFields: {},
   },
 };
