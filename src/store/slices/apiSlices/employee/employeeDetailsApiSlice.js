@@ -12,7 +12,7 @@ export const employeeDetails = createApi({
 
       // If we have a token set in state, let's assume that we should be passing it.
       if (token) {
-        headers.set("authorization", `Bearer ${token}`);
+        headers.set("authorization", `${token}`);
       }
 
       return headers;
