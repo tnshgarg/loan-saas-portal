@@ -5,6 +5,7 @@ import {
   faCalendarDays,
   faChartLine,
   faFileArrowUp,
+  faFileInvoice,
   faFilePen,
   faListCheck,
   faMoneyBill,
@@ -102,6 +103,18 @@ const NAV_MENU = [
         name: "Payout Processing",
         icon: <MenuIcon icon={faMoneyCheck} />,
         route: "/info",
+      },
+    ],
+  },
+  {
+    name: "Payslips",
+    icon: <SidebarIcon icon={faFileInvoice} />,
+    route: "/payslips",
+    children: [
+      {
+        name: "Data Upload",
+        icon: <MenuIcon icon={faFileArrowUp} />,
+        route: "/data-upload",
       },
     ],
   },
