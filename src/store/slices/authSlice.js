@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getMessageFromError } from "../../utils/getMessageFromError";
 import AuthService from "../../services/auth.service";
+import { getMessageFromError } from "../../utils/getMessageFromError";
 import { clearMessage, setMessage } from "./messageSlice";
 
 const AUTH_STORAGE_KEY = "cognitoSession";
@@ -56,7 +56,8 @@ export const registerUser =
     company_name,
     company_type,
     employee_count,
-    designation
+    designation,
+    rm_id
   ) =>
   (dispatch) => {
     username = username.replace("+", "_");
@@ -69,7 +70,8 @@ export const registerUser =
       company_name,
       company_type,
       employee_count,
-      designation
+      designation,
+      rm_id
     ).then(
       (response) => {
         dispatch(setLoggedInUser(null));
@@ -106,13 +108,14 @@ export const login = (username, password) => (dispatch) => {
         data.attributes.refEmployerId is set due to old user migration and is only set when we csv-import
         users
       */
-     data.attributes.sub = data.attributes["custom:refEmployerId"] || data.attributes.sub
-     console.log({loginD: data})
+      data.attributes.sub =
+        data.attributes["custom:refEmployerId"] || data.attributes.sub;
+      console.log({ loginD: data });
       const loginData = {
         authToken: data.signInUserSession.idToken.jwtToken,
         employerId: data.attributes.sub,
       };
-      console.log({loginD: loginData})
+      console.log({ loginD: loginData });
       dispatch(setLoggedInUser({ user: data }));
       return Promise.resolve(loginData);
     },

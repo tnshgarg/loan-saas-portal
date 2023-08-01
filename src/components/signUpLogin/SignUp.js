@@ -44,6 +44,7 @@ export const SignUp = () => {
       company_type,
       employee_count,
       designation,
+      rm_id,
     } = data;
 
     dispatch(
@@ -56,7 +57,8 @@ export const SignUp = () => {
         company_name,
         company_type,
         employee_count,
-        designation
+        designation,
+        rm_id
       )
     )
       .then(() => {
@@ -114,7 +116,10 @@ export const SignUp = () => {
                     required: true,
                     validate: {
                       hash: (v) => {
-                        return md5(v) === process.env.REACT_APP_REGISTRATION_ACCESS_KEY
+                        return (
+                          md5(v) ===
+                          process.env.REACT_APP_REGISTRATION_ACCESS_KEY
+                        );
                       },
                     },
                   }}
@@ -178,6 +183,21 @@ export const SignUp = () => {
                     placeholder: "Password",
                     errorMessage:
                       "Password must contain atleast 8 characters with a special character, a number, a lowercase and an uppercase alphabet",
+                  }}
+                />
+                <FormInput
+                  register={register}
+                  validations={{
+                    required: true,
+                  }}
+                  errors={errors}
+                  field={"rm_id"}
+                  inputProps={{
+                    icon: "id-number",
+                    type: "text",
+                    label: "RM ID",
+                    placeholder: "RM ID",
+                    errorMessage: "RM ID cannot be empty",
                   }}
                 />
               </Card>
