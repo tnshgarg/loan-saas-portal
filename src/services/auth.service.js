@@ -9,7 +9,8 @@ const signUp = (
   company_name,
   company_type,
   employee_count,
-  designation
+  designation,
+  rm_id
 ) => {
   if (!phone_number.startsWith("+91")) phone_number = "+91" + phone_number;
   return Auth.signUp({
@@ -23,6 +24,7 @@ const signUp = (
       "custom:company_type": company_type,
       "custom:employee_count": employee_count,
       "custom:designation": designation,
+      "custom:sales_id": rm_id,
     },
   });
 };
