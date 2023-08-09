@@ -44,7 +44,7 @@ export const SignUp = () => {
       company_type,
       employee_count,
       designation,
-      rm_id,
+      sales_id,
     } = data;
 
     dispatch(
@@ -58,7 +58,7 @@ export const SignUp = () => {
         company_type,
         employee_count,
         designation,
-        rm_id
+        sales_id
       )
     )
       .then(() => {
@@ -191,13 +191,13 @@ export const SignUp = () => {
                     required: true,
                   }}
                   errors={errors}
-                  field={"rm_id"}
+                  field={"sales_id"}
                   inputProps={{
                     icon: "id-number",
                     type: "text",
-                    label: "RM ID",
-                    placeholder: "RM ID",
-                    errorMessage: "RM ID cannot be empty",
+                    label: "Sales ID",
+                    placeholder: "Sales ID",
+                    errorMessage: "Sales ID cannot be empty",
                   }}
                 />
               </Card>
