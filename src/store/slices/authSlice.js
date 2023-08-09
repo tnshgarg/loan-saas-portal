@@ -57,7 +57,7 @@ export const registerUser =
     company_type,
     employee_count,
     designation,
-    rm_id
+    sales_id
   ) =>
   (dispatch) => {
     username = username.replace("+", "_");
@@ -71,7 +71,7 @@ export const registerUser =
       company_type,
       employee_count,
       designation,
-      rm_id
+      sales_id
     ).then(
       (response) => {
         dispatch(setLoggedInUser(null));
