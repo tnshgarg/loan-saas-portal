@@ -20,6 +20,7 @@ export const EmployeeModalTab = ({
   fields,
   requiredFields,
   fieldPatterns,
+  readOnlyFields,
   currEmployeeId,
   currEmploymentId,
   setDidDialogChange,
@@ -279,7 +280,7 @@ export const EmployeeModalTab = ({
                             field.onChange(v.value);
                           }}
                           name={key}
-                          isDisabled={disabled}
+                          isDisabled={readOnlyFields?.[originalKey] ?? disabled}
                         />
                         <div>&nbsp;</div>
                       </>
@@ -298,7 +299,7 @@ export const EmployeeModalTab = ({
                     label: labelKey,
                     placeholder: `Please enter ${labelKey} for selected employee`,
                     errorMessage: `Please enter ${labelKey} in the correct format`,
-                    disabled: disabled,
+                    disabled: readOnlyFields?.[originalKey] ?? disabled,
                   }}
                   setValue={setValue}
                   getValues={getValues}

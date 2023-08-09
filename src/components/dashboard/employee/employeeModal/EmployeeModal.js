@@ -26,6 +26,7 @@ export const EmployeeModal = ({
                 fields,
                 requiredFields,
                 fieldPatterns,
+                readOnlyFields,
                 hasSubTabs,
               } = value;
               if (hasSubTabs) {
@@ -58,6 +59,7 @@ export const EmployeeModal = ({
                         fields={fields}
                         requiredFields={requiredFields}
                         fieldPatterns={fieldPatterns}
+                        readOnlyFields={readOnlyFields}
                         currEmployeeId={currEmployeeId}
                         currEmploymentId={currEmploymentId}
                         setDidDialogChange={setDidDialogChange}
@@ -80,8 +82,15 @@ const SubTabs = ({
   currEmploymentId,
   setDidDialogChange,
 }) => {
-  const { fields, requiredFields, fieldPatterns, category, types, inputTypes } =
-    value;
+  const {
+    fields,
+    requiredFields,
+    fieldPatterns,
+    readOnlyFields,
+    category,
+    types,
+    inputTypes,
+  } = value;
   return (
     <Tabs renderActiveTabPanelOnly id="employeeDetails">
       {Object.entries(fields).map(([key, fieldsList], index) => {
@@ -96,6 +105,7 @@ const SubTabs = ({
                 fields={fieldsList}
                 requiredFields={requiredFields[key]}
                 fieldPatterns={fieldPatterns[key]}
+                readOnlyFields={readOnlyFields[key]}
                 currEmployeeId={currEmployeeId}
                 currEmploymentId={currEmploymentId}
                 setDidDialogChange={setDidDialogChange}
