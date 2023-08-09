@@ -112,11 +112,11 @@ const NAV_MENU = [
     icon: <SidebarIcon icon={faFileInvoice} />,
     route: "/payslips",
     children: [
-      {
-        name: "Data Upload",
-        icon: <MenuIcon icon={faFileArrowUp} />,
-        route: "/data-upload",
-      },
+      // {
+      //   name: "Data Upload",
+      //   icon: <MenuIcon icon={faFileArrowUp} />,
+      //   route: "/data-upload",
+      // },
       {
         name: "View Payslips",
         icon: <MenuIcon icon={faRectangleList} />,
