@@ -1,8 +1,9 @@
-import { Auth } from "aws-amplify";
+import { Amplify, Auth } from "aws-amplify";
 
 const signUp = (
   username,
   password,
+  access_key,
   email,
   phone_number,
   name,
@@ -26,6 +27,9 @@ const signUp = (
       "custom:designation": designation,
       "custom:sales_id": sales_id,
     },
+    validationData: {
+      access_key: access_key
+    }
   });
 };
 

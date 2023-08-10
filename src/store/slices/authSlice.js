@@ -50,6 +50,7 @@ export const registerUser =
   (
     username,
     password,
+    access_key,
     email,
     phone_number,
     name,
@@ -64,6 +65,7 @@ export const registerUser =
     return AuthService.signUp(
       username,
       password,
+      access_key,
       email,
       phone_number,
       name,

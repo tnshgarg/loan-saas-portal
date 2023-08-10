@@ -45,12 +45,14 @@ export const SignUp = () => {
       employee_count,
       designation,
       sales_id,
+      access_key
     } = data;
 
     dispatch(
       registerUser(
         username,
         password,
+        access_key,
         email,
         `+91${phone_number}`,
         name,
@@ -116,10 +118,7 @@ export const SignUp = () => {
                     required: true,
                     validate: {
                       hash: (v) => {
-                        return (
-                          md5(v) ===
-                          process.env.REACT_APP_REGISTRATION_ACCESS_KEY
-                        );
+                        return (v || "").length
                       },
                     },
                   }}
