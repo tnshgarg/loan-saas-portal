@@ -5,6 +5,7 @@ import {
   faCalendarDays,
   faChartLine,
   faFileArrowUp,
+  faFileInvoice,
   faFilePen,
   faListCheck,
   faMoneyBill,
@@ -13,6 +14,7 @@ import {
   faMoneyCheck,
   faPaperPlane,
   faReceipt,
+  faRectangleList,
   faUsers,
   faWallet,
 } from "@fortawesome/free-solid-svg-icons";
@@ -101,6 +103,23 @@ const NAV_MENU = [
       {
         name: "Payout Processing",
         icon: <MenuIcon icon={faMoneyCheck} />,
+        route: "/info",
+      },
+    ],
+  },
+  {
+    name: "Payslips",
+    icon: <SidebarIcon icon={faFileInvoice} />,
+    route: "/payslips",
+    children: [
+      // {
+      //   name: "Data Upload",
+      //   icon: <MenuIcon icon={faFileArrowUp} />,
+      //   route: "/data-upload",
+      // },
+      {
+        name: "View Payslips",
+        icon: <MenuIcon icon={faRectangleList} />,
         route: "/info",
       },
     ],
