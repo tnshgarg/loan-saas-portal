@@ -26,6 +26,8 @@ import { PayrollInfo } from "./components/dashboard/payouts/info/PayrollInfo";
 import { OneClickPayouts } from "./components/dashboard/payouts/oneClickPayouts/oneClickPayoutsUpload";
 import { SalaryUpload } from "./components/dashboard/payouts/salaryManagement/SalaryUpload";
 import { EmployerUnapproved } from "./components/employerUnapproved";
+import { PayslipsDataUploadPanel } from "./components/dashboard/payslips/dataUpload/payslipsDataUploadPanel";
+import { PayslipsPanel } from "./components/dashboard/payslips/info/payslipsPanel";
 import BaseLayout from "./layout/base";
 import { history } from "./utils/history";
 
@@ -76,6 +78,12 @@ const App = () => {
             <Route path="/payroll/salary" element={<SalaryUpload />} />
             <Route path="/payroll/info" element={<PayrollInfo />} />
             <Route path="/payroll/transactions" element={<PayrollInfo />} />
+
+            <Route
+              path="/payslips/data-upload"
+              element={<PayslipsDataUploadPanel />}
+            />
+            <Route path="/payslips/info" element={<PayslipsPanel />} />
 
             <Route path="/ewa/info" element={<Disbursements />} />
 

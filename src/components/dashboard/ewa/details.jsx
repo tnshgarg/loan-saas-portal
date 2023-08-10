@@ -1,16 +1,16 @@
-import { connect } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faWallet } from "@fortawesome/free-solid-svg-icons";
-import { DateDropdown } from "../payouts/info/DateDropdown";
-import { Spacer } from "../../../atomic/atoms/layouts/alignment";
 import { Button, Intent, NonIdealState, ProgressBar } from "@blueprintjs/core";
+import { faWallet } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { Spacer } from "../../../atomic/atoms/layouts/alignment";
 import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
-import { useState } from "react";
-import { useGetDisbursementsQuery } from "../../../store/slices/apiSlices/employer/ewaApiSlice";
 import BrowserTable from "../../../atomic/organisms/browserTable";
-import { initBrowserTable } from "../../../store/slices/browserTableSlice.ts";
 import { MultiLineCell } from "../../../atomic/organisms/browserTable/cells";
+import { useGetDisbursementsQuery } from "../../../store/slices/apiSlices/employer/ewaApiSlice";
+import { initBrowserTable } from "../../../store/slices/browserTableSlice.ts";
 import { getExcel } from "../../../utils/excelHandling";
+import { DateDropdown } from "../payouts/info/DateDropdown";
 
 function mapStateToProps(state) {
   return {
@@ -58,22 +58,27 @@ const DISBURSEMENT_FIELDS = [
   {
     header: "Pending Amount",
     field: "pendingAmount",
-  },{
+  },
+  {
     header: "Total Paid Amount",
     field: "paidAmount",
-  },{
+  },
+  {
     header: "Paid Amount",
     field: "payoutAmount",
-  },{
+  },
+  {
     header: "Payment Status",
     field: "payoutStatus",
-  },{
+  },
+  {
     header: "Payment Time",
     field: "payoutDate",
-  },{
+  },
+  {
     header: "Payment Mode",
     field: "transferMode",
-  }
+  },
 ].map((column) => ({
   ...column,
   Header: column.header,
@@ -99,35 +104,38 @@ const _Disbursements = ({ employerId, dispatch }) => {
     year: year,
     month: month,
   });
+  const [safeDisbursements, setSafeDisbursements] = useState([]);
 
-  const disbursements = data?.body ?? [];
-  console.log(disbursements);
-  const safeDisbursements = disbursements.map((item) => {
-    const mutableItem = Object.assign({}, item);
-    mutableItem.loanStatus = mutableItem.status;
-    mutableItem.pendingAmount = mutableItem.loanAmount - (mutableItem.paidAmount || 0);
-    mutableItem.status = {};
-    return mutableItem;
-  });
-  if (safeDisbursements.length) {
-    dispatch(
-      initBrowserTable({
-        data: safeDisbursements,
-        fields: DISBURSEMENT_FIELDS,
-        fileName: key,
-        module: DISBURSEMENTS_MODULE,
-      })
-    );
-  }
+  useEffect(() => {
+    const disbursementsCurrent = data?.body ?? [];
+    console.log(disbursementsCurrent);
+    const safeDisbursementsCurrent = disbursementsCurrent.map((item) => {
+      const mutableItem = Object.assign({}, item);
+      mutableItem.loanStatus = mutableItem.status;
+      mutableItem.pendingAmount =
+        mutableItem.loanAmount - (mutableItem.paidAmount || 0);
+      mutableItem.status = {};
+      return mutableItem;
+    });
+    setSafeDisbursements(safeDisbursementsCurrent);
+    if (safeDisbursementsCurrent.length) {
+      dispatch(
+        initBrowserTable({
+          data: safeDisbursementsCurrent,
+          fields: DISBURSEMENT_FIELDS,
+          fileName: key,
+          module: DISBURSEMENTS_MODULE,
+        })
+      );
+    }
+  }, [data]);
+
   const dataRefetch = () => {
     refetch();
   };
   const downloadExcel = () => {
-    getExcel(
-      [{headers: DISBURSEMENT_FIELDS}],
-      safeDisbursements
-    );
-  }
+    getExcel([{ headers: DISBURSEMENT_FIELDS }], safeDisbursements);
+  };
   return (
     <>
       <Dashlet
@@ -155,17 +163,17 @@ const _Disbursements = ({ employerId, dispatch }) => {
           <div style={{ padding: "3em" }}>
             <ProgressBar animate stripes />
           </div>
-        ) : disbursements && disbursements.length ? (
+        ) : safeDisbursements && safeDisbursements.length ? (
           <BrowserTable
             key={"ewa-info"}
             tableName={key}
             module={DISBURSEMENTS_MODULE}
             disableEdits={true}
             customCells={{
-              "transferMode": MultiLineCell,
-              "payoutDate": MultiLineCell,
-              "payoutAmount": MultiLineCell,
-              "payoutStatus": MultiLineCell,
+              transferMode: MultiLineCell,
+              payoutDate: MultiLineCell,
+              payoutAmount: MultiLineCell,
+              payoutStatus: MultiLineCell,
             }}
           />
         ) : (

@@ -10,7 +10,7 @@ import { convertExcelSerialToDateString } from "../../utils/excelHandling";
 export const FILTER_OP = {
   ADD: true,
   REMOVE: false,
-}
+};
 
 const BLANK_VALUE = "(Blank)";
 
@@ -18,9 +18,9 @@ function isNaN(value) {
   return value === null || value === undefined || value === "";
 }
 type TableRow = {
-  [columnName: string]: any,
-  rowNumber: number,
-}
+  [columnName: string]: any;
+  rowNumber: number;
+};
 type TableData = Array<TableRow>;
 
 interface TablePagination {
@@ -51,8 +51,8 @@ type ErrorFilters = Array<number>;
 
 interface TableFilters {
   [columnName: string]: {
-    [value: string]: boolean
-  }
+    [value: string]: boolean;
+  };
 }
 interface PanelValues {
   data: TableData;
@@ -104,32 +104,40 @@ interface RootState {
 
 const BROWSER_TABULAR_DATA_INITIAL: RootState = {};
 
-function populateFilteredData(data: any, errorFilters: any, dataFilters: any, filteredData: any) {
+function populateFilteredData(
+  data: any,
+  errorFilters: any,
+  dataFilters: any,
+  filteredData: any
+) {
   filteredData.splice(0, filteredData.length);
   data.forEach((row: any) => {
-    const appliedErrorFilters = errorFilters.filter((f: string) => !!row.status[f]);
+    const appliedErrorFilters = errorFilters.filter(
+      (f: string) => !!row.status[f]
+    );
     const filterCount = Object.keys(dataFilters).length;
     let appliedFilters = 0;
 
     Object.keys(dataFilters).forEach((key) => {
       if (
-        (!isNaN(row[key]) && (dataFilters[key][row[key]])) 
-        || 
-        ((isNaN(row[key])) && dataFilters[key][BLANK_VALUE])
-        ||
-        (Array.isArray(row[key]) &&  (
-            (row[key].length == 0 && dataFilters[key][BLANK_VALUE])
-            ||
-            (row[key].map(value => dataFilters[key][value]).reduce((p,v) => v||p, false))
-        ))
+        (!isNaN(row[key]) && dataFilters[key][row[key]]) ||
+        (isNaN(row[key]) && dataFilters[key][BLANK_VALUE]) ||
+        (Array.isArray(row[key]) &&
+          ((row[key].length == 0 && dataFilters[key][BLANK_VALUE]) ||
+            row[key]
+              .map((value) => dataFilters[key][value])
+              .reduce((p, v) => v || p, false)))
       )
         appliedFilters += 1;
       else {
-        console.log("appliedFilters not",key,row[key])
+        console.log("appliedFilters not", key, row[key]);
       }
-    })
-    console.log("filteredDataDebug",{row, filterCount,appliedFilters})
-    if ((appliedErrorFilters.length > 0 || errorFilters.length === 0) && filterCount === appliedFilters) {
+    });
+    console.log("filteredDataDebug", { row, filterCount, appliedFilters });
+    if (
+      (appliedErrorFilters.length > 0 || errorFilters.length === 0) &&
+      filterCount === appliedFilters
+    ) {
       filteredData.push(row);
     }
   });
@@ -139,12 +147,12 @@ const extractCurrentTableDataFromState = ({ module, tableName, state }) => {
   const {
     [module]: {
       tableData: {
-        [tableName]: { data, errorFilters,dataFilters, filteredData, stats },
+        [tableName]: { data, errorFilters, dataFilters, filteredData, stats },
       },
     },
   } = state;
 
-  return { data, errorFilters,dataFilters, filteredData, stats };
+  return { data, errorFilters, dataFilters, filteredData, stats };
 };
 
 export const BrowserTabularDataSlice = createSlice({
@@ -159,8 +167,8 @@ export const BrowserTabularDataSlice = createSlice({
       state[module].tableData[fileName].fields = fields;
       state[module].tableData[fileName].errorFilters = [];
       state[module].tableData[fileName].filteredData = [] as any;
-      const fieldMap = state[module].tableData[fileName].fieldMap = fields.reduce(
-        (res, field) => {
+      const fieldMap = (state[module].tableData[fileName].fieldMap =
+        fields.reduce((res, field) => {
           if (field.columns) {
             field.columns.reduce((res, field) => {
               res[field.field] = field.validations;
@@ -170,25 +178,31 @@ export const BrowserTabularDataSlice = createSlice({
             res[field.field] = field.validations;
           }
           return res;
-        },
-        {}
-      );
+        }, {}));
       state[module].tableData[fileName].stats = getStatusDict();
-      const dataFilters = state[module].tableData[fileName].dataFilters = {}
+      const dataFilters = (state[module].tableData[fileName].dataFilters = {});
       data.forEach((row: any, index: number) => {
         const rowEntries = Object.entries(row);
         console.log(row);
         row.rowNumber = index;
         row.status = getStatusDict();
-        const fieldExists = Object.keys(fieldMap).reduce((obj, key) => {obj[key] = false; return obj},{})
+        const fieldExists = Object.keys(fieldMap).reduce((obj, key) => {
+          obj[key] = false;
+          return obj;
+        }, {});
         rowEntries.forEach(([key, value]: [string, any]) => {
           if (value) {
-            if (Array.isArray(value)){
-              console.log("ArrayDebubFilters",{key,value})
+            if (Array.isArray(value)) {
+              console.log("ArrayDebubFilters", { key, value });
             } else if (typeof value === "object") {
-              return 
-            }
-            else if (!(typeof value === "string" || value instanceof String || Array.isArray(value))) {
+              return;
+            } else if (
+              !(
+                typeof value === "string" ||
+                value instanceof String ||
+                Array.isArray(value)
+              )
+            ) {
               value = String(value);
               row[key] = value.trim();
               if (DATE_FIELDS.includes(key) && !reg.DATE.test(value)) {
@@ -199,20 +213,19 @@ export const BrowserTabularDataSlice = createSlice({
             }
           }
           fieldExists[key] = true;
-          
+
           if (!["status", "rowNumber", "context"].includes(key)) {
-            if (!dataFilters[key])
-              dataFilters[key] = {}
+            if (!dataFilters[key]) dataFilters[key] = {};
             if (isNaN(value)) {
               dataFilters[key][BLANK_VALUE] = true;
-            } else if (Array.isArray(value)){
-              console.log("ArrayDebubFilters",{key,value})
-              if (value.length == 0){
-                dataFilters[key][BLANK_VALUE] = true
+            } else if (Array.isArray(value)) {
+              console.log("ArrayDebubFilters", { key, value });
+              if (value.length == 0) {
+                dataFilters[key][BLANK_VALUE] = true;
               } else {
                 value.forEach((item) => {
-                  dataFilters[key][String(item)] = true
-                })
+                  dataFilters[key][String(item)] = true;
+                });
               }
             } else {
               dataFilters[key][value] = true;
@@ -228,17 +241,21 @@ export const BrowserTabularDataSlice = createSlice({
           row.status[errState] += 1;
         });
         const missingFields = Object.entries(fieldExists).filter(
-          ([key,exists]) => !exists
-          )
-          console.log({missingFields})
+          ([key, exists]) => !exists
+        );
+        console.log({ missingFields });
         missingFields.forEach(([key]) => {
-          if (!dataFilters[key])
-            dataFilters[key] = {}
+          if (!dataFilters[key]) dataFilters[key] = {};
           dataFilters[key][BLANK_VALUE] = true;
-        })
+        });
       });
       state[module].tableData[fileName].data = data;
-      populateFilteredData(data, [], dataFilters, state[module].tableData[fileName].filteredData);
+      populateFilteredData(
+        data,
+        [],
+        dataFilters,
+        state[module].tableData[fileName].filteredData
+      );
     },
     updateBrowserTableRow: (state, action) => {
       const {
@@ -249,9 +266,8 @@ export const BrowserTabularDataSlice = createSlice({
       let row = data[rowIndex];
       if (filteredData.length) {
         if (filteredData[rowIndex].rowNumber >= 0)
-          row = data[filteredData[rowIndex].rowNumber]
-        else
-          row = data[-1];
+          row = data[filteredData[rowIndex].rowNumber];
+        else row = data[-1];
       }
       const validate =
         VALIDATIONS[state[module].tableData[tableName].fieldMap[columnId]];
@@ -272,11 +288,11 @@ export const BrowserTabularDataSlice = createSlice({
           row.status[updatedState] += 1;
           console.assert(row.status[currentState] >= 0);
         } else {
-          console.error("row.status is not set", row)
+          console.error("row.status is not set", row);
         }
         console.log(currentState, updatedState);
-        populateFilteredData(data, errorFilters, dataFilters, filteredData);
       }
+      populateFilteredData(data, errorFilters, dataFilters, filteredData);
     },
     toggleErrorFilter: (state, action) => {
       const {
@@ -323,7 +339,7 @@ export const BrowserTabularDataSlice = createSlice({
       const { data, filteredData, errorFilters, dataFilters } =
         state[module].tableData[tableName];
       dataFilters[column] = filters;
-      console.log("updateFilters", dataFilters)
+      console.log("updateFilters", dataFilters);
       populateFilteredData(data, errorFilters, dataFilters, filteredData);
     },
     clearFilters: (state, action) => {
@@ -333,28 +349,27 @@ export const BrowserTabularDataSlice = createSlice({
 
       const { data, filteredData, errorFilters, dataFilters } =
         state[module].tableData[tableName];
-        while(errorFilters.length)
-          errorFilters.pop()
-        Object.values(dataFilters).forEach((filterState) => {
-          Object.keys(filterState).forEach(key => {
-            filterState[key] = true;
-          })
-        })
-        populateFilteredData(data, errorFilters, dataFilters, filteredData);
+      while (errorFilters.length) errorFilters.pop();
+      Object.values(dataFilters).forEach((filterState) => {
+        Object.keys(filterState).forEach((key) => {
+          filterState[key] = true;
+        });
+      });
+      populateFilteredData(data, errorFilters, dataFilters, filteredData);
     },
     selectBrowserTableRow: (state, action) => {
       const {
         payload: { tableName, rowIndex, module },
       } = action;
 
-      const { data, errorFilters,dataFilters, filteredData, stats } =
+      const { data, errorFilters, dataFilters, filteredData, stats } =
         extractCurrentTableDataFromState({ module, tableName, state });
 
-      let filteredRow = filteredData[rowIndex]
+      let filteredRow = filteredData[rowIndex];
       let row = data[filteredRow.rowNumber];
       row.status[FS.SELECTED] = true;
       filteredRow.status = row.status;
-      
+
       stats[FS.SELECTED] = (stats[FS.SELECTED] || 0) + 1;
     },
     deselectBrowserTableRow: (state, action) => {
@@ -362,14 +377,14 @@ export const BrowserTabularDataSlice = createSlice({
         payload: { tableName, rowIndex, module },
       } = action;
 
-      const { data, errorFilters,dataFilters, filteredData, stats } =
+      const { data, errorFilters, dataFilters, filteredData, stats } =
         extractCurrentTableDataFromState({ module, tableName, state });
 
-      let filteredRow = filteredData[rowIndex]
+      let filteredRow = filteredData[rowIndex];
       let row = data[filteredRow.rowNumber];
       row.status[FS.SELECTED] = false;
       filteredRow.status = row.status;
-      
+
       stats[FS.SELECTED] = (stats[FS.SELECTED] || 1) - 1;
     },
     deleteBrowserTableRow: (state, action) => {
@@ -377,15 +392,18 @@ export const BrowserTabularDataSlice = createSlice({
         payload: { tableName, rowIndex, module },
       } = action;
       console.log(state);
-      const { data, filteredData, stats } =
-        extractCurrentTableDataFromState({ module, tableName, state });
+      const { data, filteredData, stats } = extractCurrentTableDataFromState({
+        module,
+        tableName,
+        state,
+      });
 
-      let filteredRow = filteredData[rowIndex]
+      let filteredRow = filteredData[rowIndex];
       let row = data[filteredRow.rowNumber];
-      
+
       row.status[FS.DELETED] = true;
       filteredRow.status = row.status;
-      
+
       [FS.ERROR, FS.VALID, FS.WARN].forEach((errState) => {
         stats[errState] -= row.status[errState];
       });
@@ -396,13 +414,13 @@ export const BrowserTabularDataSlice = createSlice({
         payload: { tableName, rowIndex, module },
       } = action;
 
-      const { data, errorFilters,dataFilters, filteredData, stats } =
+      const { data, errorFilters, dataFilters, filteredData, stats } =
         extractCurrentTableDataFromState({ module, tableName, state });
-      let filteredRow = filteredData[rowIndex]
+      let filteredRow = filteredData[rowIndex];
       let row = data[filteredRow.rowNumber];
       delete row.status[FS.DELETED];
       filteredRow.status = row.status;
-      
+
       [FS.ERROR, FS.VALID, FS.WARN].forEach((errState) => {
         stats[errState] += row.status[errState];
       });
