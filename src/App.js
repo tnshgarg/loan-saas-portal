@@ -1,6 +1,6 @@
 import Amplify from "aws-amplify";
 import { useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 import Overview from "./components/dashboard/overview/Overview";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
@@ -25,6 +25,7 @@ import { EmployeeSalaryPayments } from "./components/dashboard/payouts/employeeS
 import { PayrollInfo } from "./components/dashboard/payouts/info/PayrollInfo";
 import { OneClickPayouts } from "./components/dashboard/payouts/oneClickPayouts/oneClickPayoutsUpload";
 import { SalaryUpload } from "./components/dashboard/payouts/salaryManagement/SalaryUpload";
+import { EmployerUnapproved } from "./components/employerUnapproved";
 import BaseLayout from "./layout/base";
 import { history } from "./utils/history";
 
@@ -78,6 +79,7 @@ const App = () => {
 
             <Route path="/ewa/info" element={<Disbursements />} />
 
+            <Route path="/unapproved" element={<EmployerUnapproved />} />
             <Route path="*" element={<Invalid />} />
           </Routes>
         </BaseLayout>
