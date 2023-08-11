@@ -17,8 +17,8 @@ import {
 import { CSVFileInput } from "../../atoms/forms/CSVFileInput";
 import { TemplateDownloadButton } from "../../atoms/forms/TemplateDownloadButton";
 import { Dashlet } from "../../molecules/dashlets/dashlet";
+import BrowserTable from "../browserTable";
 import { UploadHistoryPanel } from "./UploadHistoryPanel";
-import BrowserTable from "../browserTable"
 
 export const MAX_SIZE = 1024 * 1024 * 5;
 
@@ -31,6 +31,8 @@ const mapOnboardPropsToState = (state, ownProps) => {
     state?.["csvUploads"]?.[module]?.["activeFileName"] ?? "";
   return {
     employerId: state.auth.user?.attributes.sub || "",
+    isReadOnly:
+      state.auth.user?.attributes["custom:read_only"] === "true" || false,
     savedFileName,
   };
 };
@@ -46,6 +48,7 @@ function _CSVUploadDashlet({
   onToastDismiss,
   module,
   savedFileName,
+  isReadOnly,
 }) {
   const navigate = useNavigate();
   templateDownloadProps = templateDownloadProps ?? {};
@@ -243,6 +246,7 @@ function _CSVUploadDashlet({
               icon="add-to-folder"
               intent={csvUploadButtonIntent}
               onChange={handleChange}
+              isReadOnly={isReadOnly}
             />
             {file.object ? (
               <>
