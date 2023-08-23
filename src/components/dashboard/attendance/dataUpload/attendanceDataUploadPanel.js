@@ -39,7 +39,7 @@ const _AttendanceDataUploadPanel = ({ employerId }) => {
     setDate(updatedDate);
   };
   const dispatch = useDispatch();
-  const { data, error, isLoading } = useGetAttendanceQuery({
+  const { data, error, isFetching } = useGetAttendanceQuery({
     id: employerId,
     year: year,
     month: month,
@@ -52,7 +52,7 @@ const _AttendanceDataUploadPanel = ({ employerId }) => {
       title={"Attendance Data Upload"}
       label={"attendance_data_upload"}
       module={"attendance"}
-      templateDownloadProps={{ loading: isLoading, templateData }}
+      templateDownloadProps={{ loading: isFetching, templateData }}
       fields={HEADER_GROUPS}
       preProcessing={transformHeadersToFields}
       onToastDismiss={() => {
