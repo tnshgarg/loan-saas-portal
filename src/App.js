@@ -18,6 +18,7 @@ import {
 import { EmployeesPanel } from "./components/dashboard/employee/panel/EmployeesPanel";
 
 import { AttendanceDataUploadPanel } from "./components/dashboard/attendance/dataUpload/attendanceDataUploadPanel";
+import { AttendancePanel } from "./components/dashboard/attendance/info/attendancePanel";
 import { EmployeesBulkUpdatesPanel } from "./components/dashboard/employee/bulkUpdates/bulkUpdatesPanel";
 import { Onboard } from "./components/dashboard/employee/onboarding/Onboard";
 import { Disbursements } from "./components/dashboard/ewa/details";
@@ -90,6 +91,7 @@ const App = () => {
               path="/attendance/data-upload"
               element={<AttendanceDataUploadPanel />}
             />
+            <Route path="/attendance/info" element={<AttendancePanel />} />
 
             <Route path="/unapproved" element={<EmployerUnapproved />} />
             <Route path="*" element={<Invalid />} />

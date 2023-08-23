@@ -148,26 +148,33 @@ export const FIELD_MAP = FIELDS.reduce((map, column) => {
 /**
  * HEADER_GROUPS is a react-table feature, which allows creating of column groups
  */
-export const HEADER_GROUPS = FIELDS.reduce((groups, column) => {
-  if (column.group === FG.PERSISTENT) {
-    groups.push({ ...column, Header: column.header, accessor: column.field });
+export const getHeaderGroups = (tableFields, shouldTrimHeaders = false) => {
+  return tableFields.reduce((groups, column) => {
+    const columnHeader = shouldTrimHeaders
+      ? column.header.replace(REQUIRED_SUFFIX, "").trim()
+      : column.header;
+    if (column.group === FG.PERSISTENT) {
+      groups.push({ ...column, Header: columnHeader, accessor: column.field });
+      return groups;
+    }
+    let header_group = groups.find((group) => group.Header === column.group);
+    if (!header_group) {
+      header_group = {
+        Header: column.group,
+        columns: [],
+      };
+      groups.push(header_group);
+    }
+    header_group.columns.push({
+      ...column,
+      Header: columnHeader,
+      accessor: column.field,
+    });
     return groups;
-  }
-  let header_group = groups.find((group) => group.Header === column.group);
-  if (!header_group) {
-    header_group = {
-      Header: column.group,
-      columns: [],
-    };
-    groups.push(header_group);
-  }
-  header_group.columns.push({
-    ...column,
-    Header: column.header,
-    accessor: column.field,
-  });
-  return groups;
-}, []);
+  }, []);
+};
+
+export const HEADER_GROUPS = getHeaderGroups(FIELDS);
 
 export const HEADER_LIST = FIELDS.map((column) => column.header);
 
