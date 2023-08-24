@@ -2,7 +2,7 @@ import { useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import { CSVUploadDashlet } from "../../../../atomic/organisms/csvUploads/CSVUploadDashlet";
 import {
-  attendanceApi,
+  // attendanceApi,
   useGetAttendanceQuery,
 } from "../../../../store/slices/apiSlices/employer/attendanceApiSlice";
 import styles from "../../employee/styles/onboard.module.css";
@@ -59,9 +59,9 @@ const _AttendanceDataUploadPanel = ({ employerId }) => {
       templateDownloadProps={{ loading: isFetching, templateData }}
       fields={HEADER_GROUPS}
       preProcessing={preProcessing}
-      onToastDismiss={() => {
-        dispatch(attendanceApi.util.invalidateTags(["Attendance"]));
-      }}
+      // onToastDismiss={() => {
+      //   dispatch(attendanceApi.util.invalidateTags(["Attendance"]));
+      // }}
       dateDropDown={{ exists: true, onChange: dateChanged }}
     ></CSVUploadDashlet>
   );
