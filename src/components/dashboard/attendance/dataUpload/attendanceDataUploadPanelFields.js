@@ -1,3 +1,6 @@
+import { Intent } from "@blueprintjs/core";
+import { AppToaster } from "../../../../contexts/ToastContext";
+import { DATE_COLUMNS_INCORRECT } from "../../../../utils/messageStrings";
 import {
   monthValidation,
   noValidation,
@@ -178,18 +181,71 @@ export const HEADER_GROUPS = getHeaderGroups(FIELDS);
 
 export const HEADER_LIST = FIELDS.map((column) => column.header);
 
-export function transformHeadersToFields(list) {
+export function transformHeadersToFields(list, year, month) {
   console.log({ transformHeadersToFields: true, list });
+
+  if (list.length) {
+    const firstRow = list[0];
+    const areDateColumnsValid = Object.entries(firstRow).reduce(
+      (currentStatus, [column, value]) => {
+        const columnSplit = column.split("/");
+        const columnMonth =
+          columnSplit.length > 1 ? parseInt(columnSplit[1]) : null;
+
+        if (columnMonth) {
+          return currentStatus && columnMonth === month;
+        }
+        return currentStatus;
+      },
+      true
+    );
+    if (!areDateColumnsValid) {
+      AppToaster.clear();
+      AppToaster.show({
+        intent: Intent.DANGER,
+        message: DATE_COLUMNS_INCORRECT,
+      });
+      return [];
+    }
+  }
+
   return list.map((item) => {
-    return Object.entries(HEADERS_MAP).reduce(
+    const processedRow = Object.entries(HEADERS_MAP).reduce(
       (transformedObject, [header, column]) => {
         const trimmedHeader = header.replace(REQUIRED_SUFFIX, "").trim();
+        const headerToNum = parseInt(header);
+        const dateHeader = headerToNum ? `${headerToNum}/${month}` : "";
         console.log({ header, column, item });
         transformedObject[column.field] =
-          item[header] ?? item[trimmedHeader] ?? "";
+          item[header] ?? item[trimmedHeader] ?? item[dateHeader] ?? "";
         return transformedObject;
       },
       {}
     );
+    processedRow.year = year;
+    processedRow.month = month;
+    return processedRow;
   });
+}
+
+export function buildTemplate(employeesData, month, defaultValues = {}) {
+  const allowedFields = FIELDS.filter(
+    (column) => !["year", "month"].includes(column.field)
+  );
+  const headers = allowedFields.map((column) => {
+    const headerToNum = parseInt(column.header);
+    if (headerToNum) {
+      const dateHeader = `${headerToNum}/${month}`;
+      return dateHeader;
+    }
+    return column.header;
+  });
+  const rows = employeesData.map((employee) =>
+    allowedFields.map((column) =>
+      column.prefetch && employee[column.field]
+        ? employee[column.field].toString()
+        : defaultValues[column.field] ?? ""
+    )
+  );
+  return [headers, ...rows];
 }

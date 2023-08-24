@@ -6,10 +6,9 @@ import {
   useGetAttendanceQuery,
 } from "../../../../store/slices/apiSlices/employer/attendanceApiSlice";
 import styles from "../../employee/styles/onboard.module.css";
-import { buildTemplate } from "../../payouts/util";
 import {
-  FIELDS,
   HEADER_GROUPS,
+  buildTemplate,
   transformHeadersToFields,
 } from "./attendanceDataUploadPanelFields";
 
@@ -46,7 +45,12 @@ const _AttendanceDataUploadPanel = ({ employerId }) => {
   });
   if (error) console.error(error);
   const employeesAttendanceData = data?.body ?? [];
-  const templateData = buildTemplate(FIELDS, employeesAttendanceData);
+  const templateData = buildTemplate(employeesAttendanceData, month);
+
+  const preProcessing = (data) => {
+    return transformHeadersToFields(data, year, month);
+  };
+
   return (
     <CSVUploadDashlet
       title={"Attendance Data Upload"}
@@ -54,7 +58,7 @@ const _AttendanceDataUploadPanel = ({ employerId }) => {
       module={"attendance"}
       templateDownloadProps={{ loading: isFetching, templateData }}
       fields={HEADER_GROUPS}
-      preProcessing={transformHeadersToFields}
+      preProcessing={preProcessing}
       onToastDismiss={() => {
         dispatch(attendanceApi.util.invalidateTags(["Attendance"]));
       }}
