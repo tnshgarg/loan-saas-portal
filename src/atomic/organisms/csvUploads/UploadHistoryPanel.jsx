@@ -34,7 +34,8 @@ const DownloadFileCell = ({ value }) => (
 const TABLE_COLUMNS = [
   { Header: "File Name", accessor: "inputFileName" },
   { Header: "Upload Time", accessor: "uploadedAt" },
-  { Header: "Status", accessor: "inputFileStatus" },
+  { Header: "File Status", accessor: "fileStatus" },
+  { Header: "Error Message", accessor: "errorMessage" },
   { Header: "Download Input File", accessor: "inputFileUrl" },
   { Header: "Download Output File", accessor: "outputFileUrl" },
 ];
@@ -90,7 +91,7 @@ const UploadHistoryTable = ({ employerId, module, handlers }) => {
         tableName={stateTableName}
         disableEdits={true}
         customCells={{
-          inputFileStatus: StatusCell,
+          fileStatus: StatusCell,
           inputFileUrl: DownloadFileCell,
           outputFileUrl: DownloadFileCell,
         }}
