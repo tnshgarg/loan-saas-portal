@@ -7,18 +7,18 @@ import {
   ProgressBar,
   Tag,
 } from "@blueprintjs/core";
+import { Spacer } from "../../../../atomic/atoms/layouts/alignment";
+import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 import BrowserTable from "../../../../atomic/organisms/browserTable";
-import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts";
-import { ONE_CLICK_HEADERS } from "../employeeSalary/employeeSalaryFields";
 import {
   useFetchInstrumentMutation,
   useProcessPayoutsMutation,
   useUpdatePayoutsMutation,
 } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
-import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
-import { Spacer } from "../../../../atomic/atoms/layouts/alignment";
-import { createPayoutHash, SavePayoutButton } from "./SavePayoutButton";
+import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts";
+import { ONE_CLICK_HEADERS } from "../employeeSalary/employeeSalaryFields";
 import { ProcessPayoutsButton } from "./ProcessPayoutsButton";
+import { SavePayoutButton, createPayoutHash } from "./SavePayoutButton";
 import { VirtualAccountInfo } from "./VirtualAccountInfo";
 
 export function PendingPayoutsTable({
@@ -41,10 +41,12 @@ export function PendingPayoutsTable({
     console.log(pendingPayouts);
     dispatch(
       initBrowserTable({
-        data: pendingPayouts.map((item) => {  
+        data: pendingPayouts.map((item) => {
           const mutableItem = Object.assign({}, item);
           mutableItem.payrollStatus = mutableItem.status;
           delete mutableItem.status;
+          delete mutableItem.message;
+          delete mutableItem.errorReason;
           mutableItem.status = {};
           mutableItem.initialHash = createPayoutHash(item);
           return mutableItem;

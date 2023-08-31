@@ -1,9 +1,10 @@
-import { Button, Intent } from "@blueprintjs/core";
-import { Classes, Popover2 } from "@blueprintjs/popover2";
+import { Button, Classes, Dialog, Intent } from "@blueprintjs/core";
+import { useState } from "react";
 import { connect } from "react-redux";
 import { Spacer } from "../../../../atomic/atoms/layouts/alignment";
 import { CSVUploadsStateMapper } from "../../../../atomic/organisms/browserTable";
 import { FS } from "../../employee/onboarding/validations";
+import { getTotalPayoutsAmount } from "../util";
 function _ProcessPayoutsButton({
   data,
   employerId,
@@ -14,7 +15,17 @@ function _ProcessPayoutsButton({
   disabled,
   updateHook: processPayouts,
 }) {
-  const onClick = () => {
+  const [overrideDialog, setOverrideDialog] = useState(false);
+
+  const openOverrideDialog = () => {
+    setOverrideDialog(true);
+  };
+
+  const closeOverrideDialog = () => {
+    setOverrideDialog(false);
+  };
+
+  const onClickConfirm = () => {
     const payload = {
       employerId,
       year,
@@ -27,15 +38,18 @@ function _ProcessPayoutsButton({
     }
     payload["provider"] = provider;
     processPayouts(payload);
+    closeOverrideDialog();
   };
 
   const getPayoutsSummary = () => {
+    let totalPayouts = data.length;
+    let netAmount = getTotalPayoutsAmount(data);
+
     const selected = data.filter((item) => item.status[FS.SELECTED]);
-    const totalPayouts = selected.length;
-    const netAmount = selected.reduce((totalPayoutsAmount, currentPayout) => {
-      const currentPayoutAmount = parseInt(currentPayout.amount);
-      return totalPayoutsAmount + currentPayoutAmount;
-    }, 0);
+    if (selected.length) {
+      totalPayouts = selected.length;
+      netAmount = getTotalPayoutsAmount(selected);
+    }
 
     return (
       <>
@@ -47,40 +61,40 @@ function _ProcessPayoutsButton({
 
   return (
     <>
-      <Popover2
-        interactionKind="click"
-        popoverClassName={Classes.POPOVER2_CONTENT_SIZING}
-        placement="bottom"
-        content={
-          <div>
-            <h3>Payouts Summary</h3>
-            {getPayoutsSummary()}
+      <Button
+        disabled={loading || disabled}
+        loading={loading}
+        icon={"bank-account"}
+        intent={Intent.PRIMARY}
+        onClick={openOverrideDialog}
+      >
+        Process Payouts
+      </Button>
+
+      <Dialog
+        isOpen={overrideDialog}
+        onClose={closeOverrideDialog}
+        title={`Payouts Summary`}
+        icon={"error"}
+        intent={Intent.DANGER}
+      >
+        <div className={Classes.DIALOG_BODY}>{getPayoutsSummary()}</div>
+        <div className={Classes.DIALOG_FOOTER}>
+          <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button
-              className={Classes.POPOVER2_DISMISS}
               text="Cancel"
               intent={Intent.DANGER}
+              onClick={closeOverrideDialog}
             />
             <Spacer />
             <Button
-              className={Classes.POPOVER2_DISMISS}
               text="Confirm"
               intent={Intent.SUCCESS}
-              onClick={onClick}
+              onClick={onClickConfirm}
             />
           </div>
-        }
-        renderTarget={({ isOpen, ref, ...targetProps }) => (
-          <Button
-            {...targetProps}
-            elementRef={ref}
-            disabled={loading || disabled}
-            loading={loading}
-            icon={"bank-account"}
-            intent={Intent.PRIMARY}
-            text="Process Payouts"
-          />
-        )}
-      />
+        </div>
+      </Dialog>
     </>
   );
 }

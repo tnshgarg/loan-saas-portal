@@ -42,3 +42,10 @@ export function buildHeaderMap(fields) {
     return map;
   }, {});
 }
+
+export function getTotalPayoutsAmount(data) {
+  return data.reduce((totalPayoutsAmount, currentPayout) => {
+    const currentPayoutAmount = parseInt(currentPayout.amount);
+    return totalPayoutsAmount + currentPayoutAmount;
+  }, 0);
+}
