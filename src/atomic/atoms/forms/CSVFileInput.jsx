@@ -1,7 +1,9 @@
 import { Button, Intent } from "@blueprintjs/core";
 import { useRef } from "react";
+import { AppToaster } from "../../../contexts/ToastContext";
+import { USER_IS_READ_ONLY_ERROR } from "../../../utils/messageStrings";
 
-export function CSVFileInput({ icon, intent, onChange, onInput }) {
+export function CSVFileInput({ icon, intent, onChange, onInput, isReadOnly }) {
   // Create a reference to the hidden file input element
   const hiddenFileInput = useRef(null);
 
@@ -10,7 +12,14 @@ export function CSVFileInput({ icon, intent, onChange, onInput }) {
       <Button
         icon={icon}
         intent={intent}
-        onClick={(e) => hiddenFileInput.current.click(e)}
+        onClick={(e) =>
+          isReadOnly
+            ? AppToaster.show({
+                intent: Intent.DANGER,
+                message: USER_IS_READ_ONLY_ERROR,
+              })
+            : hiddenFileInput.current.click(e)
+        }
       >
         {intent === Intent.PRIMARY ? "Upload File" : "Upload Another File"}
       </Button>

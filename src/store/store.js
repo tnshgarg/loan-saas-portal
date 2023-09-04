@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { rtkQueryErrorLogger } from "./customMiddlewares/errorLogger";
+import { readOnlyAccessLogger } from "./customMiddlewares/readOnlyAccessLogger";
 import { employeeDetails } from "./slices/apiSlices/employee/employeeDetailsApiSlice";
 import { allEmployeesEmploymentDetails } from "./slices/apiSlices/employees/employmentApiSlice";
 import { allEmployeesPanelDetails } from "./slices/apiSlices/employees/panelApiSlice";
@@ -47,6 +48,7 @@ export const store = configureStore({
       },
     })
       .concat(rtkQueryErrorLogger)
+      .concat(readOnlyAccessLogger)
       .concat(employerEWAApi.middleware)
       .concat(employerAddressApi.middleware)
       .concat(employerPayrollApi.middleware)
