@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { read, utils } from "xlsx";
 import { FS } from "../../../components/dashboard/employee/onboarding/validations";
 import { VerifyAndUploadEmployees } from "../../../components/dashboard/employee/onboarding/verifyAndUploadEmployees";
+import { DateDropdown } from "../../../components/dashboard/payouts/info/DateDropdown";
 import { useToastContext } from "../../../contexts/ToastContext";
 import {
   clearActiveFileName,
@@ -16,6 +17,7 @@ import {
 } from "../../../store/slices/browserTableSlice.ts";
 import { CSVFileInput } from "../../atoms/forms/CSVFileInput";
 import { TemplateDownloadButton } from "../../atoms/forms/TemplateDownloadButton";
+import { Spacer } from "../../atoms/layouts/alignment";
 import { Dashlet } from "../../molecules/dashlets/dashlet";
 import BrowserTable from "../browserTable";
 import { UploadHistoryPanel } from "./UploadHistoryPanel";
@@ -48,6 +50,7 @@ function _CSVUploadDashlet({
   onToastDismiss,
   module,
   savedFileName,
+  dateDropDown,
   isReadOnly,
 }) {
   const navigate = useNavigate();
@@ -236,6 +239,13 @@ function _CSVUploadDashlet({
         title={title}
         actions={
           <>
+            {dateDropDown?.exists && (
+              <>
+                <DateDropdown onChange={dateDropDown.onChange} />
+                <Spacer />
+              </>
+            )}
+
             <TemplateDownloadButton
               fileName={title}
               templateData={templateData}

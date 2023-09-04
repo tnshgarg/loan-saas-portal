@@ -142,9 +142,14 @@ const NAV_MENU = [
     route: "/attendance",
     children: [
       {
-        name: "Data Import",
+        name: "Data Upload",
         icon: <MenuIcon icon={faFileArrowUp} />,
-        route: "/import",
+        route: "/data-upload",
+      },
+      {
+        name: "View Attendance Data",
+        icon: <MenuIcon icon={faRectangleList} />,
+        route: "/info",
       },
     ],
   },

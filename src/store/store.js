@@ -6,6 +6,7 @@ import { employeeDetails } from "./slices/apiSlices/employee/employeeDetailsApiS
 import { allEmployeesEmploymentDetails } from "./slices/apiSlices/employees/employmentApiSlice";
 import { allEmployeesPanelDetails } from "./slices/apiSlices/employees/panelApiSlice";
 import { employerAddressApi } from "./slices/apiSlices/employer/addressApiSlice";
+import { attendanceApi } from "./slices/apiSlices/employer/attendanceApiSlice";
 import { employerCredentialsApi } from "./slices/apiSlices/employer/credentialsApiSlice";
 import { employerEWAApi } from "./slices/apiSlices/employer/ewaApiSlice";
 import { employerMetricsApi } from "./slices/apiSlices/employer/metricsApiSlice";
@@ -38,6 +39,7 @@ export const store = configureStore({
     [employerMetricsApi.reducerPath]: employerMetricsApi.reducer,
     [uploadedFiles.reducerPath]: uploadedFiles.reducer,
     [payslipsApi.reducerPath]: payslipsApi.reducer,
+    [attendanceApi.reducerPath]: attendanceApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -59,7 +61,8 @@ export const store = configureStore({
       .concat(employeeDetails.middleware)
       .concat(employerMetricsApi.middleware)
       .concat(uploadedFiles.middleware)
-      .concat(payslipsApi.middleware),
+      .concat(payslipsApi.middleware)
+      .concat(attendanceApi.middleware),
 });
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors

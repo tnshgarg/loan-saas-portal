@@ -1,4 +1,4 @@
-import {Amplify} from "aws-amplify";
+import { Amplify } from "aws-amplify";
 import { useEffect } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
@@ -17,7 +17,8 @@ import {
 
 import { EmployeesPanel } from "./components/dashboard/employee/panel/EmployeesPanel";
 
-import { AttendanceUpload } from "./components/dashboard/attendance/attendanceUpload";
+import { AttendanceDataUploadPanel } from "./components/dashboard/attendance/dataUpload/attendanceDataUploadPanel";
+import { AttendancePanel } from "./components/dashboard/attendance/info/attendancePanel";
 import { EmployeesBulkUpdatesPanel } from "./components/dashboard/employee/bulkUpdates/bulkUpdatesPanel";
 import { Onboard } from "./components/dashboard/employee/onboarding/Onboard";
 import { Disbursements } from "./components/dashboard/ewa/details";
@@ -25,9 +26,9 @@ import { EmployeeSalaryPayments } from "./components/dashboard/payouts/employeeS
 import { PayrollInfo } from "./components/dashboard/payouts/info/PayrollInfo";
 import { OneClickPayouts } from "./components/dashboard/payouts/oneClickPayouts/oneClickPayoutsUpload";
 import { SalaryUpload } from "./components/dashboard/payouts/salaryManagement/SalaryUpload";
-import { EmployerUnapproved } from "./components/employerUnapproved";
 import { PayslipsDataUploadPanel } from "./components/dashboard/payslips/dataUpload/payslipsDataUploadPanel";
 import { PayslipsPanel } from "./components/dashboard/payslips/info/payslipsPanel";
+import { EmployerUnapproved } from "./components/employerUnapproved";
 import BaseLayout from "./layout/base";
 import { history } from "./utils/history";
 
@@ -66,7 +67,6 @@ const App = () => {
               path="/employees/bulk-updates"
               element={<EmployeesBulkUpdatesPanel />}
             />
-            <Route path="/attendance/import" element={<AttendanceUpload />} />
             <Route
               path="/payroll/one-click-payout"
               element={<OneClickPayouts />}
@@ -86,6 +86,12 @@ const App = () => {
             <Route path="/payslips/info" element={<PayslipsPanel />} />
 
             <Route path="/ewa/info" element={<Disbursements />} />
+
+            <Route
+              path="/attendance/data-upload"
+              element={<AttendanceDataUploadPanel />}
+            />
+            <Route path="/attendance/info" element={<AttendancePanel />} />
 
             <Route path="/unapproved" element={<EmployerUnapproved />} />
             <Route path="*" element={<Invalid />} />
