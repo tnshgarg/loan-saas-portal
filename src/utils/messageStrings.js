@@ -7,3 +7,4 @@ export const DOJ_CHANGED_BUT_DOE_ALREADY_PRESENT_ERROR =
 export const EMPLOYER_NOT_APPROVED_ERROR = "Employer not approved";
 export const DATE_COLUMNS_INCORRECT =
   "Daywise attendance columns are incorrect for current month, please download template CSV";
+export const USER_IS_READ_ONLY_ERROR = "Read Only Access allowed";

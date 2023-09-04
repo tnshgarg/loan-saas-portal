@@ -33,6 +33,8 @@ const mapOnboardPropsToState = (state, ownProps) => {
     state?.["csvUploads"]?.[module]?.["activeFileName"] ?? "";
   return {
     employerId: state.auth.user?.attributes.sub || "",
+    isReadOnly:
+      state.auth.user?.attributes["custom:read_only"] === "true" || false,
     savedFileName,
   };
 };
@@ -49,6 +51,7 @@ function _CSVUploadDashlet({
   module,
   savedFileName,
   dateDropDown,
+  isReadOnly,
 }) {
   const navigate = useNavigate();
   templateDownloadProps = templateDownloadProps ?? {};
@@ -253,6 +256,7 @@ function _CSVUploadDashlet({
               icon="add-to-folder"
               intent={csvUploadButtonIntent}
               onChange={handleChange}
+              isReadOnly={isReadOnly}
             />
             {file.object ? (
               <>
