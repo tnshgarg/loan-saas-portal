@@ -48,7 +48,7 @@ export const Login = () => {
     dispatch(login(username, password))
       .then(() => {
         setSuccessful(true);
-        navigate("/employer/register-form");
+        navigate("dashboard/employer/register-form");
       })
       .catch(() => {
         setSuccessful(false);

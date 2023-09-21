@@ -20,7 +20,7 @@ const RegisterFormContent = () => {
   useEffect(() => {
     console.log(auth);
     if (auth === undefined || auth === {} || !auth.isLoggedIn) {
-      navigate("/login");
+      navigate("auth/login", { replace: true });
     }
   }, [auth, navigate]);
 

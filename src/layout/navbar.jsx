@@ -25,7 +25,7 @@ function _UserMenuItem(props) {
     return (
       <Button
         onClick={() => {
-          navigate("/login", { replace: true });
+          navigate("auth/login", { replace: true });
         }}
       >
         {" "}

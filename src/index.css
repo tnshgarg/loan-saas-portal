@@ -6,33 +6,8 @@
 @import "~@blueprintjs/select/lib/css/blueprint-select.css";
 @import "~@blueprintjs/datetime/lib/css/blueprint-datetime.css";
 @import "~@blueprintjs/datetime2/lib/css/blueprint-datetime2.css";
-@import '~react-perfect-scrollbar/dist/css/styles.css';
+@import "~react-perfect-scrollbar/dist/css/styles.css";
 
-
-
-*:focus {
-    outline: none;
-}
-
-.AppToaster .bp4-toast {
-    font-size: 1.3em;
-    padding: 0.3em;
-}
-
-#root {
-    margin: 0;
-    padding: 0;
-}
-
-.hoverBackground:hover {
-    background-color: #EDEFF2;
-    border-radius: 0.4em;
-}
-
-.filterBottomMenu {
-    text-align: right;
-}
-
-.filterBottomMenu  li {
-    display: inline;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

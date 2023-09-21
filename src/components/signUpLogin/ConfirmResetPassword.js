@@ -45,7 +45,7 @@ export const ConfirmResetPassword = () => {
     dispatch(confirmForgotPassword(username, code, password))
       .then(() => {
         setSuccessful(true);
-        navigate("/login");
+        navigate("auth/login", { replace: true });
       })
       .catch(() => {
         setSuccessful(false);

@@ -8,7 +8,7 @@ import {
   Tag,
 } from "@blueprintjs/core";
 import { isObject } from "lodash";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
@@ -26,6 +26,55 @@ import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts"
 import { groupByKeyCount } from "../../../../utils/aggregates";
 import { EmployeeModal } from "../employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
+
+import { Typography } from "@material-tailwind/react";
+import StatisticsCard from "../../../../widgets/cards/statistics-card";
+import {
+  BanknotesIcon,
+  UserGroupIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
+
+const statisticsCardsData = [
+  {
+    icon: UserGroupIcon,
+    span: 1,
+    title: "Onboarding Status",
+    data: [{ label: "All Employees", value: 345, color: "primary" }],
+    footer: {
+      color: "text-green-500",
+      value: "345",
+      label: "Active Employees:",
+    },
+  },
+  {
+    icon: UserIcon,
+    span: 1,
+    title: "Employment Status",
+    data: [{ label: "Enrolled Employees", value: 45, color: "primary" }],
+    footer: {
+      color: "text-green-500",
+      value: "45",
+      label: "KYC Done:",
+    },
+  },
+  {
+    icon: UserIcon,
+    span: 2,
+    title: "Pending Employees",
+    data: [
+      { label: "Aadhaar Pending", value: 34, color: "warning" },
+      { label: "Pan Pending", value: 29, color: "warning" },
+      { label: "Bank Pending", value: 24, color: "warning" },
+    ],
+    footer: {
+      color: "text-green-500",
+      value: "",
+      label:
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+    },
+  },
+];
 
 const checkOverallStatus = (aadhaar, pan, bank) => {
   return aadhaar?.verifyStatus === "SUCCESS" &&
@@ -282,12 +331,14 @@ const TabularTabsComponent = () => {
 
   useEffect(() => {
     if (auth === undefined || auth === {} || !auth.isLoggedIn) {
-      navigate("/login");
+      navigate("auth/login", { replace: true });
     } else {
       // setUserName(user.signInUserSession.idToken.payload.name);
       // setUserName(auth.user.attributes.name);
     }
   }, [auth, navigate]);
+
+  console.log({ metricsData });
 
   const handlers = {};
   const createHandler = (e) => {
@@ -296,12 +347,31 @@ const TabularTabsComponent = () => {
     };
   };
   return (
-    <>
-      <EmployerMetrics
+    <div className="mt-4">
+      <div className="mb-6 grid gap-y-10 gap-x-4 md:grid-cols-2 xl:grid-cols-4">
+        {statisticsCardsData.map(({ icon, title, footer, span, ...rest }) => (
+          <StatisticsCard
+            span={span}
+            key={title}
+            {...rest}
+            title={title}
+            icon={React.createElement(icon, {
+              className: "w-6 h-6 text-gray",
+            })}
+            footer={
+              <Typography className="text-md text-black">
+                {footer.label}
+                <strong className={footer.color}> {footer.value}</strong>
+              </Typography>
+            }
+          />
+        ))}
+      </div>
+      {/* <EmployerMetrics
         data={metricsData}
         primaryKey={"SUCCESS"}
         config={metricsConfig}
-      />
+      /> */}
       <Dashlet
         icon={"people"}
         title={"Employee Records"}
@@ -323,7 +393,7 @@ const TabularTabsComponent = () => {
       >
         <TabularViewTab handlers={handlers} />
       </Dashlet>
-    </>
+    </div>
   );
 };
 

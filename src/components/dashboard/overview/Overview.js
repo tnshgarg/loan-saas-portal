@@ -10,9 +10,9 @@ const ProfileContent = () => {
   useEffect(() => {
     console.log(auth);
     if (auth === undefined || auth === {}) {
-      navigate("/login");
+      navigate("auth/login", { replace: true });
     } else if (!auth.isLoggedIn) {
-      navigate("/login");
+      navigate("auth/login", { replace: true });
     } else {
       // setUserName(user.signInUserSession.idToken.payload.name);
       setUserName(auth.user.attributes.name);

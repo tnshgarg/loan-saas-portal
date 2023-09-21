@@ -45,7 +45,7 @@ export const ConfirmSignUp = () => {
     dispatch(confirmSignUp(username, code))
       .then(() => {
         setSuccessful(true);
-        navigate("/login");
+        navigate("auth/login", { replace: true });
       })
       .catch(() => {
         setSuccessful(false);

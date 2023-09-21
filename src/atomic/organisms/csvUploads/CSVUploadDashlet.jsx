@@ -59,7 +59,7 @@ function _CSVUploadDashlet({
 
   useEffect(() => {
     if (employerId === "") {
-      navigate("/login");
+      navigate("auth/login", { replace: true });
     }
   }, [employerId, navigate]);
 
