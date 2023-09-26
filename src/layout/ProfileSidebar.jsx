@@ -46,7 +46,7 @@ function formatNumber(number, decPlaces) {
   return number;
 }
 
-export function Configurator() {
+export function ProfileSidebar() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { openConfigurator, sidenavColor, sidenavType, fixedNavbar } =
     controller;
@@ -203,6 +203,4 @@ export function Configurator() {
   );
 }
 
-Configurator.displayName = "/src/widgets/layout/configurator.jsx";
-
-export default Configurator;
+export default ProfileSidebar;

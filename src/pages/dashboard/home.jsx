@@ -15,6 +15,7 @@ import {
   List,
   ListItem,
   ListItemPrefix,
+  ListItemSuffix,
 } from "@material-tailwind/react";
 import {
   ClockIcon,
@@ -24,26 +25,27 @@ import {
   UserIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import StatisticsCard from "../../widgets/cards/statistics-card";
-// import  StatisticsChart  from "../../widgets/charts/st";
+import StatisticsCard from "../../newComponents/cards/StatisticsCard";
+// import  StatisticsChart  from "../../newComponents/charts/st";
 import {
   // statisticsChartsData,
   projectsTableData,
   ordersOverviewData,
 } from "../../data";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
-import BannerCard from "../../widgets/cards/banner-card";
-import WithdrawalsCard from "../../widgets/cards/withdrawals-card";
-import VideoCard from "../../widgets/cards/video-card";
+import BannerCard from "../../newComponents/cards/banner-card";
+import WithdrawalsCard from "../../newComponents/cards/withdrawals-card";
+import VideoCard from "../../newComponents/cards/video-card";
+import DialogWrapper from "../../newComponents/DialogWrapper";
 
 const statisticsCardsData = [
   {
     icon: UserGroupIcon,
-    span: 2,
+    className: "col-span-2",
     title: "On Demand Withdrawal",
     data: [
-      { label: "Total Amount", value: 45700, color: "black" },
-      { label: "Employees", value: 567, color: "black" },
+      { label: "Total Amount", value: 45700, className: "text-black" },
+      { label: "Employees", value: 567, className: "text-black" },
     ],
     footer: {
       color: "text-green-500",
@@ -53,11 +55,11 @@ const statisticsCardsData = [
   },
   {
     icon: UserIcon,
-    span: 2,
+    className: "col-span-2",
     title: "Company Name",
     data: [
-      { label: "Completed Onboarding", value: 11345, color: "black" },
-      { label: "Pending KYC", value: 5678, color: "black" },
+      { label: "Completed Onboarding", value: 11345, className: "text-black" },
+      { label: "Pending KYC", value: 5678, className: "text-black" },
     ],
     footer: {
       color: "text-green-500",
@@ -73,6 +75,7 @@ export function Home() {
       <div className="mb-6 grid gap-y-10 gap-x-6">
         <BannerCard />
       </div>
+      <DialogWrapper />
       <div className="mb-6 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-6">
         {statisticsCardsData.map(({ icon, title, footer, ...rest }) => (
           <StatisticsCard
@@ -90,8 +93,10 @@ export function Home() {
             }
           />
         ))}
+
         {/* <VideoCard /> */}
       </div>
+
       <div className="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-6">
         {/* <WithdrawalsCard /> */}
         <Card className="overflow-hidden shadow-none xl:col-span-2">
@@ -99,98 +104,39 @@ export function Home() {
             floated={false}
             shadow={false}
             color="transparent"
-            className="m-0 flex items-center justify-between p-6"
+            className="m-0 flex items-center justify-between p-6 flex flex-col"
           >
-            <div>
-              <Typography variant="h6" color="blue-gray" className="mb-1">
+            <div className="flex flex-row w-full jusitfy-between items-center pt-0">
+              <Typography className="mb-4 text-md">
                 Recent Withdrawals
               </Typography>
             </div>
-            <Menu placement="left-start">
-              <MenuHandler>
-                <>
-                  {/* <Typography variant="h6" color="blue-gray" className="mb-1">
-                    View All
-                  </Typography> */}
-                  <IconButton size="sm" variant="text" color="blue-gray">
-                    <ChevronRightIcon
-                      strokeWidth={3}
-                      fill="currenColor"
-                      className="h-6 w-6"
-                    />
-                  </IconButton>
-                </>
-              </MenuHandler>
-              <MenuList>
-                <MenuItem>Action</MenuItem>
-                <MenuItem>Another Action</MenuItem>
-                <MenuItem>Something else here</MenuItem>
-              </MenuList>
-            </Menu>
-          </CardHeader>
-          {/* <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-            <List>
-              <ListItem>
+            {[1, 2, 3, 4].map((item, index) => (
+              <ListItem className="bg-lightgray_01 mt-2">
                 <ListItemPrefix>
                   <Avatar
+                    size="sm"
                     variant="circular"
                     alt="candice"
-                    src="/img/face-1.jpg"
+                    src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=2000"
                   />
                 </ListItemPrefix>
                 <div>
-                  <Typography variant="h6" color="blue-gray">
+                  <Typography className="mb-1 text-md text-black font-medium">
                     Tania Andrew
                   </Typography>
-                  <Typography
-                    variant="small"
-                    color="gray"
-                    className="font-normal"
-                  >
-                    Software Engineer @ Material Tailwind
+                  <Typography className="text-xs text-gray">
+                    14 Jan,2023
                   </Typography>
                 </div>
+                <ListItemSuffix>
+                  <Typography className="mb-1 text-md text-black font-bold">
+                    5000
+                  </Typography>
+                </ListItemSuffix>
               </ListItem>
-              <ListItem>
-                <ListItemPrefix>
-                  <Avatar
-                    variant="circular"
-                    alt="alexander"
-                    src="/img/face-2.jpg"
-                  />
-                </ListItemPrefix>
-                <div>
-                  <Typography variant="h6" color="blue-gray">
-                    Alexander
-                  </Typography>
-                  <Typography
-                    variant="small"
-                    color="gray"
-                    className="font-normal"
-                  >
-                    Backend Developer @ Material Tailwind
-                  </Typography>
-                </div>
-              </ListItem>
-              <ListItem>
-                <ListItemPrefix>
-                  <Avatar variant="circular" alt="emma" src="/img/face-3.jpg" />
-                </ListItemPrefix>
-                <div>
-                  <Typography variant="h6" color="blue-gray">
-                    Emma Willever
-                  </Typography>
-                  <Typography
-                    variant="small"
-                    color="gray"
-                    className="font-normal"
-                  >
-                    UI/UX Designer @ Material Tailwind
-                  </Typography>
-                </div>
-              </ListItem>
-            </List>
-          </CardBody> */}
+            ))}
+          </CardHeader>
         </Card>
         <Card className="overflow-hidden shadow-none xl:col-span-2">
           <CardHeader

@@ -11,6 +11,10 @@ import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts"
 import { getExcel } from "../../../../utils/excelHandling";
 import { DateDropdown } from "../../payouts/info/DateDropdown";
 import { ATTENDANCE_TABLE_FIELDS } from "./tableColumns";
+import { Option, Select, Typography } from "@material-tailwind/react";
+import PrimaryButton from "../../../../newComponents/PrimaryButton";
+import AttendanceTable from "../../../../newComponents/AttendanceTable";
+import TextInput from "../../../../newComponents/TextInput";
 
 function mapStateToProps(state) {
   return {
@@ -69,8 +73,8 @@ const _AttendancePanel = ({ employerId, dispatch }) => {
   console.log("mounting attendance panel", year, month, isLoading, isFetching);
 
   return (
-    <>
-      <Dashlet
+    <div className="mt-4">
+      {/* <Dashlet
         icon={<FontAwesomeIcon icon={faCalendarDays} />}
         title={"Attendance"}
         actions={
@@ -115,8 +119,36 @@ const _AttendancePanel = ({ employerId, dispatch }) => {
             />
           </>
         )}
-      </Dashlet>
-    </>
+      </Dashlet> */}
+      <div className="w-full flex-row flex items-center justify-between">
+        <div className="w-72">
+          <Select label="Select Date" className="rounded-md bg-white">
+            <Option>Jan 2023</Option>
+            <Option>Jan 2023</Option>
+            <Option>Jan 2023</Option>
+            <Option>Jan 2023</Option>
+            <Option>Jan 2023</Option>
+          </Select>
+        </div>
+        <div className="flex-row flex items-center justify-between">
+          <PrimaryButton title={"Upload attendance data"} color={"secondary"} />
+        </div>
+      </div>
+      <div className="w-full flex-row flex items-center justify-between">
+        <TextInput label="Search for an employee" />
+        <PrimaryButton
+          title={"Filter"}
+          color={"secondary"}
+          variant={"outlined"}
+        />
+        <PrimaryButton
+          title={"Download"}
+          color={"secondary"}
+          variant={"outlined"}
+        />
+      </div>
+      <AttendanceTable />
+    </div>
   );
 };
 export const AttendancePanel = connect(mapStateToProps)(_AttendancePanel);

@@ -187,22 +187,37 @@ export function DashboardNavbar() {
               </MenuItem>
             </MenuList>
           </Menu>
-          <IconButton
-            variant="text"
-            color="blue-gray"
-            onClick={() => setOpenConfigurator(dispatch, true)}
-          >
-            {/* <Avatar
+          <Menu>
+            <MenuHandler>
+              <Button
+                className="flex flex-row items-center shadow-none p-2"
+                // onClick={() => setOpenConfigurator(dispatch, true)}
+              >
+                {/* <Avatar
               src="https://www.pngarts.com/files/6/User-Avatar-in-Suit-PNG.png"
               alt="avatar"
               size="sm"
             /> */}
-            <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
-          </IconButton>
-
-          <Typography className="ml-2 font-bold text-black">
-            Guest User
-          </Typography>
+                <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
+                <Typography className="ml-2 font-bold text-black">
+                  Guest User
+                </Typography>
+              </Button>
+            </MenuHandler>
+            <MenuList className="w-max border-0">
+              <MenuItem className="flex items-center gap-3">
+                <div>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="mb-1 font-normal"
+                  >
+                    LOG OUT
+                  </Typography>
+                </div>
+              </MenuItem>
+            </MenuList>
+          </Menu>
         </div>
       </div>
     </Navbar>

@@ -11,6 +11,11 @@ import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts"
 import { getExcel } from "../../../../utils/excelHandling";
 import { DateDropdown } from "../../payouts/info/DateDropdown";
 import { PAYSLIPS_TABLE_FIELDS } from "./tableColumns";
+import PrimaryButton from "../../../../newComponents/PrimaryButton";
+import { Option, Select } from "@material-tailwind/react";
+import AttendanceTable from "../../../../newComponents/AttendanceTable";
+import TextInput from "../../../../newComponents/TextInput";
+import PayslipTable from "../../../../newComponents/PayslipTable.jsx";
 
 function mapStateToProps(state) {
   return {
@@ -69,8 +74,8 @@ const _PayslipsPanel = ({ employerId, dispatch }) => {
   console.log("mounting payslip panel", year, month, isLoading, isFetching);
 
   return (
-    <>
-      <Dashlet
+    <div className="mt-4">
+      {/* <Dashlet
         icon={<FontAwesomeIcon icon={faRectangleList} />}
         title={"Payslips"}
         actions={
@@ -113,8 +118,32 @@ const _PayslipsPanel = ({ employerId, dispatch }) => {
             />
           </>
         )}
-      </Dashlet>
-    </>
+      </Dashlet> */}
+
+      <div className="w-full flex-row flex items-center justify-between">
+        <div className="w-72">
+          <Select label="Select Date" className="rounded-md bg-white">
+            <Option>Jan 2023</Option>
+            <Option>Jan 2023</Option>
+            <Option>Jan 2023</Option>
+            <Option>Jan 2023</Option>
+            <Option>Jan 2023</Option>
+          </Select>
+        </div>
+        <div className="flex-row flex items-center justify-between">
+          <PrimaryButton title={"Send Salary Slip"} color="secondary" />
+        </div>
+      </div>
+      <div className="w-full flex-row flex items-center justify-between">
+        <TextInput label="Search for an employee" />
+        <PrimaryButton
+          title={"Filter"}
+          color="secondary"
+          variant={"outlined"}
+        />
+      </div>
+      <PayslipTable />
+    </div>
   );
 };
 export const PayslipsPanel = connect(mapStateToProps)(_PayslipsPanel);

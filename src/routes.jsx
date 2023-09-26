@@ -65,29 +65,8 @@
 
 // export default routes;
 
-import {
-  faAddressBook,
-  faBuildingColumns,
-  faCalculator,
-  faCalendarDays,
-  faChartLine,
-  faFileArrowUp,
-  faFileInvoice,
-  faFilePen,
-  faListCheck,
-  faMoneyBill,
-  faMoneyBill1Wave,
-  faMoneyBillWave,
-  faMoneyCheck,
-  faPaperPlane,
-  faReceipt,
-  faRectangleList,
-  faUsers,
-  faWallet,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Overview from "./components/dashboard/overview/Overview";
-import Home from "./pages/dashboard/home";
+import Home from "./pages/dashboard/Home";
 import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
 import {
   BuildingOfficeIcon,
@@ -104,6 +83,7 @@ import { Onboard } from "./components/dashboard/employee/onboarding/Onboard";
 import { AttendancePanel } from "./components/dashboard/attendance/info/attendancePanel";
 import { PayrollInfo } from "./components/dashboard/payouts/info/PayrollInfo";
 import { Disbursements } from "./components/dashboard/ewa/details";
+import { PayslipsPanel } from "./components/dashboard/payslips/info/payslipsPanel";
 
 const icon = {
   className: "w-6 h-6 text-inherit color-gray",
@@ -151,8 +131,8 @@ export const routes = [
       {
         name: "Salary Slip",
 
-        route: "/payroll",
-        element: <PayrollInfo />,
+        route: "/payslip",
+        element: <PayslipsPanel />,
       },
       // {
       //   name: "All Employees",

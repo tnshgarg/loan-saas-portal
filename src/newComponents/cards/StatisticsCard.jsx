@@ -14,11 +14,10 @@ export function StatisticsCard({
   value,
   footer,
   data,
-  span,
+  className,
 }) {
-  console.log({ span });
   return (
-    <Card className={`rounded-lg shadow-none col-span-${span}`}>
+    <Card className={`rounded-lg shadow-none ${className}`}>
       <div className="flex flex-row w-full justify-between">
         <CardHeader floated={false} className="col-span-1 shadow-none">
           <Typography className="col-span-3 text-sm">{title}</Typography>
@@ -35,8 +34,16 @@ export function StatisticsCard({
       </div>
 
       <CardBody className="p-4 text-left pt-0">
-        <div className={`grid grid-cols-${data.length} gap-x-2`}>
-          {data.map(({ label, value, type, color }, index) => (
+        <div
+          className={`grid ${
+            data.length == 3
+              ? "grid-cols-3"
+              : data.length == 2
+              ? "grid-cols-2"
+              : "grid-cols-1"
+          } gap-x-2`}
+        >
+          {data.map(({ label, value, type, className }, index) => (
             <div
               className={`flex flex-col pl-${index != 0 ? 4 : 0} ${
                 data.length > 2 && index + 1 != data.length
@@ -44,7 +51,7 @@ export function StatisticsCard({
                   : null
               }`}
             >
-              <Typography variant="h3" className={`text-${color}`}>
+              <Typography variant="h3" className={`${className}`}>
                 {value}
               </Typography>
               <Typography variant="small" className="font-normal text-black">
@@ -98,6 +105,6 @@ StatisticsCard.propTypes = {
   footer: PropTypes.node,
 };
 
-StatisticsCard.displayName = "/src/widgets/cards/statistics-card.jsx";
+StatisticsCard.displayName = "/src/newComponents/cards/StatisticsCard.jsx";
 
 export default StatisticsCard;

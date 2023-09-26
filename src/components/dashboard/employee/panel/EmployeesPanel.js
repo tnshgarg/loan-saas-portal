@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   Dialog,
   Elevation,
@@ -27,20 +26,23 @@ import { groupByKeyCount } from "../../../../utils/aggregates";
 import { EmployeeModal } from "../employeeModal/EmployeeModal";
 import { tableColumns } from "./tableColumns";
 
-import { Typography } from "@material-tailwind/react";
-import StatisticsCard from "../../../../widgets/cards/statistics-card";
+import { Button, Typography } from "@material-tailwind/react";
+import StatisticsCard from "../../../../newComponents/cards/StatisticsCard";
 import {
   BanknotesIcon,
   UserGroupIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
+import PrimaryButton from "../../../../newComponents/PrimaryButton";
+import TextInput from "../../../../newComponents/TextInput";
+import EmployeeTable from "../../../../newComponents/EmployeeTable";
 
 const statisticsCardsData = [
   {
     icon: UserGroupIcon,
-    span: 1,
+    className: "col-span-1",
     title: "Onboarding Status",
-    data: [{ label: "All Employees", value: 345, color: "primary" }],
+    data: [{ label: "All Employees", value: 345, className: "text-primary" }],
     footer: {
       color: "text-green-500",
       value: "345",
@@ -49,9 +51,11 @@ const statisticsCardsData = [
   },
   {
     icon: UserIcon,
-    span: 1,
+    className: "col-span-1",
     title: "Employment Status",
-    data: [{ label: "Enrolled Employees", value: 45, color: "primary" }],
+    data: [
+      { label: "Enrolled Employees", value: 45, className: "text-primary" },
+    ],
     footer: {
       color: "text-green-500",
       value: "45",
@@ -60,12 +64,12 @@ const statisticsCardsData = [
   },
   {
     icon: UserIcon,
-    span: 2,
+    className: "col-span-2",
     title: "Pending Employees",
     data: [
-      { label: "Aadhaar Pending", value: 34, color: "warning" },
-      { label: "Pan Pending", value: 29, color: "warning" },
-      { label: "Bank Pending", value: 24, color: "warning" },
+      { label: "Aadhaar Pending", value: 34, className: "text-warning" },
+      { label: "Pan Pending", value: 29, className: "text-warning" },
+      { label: "Bank Pending", value: 24, className: "text-warning" },
     ],
     footer: {
       color: "text-green-500",
@@ -349,30 +353,60 @@ const TabularTabsComponent = () => {
   return (
     <div className="mt-4">
       <div className="mb-6 grid gap-y-10 gap-x-4 md:grid-cols-2 xl:grid-cols-4">
-        {statisticsCardsData.map(({ icon, title, footer, span, ...rest }) => (
-          <StatisticsCard
-            span={span}
-            key={title}
-            {...rest}
-            title={title}
-            icon={React.createElement(icon, {
-              className: "w-6 h-6 text-gray",
-            })}
-            footer={
-              <Typography className="text-md text-black">
-                {footer.label}
-                <strong className={footer.color}> {footer.value}</strong>
-              </Typography>
-            }
-          />
-        ))}
+        {statisticsCardsData.map(
+          ({ icon, title, footer, className, ...rest }) => (
+            <StatisticsCard
+              className={className}
+              key={title}
+              {...rest}
+              title={title}
+              icon={React.createElement(icon, {
+                className: "w-6 h-6 text-gray",
+              })}
+              footer={
+                <Typography className="text-md text-black">
+                  {footer.label}
+                  <strong className={footer.color}> {footer.value}</strong>
+                </Typography>
+              }
+            />
+          )
+        )}
       </div>
+      <div className="w-full flex-row flex items-center justify-between">
+        <Typography className="text-md">All Employees</Typography>
+        <div className="flex-row flex items-center justify-between">
+          <PrimaryButton title={"Upload attendance data"} color="primary" />
+          <PrimaryButton title={"Onboard Employees"} color="primary" />
+          <PrimaryButton title={"Bulk Update via Upload "} color="primary" />
+        </div>
+      </div>
+      <div className="w-full flex-row flex items-center justify-between">
+        <TextInput label="Search for an employee" />
+        <PrimaryButton
+          title={"Filter"}
+          color="secondary"
+          variant={"outlined"}
+        />
+        <PrimaryButton
+          title={"Download"}
+          color="secondary"
+          variant={"outlined"}
+        />
+      </div>
+      <EmployeeTable />
+      {/* <div className="w-full flex-row flex items-center justify-between">
+        <TextInput />
+        <PrimaryButton title={"Filter"} />
+        <PrimaryButton title={"Download"} />
+      </div> */}
+
       {/* <EmployerMetrics
         data={metricsData}
         primaryKey={"SUCCESS"}
         config={metricsConfig}
       /> */}
-      <Dashlet
+      {/* <Dashlet
         icon={"people"}
         title={"Employee Records"}
         actions={
@@ -392,7 +426,7 @@ const TabularTabsComponent = () => {
         }
       >
         <TabularViewTab handlers={handlers} />
-      </Dashlet>
+      </Dashlet> */}
     </div>
   );
 };

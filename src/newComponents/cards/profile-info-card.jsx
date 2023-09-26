@@ -74,6 +74,6 @@ ProfileInfoCard.propTypes = {
   details: PropTypes.object,
 };
 
-ProfileInfoCard.displayName = "/src/widgets/cards/profile-info-card.jsx";
+ProfileInfoCard.displayName = "/src/newComponents/cards/profile-info-card.jsx";
 
 export default ProfileInfoCard;
