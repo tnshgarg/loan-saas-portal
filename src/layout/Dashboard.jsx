@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 // import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import { IconButton } from "@material-tailwind/react";
 import routes from "../routes";
@@ -7,10 +7,17 @@ import Sidenav from "./Sidenav";
 import NAV_MENU from "./navigation";
 import DashboardNavbar from "./DashboardNavbar";
 import Home from "../pages/dashboard/Home";
+import { useSelector } from "react-redux";
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavType } = controller;
+
+  const auth = useSelector((state) => state.auth);
+
+  if (auth === undefined || auth === {} || !auth.isLoggedIn) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <div className="min-h-screen bg-[#f2f2f2]">

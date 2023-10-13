@@ -58,7 +58,16 @@ export const registerUser =
     company_type,
     employee_count,
     designation,
-    sales_id
+    sales_id,
+    address,
+    state,
+    pin,
+    gstin,
+    pan,
+    tan,
+    cin,
+    preferredModules,
+    brand_name
   ) =>
   (dispatch) => {
     username = username.replace("+", "_");
@@ -73,7 +82,16 @@ export const registerUser =
       company_type,
       employee_count,
       designation,
-      sales_id
+      sales_id,
+      address,
+      state,
+      pin,
+      gstin,
+      pan,
+      tan,
+      cin,
+      preferredModules,
+      brand_name
     ).then(
       (response) => {
         dispatch(setLoggedInUser(null));

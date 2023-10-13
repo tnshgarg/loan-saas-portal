@@ -16,6 +16,7 @@ import { Option, Select } from "@material-tailwind/react";
 import AttendanceTable from "../../../../newComponents/AttendanceTable";
 import TextInput from "../../../../newComponents/TextInput";
 import PayslipTable from "../../../../newComponents/PayslipTable.jsx";
+import DropdownInput from "../../../../newComponents/DropdownInput";
 
 function mapStateToProps(state) {
   return {
@@ -121,15 +122,7 @@ const _PayslipsPanel = ({ employerId, dispatch }) => {
       </Dashlet> */}
 
       <div className="w-full flex-row flex items-center justify-between">
-        <div className="w-72">
-          <Select label="Select Date" className="rounded-md bg-white">
-            <Option>Jan 2023</Option>
-            <Option>Jan 2023</Option>
-            <Option>Jan 2023</Option>
-            <Option>Jan 2023</Option>
-            <Option>Jan 2023</Option>
-          </Select>
-        </div>
+        <DropdownInput />
         <div className="flex-row flex items-center justify-between">
           <PrimaryButton title={"Send Salary Slip"} color="secondary" />
         </div>

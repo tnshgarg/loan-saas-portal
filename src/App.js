@@ -102,11 +102,12 @@
 
 // export default App;
 
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Dashboard from "./layout/Dashboard";
-import { Login } from "./components/signUpLogin/Login";
+
 import { useEffect } from "react";
 import Amplify from "aws-amplify";
+import Auth from "./layout/Auth";
 
 function App() {
   useEffect(() => {
@@ -118,11 +119,12 @@ function App() {
       },
     });
   });
+
   return (
     <Routes>
       <Route path="/dashboard/*" element={<Dashboard />} />
-      <Route path="/auth/login" element={<Login />} />
-      {/* <Route path="*" element={<Navigate to="/dashboard/*" replace />} /> */}
+      <Route path="/auth/*" element={<Auth />} />
+      <Route path="*" element={<Navigate to="/auth/login" replace />} />
     </Routes>
   );
 }

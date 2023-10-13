@@ -17,7 +17,7 @@ const TABLE_HEAD = [
   "Name",
   "EWA",
   "Mobile",
-  "Status",
+  "EWA Status",
   "Email",
   "DOB",
   "Designation",

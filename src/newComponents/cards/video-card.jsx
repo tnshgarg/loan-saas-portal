@@ -9,7 +9,7 @@ import {
 
 export default function VideoCard() {
   return (
-    <Card className="w-full shadow-none">
+    <Card className="w-full shadow-none col-span-2">
       <CardHeader floated={false} className="shadow-none">
         <Typography variant="h5" color="blue-gray" className="mb-2">
           How to use Unipe?

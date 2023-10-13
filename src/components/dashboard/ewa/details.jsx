@@ -17,6 +17,7 @@ import { Option, Select, Typography } from "@material-tailwind/react";
 import StatisticsCard from "../../../newComponents/cards/StatisticsCard";
 import { UserGroupIcon, UserIcon } from "@heroicons/react/24/outline";
 import TextInput from "../../../newComponents/TextInput";
+import DropdownInput from "../../../newComponents/DropdownInput";
 
 function mapStateToProps(state) {
   return {
@@ -262,15 +263,7 @@ const _Disbursements = ({ employerId, dispatch }) => {
         />
       </div>
       <div className="w-full flex-row flex items-center justify-between">
-        <div className="w-72">
-          <Select label="Select Date" className="rounded-md bg-white">
-            <Option>Jan 2023</Option>
-            <Option>Jan 2023</Option>
-            <Option>Jan 2023</Option>
-            <Option>Jan 2023</Option>
-            <Option>Jan 2023</Option>
-          </Select>
-        </div>
+        <DropdownInput />
         {/* <div className="flex-row flex items-center justify-between">
           <PrimaryButton title={"Send Salary Slip"} color="secondary" />
         </div> */}

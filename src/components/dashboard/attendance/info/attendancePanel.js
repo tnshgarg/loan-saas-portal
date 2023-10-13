@@ -15,6 +15,7 @@ import { Option, Select, Typography } from "@material-tailwind/react";
 import PrimaryButton from "../../../../newComponents/PrimaryButton";
 import AttendanceTable from "../../../../newComponents/AttendanceTable";
 import TextInput from "../../../../newComponents/TextInput";
+import DropdownInput from "../../../../newComponents/DropdownInput";
 
 function mapStateToProps(state) {
   return {
@@ -121,15 +122,7 @@ const _AttendancePanel = ({ employerId, dispatch }) => {
         )}
       </Dashlet> */}
       <div className="w-full flex-row flex items-center justify-between">
-        <div className="w-72">
-          <Select label="Select Date" className="rounded-md bg-white">
-            <Option>Jan 2023</Option>
-            <Option>Jan 2023</Option>
-            <Option>Jan 2023</Option>
-            <Option>Jan 2023</Option>
-            <Option>Jan 2023</Option>
-          </Select>
-        </div>
+        <DropdownInput />
         <div className="flex-row flex items-center justify-between">
           <PrimaryButton title={"Upload attendance data"} color={"secondary"} />
         </div>

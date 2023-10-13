@@ -199,7 +199,7 @@ export default function Sidenav({ brandImg, brandName, routes }) {
               style={{ textDecoration: "none" }}
             >
               <ListItem
-                className="p-0 rounded-none focus:bg-gradient-to-r from-[#ebf9d9] to-[#f5fdc8]"
+                className="p-0 rounded-none hover:bg-gradient-to-r focus:bg-gradient-to-r from-[#ebf9d9] to-[#f5fdc8]"
                 selected={open === index + 1}
               >
                 <AccordionHeader
