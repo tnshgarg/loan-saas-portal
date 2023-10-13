@@ -28,7 +28,7 @@ export const ResetPassword = () => {
     handleSubmit,
     getValues,
     // watch,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm({ mode: "all" });
   const values = getValues();
   const onSubmit = () => {
@@ -125,7 +125,7 @@ export const ResetPassword = () => {
                 title={"Send Verification Code"}
                 color="primary"
                 type="submit"
-                disabled={errors.email}
+                disabled={!dirtyFields.email || errors.email}
                 onClick={onSubmit}
               />
             </form>

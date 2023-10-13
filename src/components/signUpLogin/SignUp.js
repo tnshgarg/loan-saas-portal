@@ -18,23 +18,10 @@ import {
   CardFooter,
   CardHeader,
   Checkbox,
-  Input,
-  Tab,
-  TabPanel,
-  Tabs,
-  TabsBody,
-  TabsHeader,
   Typography,
   Button,
 } from "@material-tailwind/react";
 
-import {
-  Square3Stack3DIcon,
-  UserCircleIcon,
-  Cog6ToothIcon,
-  UserPlusIcon,
-  ArrowRightOnRectangleIcon,
-} from "@heroicons/react/24/solid";
 import TextInput from "../../newComponents/TextInput";
 import PhoneInput from "../../newComponents/PhoneInput";
 import AuthNavbar from "../../layout/AuthNavbar";

@@ -198,6 +198,7 @@ export const Login = () => {
                 errorMessage={
                   "Password must contain atleast 8 characters with a special character, a number, a lowercase and an uppercase alphabet"
                 }
+                securedEntry={true}
               />
 
               <a href="/auth/reset-password" className="self-end mb-8">
