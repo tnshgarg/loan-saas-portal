@@ -11,7 +11,16 @@ const signUp = (
   company_type,
   employee_count,
   designation,
-  sales_id
+  sales_id,
+  address,
+  state,
+  pin,
+  gstin,
+  pan,
+  tan,
+  cin,
+  preferred_modules,
+  brand_name
 ) => {
   if (!phone_number.startsWith("+91")) phone_number = "+91" + phone_number;
   return Auth.signUp({
@@ -26,10 +35,19 @@ const signUp = (
       "custom:employee_count": employee_count,
       "custom:designation": designation,
       "custom:sales_id": sales_id,
+      "custom:address": address,
+      "custom:state": state,
+      "custom:pin": pin,
+      "custom:gstin": gstin,
+      "custom:pan": pan,
+      "custom:tan": tan,
+      "custom:cin": cin,
+      "custom:preferred_modules": JSON.stringify(preferred_modules),
+      "custom:brand_name": brand_name,
     },
     validationData: {
-      access_key: access_key
-    }
+      access_key: access_key,
+    },
   });
 };
 

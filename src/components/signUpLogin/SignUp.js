@@ -505,11 +505,26 @@ export const SignUp = () => {
                         <Checkbox
                           color="gray"
                           onClick={(e) => {
-                            let arr = [];
-                            console.log(item);
-                            arr = preferredModules;
-                            // setPreferredModules(arr.push(item));
-                            console.log({ arr });
+                            // let arr = [];
+                            // console.log(item);
+                            // arr = preferredModules;
+                            // arr.push(item);
+
+                            if (preferredModules.includes(item)) {
+                              // let index = preferredModules.indexOf(item);
+                              // if (index !== -1)
+                              //   setPreferredModules([
+                              //     ...preferredModules.slice(0, index),
+                              //     ...preferredModules.slice(
+                              //       index,
+                              //       preferredModules.length - 1
+                              //     ),
+                              //   ]);
+                              setPreferredModules((val) =>
+                                val.filter((_, index) => index !== 0)
+                              );
+                            } else
+                              setPreferredModules([...preferredModules, item]);
                           }}
                         />
                       </div>
@@ -523,7 +538,7 @@ export const SignUp = () => {
                     // disabled={!preferredModules.length}
                     // type="submit"
                     onClick={() => setModuleSelected(true)}
-                    // disabled={preferredModules.length == 0}
+                    disabled={preferredModules.length == 0}
                   />
                 </form>
               </CardBody>
