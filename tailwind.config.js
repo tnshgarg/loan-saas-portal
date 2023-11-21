@@ -31,6 +31,7 @@ module.exports = withMT({
         lightGreen: "rgba(110, 220, 133,0.3)",
         lightYellow: "rgba(237, 251, 139,0.3)",
         beige: "#f7f6f1",
+        green: "#41be89",
       },
     },
   },

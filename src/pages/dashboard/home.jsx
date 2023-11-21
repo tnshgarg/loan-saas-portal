@@ -36,7 +36,16 @@ import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import BannerCard from "../../newComponents/cards/banner-card";
 import WithdrawalsCard from "../../newComponents/cards/withdrawals-card";
 import VideoCard from "../../newComponents/cards/video-card";
-import DialogWrapper from "../../newComponents/DialogWrapper";
+
+import { Onboard } from "../../components/dashboard/employee/onboarding/Onboard";
+import { CsvUploadDialog } from "../../newComponents/CsvUploadDialog";
+import {
+  HEADER_GROUPS,
+  HEADER_LIST,
+  transformHeadersToFields,
+} from "../../components/dashboard/employee/onboarding/fields";
+import { allEmployeesPanelDetails } from "../../store/slices/apiSlices/employees/panelApiSlice";
+import { useDispatch } from "react-redux";
 
 const statisticsCardsData = [
   {
@@ -70,12 +79,15 @@ const statisticsCardsData = [
 ];
 
 export function Home() {
-  return (
+  const dispatch = useDispatch();
+  return false ? (
+    <div className="mt-4"></div>
+  ) : (
     <div className="mt-4">
       <div className="mb-6 grid gap-y-10 gap-x-6">
         <BannerCard />
       </div>
-      <DialogWrapper />
+
       <div className="mb-6 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-6">
         {statisticsCardsData.map(({ icon, title, footer, ...rest }) => (
           <StatisticsCard

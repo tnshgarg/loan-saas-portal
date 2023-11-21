@@ -14,7 +14,7 @@ export default function PrimaryButton({
 }) {
   return (
     <Button
-      className={`flex items-center justify-center m-2 shadow-none rounded-[4px] ${className}`}
+      className={`flex items-center justify-center m-2 shadow-none outline-none rounded-[4px] ${className}`}
       size={size}
       variant={variant}
       color={color}

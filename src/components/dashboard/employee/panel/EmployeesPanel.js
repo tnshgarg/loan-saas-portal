@@ -18,6 +18,7 @@ import {
 } from "../../../../atomic/organisms/browserTable/cells";
 import EmployerMetrics from "../../../../atomic/organisms/employerMetrics/EmployerMetrics";
 import {
+  allEmployeesPanelDetails,
   useGetAllEmployeesPanelByEmployerIdQuery,
   useLazyGetAllEmployeesPanelByEmployerIdQuery,
 } from "../../../../store/slices/apiSlices/employees/panelApiSlice";
@@ -36,49 +37,13 @@ import {
 import PrimaryButton from "../../../../newComponents/PrimaryButton";
 import TextInput from "../../../../newComponents/TextInput";
 import EmployeeTable from "../../../../newComponents/EmployeeTable";
-
-const statisticsCardsData = [
-  {
-    icon: UserGroupIcon,
-    className: "col-span-1",
-    title: "Onboarding Status",
-    data: [{ label: "All Employees", value: 345, className: "text-primary" }],
-    footer: {
-      color: "text-green-500",
-      value: "345",
-      label: "Active Employees:",
-    },
-  },
-  {
-    icon: UserIcon,
-    className: "col-span-1",
-    title: "Employment Status",
-    data: [
-      { label: "Enrolled Employees", value: 45, className: "text-primary" },
-    ],
-    footer: {
-      color: "text-green-500",
-      value: "45",
-      label: "KYC Done:",
-    },
-  },
-  {
-    icon: UserIcon,
-    className: "col-span-2",
-    title: "Pending Employees",
-    data: [
-      { label: "Aadhaar Pending", value: 34, className: "text-warning" },
-      { label: "Pan Pending", value: 29, className: "text-warning" },
-      { label: "Bank Pending", value: 24, className: "text-warning" },
-    ],
-    footer: {
-      color: "text-green-500",
-      value: "",
-      label:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    },
-  },
-];
+import SearchInput from "../../../../newComponents/SearchInput.jsx";
+import { CsvUploadDialog } from "../../../../newComponents/CsvUploadDialog.jsx";
+import {
+  HEADER_GROUPS,
+  HEADER_LIST,
+  transformHeadersToFields,
+} from "../onboarding/fields.jsx";
 
 const checkOverallStatus = (aadhaar, pan, bank) => {
   return aadhaar?.verifyStatus === "SUCCESS" &&
@@ -277,6 +242,7 @@ const TabularViewTab = ({ handlers }) => {
 
 const TabularTabsComponent = () => {
   const auth = useSelector((state) => state.auth);
+  const [pendingAadhaar, setPendingAadhaar] = useState(0);
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
@@ -285,6 +251,66 @@ const TabularTabsComponent = () => {
   const responseFromQuery =
     useGetAllEmployeesPanelByEmployerIdQuery(employerId);
   const { data } = responseFromQuery;
+
+  const getPendingAadhaar = () => {
+    data?.body?.forEach(({ aadhaar }, index) => {
+      if (aadhaar?.verifyStatus) setPendingAadhaar((prev) => prev + 1);
+    });
+  };
+
+  const statisticsCardsData = [
+    {
+      icon: UserGroupIcon,
+      className: "col-span-1",
+      title: "Onboarding Status",
+      data: [
+        {
+          label: "All Employees",
+          value: data?.body?.length,
+          className: "text-primary",
+        },
+      ],
+      footer: {
+        color: "text-green-500",
+        value: data?.body?.length,
+        label: "Active Employees:",
+      },
+    },
+    {
+      icon: UserIcon,
+      className: "col-span-1",
+      title: "Employment Status",
+      data: [
+        {
+          label: "Enrolled Employees",
+          value: data?.body?.length,
+          className: "text-primary",
+        },
+      ],
+      footer: {
+        color: "text-green-500",
+        value: data?.body?.length,
+        label: "KYC Done:",
+      },
+    },
+    {
+      icon: UserIcon,
+      className: "col-span-2",
+      title: "Pending Employees",
+      data: [
+        { label: "Aadhaar Pending", value: 34, className: "text-warning" },
+        { label: "Pan Pending", value: 29, className: "text-warning" },
+        { label: "Bank Pending", value: 24, className: "text-warning" },
+      ],
+      footer: {
+        color: "text-green-500",
+        value: "",
+        label:
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      },
+    },
+  ];
+
   const [metricsData, setMetricsData] = useState({});
   useEffect(() => {
     if (data) {
@@ -350,63 +376,84 @@ const TabularTabsComponent = () => {
       if (handlers[e]) handlers[e]();
     };
   };
+  const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const handleOpen = (e) => {
+    setOpen(true);
+  };
   return (
-    <div className="mt-4">
-      <div className="mb-6 grid gap-y-10 gap-x-4 md:grid-cols-2 xl:grid-cols-4">
-        {statisticsCardsData.map(
-          ({ icon, title, footer, className, ...rest }) => (
-            <StatisticsCard
-              className={className}
-              key={title}
-              {...rest}
-              title={title}
-              icon={React.createElement(icon, {
-                className: "w-6 h-6 text-gray",
-              })}
-              footer={
-                <Typography className="text-md text-black">
-                  {footer.label}
-                  <strong className={footer.color}> {footer.value}</strong>
-                </Typography>
-              }
-            />
-          )
-        )}
-      </div>
-      <div className="w-full flex-row flex items-center justify-between">
-        <Typography className="text-md">All Employees</Typography>
-        <div className="flex-row flex items-center justify-between">
-          <PrimaryButton title={"Upload attendance data"} color="primary" />
-          <PrimaryButton title={"Onboard Employees"} color="primary" />
-          <PrimaryButton title={"Bulk Update via Upload "} color="primary" />
+    <>
+      <div className="mt-4">
+        <div className="mb-6 grid gap-y-10 gap-x-4 md:grid-cols-2 xl:grid-cols-4">
+          {statisticsCardsData.map(
+            ({ icon, title, footer, className, ...rest }) => (
+              <StatisticsCard
+                className={className}
+                key={title}
+                {...rest}
+                title={title}
+                icon={React.createElement(icon, {
+                  className: "w-6 h-6 text-gray",
+                })}
+                footer={
+                  <Typography className="text-md text-black">
+                    {footer.label}
+                    <strong className={footer.color}> {footer.value}</strong>
+                  </Typography>
+                }
+              />
+            )
+          )}
         </div>
-      </div>
-      <div className="w-full flex-row flex items-center justify-between">
-        <TextInput label="Search for an employee" />
-        <PrimaryButton
-          title={"Filter"}
-          color="secondary"
-          variant={"outlined"}
-        />
-        <PrimaryButton
-          title={"Download"}
-          color="secondary"
-          variant={"outlined"}
-        />
-      </div>
-      <EmployeeTable />
-      {/* <div className="w-full flex-row flex items-center justify-between">
+        <div className="w-full flex-row flex items-center justify-between">
+          <Typography className="text-md">All Employees</Typography>
+          <div className="flex-row flex items-center justify-between">
+            <PrimaryButton
+              title={"Upload attendance data"}
+              color="primary"
+              size={"sm"}
+            />
+            <PrimaryButton
+              title={"Onboard Employees"}
+              color="primary"
+              size={"sm"}
+              onClick={handleOpen}
+            />
+            <PrimaryButton
+              title={"Bulk Update via Upload "}
+              color="primary"
+              size={"sm"}
+            />
+          </div>
+        </div>
+        <div className="w-full flex-row flex items-center justify-between">
+          <SearchInput label="Search for an employee" />
+          <PrimaryButton
+            title={"Filter"}
+            color="secondary"
+            variant={"outlined"}
+            size={"sm"}
+          />
+          <PrimaryButton
+            title={"Download"}
+            color="secondary"
+            variant={"outlined"}
+            size={"sm"}
+          />
+        </div>
+        <EmployeeTable employeesData={data?.body} />
+        {/* <div className="w-full flex-row flex items-center justify-between">
         <TextInput />
         <PrimaryButton title={"Filter"} />
         <PrimaryButton title={"Download"} />
       </div> */}
 
-      {/* <EmployerMetrics
+        {/* <EmployerMetrics
         data={metricsData}
         primaryKey={"SUCCESS"}
         config={metricsConfig}
       /> */}
-      {/* <Dashlet
+        {/* <Dashlet
         icon={"people"}
         title={"Employee Records"}
         actions={
@@ -427,7 +474,31 @@ const TabularTabsComponent = () => {
       >
         <TabularViewTab handlers={handlers} />
       </Dashlet> */}
-    </div>
+        <CsvUploadDialog
+          name="Employees"
+          title={"Step 1: Import Your Employee Data"}
+          description="Start by uploading your employee data. If you're unsure,
+          download our template to guide you"
+          label={"employee_details"}
+          headerImage="https://cdn-icons-png.flaticon.com/512/2991/2991114.png"
+          module={"onboarding"}
+          templateData={[HEADER_LIST]}
+          fields={HEADER_GROUPS}
+          preProcessing={transformHeadersToFields}
+          setOpen={setOpen}
+          open={open}
+          handleOpen={handleOpen}
+          employeesData={data?.body}
+          onToastDismiss={() => {
+            dispatch(
+              allEmployeesPanelDetails.util.invalidateTags([
+                "AllEmployeesPanelDetails",
+              ])
+            );
+          }}
+        />
+      </div>
+    </>
   );
 };
 

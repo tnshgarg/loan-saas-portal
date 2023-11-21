@@ -1367,6 +1367,92 @@ const customTheme = {
       },
     },
   },
+  progress: {
+    defaultProps: {
+      variant: "filled",
+      color: "blue",
+      size: "md",
+      value: 0,
+      label: false,
+      className: "",
+      barProps: {},
+    },
+    valid: {
+      variants: ["filled", "gradient"],
+      colors: ["blue-gray"],
+      sizes: ["sm", "md", "lg"],
+    },
+    styles: {
+      base: {
+        container: {
+          initial: {
+            display: "flex",
+            justifyContent: "flex-start",
+            bg: "bg-blue-gray-50",
+            overflow: "overflow-hidden",
+            width: "w-full",
+            fontFamily: "font-sans",
+            borderRadius: "rounded-full",
+            fontSize: "text-xs",
+            fontWeight: "font-medium",
+          },
+          withLabel: {},
+        },
+        bar: {
+          display: "flex",
+          justifyContent: "justify-center",
+          alignItems: "items-center",
+          height: "h-full",
+          overflow: "overflow-hidden",
+          wordBreak: "break-all",
+          borderRadius: "rounded-full",
+        },
+      },
+      sizes: {
+        sm: {
+          container: {
+            initial: {
+              height: "h-1.5",
+            },
+            withLabel: {
+              height: "h-3.5",
+            },
+          },
+          bar: {},
+        },
+        md: {
+          container: {
+            initial: {
+              height: "h-2.5",
+            },
+            withLabel: {
+              height: "h-4",
+            },
+          },
+          bar: {},
+        },
+        lg: {
+          container: {
+            initial: {
+              height: "h-3.5",
+            },
+            withLabel: {
+              height: "h-5",
+            },
+          },
+          bar: {},
+        },
+      },
+      variants: {
+        filled: {
+          "blue-gray": {
+            backgroud: "bg-[#2169ff]",
+            color: "text-white",
+          },
+        },
+      },
+    },
+  },
 };
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

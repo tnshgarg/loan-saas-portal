@@ -22,6 +22,7 @@ export const uploadedFiles = createApi({
   keepUnusedDataFor: TIMEOUT,
   endpoints: (builder) => ({
     // Define endpoints here
+
     getUploadedFiles: builder.query({
       query: ({ id, module }) => `/files?id=${id}&module=${module}`,
       providesTags: ["UploadedFiles"],

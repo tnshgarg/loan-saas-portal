@@ -1,0 +1,6 @@
+projectKey=employer-saas-ui
+serverUrl=http://sonarqube:9000
+serverVersion=9.9.2.77730
+dashboardUrl=http://sonarqube:9000/dashboard?id=employer-saas-ui
+ceTaskId=AYuqAAri2zAlhirGJHOQ
+ceTaskUrl=http://sonarqube:9000/api/ce/task?id=AYuqAAri2zAlhirGJHOQ

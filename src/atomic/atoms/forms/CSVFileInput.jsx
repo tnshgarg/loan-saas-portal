@@ -2,6 +2,7 @@ import { Button, Intent } from "@blueprintjs/core";
 import { useRef } from "react";
 import { AppToaster } from "../../../contexts/ToastContext";
 import { USER_IS_READ_ONLY_ERROR } from "../../../utils/messageStrings";
+import { IconButton } from "@material-tailwind/react";
 
 export function CSVFileInput({ icon, intent, onChange, onInput, isReadOnly }) {
   // Create a reference to the hidden file input element
@@ -9,7 +10,21 @@ export function CSVFileInput({ icon, intent, onChange, onInput, isReadOnly }) {
 
   return (
     <>
-      <Button
+      <IconButton
+        variant="outlined"
+        size="sm"
+        onClick={(e) =>
+          isReadOnly
+            ? AppToaster.show({
+                intent: Intent.DANGER,
+                message: USER_IS_READ_ONLY_ERROR,
+              })
+            : hiddenFileInput.current.click(e)
+        }
+      >
+        <i className="fas fa-upload" />
+      </IconButton>
+      {/* <Button
         icon={icon}
         intent={intent}
         onClick={(e) =>
@@ -22,7 +37,7 @@ export function CSVFileInput({ icon, intent, onChange, onInput, isReadOnly }) {
         }
       >
         {intent === Intent.PRIMARY ? "Upload File" : "Upload Another File"}
-      </Button>
+      </Button> */}
       <div style={{ display: "none" }}>
         <input
           type="file"

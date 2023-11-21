@@ -70,3 +70,22 @@ export const VALIDATIONS = {
   [monthValidation]: regexValidation(reg.MONTH, FS.ERROR),
   [amountValidation]: regexValidation(reg.AMOUNT, FS.ERROR),
 };
+
+export const VALIDATIONS_MESSAGES = {
+  [phoneValidation]: "ERROR: Phone number is invalid!",
+  [emailValidation]: "WARNING: Email is invalid!",
+  [dateValidation]: "WARNING: Date is invalid!",
+  [dojValidation]: "ERROR: Date is invalid!",
+  [doeValidation]: "ERROR: Date is invalid!",
+  [aadhaarValidation]: "WARNING: Aadhaar is invalid!",
+  [panValidation]: "WARNING: Pan is invalid!",
+  [accNumberValidation]: "WARNING: Account number is invalid!",
+  [ifscValidation]: "WARNING: Ifsc is invalid!",
+  [currencyValidation]: "ERROR: Currency is invalid!",
+  [noValidation]: "",
+  [requiredValidation]: "ERROR: Field is invalid!",
+  [genderValidation]: "WARNING: Gender is invalid!",
+  [yearValidation]: "ERROR: Year is invalid!",
+  [monthValidation]: "ERROR: Month is invalid!",
+  [amountValidation]: "ERROR: Amount is invalid!",
+};

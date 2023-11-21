@@ -46,11 +46,24 @@ function formatNumber(number, decPlaces) {
   return number;
 }
 
-export function ProfileSidebar() {
+export function ProfileSidebar({ profileData }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { openConfigurator, sidenavColor, sidenavType, fixedNavbar } =
     controller;
   const [stars, setStars] = React.useState(0);
+
+  const {
+    employmentId,
+    employeeName,
+    ewa,
+    mobile,
+    ewaStatus,
+    email,
+    dob,
+    designation,
+    principalEmployer,
+    empStatus,
+  } = profileData ?? {};
 
   const sidenavColors = {
     blue: "from-blue-400 to-blue-600",
@@ -135,7 +148,7 @@ export function ProfileSidebar() {
         <div className="flex flex-col w-full">
           <div className="flex flex-row w-full items-start justify-between">
             <div className="flex flex-col ml-4">
-              <Typography>Guest User!</Typography>
+              <Typography>{employeeName}</Typography>
               <Typography>Guest User!</Typography>
             </div>
 
