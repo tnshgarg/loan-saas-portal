@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Button,
   Dialog,
@@ -9,22 +9,14 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { CSVFileInput } from "../atomic/atoms/forms/CSVFileInput";
-import DialogStepper from "./DialogStepper";
 import { Intent } from "@blueprintjs/core";
 import { read, utils } from "xlsx";
 import { useToastContext } from "../contexts/ToastContext";
 import * as Papa from "papaparse";
-import {
-  clearActiveFileName,
-  initBrowserTable,
-  setActiveFileName,
-} from "../store/slices/browserTableSlice.ts";
 import { connect, useSelector } from "react-redux";
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
 import { MAX_SIZE } from "../atomic/organisms/csvUploads/CSVUploadDashlet";
-import { FS } from "../components/dashboard/employee/onboarding/validations";
-import { FIELDS } from "../components/dashboard/employee/onboarding/fields";
 import ErrorReportButton from "./ErrorReportButton";
 import FullReportButton from "./FullReportButton";
 import { useGetUploadedFilesQuery } from "../store/slices/apiSlices/files/filesApiSlice.js";
@@ -33,16 +25,20 @@ import IntervalTimer from "../utils/intervalTimer.js";
 import PrimaryButton from "./PrimaryButton.jsx";
 import { DateDropdown } from "../components/dashboard/payouts/info/DateDropdown.jsx";
 import { TemplateDownloadButton } from "../atomic/atoms/forms/TemplateDownloadButton.jsx";
-// import {
-//   clearActiveFileName,
-//   setActiveFileName,
-// } from "../store/slices/browserTableSlice";
+import CloseIcon from "../atomic/atoms/icons/CloseIcon.jsx";
+import UploadSuccess from "./atoms/csvUploads/common/UploadSuccess.jsx";
+import UploadStepper, {
+  UploadStep,
+} from "./atoms/csvUploads/common/UploadStepper.jsx";
+import {
+  clearActiveFileName,
+  initCsvTable,
+  setActiveFileName,
+} from "../store/slices/csvSlice.js";
 
 const mapOnboardPropsToState = (state, ownProps) => {
   const { module } = ownProps;
-  console.log({
-    csvUploads: state?.["csvUploads"]?.[module]?.["activeFileName"],
-  });
+
   const savedFileName =
     state?.["csvUploads"]?.[module]?.["activeFileName"] ?? "";
   return {
@@ -59,6 +55,7 @@ const _CsvUploadDialog = ({
   description,
   templateData,
   templateDownloadProps,
+  headerGroups,
   fields,
   employerId,
   dispatch,
@@ -68,11 +65,15 @@ const _CsvUploadDialog = ({
   savedFileName,
   dateDropDown,
   isReadOnly,
+  validations,
   handleOpen,
   setOpen,
   open,
   employeesData,
   headerImage,
+  note,
+  year,
+  month,
 }) => {
   const { handleProgressToast, setConfig } = useToastContext();
 
@@ -93,58 +94,19 @@ const _CsvUploadDialog = ({
 
   const handlePrev = () => !isFirstStep && setActiveStep((cur) => cur - 1);
 
-  const data = [
-    {
-      label: "Upload CSV",
-      value: 1,
-      header: "Unipe For Employers",
-      subHeader: "Pay your employees with ease",
-      points: [
-        "Ensure on-time payroll, every time.",
-        "Offer On-Demand Salary with zero hassle.",
-        "Boost retention and attract top-tier talent.",
-      ],
-    },
-    {
-      label: "Review",
-      value: 2,
-
-      header: "Empower Your Workforce with Unipe",
-      subHeader:
-        "On-Time and On-Demand Salary That Will Make Your Employees Happy!",
-      points: [
-        "Say goodbye to late salary issues.",
-        "Real-time salary advances for employee needs.",
-        "Transform the way your business handles payroll.",
-      ],
-    },
-    {
-      label: "Import",
-      value: 3,
-
-      header: "Optimize Your Unipe Experience",
-      subHeader: "Provide additional info for tailored services",
-      points: [
-        "Cross-check and affirm your business identity.",
-        "Help us evaluate your company's eligibility swiftly.",
-        "Optimal service recommendations based on detailed info.",
-      ],
-    },
-  ];
   const [file, setFile] = useState({ object: null, validations: [] });
   const [fileSize, setFileSize] = useState(0);
   const [fileName, setFileName] = useState("");
   const [progressValue, setProgressValue] = useState(0);
   const currentFileName =
-    useSelector((state) => state?.csvUploads?.onboarding?.activeFileName) ?? "";
+    useSelector((state) => state?.csvUploads?.[module]?.activeFileName) ?? "";
   const stats =
     useSelector(
-      (state) =>
-        state?.csvUploads?.onboarding?.tableData[currentFileName]?.stats
+      (state) => state?.csvUploads?.[module]?.tableData[currentFileName]?.stats
     ) ?? "";
   const currentData =
     useSelector(
-      (state) => state?.csvUploads?.onboarding?.tableData[currentFileName]
+      (state) => state?.csvUploads?.[module]?.tableData[currentFileName]
     ) ?? [];
 
   const [uploadStatus, setUploadStatus] = useState(false);
@@ -187,7 +149,7 @@ const _CsvUploadDialog = ({
       let updatedElement = "";
       let updatedItem = Object.assign({}, item);
 
-      FIELDS.forEach(({ field, validations }, i) => {
+      fields?.forEach(({ field, validations }, i) => {
         eachElement = item[field];
         console.log("eachElement", eachElement);
         if (eachElement?.includes("[")) {
@@ -195,7 +157,7 @@ const _CsvUploadDialog = ({
 
           updatedItem[field] = updatedElement;
         }
-        // if (validLevel == FS.ERROR || validLevel == FS.WARN)
+        // if (validLevel == validations.ERROR || validLevel == validations.WARN)
         //   updatedItem[
         //     field
         //   ] = `${item[field]} [${VALIDATIONS_MESSAGES[validations]}]`;
@@ -205,11 +167,13 @@ const _CsvUploadDialog = ({
     });
 
     // const tableData = getter["data"]();
-    let erroredData = uploadArray.filter((row) => row.status[FS.ERROR] >= 1);
+    let erroredData = uploadArray.filter(
+      (row) => row.status[validations.ERROR] >= 1
+    );
 
     const tableCSV = Papa.unparse(
       uploadArray
-        ?.filter((row) => !row.status[FS.DELETED])
+        ?.filter((row) => !row.status[validations.DELETED])
         .map((row) => {
           let csvRow = Object.assign({}, row);
           delete csvRow?.status;
@@ -269,14 +233,14 @@ const _CsvUploadDialog = ({
             icon: "tick",
           });
           setUploadStatus(true);
-          dispatch(
-            initBrowserTable({
-              data: erroredData,
-              fileName: file.object.name,
-              fields,
-              module,
-            })
-          );
+          // dispatch(
+          //   initBrowserTable({
+          //     data: erroredData,
+          //     fileName: file.object.name,
+          //     headerGroups,
+          //     module,
+          //   })
+          // );
         } else {
           setUploadStatus(true);
           setFile({ object: null, validations: [] });
@@ -302,11 +266,12 @@ const _CsvUploadDialog = ({
   };
 
   const handleFileImport = (data) => {
+    console.log("init", data);
     dispatch(
-      initBrowserTable({
-        data: preProcessing(data),
+      initCsvTable({
+        data: preProcessing(data, year, month),
         fileName: file.object.name,
-        fields,
+        fields: headerGroups,
         module: module,
       })
     );
@@ -364,6 +329,7 @@ const _CsvUploadDialog = ({
     setFileName(file.name);
     setFile({ object: file, validations: [] });
     let count = 0;
+    console.log("current data:", currentData?.data);
     currentData?.data?.forEach((item, index) => {
       if (employeesData.find((e) => e.mobile === item.mobile)) {
         /* same result as above, but a different function return type */
@@ -373,9 +339,14 @@ const _CsvUploadDialog = ({
     setExistingEmployees(count);
   };
 
+  const uploadSuccess =
+    uploadStarted &&
+    uploadedData?.body?.[currentFileIndex]?.fileStatus === "SUCCESS";
+
   // const [csvUploadButtonIntent, setCsvUploadButtonIntent] = useState(
   //   Intent.PRIMARY
   // );
+
   return (
     <Dialog
       open={open}
@@ -385,207 +356,128 @@ const _CsvUploadDialog = ({
     >
       <div className="flex items-center justify-between p-4 pb-0">
         <DialogHeader className="p-0"></DialogHeader>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-6 h-6 cursor-pointer"
+        <CloseIcon
           onClick={() => {
             setOpen(false);
             setActiveStep(0);
           }}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
+        />
       </div>
-      {uploadedData?.body?.[currentFileIndex]?.fileStatus === "SUCCESS" &&
-      uploadStarted ? (
-        <div className="w-full flex flex-col py-4">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/808/808680.png"
-            className="h-28 w-32 self-center mb-4"
-          />
-          <p className="text-md w-[80%] self-center text-center font-semibold text-black mt-4">
-            Your data has been imported successfully
-          </p>
-          <p className="text-sm w-[80%] self-center text-center font-regular text-black mt-1">
-            as a next step Upload Your Employee Attendance Data
-          </p>
-        </div>
+      {uploadSuccess ? (
+        <UploadSuccess />
       ) : (
-        <DialogBody>
-          <div className="w-full overflow-y-auto flex flex-col items-center">
-            <img src={headerImage} className="h-12 w-12" />
-            <p className="text-md text-black font-semibold my-4 mb-8">
-              {title}
-            </p>
-            <DialogStepper
-              steps={data}
-              activeStep={activeStep}
-              setActiveStep={setActiveStep}
-            />
-
-            {activeStep == 0 && (
-              <>
-                {dateDropDown?.exists ? (
-                  <DateDropdown onChange={dateDropDown.onChange} />
-                ) : (
-                  <></>
-                )}
-                <p className="text-sm w-[80%] self-center text-center font-normal text-black mt-4 mb-8">
-                  {description}
-                </p>
-
-                {fileName ? (
-                  <div className="w-full border border-black p-2 flex flex-row items-center justify-between rounded-md ">
-                    <img
-                      src="https://cdn-icons-png.flaticon.com/512/2991/2991114.png"
-                      className="h-8 w-8"
-                    />
-                    <p className="w-full text-sm font-normal text-black pl-2">
-                      {fileName ? fileName : "Upload File"}
-                    </p>
-
-                    <CSVFileInput
-                      icon="add-to-folder"
-                      // intent={csvUploadButtonIntent}
-                      onChange={handleChange}
-                      // isReadOnly={isReadOnly}
-                    />
-                  </div>
-                ) : (
-                  <>
-                    <div className="flex flex-row w-full items-center justify-center">
-                      <TemplateDownloadButton
-                        title={`Download ${name} Template`}
-                        fileName={title}
-                        templateData={templateData}
-                        {...templateDownloadProps}
-                      />
-                      {/* <PrimaryButton
-                        title={`Download ${name} Template`}
-                        color="secondary"
-                        variant={"outlined"}
-                        className={"w-full"}
-                        // leftIcon={
-                        //   <i class="fa fa-download" aria-hidden="true"></i>
-                        // }
-                      /> */}
-                      <PrimaryButton
-                        title={`Upload ${name} CSV`}
-                        color="primary"
-                        className={"w-full"}
-                      />
-                    </div>
-                    <p className="text-xs text-center mt-4 mx-4">
-                      Uploading accurate attendance data ensures your employees
-                      enjoy uninterrupted access to Unipe's advance salary
-                      feature.
-                    </p>
-                  </>
-                )}
-                {/* <IconButton variant="outlined" size="sm">
-                    <i className="fas fa-upload" />
-                  </IconButton> */}
-              </>
+        <UploadStepper
+          headerImage={headerImage}
+          title={title}
+          active={activeStep}
+        >
+          <UploadStep label="Upload CSV" step={1}>
+            {dateDropDown?.exists ? (
+              <DateDropdown onChange={dateDropDown.onChange} />
+            ) : (
+              <></>
             )}
-            {activeStep == 1 && (
-              <>
-                <p className="text-sm w-[80%]  self-center text-center font-normal text-black mt-4 mb-8">
-                  Your file is validated and data is ready to be impoted.
+            <p className="text-sm w-[80%] self-center text-center font-normal text-black mt-4 mb-8">
+              {description}
+            </p>
+
+            <CSVFileInput
+              handleChange={handleChange}
+              fileName={fileName}
+              templateData={templateData}
+              templateDownloadProps={templateDownloadProps}
+              title={title}
+              btnName={name}
+              setFileName={setFileName}
+              setFile={setFile}
+              description={note}
+            />
+          </UploadStep>
+          <UploadStep label="Review" step={2}>
+            <p className="text-sm w-[80%]  self-center text-center font-normal text-black mt-4 mb-8">
+              Your file is validated and data is ready to be impoted.
+            </p>
+            <div className="w-full border border-lightGray p-4 rounded-md grid grid-cols-4 gap-4">
+              <div className="flex flex-col col-span-1">
+                <p className="text-2xl font-bold text-black">
+                  {currentData?.data?.length - existingEmployees}
                 </p>
-                <div className="w-full border border-lightGray p-4 rounded-md grid grid-cols-4 gap-4">
-                  <div className="flex flex-col col-span-1">
-                    <p className="text-2xl font-bold text-black">
-                      {currentData?.data?.length - existingEmployees}
-                    </p>
-                    <p className="text-xs text-black">New Employees</p>
-                  </div>
-                  <div className="flex flex-col col-span-1">
-                    <p className="text-2xl font-bold text-black">
-                      {existingEmployees}
-                    </p>
-                    <p className="text-xs text-black">Existing Employees</p>
-                  </div>
-                  <div className="flex flex-col col-span-1">
-                    <p className="text-2xl font-bold text-warning">
-                      {stats[FS.ERROR]}
-                    </p>
-                    <p className="text-xs text-black">Errors</p>
-                  </div>
-                  <div className="flex flex-col col-span-1">
-                    <p className="text-2xl font-bold text-warning">
-                      {stats[FS.WARN]}
-                    </p>
-                    <p className="text-xs text-black">Warning</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4 my-4 w-full">
-                  {/* <TemplateDownloadButton
+                <p className="text-xs text-black">New Employees</p>
+              </div>
+              <div className="flex flex-col col-span-1">
+                <p className="text-2xl font-bold text-black">
+                  {existingEmployees}
+                </p>
+                <p className="text-xs text-black">Existing Employees</p>
+              </div>
+              <div className="flex flex-col col-span-1">
+                <p className="text-2xl font-bold text-danger">
+                  {stats[validations.ERROR]}
+                </p>
+                <p className="text-xs text-black">Errors</p>
+              </div>
+              <div className="flex flex-col col-span-1">
+                <p className="text-2xl font-bold text-danger">
+                  {stats[validations.WARN]}
+                </p>
+                <p className="text-xs text-black">Warning</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 my-4 w-full">
+              {/* <TemplateDownloadButton
                     fileName={"Test"}
                     templateData={currentData}
                   /> */}
-                  <ErrorReportButton
-                    fileName={"Test"}
-                    templateData={currentData}
-                    fields={FIELDS}
-                  />
-                  <FullReportButton
-                    fileName={"Test"}
-                    templateData={currentData}
-                    fields={FIELDS}
-                  />
-                </div>
-                <div className="flex flex-row items-center justify-start w-full">
-                  <Checkbox
-                    color="gray"
-                    size={"xs"}
-                    ripple={false}
-                    value={checked}
-                    onChange={(v) => {
-                      console.log(v.target.value);
-                      setChecked(!checked);
-                    }}
-                    label={
-                      <Typography
-                        color="blue-gray"
-                        className="flex font-medium text-sm"
-                      >
-                        In case of conflict, overwrite data of existing employee
-                      </Typography>
-                    }
-                  />
-                  {/* <p className="text-xs pl-1 text-gray">
+              <ErrorReportButton
+                fileName={"Error_Report"}
+                templateData={currentData}
+                fields={fields}
+              />
+              <FullReportButton
+                fileName={"Full_Report"}
+                templateData={currentData}
+                fields={fields}
+              />
+            </div>
+            <div className="flex flex-row items-center justify-start w-full">
+              <Checkbox
+                color="gray"
+                size={"xs"}
+                ripple={false}
+                value={checked}
+                onChange={(v) => {
+                  console.log(v.target.value);
+                  setChecked(!checked);
+                }}
+                label={
+                  <Typography
+                    color="blue-gray"
+                    className="flex font-medium text-sm"
+                  >
+                    In case of conflict, overwrite data of existing employee
+                  </Typography>
+                }
+              />
+              {/* <p className="text-xs pl-1 text-gray">
                     In case of conflict, overwrite data of existing employee
                   </p> */}
-                </div>
-              </>
-            )}
-            {activeStep == 2 && (
-              <>
-                {/* <img
+            </div>
+          </UploadStep>
+          <UploadStep label="Import" step={3}>
+            {/* <img
                   src="https://img.freepik.com/premium-vector/cloud-upload-icon-flat-color-style_755164-834.jpg"
                   className="h-24 w-24 self-center"
                 /> */}
-                <p className="text-lg w-[80%] self-center text-center font-semibold text-black mt-4">
-                  {progressValue != 100
-                    ? "Your file is uploading..."
-                    : uploadedData?.body?.[0]?.fileStatus === "FAILED"
-                    ? "ERROR IN UPLOADING FILE"
-                    : "Your data has been imported successfully"}
-                </p>
-                <ProgressBar value={progressValue} />
-              </>
-            )}
-            {/* <Onboard /> */}
-          </div>
-        </DialogBody>
+            <p className="text-lg w-[80%] self-center text-center font-semibold text-black mt-4">
+              {progressValue != 100
+                ? "Your file is uploading..."
+                : uploadedData?.body?.[0]?.fileStatus === "FAILED"
+                ? "ERROR IN UPLOADING FILE"
+                : "Your data has been imported successfully"}
+            </p>
+            <ProgressBar value={progressValue} />
+          </UploadStep>
+        </UploadStepper>
       )}
       <DialogFooter className="space-x-2 items-center justify-center mb-4 mt-4">
         {activeStep == 0 && fileName && (
@@ -615,7 +507,7 @@ const _CsvUploadDialog = ({
                 uploadCSV();
               }}
               className="w-1/3 rounded-md bg-primary"
-              disabled={!checked || stats[FS.ERROR] > 0}
+              disabled={!checked || stats[validations.ERROR] > 0}
             >
               {activeStep == 1 ? "Import" : "Next"}
             </Button>

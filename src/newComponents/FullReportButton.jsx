@@ -14,13 +14,11 @@ const FullReportButton = ({ loading, templateData, fileName, fields }) => {
   const [errorData, setErrorData] = useState([]);
   loading = loading ?? false;
   const safeFileName =
-    `${fileName}_Template_${new Date().toISOString()}`.replaceAll(
-      /\s|-|\./g,
-      "_"
-    ) + ".csv";
+    `${fileName}_${new Date().toISOString()}`.replaceAll(/\s|-|\./g, "_") +
+    ".csv";
   let headers = [];
 
-  fields.forEach((item) => {
+  fields?.forEach((item) => {
     headers.push({ label: item.header, key: item.field });
   });
   // console.log("headers", headers);

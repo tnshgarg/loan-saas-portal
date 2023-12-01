@@ -69,6 +69,7 @@ export const employeeFieldsToTabsMap = {
   },
   EPFO: {
     category: "epfo",
+    // TODO:complaince
     fields: {
       UAN: "PF UAN (Enter if available else leave blank)",
     },
@@ -87,53 +88,53 @@ export const employeeFieldsToTabsMap = {
     fieldPatterns: {},
     readOnlyFields: {},
   },
-  "Family Details": {
-    category: "relatives",
-    hasSubTabs: true,
-    types: {
-      "Father / Husband": "fh",
-      Nominee: "nominee",
-    },
-    inputTypes: {
-      "Father / Husband": {
-        "Relation with Employee (Father/Husband)": {
-          type: "dropdown",
-          options: ["Father", "Husband"],
-        },
-      },
-      Nominee: {
-        "Nominee Relationship with Employee": {
-          type: "dropdown",
-          options: [
-            "Spouse",
-            "Minor dependant son",
-            "Dependant unmarried daughter",
-            "Dependant son receiving education",
-            "Dependant infirm son",
-            "Dependant infirm unmarried daughter",
-            "Dependant father",
-            "Dependant mother",
-            "Brother",
-            "Sister",
-            "Others",
-          ],
-        },
-      },
-    },
-    fields: {
-      "Father / Husband": {
-        name: "Father's / Husband's Name",
-        relation: "Relation with Employee (Father/Husband)",
-      },
-      Nominee: {
-        name: "Name of Nominee (As per Aadhaar card)",
-        relation: "Nominee Relationship with Employee",
-      },
-    },
-    requiredFields: {},
-    fieldPatterns: {},
-    readOnlyFields: {},
-  },
+  // "Family Details": {
+  //   category: "relatives",
+  //   hasSubTabs: true,
+  //   types: {
+  //     "Father / Husband": "fh",
+  //     Nominee: "nominee",
+  //   },
+  //   inputTypes: {
+  //     "Father / Husband": {
+  //       "Relation with Employee (Father/Husband)": {
+  //         type: "dropdown",
+  //         options: ["Father", "Husband"],
+  //       },
+  //     },
+  //     Nominee: {
+  //       "Nominee Relationship with Employee": {
+  //         type: "dropdown",
+  //         options: [
+  //           "Spouse",
+  //           "Minor dependant son",
+  //           "Dependant unmarried daughter",
+  //           "Dependant son receiving education",
+  //           "Dependant infirm son",
+  //           "Dependant infirm unmarried daughter",
+  //           "Dependant father",
+  //           "Dependant mother",
+  //           "Brother",
+  //           "Sister",
+  //           "Others",
+  //         ],
+  //       },
+  //     },
+  //   },
+  //   fields: {
+  //     "Father / Husband": {
+  //       name: "Father's / Husband's Name",
+  //       relation: "Relation with Employee (Father/Husband)",
+  //     },
+  //     Nominee: {
+  //       name: "Name of Nominee (As per Aadhaar card)",
+  //       relation: "Nominee Relationship with Employee",
+  //     },
+  //   },
+  //   requiredFields: {},
+  //   fieldPatterns: {},
+  //   readOnlyFields: {},
+  // },
   Addresses: {
     category: "addresses",
     hasSubTabs: true,
@@ -195,6 +196,129 @@ export const employeeFieldsToTabsMap = {
         district: "Employee Nominee Address District",
         street: "Employee Nominee Address",
         pin: "Employee Nominee Address Pincode",
+      },
+    },
+    requiredFields: {},
+    fieldPatterns: {},
+    readOnlyFields: {},
+  },
+};
+
+export const newEmployeeFieldsToTabsMap = {
+  "Employee Details": {
+    category: "profile",
+    fields: {
+      employeeName: "Employee Name",
+      mobile: "Mobile Number",
+      altMobile: "Alternate Mobile Number",
+      email: "Email",
+      gender: "Gender",
+      nationality: "Nationality",
+      dob: "Date of Birth",
+      maritalStatus: "Marital Status",
+      qualification: "Education Qualification",
+      motherName: "Mother's Name",
+      fatherName: "Father's Name",
+      address: "Permanent Address",
+    },
+    requiredFields: {},
+    fieldPatterns: {},
+    readOnlyFields: { mobile: true },
+  },
+  "Employment Details": {
+    category: "employment",
+    fields: {
+      principalEmployer: "Principal Employer",
+      employerEmployeeId: "Employee ID",
+      doj: "Date of Joining",
+      designation: "Designation",
+      department: "Department",
+      mInHandSalary: "Monthly Salary",
+      aCTC: "Annual CTC",
+      uan: "UAN Number",
+      esic: "ESIC Number",
+
+      // doe: "Date of Exit (dd/mm/yyyy)",
+    },
+    requiredFields: {},
+    fieldPatterns: {},
+    readOnlyFields: {},
+  },
+  "Govt ID": {
+    category: "governmentIds",
+    hasSubTabs: true,
+    inputTypes: {},
+    types: {
+      Aadhaar: "aadhaar",
+      PAN: "pan",
+    },
+    fields: {
+      Aadhaar: {
+        number: "ID Number",
+      },
+      PAN: {
+        number: "ID Number",
+      },
+    },
+    requiredFields: {},
+    fieldPatterns: {},
+    readOnlyFields: {},
+  },
+  "Bank Details": {
+    category: "bankDetails",
+    fields: {
+      accountNumber: "Bank Account Number",
+      ifsc: "Bank IFSC Code",
+    },
+    requiredFields: { accountNumber: true },
+    fieldPatterns: {
+      accountNumber: /^[0-9]{9,18}$/,
+      ifsc: /^[A-Z]{4}0[A-Z0-9]{6}$/,
+    },
+    readOnlyFields: {},
+  },
+
+  "Withdrawal Timeline": {
+    category: "relatives",
+    hasSubTabs: true,
+    types: {
+      "Father / Husband": "fh",
+      Nominee: "nominee",
+    },
+    inputTypes: {
+      "Father / Husband": {
+        "Relation with Employee (Father/Husband)": {
+          type: "dropdown",
+          options: ["Father", "Husband"],
+        },
+      },
+      Nominee: {
+        "Nominee Relationship with Employee": {
+          type: "dropdown",
+          options: [
+            "Spouse",
+            "Minor dependant son",
+            "Dependant unmarried daughter",
+            "Dependant son receiving education",
+            "Dependant infirm son",
+            "Dependant infirm unmarried daughter",
+            "Dependant father",
+            "Dependant mother",
+            "Brother",
+            "Sister",
+            "Others",
+          ],
+        },
+      },
+    },
+    fields: {
+      "Father / Husband": {
+        name: "Father's / Husband's Name",
+        relation: "Relation with Employee (Father/Husband)",
+      },
+      Nominee: {
+        name: "Name of Nominee (As per Aadhaar card)",
+        relation: "Nominee Relationship with Employee",
       },
     },
     requiredFields: {},

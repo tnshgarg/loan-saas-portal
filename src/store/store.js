@@ -15,10 +15,11 @@ import { payslipsApi } from "./slices/apiSlices/employer/payslipsApiSlice";
 import { employerTaxApi } from "./slices/apiSlices/employer/taxApiSlice";
 import { uploadedFiles } from "./slices/apiSlices/files/filesApiSlice";
 import authReducer from "./slices/authSlice";
-import CSVUploadReducer from "./slices/browserTableSlice.ts";
+// import CSVUploadReducer from "./slices/browserTableSlice.ts";
 import employeeReducer from "./slices/employeeSlice";
 import messageReducer from "./slices/messageSlice";
 import registerFormReducer from "./slices/registerFormSlice";
+import csvReducer from "./slices/csvSlice";
 
 export const store = configureStore({
   reducer: {
@@ -26,7 +27,7 @@ export const store = configureStore({
     auth: authReducer,
     registerForm: registerFormReducer,
     employee: employeeReducer,
-    csvUploads: CSVUploadReducer,
+    csvUploads: csvReducer,
     [employerAddressApi.reducerPath]: employerAddressApi.reducer,
     [employerPayrollApi.reducerPath]: employerPayrollApi.reducer,
     [employerEWAApi.reducerPath]: employerEWAApi.reducer,

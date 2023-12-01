@@ -25,7 +25,7 @@ export default function TextInput({
         // placeholder={label}
         label={label}
         size={size}
-        className="rounded-[3px] border border-lightGray bg-white text-gray shadow-none placeholder:text-warning placeholder:bg-white placeholder:font-sans"
+        className="rounded-[3px] border border-lightGray bg-white text-gray shadow-none placeholder:text-danger placeholder:bg-white placeholder:font-sans"
         type={securedEntry ? textType : type}
         onChange={onChange}
         onBlur={onBlur}
@@ -64,7 +64,7 @@ export default function TextInput({
 
       <>
         {errors?.[field] ? (
-          <p className="text-[10px] text-warning mt-[4px] leading-3">
+          <p className="text-[10px] text-danger mt-[4px] leading-3">
             {errorMessage}
           </p>
         ) : (

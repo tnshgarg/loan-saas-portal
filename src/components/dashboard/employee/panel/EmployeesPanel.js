@@ -44,6 +44,8 @@ import {
   HEADER_LIST,
   transformHeadersToFields,
 } from "../onboarding/fields.jsx";
+import employee_icon from "../../../../assets/icons/employee_data.png";
+import EmployeeUpload from "../../../../newComponents/EmployeeUpload.jsx";
 
 const checkOverallStatus = (aadhaar, pan, bank) => {
   return aadhaar?.verifyStatus === "SUCCESS" &&
@@ -69,7 +71,7 @@ const reformatEmployeeData = (employeeData) => {
       employmentId,
       active,
       principalEmployer,
-    } = employee;
+    } = employee ?? {};
     return {
       "Employee ID": employerEmployeeId,
       Name: employeeName,
@@ -252,11 +254,38 @@ const TabularTabsComponent = () => {
     useGetAllEmployeesPanelByEmployerIdQuery(employerId);
   const { data } = responseFromQuery;
 
+  const [filteredData, setFilteredData] = useState(data?.body);
+
   const getPendingAadhaar = () => {
     data?.body?.forEach(({ aadhaar }, index) => {
       if (aadhaar?.verifyStatus) setPendingAadhaar((prev) => prev + 1);
     });
   };
+
+  const activeEmployees = data?.body?.filter(
+    (item) => item.active == true
+  )?.length;
+
+  const kycDone = data?.body?.filter(
+    (item) =>
+      item.aadhaar.verifyStatus == "SUCCESS" &&
+      item.pan.verifyStatus == "SUCCESS" &&
+      item.bank.verifyStatus == "SUCCESS"
+  )?.length;
+
+  const enrolledEmployees = data?.body?.filter(
+    (item) => item.employmentId.length > 0
+  )?.length;
+
+  const aadhaarPending = data?.body?.filter(
+    (item) => item.aadhaar.verifyStatus != "SUCCESS"
+  )?.length;
+  const panPending = data?.body?.filter(
+    (item) => item.pan.verifyStatus != "SUCCESS"
+  )?.length;
+  const bankPending = data?.body?.filter(
+    (item) => item.aadhaar.verifyStatus != "SUCCESS"
+  )?.length;
 
   const statisticsCardsData = [
     {
@@ -272,7 +301,7 @@ const TabularTabsComponent = () => {
       ],
       footer: {
         color: "text-green-500",
-        value: data?.body?.length,
+        value: activeEmployees,
         label: "Active Employees:",
       },
     },
@@ -283,13 +312,13 @@ const TabularTabsComponent = () => {
       data: [
         {
           label: "Enrolled Employees",
-          value: data?.body?.length,
+          value: enrolledEmployees,
           className: "text-primary",
         },
       ],
       footer: {
         color: "text-green-500",
-        value: data?.body?.length,
+        value: kycDone,
         label: "KYC Done:",
       },
     },
@@ -298,9 +327,13 @@ const TabularTabsComponent = () => {
       className: "col-span-2",
       title: "Pending Employees",
       data: [
-        { label: "Aadhaar Pending", value: 34, className: "text-warning" },
-        { label: "Pan Pending", value: 29, className: "text-warning" },
-        { label: "Bank Pending", value: 24, className: "text-warning" },
+        {
+          label: "Aadhaar Pending",
+          value: aadhaarPending,
+          className: "text-danger",
+        },
+        { label: "Pan Pending", value: panPending, className: "text-danger" },
+        { label: "Bank Pending", value: bankPending, className: "text-danger" },
       ],
       footer: {
         color: "text-green-500",
@@ -382,78 +415,86 @@ const TabularTabsComponent = () => {
     setOpen(true);
   };
   return (
-    <>
-      <div className="mt-4">
-        <div className="mb-6 grid gap-y-10 gap-x-4 md:grid-cols-2 xl:grid-cols-4">
-          {statisticsCardsData.map(
-            ({ icon, title, footer, className, ...rest }) => (
-              <StatisticsCard
-                className={className}
-                key={title}
-                {...rest}
-                title={title}
-                icon={React.createElement(icon, {
-                  className: "w-6 h-6 text-gray",
-                })}
-                footer={
-                  <Typography className="text-md text-black">
-                    {footer.label}
-                    <strong className={footer.color}> {footer.value}</strong>
-                  </Typography>
-                }
-              />
-            )
-          )}
-        </div>
-        <div className="w-full flex-row flex items-center justify-between">
-          <Typography className="text-md">All Employees</Typography>
-          <div className="flex-row flex items-center justify-between">
-            <PrimaryButton
-              title={"Upload attendance data"}
-              color="primary"
-              size={"sm"}
+    <div className="mt-4">
+      <div className="mb-6 grid gap-y-10 gap-x-4 md:grid-cols-2 xl:grid-cols-4">
+        {statisticsCardsData.map(
+          ({ icon, title, footer, className, ...rest }) => (
+            <StatisticsCard
+              className={className}
+              key={title}
+              {...rest}
+              title={title}
+              icon={React.createElement(icon, {
+                className: "w-6 h-6 text-gray",
+              })}
+              footer={
+                <Typography className="text-md text-black">
+                  {footer.label}
+                  <strong className={footer.color}> {footer.value}</strong>
+                </Typography>
+              }
             />
-            <PrimaryButton
-              title={"Onboard Employees"}
-              color="primary"
-              size={"sm"}
-              onClick={handleOpen}
-            />
-            <PrimaryButton
-              title={"Bulk Update via Upload "}
-              color="primary"
-              size={"sm"}
-            />
-          </div>
-        </div>
-        <div className="w-full flex-row flex items-center justify-between">
-          <SearchInput label="Search for an employee" />
+          )
+        )}
+      </div>
+      <div className="w-full flex-row flex items-center justify-between">
+        <Typography className="text-md">All Employees</Typography>
+        <div className="flex-row flex items-center justify-between">
           <PrimaryButton
-            title={"Filter"}
-            color="secondary"
-            variant={"outlined"}
+            title={"Upload attendance data"}
+            color="primary"
             size={"sm"}
+            className={"ml-0"}
           />
           <PrimaryButton
-            title={"Download"}
-            color="secondary"
-            variant={"outlined"}
+            title={"Onboard Employees"}
+            color="primary"
             size={"sm"}
+            onClick={handleOpen}
+            className={"ml-0"}
+          />
+          <PrimaryButton
+            title={"Bulk Update via Upload "}
+            color="primary"
+            size={"sm"}
+            className={"ml-0"}
           />
         </div>
-        <EmployeeTable employeesData={data?.body} />
-        {/* <div className="w-full flex-row flex items-center justify-between">
+      </div>
+      <div className="w-full flex-row flex items-center justify-between">
+        <SearchInput
+          label="Search by Name, Phone, Employee ID and Email ID"
+          data={filteredData}
+          setData={setFilteredData}
+          mainData={data?.body}
+        />
+        <PrimaryButton
+          title={"Filter"}
+          color="secondary"
+          variant={"outlined"}
+          size={"sm"}
+        />
+        <PrimaryButton
+          title={"Download"}
+          color="secondary"
+          variant={"outlined"}
+          size={"sm"}
+          className={"ml-0"}
+        />
+      </div>
+      <EmployeeTable employeesData={filteredData} />
+      {/* <div className="w-full flex-row flex items-center justify-between">
         <TextInput />
         <PrimaryButton title={"Filter"} />
         <PrimaryButton title={"Download"} />
       </div> */}
 
-        {/* <EmployerMetrics
+      {/* <EmployerMetrics
         data={metricsData}
         primaryKey={"SUCCESS"}
         config={metricsConfig}
       /> */}
-        {/* <Dashlet
+      {/* <Dashlet
         icon={"people"}
         title={"Employee Records"}
         actions={
@@ -474,31 +515,13 @@ const TabularTabsComponent = () => {
       >
         <TabularViewTab handlers={handlers} />
       </Dashlet> */}
-        <CsvUploadDialog
-          name="Employees"
-          title={"Step 1: Import Your Employee Data"}
-          description="Start by uploading your employee data. If you're unsure,
-          download our template to guide you"
-          label={"employee_details"}
-          headerImage="https://cdn-icons-png.flaticon.com/512/2991/2991114.png"
-          module={"onboarding"}
-          templateData={[HEADER_LIST]}
-          fields={HEADER_GROUPS}
-          preProcessing={transformHeadersToFields}
-          setOpen={setOpen}
-          open={open}
-          handleOpen={handleOpen}
-          employeesData={data?.body}
-          onToastDismiss={() => {
-            dispatch(
-              allEmployeesPanelDetails.util.invalidateTags([
-                "AllEmployeesPanelDetails",
-              ])
-            );
-          }}
-        />
-      </div>
-    </>
+      <EmployeeUpload
+        setOpen={setOpen}
+        handleOpen={handleOpen}
+        open={open}
+        employeesData={data?.body}
+      />
+    </div>
   );
 };
 

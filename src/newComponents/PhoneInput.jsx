@@ -77,7 +77,7 @@ export default function PhoneInput({
       </div>
       <>
         {errors?.[field] ? (
-          <p className="text-[10px] text-warning mt-[4px] leading-3">
+          <p className="text-[10px] text-danger mt-[4px] leading-3">
             {errorMessage}
           </p>
         ) : (

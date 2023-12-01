@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Card,
@@ -37,15 +37,29 @@ import BannerCard from "../../newComponents/cards/banner-card";
 import WithdrawalsCard from "../../newComponents/cards/withdrawals-card";
 import VideoCard from "../../newComponents/cards/video-card";
 
-import { Onboard } from "../../components/dashboard/employee/onboarding/Onboard";
-import { CsvUploadDialog } from "../../newComponents/CsvUploadDialog";
 import {
-  HEADER_GROUPS,
-  HEADER_LIST,
+  HEADER_GROUPS as EMPLOYEE_HEADER_GROUPS,
+  HEADER_LIST as EMPLOYEE_HEADER_LIST,
   transformHeadersToFields,
 } from "../../components/dashboard/employee/onboarding/fields";
-import { allEmployeesPanelDetails } from "../../store/slices/apiSlices/employees/panelApiSlice";
-import { useDispatch } from "react-redux";
+import {
+  HEADER_GROUPS as ATTENDANCE_HEADER_GROUPS,
+  HEADER_LIST as ATTENDANCE_HEADER_LIST,
+} from "../../components/dashboard/attendance/dataUpload/attendanceDataUploadPanelFields";
+
+import {
+  allEmployeesPanelDetails,
+  useGetAllEmployeesPanelByEmployerIdQuery,
+} from "../../store/slices/apiSlices/employees/panelApiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import HomeSteps from "../../newComponents/HomeSteps";
+import employee_icon from "../../assets/icons/employee_data.png";
+import attendance_icon from "../../assets/icons/attendance.png";
+import PrimaryButton from "../../newComponents/PrimaryButton";
+import EmployeeUpload from "../../newComponents/EmployeeUpload";
+import { useGetAttendanceQuery } from "../../store/slices/apiSlices/employer/attendanceApiSlice";
+import AttendanceUpload from "../../newComponents/AttendanceUpload";
+import OnboardingStep from "../../newComponents/atoms/homeBanner/employees/OnboardingStep";
 
 const statisticsCardsData = [
   {
@@ -78,10 +92,112 @@ const statisticsCardsData = [
   },
 ];
 
-export function Home() {
+function Home() {
+  const [open, setOpen] = useState(false);
+
+  const [activeStep, setActiveStep] = useState(0);
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
+  const { data: employeesData } =
+    useGetAllEmployeesPanelByEmployerIdQuery(employerId);
+  const today = new Date();
+  const [{ year, month }, setDate] = useState({
+    year: today.getFullYear(),
+    month: today.getMonth() + 1,
+  });
+  const { data: attendanceData } = useGetAttendanceQuery({
+    id: employerId,
+    year: year,
+    month: month,
+  });
+
+  const dateChanged = (updatedDate) => {
+    setDate(updatedDate);
+    // dataRefetch();
+  };
+
+  useEffect(() => {
+    if (employeesData?.length == 0 && attendanceData?.length == 0)
+      setActiveStep(0);
+    else if (employeesData?.length != 0 && attendanceData?.length == 0)
+      setActiveStep(1);
+    else setActiveStep(2);
+  }, [employeesData, attendanceData]);
+
+  const stepsData = [
+    {
+      headerImage: employee_icon,
+      header: "Welcome to Unipe",
+      subHeader:
+        "Kickstart your journey with us. Just a few simple steps, and your employees will be onboarded in no time.",
+      stepTitle: "Step 1: Import Your Employee Data",
+      stepSubtitle:
+        "Start by uploading your employee data. If you're unsure, download our template to guide you",
+      btnName: "Employees",
+      note: "Quick Tip: Always ensure your data is up-to-date and accurate. It helps in ensuring seamless processing and payouts.",
+      templateData: [EMPLOYEE_HEADER_LIST],
+    },
+    {
+      headerImage: attendance_icon,
+      header: "Ready to Offer Advance Salaries?",
+      subHeader:
+        "Kickstart your journey with us. Just a few simple steps, and your employees will be onboarded in no time.",
+      stepTitle: "Step 2: Upload Employee Attendance Data",
+      stepSubtitle:
+        "By uploading the attendance data, you empower your employees to avail of their on-demand salary benefits via the Unipe App",
+      btnName: "Attendance",
+      note: "Reminder: Uploading accurate attendance data ensures your employees enjoy uninterrupted access to Unipe's advance salary feature.",
+      templateData: [ATTENDANCE_HEADER_LIST],
+    },
+  ];
+
+  const handleOpen = (e) => {
+    setOpen(true);
+  };
   const dispatch = useDispatch();
-  return false ? (
-    <div className="mt-4"></div>
+
+  return activeStep < 2 ? (
+    <>
+      <div className="mt-4 flex flex-col items-center justify-center h-[75vh]">
+        <HomeSteps
+          subHeader={stepsData[activeStep].subHeader}
+          header={stepsData[activeStep].header}
+          headerImage={stepsData[activeStep].headerImage}
+          stepTitle={stepsData[activeStep].stepTitle}
+          stepSubtitle={stepsData[activeStep].stepSubtitle}
+          templateData={stepsData[activeStep].templateData}
+          btnName={stepsData[activeStep].btnName}
+          note="Quick Tip: Always ensure your data is up-to-date and accurate. It helps in ensuring seamless processing and payouts."
+          setOpen={setOpen}
+          open={open}
+          handleOpen={handleOpen}
+        />
+        {/* <OnboardingStep /> */}
+      </div>
+      {activeStep == 0 && open ? (
+        <EmployeeUpload
+          setOpen={setOpen}
+          handleOpen={handleOpen}
+          open={open}
+          employeesData={employeesData?.body}
+        />
+      ) : (
+        <></>
+      )}
+      {activeStep == 1 && open ? (
+        <AttendanceUpload
+          setOpen={setOpen}
+          handleOpen={handleOpen}
+          open={open}
+          attendanceData={attendanceData?.body}
+          dateChanged={dateChanged}
+          year={year}
+          month={month}
+        />
+      ) : (
+        <></>
+      )}
+    </>
   ) : (
     <div className="mt-4">
       <div className="mb-6 grid gap-y-10 gap-x-6">

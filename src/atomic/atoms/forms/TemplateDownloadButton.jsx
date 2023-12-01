@@ -19,16 +19,14 @@ export function TemplateDownloadButton({
     <CSVLink
       data={templateData}
       filename={safeFileName}
-      className="w-full m-2 no-underline"
+      className="w-full m-2 no-underline outline-none"
     >
       <PrimaryButton
         title={title}
         color="secondary"
         variant={"outlined"}
-        className={"w-full"}
-        // leftIcon={
-        //   <i class="fa fa-download" aria-hidden="true"></i>
-        // }
+        className={"w-full outline-none px-0"}
+        leftIcon={<i class="fa fa-download mr-2" aria-hidden="true"></i>}
       />
       {/* <Button loading={loading} icon="cloud-download">
         Download Template File

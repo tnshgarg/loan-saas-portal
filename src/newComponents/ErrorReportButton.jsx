@@ -10,6 +10,7 @@ import {
 import { useState } from "react";
 
 const ErrorReportButton = ({ loading, templateData, fileName, fields }) => {
+  console.log("templateData", templateData?.data);
   const [data, setData] = useState(templateData?.data);
   const [errorData, setErrorData] = useState([]);
   loading = loading ?? false;
@@ -71,8 +72,8 @@ const ErrorReportButton = ({ loading, templateData, fileName, fields }) => {
         headers={headers ?? []}
       >
         <div className="border border-lightGray p-3 rounded-md col-span-1 flex flex-row items-center justify-between">
-          <i class="fa fa-file text-warning" aria-hidden="true"></i>
-          <p className="text-sm text-warning font-normal w-full pl-2">
+          <i class="fa fa-file text-danger" aria-hidden="true"></i>
+          <p className="text-sm text-danger font-normal w-full pl-2">
             Error Report
           </p>
           <i class="fa fa-download" aria-hidden="true"></i>

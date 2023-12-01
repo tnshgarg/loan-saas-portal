@@ -1,37 +1,36 @@
 import React from "react";
 
-const DialogStepper = ({ steps, activeStep }) => {
+const DialogStepper = ({ labels, active }) => {
+  const numLength = labels?.length;
   return (
     <div className="flex flex-row items-center justify-between w-full px-8 py-8">
-      {steps.map((item, index) => (
+      {labels?.map((item, index) => (
         <>
           <div className="w-full flex flex-row items-center justify-center">
             <div
               className={`h-5 w-5 rounded-md flex flex-col items-center justify-center border-2 ${
-                activeStep == index
+                active == index
                   ? "bg-white border-primary"
-                  : index > activeStep
+                  : index > active
                   ? "bg-white border-[#bfbfbf]"
                   : "bg-primary"
               }`}
             >
               <p
                 className={`text-xs font-semibold ${
-                  activeStep == index
+                  active == index
                     ? "text-primary"
-                    : index > activeStep
+                    : index > active
                     ? "text-[#bfbfbf]"
                     : "text-white"
                 }`}
               >
-                {item.value}
+                {index + 1}
               </p>
             </div>
-            <p className="text-black font-semibold text-xs ml-2">
-              {item.label}
-            </p>
+            <p className="text-black font-semibold text-xs ml-2">{item}</p>
           </div>
-          {item.value < steps?.length && (
+          {index < numLength - 1 && (
             <div className="border-t-2 border-lightGray w-1/2"></div>
           )}
         </>

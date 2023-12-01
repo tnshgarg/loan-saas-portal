@@ -39,13 +39,7 @@ export const attendanceApi = createApi({
 
         return path;
       },
-      transformResponse: (responseData) => {
-        if (responseData.body) {
-          responseData.body = JSON.parse(responseData.body);
-        }
-        console.log(responseData.body);
-        return responseData;
-      },
+
       providesTags: ["Attendance"],
     }),
   }),

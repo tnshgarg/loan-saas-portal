@@ -17,6 +17,7 @@ import AttendanceTable from "../../../../newComponents/AttendanceTable";
 import TextInput from "../../../../newComponents/TextInput";
 import PayslipTable from "../../../../newComponents/PayslipTable.jsx";
 import DropdownInput from "../../../../newComponents/DropdownInput";
+import SearchInput from "../../../../newComponents/SearchInput.jsx";
 
 function mapStateToProps(state) {
   return {
@@ -26,6 +27,11 @@ function mapStateToProps(state) {
 
 const PAYSLIPS_MODULE = "payslips";
 const _PayslipsPanel = ({ employerId, dispatch }) => {
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = (e) => {
+    setOpen(true);
+  };
   const today = new Date();
   const [{ year, month }, setDate] = useState({
     year: today.getFullYear(),
@@ -43,6 +49,8 @@ const _PayslipsPanel = ({ employerId, dispatch }) => {
     year: year,
     month: month,
   });
+  const [filteredData, setFilteredData] = useState(data?.body);
+
   const [safePayslips, setSafePayslips] = useState([]);
 
   useEffect(() => {
@@ -122,20 +130,38 @@ const _PayslipsPanel = ({ employerId, dispatch }) => {
       </Dashlet> */}
 
       <div className="w-full flex-row flex items-center justify-between">
-        <DropdownInput />
+        <DateDropdown />
         <div className="flex-row flex items-center justify-between">
-          <PrimaryButton title={"Send Salary Slip"} color="secondary" />
+          <PrimaryButton
+            title={"Send Salary Slip"}
+            color="secondary"
+            size={"sm"}
+          />
         </div>
       </div>
       <div className="w-full flex-row flex items-center justify-between">
-        <TextInput label="Search for an employee" />
+        <SearchInput
+          label="Search by Name, Phone, Employee ID and Email ID"
+          data={filteredData}
+          setData={setFilteredData}
+          mainData={data?.body}
+        />
         <PrimaryButton
           title={"Filter"}
           color="secondary"
           variant={"outlined"}
+          size={"sm"}
         />
       </div>
-      <PayslipTable />
+      <PayslipTable
+        setOpen={setOpen}
+        handleOpen={handleOpen}
+        open={open}
+        payslipsData={data?.body}
+        dateChanged={dateChanged}
+        year={year}
+        month={month}
+      />
     </div>
   );
 };

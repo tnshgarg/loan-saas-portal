@@ -42,13 +42,25 @@ export default function EmployeeTable({ employeesData }) {
   const currentItems = employeesData?.slice(indexOfFirstItem, indexOfLastItem);
   console.log("currentItems", currentItems);
 
-  console.log({ employeesData });
-
   const [controller, dispatch] = useMaterialTailwindController();
+  function renderValue(value) {
+    if (value !== null && value?.length > 0 && value !== undefined)
+      return value;
+    else if (value == true)
+      return (
+        <Typography className="text-xs font-semibold text-primary">
+          Active
+        </Typography>
+      );
+    else
+      return (
+        <Typography className="text-sm font-bold text-danger">-</Typography>
+      );
+  }
   return (
     <>
-      <Card className="mt-4 shadow-none rounded-none">
-        <CardBody className="h-full w-full overflow-x-scroll">
+      <Card className="mt-4 shadow-none rounded-none ">
+        <CardBody className="h-full w-full overflow-x-scroll p-0">
           <table className="w-full min-w-max table-auto text-left">
             <thead>
               <tr>
@@ -79,6 +91,7 @@ export default function EmployeeTable({ employeesData }) {
                 (
                   {
                     employmentId,
+                    employerEmployeeId,
                     employeeName,
                     ewa,
                     mobile,
@@ -87,7 +100,7 @@ export default function EmployeeTable({ employeesData }) {
                     dob,
                     designation,
                     principalEmployer,
-                    empStatus,
+                    active,
                   },
                   index
                 ) => {
@@ -102,7 +115,8 @@ export default function EmployeeTable({ employeesData }) {
                           color="blue-gray"
                           className="font-normal text-xs"
                         >
-                          {employmentId ?? "-"}
+                          {/* {employmentId ?? "-"} */}
+                          {renderValue(employerEmployeeId)}
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -111,7 +125,7 @@ export default function EmployeeTable({ employeesData }) {
                           color="blue-gray"
                           className="font-normal text-xs"
                         >
-                          {employeeName ?? "-"}
+                          {renderValue(employeeName)}
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -120,7 +134,7 @@ export default function EmployeeTable({ employeesData }) {
                           color="blue-gray"
                           className="font-normal text-xs"
                         >
-                          {ewa ?? "-"}
+                          {renderValue(ewa)}
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -129,7 +143,7 @@ export default function EmployeeTable({ employeesData }) {
                           color="blue-gray"
                           className="font-normal text-xs"
                         >
-                          {mobile ?? "-"}
+                          {renderValue(mobile)}
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -138,7 +152,7 @@ export default function EmployeeTable({ employeesData }) {
                           color="blue-gray"
                           className="font-normal text-xs"
                         >
-                          {ewaStatus ?? "-"}
+                          {ewaStatus ?? "Off"}
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -147,7 +161,7 @@ export default function EmployeeTable({ employeesData }) {
                           color="blue-gray"
                           className="font-normal text-xs"
                         >
-                          {email ?? "-"}
+                          {renderValue(email)}
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -156,7 +170,7 @@ export default function EmployeeTable({ employeesData }) {
                           color="blue-gray"
                           className="font-normal text-xs"
                         >
-                          {dob ?? "-"}
+                          {renderValue(dob)}
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -165,7 +179,7 @@ export default function EmployeeTable({ employeesData }) {
                           color="blue-gray"
                           className="font-normal text-xs"
                         >
-                          {designation ?? "-"}
+                          {renderValue(designation)}
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -174,7 +188,7 @@ export default function EmployeeTable({ employeesData }) {
                           color="blue-gray"
                           className="font-normal text-xs"
                         >
-                          {principalEmployer ?? "-"}
+                          {renderValue(principalEmployer)}
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -183,7 +197,8 @@ export default function EmployeeTable({ employeesData }) {
                           color="blue-gray"
                           className="font-normal text-xs"
                         >
-                          {empStatus ?? "-"}
+                          {/* EXIT */}
+                          {renderValue(active)}
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -225,37 +240,33 @@ export default function EmployeeTable({ employeesData }) {
             </tbody>
           </table>
         </CardBody>
-        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-          <Typography variant="small" color="blue-gray" className="font-normal">
-            Page {currentPage} of{" "}
-            {Math.ceil(employeesData?.length / itemsPerPage)}
-          </Typography>
-          <div className="flex gap-2">
-            <Button
-              variant="outlined"
-              size="sm"
-              onClick={() => {
-                if (currentPage > 1) setCurrentPage((prevPage) => prevPage - 1);
-              }}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outlined"
-              size="sm"
-              onClick={() => {
-                if (
-                  currentPage < Math.ceil(employeesData?.length / itemsPerPage)
-                )
-                  setCurrentPage((prevPage) => prevPage + 1);
-              }}
-            >
-              Next
-            </Button>
-          </div>
-        </CardFooter>
       </Card>
-      <ProfileSidebar profileData={employeesData?.[activeIndex]} />
+      <div className="flex flex-row items-center justify-end border-t border-blue-gray-50 py-4 bg-transparent">
+        <div
+          className="bg-white h-5 w-5 items-center flex flex-col justify-center hover:bg-lightGray cursor-pointer shadow-sm"
+          onClick={() => {
+            if (currentPage > 1) setCurrentPage((prevPage) => prevPage - 1);
+          }}
+        >
+          <i class="fa fa-arrow-left text-xs" aria-hidden="true"></i>
+        </div>
+        <div className="bg-white h-5 w-5 items-center flex flex-col justify-center mx-2 shadow-sm">
+          <Typography className="font-medium text-[10px]">
+            {currentPage}
+          </Typography>
+        </div>
+        <div
+          className="bg-white h-5 w-5 items-center flex flex-col justify-center hover:bg-lightGray cursor-pointer shadow-sm"
+          onClick={() => {
+            if (currentPage < Math.ceil(employeesData?.length / itemsPerPage))
+              setCurrentPage((prevPage) => prevPage + 1);
+          }}
+        >
+          <i class="fa fa-arrow-right text-xs" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <ProfileSidebar profileData={employeesData?.[activeIndex] ?? {}} />
     </>
   );
 }

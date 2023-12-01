@@ -33,7 +33,7 @@ export default function ErrorDialog({ message, success }) {
         // icon={<Icon />}
         className={`rounded-none border-l-4  font-medium  mb-2 ${
           !success
-            ? "text-warning border-warning bg-warning/10"
+            ? "text-danger border-danger bg-danger/10"
             : "text-primary border-primary bg-primary/10"
         }`}
         open={open}

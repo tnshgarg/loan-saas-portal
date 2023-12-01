@@ -16,8 +16,8 @@ import PrimaryButton from "../../../newComponents/PrimaryButton";
 import { Option, Select, Typography } from "@material-tailwind/react";
 import StatisticsCard from "../../../newComponents/cards/StatisticsCard";
 import { UserGroupIcon, UserIcon } from "@heroicons/react/24/outline";
-import TextInput from "../../../newComponents/TextInput";
 import DropdownInput from "../../../newComponents/DropdownInput";
+import SearchInput from "../../../newComponents/SearchInput.jsx";
 
 function mapStateToProps(state) {
   return {
@@ -111,6 +111,8 @@ const _Disbursements = ({ employerId, dispatch }) => {
     year: year,
     month: month,
   });
+  const [filteredData, setFilteredData] = useState(data?.body);
+
   const [safeDisbursements, setSafeDisbursements] = useState([]);
 
   useEffect(() => {
@@ -250,7 +252,12 @@ const _Disbursements = ({ employerId, dispatch }) => {
       </div>
 
       <div className="w-full flex-row flex items-center justify-between">
-        <TextInput label="Search for an employee" />
+        <SearchInput
+          label="Search by Name, Phone, Employee ID and Email ID"
+          data={filteredData}
+          setData={setFilteredData}
+          mainData={data?.body}
+        />
         <PrimaryButton
           title={"Advance Filter"}
           color="secondary"
@@ -263,7 +270,7 @@ const _Disbursements = ({ employerId, dispatch }) => {
         />
       </div>
       <div className="w-full flex-row flex items-center justify-between">
-        <DropdownInput />
+        {/* <DropdownInput /> */}
         {/* <div className="flex-row flex items-center justify-between">
           <PrimaryButton title={"Send Salary Slip"} color="secondary" />
         </div> */}

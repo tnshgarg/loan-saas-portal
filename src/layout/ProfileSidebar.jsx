@@ -13,6 +13,7 @@ import {
   TabPanel,
   TabsBody,
 } from "@material-tailwind/react";
+import _ from "lodash";
 import {
   useMaterialTailwindController,
   setOpenConfigurator,
@@ -20,6 +21,11 @@ import {
   setSidenavType,
   setFixedNavbar,
 } from "../contexts/SidebarContext";
+import {
+  employeeFieldsToTabsMap,
+  newEmployeeFieldsToTabsMap,
+} from "../components/dashboard/employee/employeeModal/employeeFieldsToTabsMap";
+import PrimaryButton from "../newComponents/PrimaryButton";
 
 function formatNumber(number, decPlaces) {
   decPlaces = Math.pow(10, decPlaces);
@@ -46,11 +52,14 @@ function formatNumber(number, decPlaces) {
   return number;
 }
 
-export function ProfileSidebar({ profileData }) {
+export function ProfileSidebar({
+  profileData,
+  currEmployeeId,
+  currEmploymentId,
+}) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { openConfigurator, sidenavColor, sidenavType, fixedNavbar } =
     controller;
-  const [stars, setStars] = React.useState(0);
 
   const {
     employmentId,
@@ -65,6 +74,8 @@ export function ProfileSidebar({ profileData }) {
     empStatus,
   } = profileData ?? {};
 
+  console.log({ profileData });
+
   const sidenavColors = {
     blue: "from-blue-400 to-blue-600",
     "blue-gray": "from-blue-gray-800 to-blue-gray-900",
@@ -74,63 +85,12 @@ export function ProfileSidebar({ profileData }) {
     pink: "from-pink-400 to-pink-600",
   };
 
-  React.useEffect(() => {
-    const stars = fetch(
-      "https://api.github.com/repos/creativetimofficial/material-tailwind-dashboard-react"
-    )
-      .then((response) => response.json())
-      .then((data) => setStars(formatNumber(data.stargazers_count, 1)));
-  }, []);
-
   const [activeTab, setActiveTab] = React.useState("html");
-  const data = [
-    {
-      label: "Profile",
-      value: "html",
-      desc: `It really matters and then like it really doesn't matter.
-      What matters is the people who are sparked by it. And the people 
-      who are like offended by it, it doesn't matter.`,
-    },
-    {
-      label: "Employment",
-      value: "react",
-      desc: `Because it's about motivating the doers. Because I'm here
-      to follow my dreams and inspire other people to follow their dreams, too.`,
-    },
-    {
-      label: "Govt. Id",
-      value: "vue",
-      desc: `We're not always in the position that we want to be at.
-      We're constantly growing. We're constantly making mistakes. We're
-      constantly trying to express ourselves and actualize our dreams.`,
-    },
-    {
-      label: "EPFO",
-      value: "angular",
-      desc: `Because it's about motivating the doers. Because I'm here
-      to follow my dreams and inspire other people to follow their dreams, too.`,
-    },
-    {
-      label: "ESIC",
-      value: "svelte",
-      desc: `We're not always in the position that we want to be at.
-      We're constantly growing. We're constantly making mistakes. We're
-      constantly trying to express ourselves and actualize our dreams.`,
-    },
-    {
-      label: "Family",
-      value: "svelte",
-      desc: `We're not always in the position that we want to be at.
-      We're constantly growing. We're constantly making mistakes. We're
-      constantly trying to express ourselves and actualize our dreams.`,
-    },
-    {
-      label: "Address",
-      value: "svelte",
-      desc: `We're not always in the position that we want to be at.
-      We're constantly growing. We're constantly making mistakes. We're
-      constantly trying to express ourselves and actualize our dreams.`,
-    },
+
+  const topData = [
+    { label: "Location", value: "Bangalore", icon: "fa fa-map-marker" },
+    { label: "Mobile", value: "9041225676", icon: "fa fa-phone" },
+    { label: "Email", value: "raunak@unipe.money", icon: "fa fa-envelope" },
   ];
 
   return (
@@ -145,22 +105,38 @@ export function ProfileSidebar({ profileData }) {
           alt="avatar"
           size="xxl"
         />
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full pr-8">
           <div className="flex flex-row w-full items-start justify-between">
-            <div className="flex flex-col ml-4">
-              <Typography>{employeeName}</Typography>
-              <Typography>Guest User!</Typography>
+            <div className="flex flex-col ml-4 border-b py-2 w-full border-lightgray_01">
+              <Typography className="text-md font-semibold ">
+                {employeeName}
+              </Typography>
+              <Typography className="text-xs text-gray">Unipe</Typography>
             </div>
-
-            <IconButton
-              variant="text"
-              color="blue-gray"
-              onClick={() => setOpenConfigurator(dispatch, false)}
-            >
-              <XMarkIcon strokeWidth={2.5} className="h-5 w-5" />
-            </IconButton>
+          </div>
+          <div className="w-full grid grid-cols-3 gap-4 ml-4 py-2">
+            {topData.map((item, index) => (
+              <div className="flex flex-row items-center" key={index}>
+                <i class={`${item.icon} text-gray`} aria-hidden="true"></i>
+                <div className="w-full flex flex-col items-start pl-3">
+                  <Typography className="text-[10px] text-gray">
+                    {item.label}
+                  </Typography>
+                  <Typography className="text-xs text-black font-semibold">
+                    {item.value}
+                  </Typography>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+        <IconButton
+          variant="text"
+          color="blue-gray"
+          onClick={() => setOpenConfigurator(dispatch, false)}
+        >
+          <XMarkIcon strokeWidth={2.5} className="h-5 w-5" />
+        </IconButton>
       </div>
       <Tabs value={activeTab}>
         <TabsHeader
@@ -170,46 +146,102 @@ export function ProfileSidebar({ profileData }) {
               "bg-transparent border-b-2 border-[#016bff] shadow-none rounded-none",
           }}
         >
-          {data.map(({ label, value }) => (
-            <Tab
-              key={value}
-              value={value}
-              onClick={() => setActiveTab(value)}
-              className={`text-xs py-2 ${
-                activeTab === value ? `text-[#016bff]` : `text-gray`
-              }`}
-            >
-              {label}
-            </Tab>
-          ))}
+          {Object.entries(newEmployeeFieldsToTabsMap).map(
+            ([key, value], index) => {
+              return (
+                <Tab
+                  key={index}
+                  value={key}
+                  onClick={() => setActiveTab(value)}
+                  className={`text-xs py-2 ${
+                    activeTab === value ? `text-[#016bff]` : `text-gray`
+                  }`}
+                >
+                  {key}
+                </Tab>
+              );
+            }
+          )}
         </TabsHeader>
         <TabsBody>
-          {data.map(({ value, desc }) => (
-            <TabPanel key={value} value={value} className="p-8">
-              <div className="flex flex-row w-full items-center justify-between">
-                <Typography className="text-sm text-gray">
-                  Profile Details
-                </Typography>
-                <Button size="md" className="bg-[#016bff] m-0 rounded-md">
-                  {/* <PencilIcon /> */}
-                  Edit Details
-                </Button>
-              </div>
+          {Object.entries(newEmployeeFieldsToTabsMap).map(
+            ([key, value], index) => {
+              const {
+                category,
+                fields,
+                requiredFields,
+                fieldPatterns,
+                readOnlyFields,
+                hasSubTabs,
+              } = value;
 
-              <div className="grid grid-cols-3 gap-4">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => (
-                  <div>
-                    <Typography className="text-xs text-gray mt-8">
-                      Field
-                    </Typography>
-                    <Typography className="text-md text-black font-bold">
-                      Value
-                    </Typography>
+              const fieldsInverted = _.invert(fields);
+
+              return (
+                <TabPanel key={index} value={key} className="p-8">
+                  <div className="flex flex-row w-full items-center justify-between">
+                    <Typography className="text-xs text-gray">{key}</Typography>
+                    <PrimaryButton
+                      variant={"primary"}
+                      size="sm"
+                      title={"Edit Details"}
+                    />
                   </div>
-                ))}
-              </div>
-            </TabPanel>
-          ))}
+
+                  <div
+                    className={`grid ${
+                      hasSubTabs ? "grid-cols-1" : "grid-cols-3 "
+                    }gap-4`}
+                  >
+                    {hasSubTabs
+                      ? Object.entries(fields).map(
+                          ([key, fieldsList], index) => {
+                            return (
+                              <div key={index}>
+                                <Typography className="text-xs font-normal text-black mt-8">
+                                  {key}
+                                </Typography>
+                                <div className="grid grid-cols-3 gap-4">
+                                  {Object.entries(fieldsList).map(
+                                    ([key, value], index) => {
+                                      console.log({ key });
+                                      console.log({ value });
+                                      return (
+                                        <div key={index}>
+                                          <Typography className="text-xs text-gray mt-8 font-normal">
+                                            {key}
+                                          </Typography>
+                                          <Typography className="text-sm text-black font-semibold">
+                                            {profileData[value]}
+                                          </Typography>
+                                        </div>
+                                      );
+                                    }
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          }
+                        )
+                      : Object.entries(fieldsInverted).map(
+                          ([key, value], index) => {
+                            return (
+                              <div key={index}>
+                                <Typography className="text-xs text-gray mt-8 font-normal">
+                                  {key}
+                                </Typography>
+                                <Typography className="text-sm text-black font-semibold">
+                                  {profileData[value]}
+                                </Typography>
+                              </div>
+                            );
+                          }
+                        )}
+                  </div>
+                </TabPanel>
+              );
+            }
+          )}
         </TabsBody>
       </Tabs>
     </aside>

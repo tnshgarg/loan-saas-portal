@@ -168,7 +168,7 @@ export const BrowserTabularDataSlice = createSlice({
       state[module].tableData[fileName].errorFilters = [];
       state[module].tableData[fileName].filteredData = [] as any;
       const fieldMap = (state[module].tableData[fileName].fieldMap =
-        fields.reduce((res, field) => {
+        fields?.reduce((res, field) => {
           if (field.columns) {
             field.columns.reduce((res, field) => {
               res[field.field] = field.validations;

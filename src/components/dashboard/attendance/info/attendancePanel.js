@@ -16,12 +16,12 @@ import PrimaryButton from "../../../../newComponents/PrimaryButton";
 import AttendanceTable from "../../../../newComponents/AttendanceTable";
 import DropdownInput from "../../../../newComponents/DropdownInput";
 import SearchInput from "../../../../newComponents/SearchInput.jsx";
-import { CsvUploadDialog } from "../../../../newComponents/CsvUploadDialog.jsx";
 import {
   HEADER_GROUPS,
   HEADER_LIST,
   transformHeadersToFields,
 } from "../dataUpload/attendanceDataUploadPanelFields.js";
+import AttendanceUpload from "../../../../newComponents/AttendanceUpload.jsx";
 
 function mapStateToProps(state) {
   return {
@@ -42,6 +42,8 @@ const _AttendancePanel = ({ employerId, dispatch }) => {
     month: today.getMonth() + 1,
   });
 
+  console.log("date", year, month);
+
   const dateChanged = (updatedDate) => {
     setDate(updatedDate);
     // dataRefetch();
@@ -53,6 +55,8 @@ const _AttendancePanel = ({ employerId, dispatch }) => {
     year: year,
     month: month,
   });
+  const [filteredData, setFilteredData] = useState(data?.body);
+
   const [safeAttendance, setSafeAttendance] = useState([]);
 
   useEffect(() => {
@@ -145,7 +149,12 @@ const _AttendancePanel = ({ employerId, dispatch }) => {
         </div>
       </div>
       <div className="w-full flex-row flex items-center justify-between">
-        <SearchInput label="Search for an employee" />
+        <SearchInput
+          label="Search by Name, Phone, Employee ID and Email ID"
+          data={filteredData}
+          setData={setFilteredData}
+          mainData={data?.body}
+        />
         <PrimaryButton
           title={"Filter"}
           color={"secondary"}
@@ -157,31 +166,19 @@ const _AttendancePanel = ({ employerId, dispatch }) => {
           color={"secondary"}
           variant={"outlined"}
           size={"sm"}
+          className={"ml-0"}
         />
       </div>
-      <AttendanceTable />
-      <CsvUploadDialog
-        name="Attendance"
-        title={"Step 2: Upload Your Employee CSV File"}
-        description="By uploading the attendance data, you empower your employees to avail of their on-demand salary benefits via the Unipe App"
-        label={"employee_details"}
-        headerImage="https://cdn1.iconfinder.com/data/icons/business-startup-48/64/1078-512.png"
-        module={ATTENDANCE_MODULE}
-        dateDropDown={{ exists: true, onChange: dateChanged }}
-        templateData={[HEADER_LIST]}
-        fields={HEADER_GROUPS}
-        preProcessing={transformHeadersToFields}
+      <AttendanceTable attendanceData={data?.body} />
+
+      <AttendanceUpload
         setOpen={setOpen}
-        open={open}
         handleOpen={handleOpen}
-        employeesData={data?.body}
-        // onToastDismiss={() => {
-        //   dispatch(
-        //     allEmployeesPanelDetails.util.invalidateTags([
-        //       "AllEmployeesPanelDetails",
-        //     ])
-        //   );
-        // }}
+        open={open}
+        attendanceData={data?.body}
+        dateChanged={dateChanged}
+        year={year}
+        month={month}
       />
     </div>
   );

@@ -247,5 +247,6 @@ export function buildTemplate(employeesData, month, defaultValues = {}) {
         : defaultValues[column.field] ?? ""
     )
   );
+
   return [headers, ...rows];
 }
