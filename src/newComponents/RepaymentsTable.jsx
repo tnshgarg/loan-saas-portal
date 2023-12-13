@@ -21,18 +21,92 @@ import { ChevronUpDownIcon } from "@heroicons/react/24/outline";
 const TABLE_HEAD = [
   "Emp ID",
   "Name",
-  "EWA",
-  "Mobile",
-  "EWA Status",
-  "Email",
-  "DOB",
-  "Designation",
-  "Employeer",
-  "Emp Status",
+  "Loan Amount",
+  "Status",
+  "Disbursement date",
+  "Due Date",
+  "Pending Amount",
+  "Repaid amount",
+  "Repayment date",
   "",
 ];
 
-export default function EmployeeTable({ employeesData }) {
+const TABLE_ROWS = [
+  {
+    id: "123456",
+    name: "Amar Roy",
+    takeHomeSalary: "5000",
+    deductions: 235,
+    grossPay: 5000,
+    // action: 2,
+  },
+  {
+    id: "123456",
+    name: "Amar Roy",
+    takeHomeSalary: "5000",
+    deductions: 235,
+    grossPay: 5000,
+    // action: 2,
+  },
+  {
+    id: "123456",
+    name: "Amar Roy",
+    takeHomeSalary: "5000",
+    deductions: 235,
+    grossPay: 5000,
+    // action: 2,
+  },
+  {
+    id: "123456",
+    name: "Amar Roy",
+    takeHomeSalary: "5000",
+    deductions: 235,
+    grossPay: 5000,
+    // action: 2,
+  },
+  {
+    id: "123456",
+    name: "Amar Roy",
+    takeHomeSalary: "5000",
+    deductions: 235,
+    grossPay: 5000,
+    // action: 2,
+  },
+  {
+    id: "123456",
+    name: "Amar Roy",
+    takeHomeSalary: "5000",
+    deductions: 235,
+    grossPay: 5000,
+    // action: 2,
+  },
+  {
+    id: "123456",
+    name: "Amar Roy",
+    takeHomeSalary: "5000",
+    deductions: 235,
+    grossPay: 5000,
+    // action: 2,
+  },
+  {
+    id: "123456",
+    name: "Amar Roy",
+    takeHomeSalary: "5000",
+    deductions: 235,
+    grossPay: 5000,
+    // action: 2,
+  },
+  {
+    id: "123456",
+    name: "Amar Roy",
+    takeHomeSalary: "5000",
+    deductions: 235,
+    grossPay: 5000,
+    // action: 2,
+  },
+];
+
+export default function RepaymentsTable({ employeesData }) {
   const itemsPerPage = 10;
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -87,7 +161,7 @@ export default function EmployeeTable({ employeesData }) {
               </tr>
             </thead>
             <tbody>
-              {currentItems?.map(
+              {TABLE_ROWS?.map(
                 (
                   {
                     employmentId,
@@ -201,10 +275,7 @@ export default function EmployeeTable({ employeesData }) {
                           {renderValue(active)}
                         </Typography>
                       </td>
-                      <td
-                        className={classes}
-                        style={{ backgroundColor: "red" }}
-                      >
+                      <td className={classes}>
                         <Menu>
                           <MenuHandler>
                             <svg

@@ -13,6 +13,7 @@ module.exports = withMT({
         primaryBackground: "#e0f2ec",
         pendingBackground: "#fff1e3",
         secondary: "#2169ff",
+        warning: "#FF7500",
         blue: "#2169ff",
         headerBg: "rgba(55, 116, 118,0.1)",
         danger: "#f56a6a",

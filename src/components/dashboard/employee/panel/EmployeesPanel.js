@@ -30,9 +30,12 @@ import { tableColumns } from "./tableColumns";
 import { Button, Typography } from "@material-tailwind/react";
 import StatisticsCard from "../../../../newComponents/cards/StatisticsCard";
 import {
+  ArrowUpTrayIcon,
   BanknotesIcon,
+  ListBulletIcon,
   UserGroupIcon,
   UserIcon,
+  UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import PrimaryButton from "../../../../newComponents/PrimaryButton";
 import TextInput from "../../../../newComponents/TextInput";
@@ -46,6 +49,8 @@ import {
 } from "../onboarding/fields.jsx";
 import employee_icon from "../../../../assets/icons/employee_data.png";
 import EmployeeUpload from "../../../../newComponents/EmployeeUpload.jsx";
+import FilterModal from "../../../../newComponents/FilterModal.jsx";
+import TableLayout from "../../../../layout/TableLayout.jsx";
 
 const checkOverallStatus = (aadhaar, pan, bank) => {
   return aadhaar?.verifyStatus === "SUCCESS" &&
@@ -343,6 +348,30 @@ const TabularTabsComponent = () => {
       },
     },
   ];
+  // "Emp ID",
+  // "Name",
+  // "EWA",
+  // "Mobile",
+  // "EWA Status",
+  // "Email",
+  // "DOB",
+  // "Designation",
+  // "Employeer",
+  // "Emp Status",
+  // "",
+  const TABLE_HEADERS = [
+    { label: "Emp ID", value: "employerEmployeeId" },
+    { label: "Name", value: "employeeName" },
+    { label: "EWA", value: "ewa" },
+    { label: "Mobile", value: "mobile" },
+    { label: "EWA Status", value: "ewaStatus" },
+    { label: "Email", value: "email" },
+    { label: "DOB", value: "dob" },
+    { label: "Designation", value: "designation" },
+    { label: "Employeer", value: "principalEmployer" },
+    { label: "Emp Status", value: "active" },
+    { label: "", value: "options" },
+  ];
 
   const [metricsData, setMetricsData] = useState({});
   useEffect(() => {
@@ -414,6 +443,31 @@ const TabularTabsComponent = () => {
   const handleOpen = (e) => {
     setOpen(true);
   };
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [filter, setFilter] = useState(null);
+
+  const openFilterModal = () => {
+    setIsFilterModalOpen(true);
+  };
+
+  const closeFilterModal = () => {
+    setIsFilterModalOpen(false);
+  };
+
+  const applyFilter = (filterCriteria) => {
+    // Handle the filter criteria, for now, just log it
+    console.log("Filter Applied:", filterCriteria);
+    setFilter(filterCriteria);
+    // Add your logic to filter the data based on the criteria
+    // For example, update the filteredData state in your component
+  };
+
+  const availableProperties = [
+    "EWA Balance",
+    "Other Property1",
+    "Other Property2",
+  ];
+
   return (
     <div className="mt-4">
       <div className="mb-6 grid gap-y-10 gap-x-4 md:grid-cols-2 xl:grid-cols-4">
@@ -445,6 +499,7 @@ const TabularTabsComponent = () => {
             color="primary"
             size={"sm"}
             className={"ml-0"}
+            leftIcon={ArrowUpTrayIcon}
           />
           <PrimaryButton
             title={"Onboard Employees"}
@@ -452,37 +507,24 @@ const TabularTabsComponent = () => {
             size={"sm"}
             onClick={handleOpen}
             className={"ml-0"}
+            leftIcon={UserPlusIcon}
           />
           <PrimaryButton
             title={"Bulk Update via Upload "}
             color="primary"
             size={"sm"}
             className={"ml-0"}
+            leftIcon={ListBulletIcon}
           />
         </div>
       </div>
-      <div className="w-full flex-row flex items-center justify-between">
-        <SearchInput
-          label="Search by Name, Phone, Employee ID and Email ID"
-          data={filteredData}
-          setData={setFilteredData}
-          mainData={data?.body}
-        />
-        <PrimaryButton
-          title={"Filter"}
-          color="secondary"
-          variant={"outlined"}
-          size={"sm"}
-        />
-        <PrimaryButton
-          title={"Download"}
-          color="secondary"
-          variant={"outlined"}
-          size={"sm"}
-          className={"ml-0"}
-        />
-      </div>
-      <EmployeeTable employeesData={filteredData} />
+
+      <TableLayout
+        mainData={data?.body}
+        rowData={filteredData}
+        setRowData={setFilteredData}
+        tableHeaders={TABLE_HEADERS}
+      />
       {/* <div className="w-full flex-row flex items-center justify-between">
         <TextInput />
         <PrimaryButton title={"Filter"} />
@@ -515,6 +557,12 @@ const TabularTabsComponent = () => {
       >
         <TabularViewTab handlers={handlers} />
       </Dashlet> */}
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={closeFilterModal}
+        onApplyFilter={applyFilter}
+        properties={availableProperties}
+      />
       <EmployeeUpload
         setOpen={setOpen}
         handleOpen={handleOpen}

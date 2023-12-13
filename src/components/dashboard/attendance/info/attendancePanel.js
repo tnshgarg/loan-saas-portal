@@ -22,6 +22,8 @@ import {
   transformHeadersToFields,
 } from "../dataUpload/attendanceDataUploadPanelFields.js";
 import AttendanceUpload from "../../../../newComponents/AttendanceUpload.jsx";
+import TableLayout from "../../../../layout/TableLayout.jsx";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 function mapStateToProps(state) {
   return {
@@ -42,6 +44,15 @@ const _AttendancePanel = ({ employerId, dispatch }) => {
     month: today.getMonth() + 1,
   });
 
+  const TABLE_HEADERS = [
+    { label: "Emp ID", value: "employerEmployeeId" },
+    { label: "Name", value: "name" },
+    { label: "EWA", value: "ewa" },
+    { label: "Present", value: "totalPresentDays" },
+    { label: "Half Day", value: "totalHalfDays" },
+    { label: "Paid Holidays", value: "totalHolidays" },
+  ];
+
   console.log("date", year, month);
 
   const dateChanged = (updatedDate) => {
@@ -56,6 +67,8 @@ const _AttendancePanel = ({ employerId, dispatch }) => {
     month: month,
   });
   const [filteredData, setFilteredData] = useState(data?.body);
+
+  console.log("attendance res:", data?.body);
 
   const [safeAttendance, setSafeAttendance] = useState([]);
 
@@ -145,32 +158,17 @@ const _AttendancePanel = ({ employerId, dispatch }) => {
             color={"secondary"}
             size={"sm"}
             onClick={() => setOpen(true)}
+            leftIcon={ArrowUpTrayIcon}
           />
         </div>
       </div>
-      <div className="w-full flex-row flex items-center justify-between">
-        <SearchInput
-          label="Search by Name, Phone, Employee ID and Email ID"
-          data={filteredData}
-          setData={setFilteredData}
-          mainData={data?.body}
-        />
-        <PrimaryButton
-          title={"Filter"}
-          color={"secondary"}
-          variant={"outlined"}
-          size={"sm"}
-        />
-        <PrimaryButton
-          title={"Download"}
-          color={"secondary"}
-          variant={"outlined"}
-          size={"sm"}
-          className={"ml-0"}
-        />
-      </div>
-      <AttendanceTable attendanceData={data?.body} />
 
+      <TableLayout
+        mainData={data?.body}
+        rowData={filteredData}
+        setRowData={setFilteredData}
+        tableHeaders={TABLE_HEADERS}
+      />
       <AttendanceUpload
         setOpen={setOpen}
         handleOpen={handleOpen}

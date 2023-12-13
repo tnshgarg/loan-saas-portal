@@ -1,8 +1,9 @@
 import { Button, Typography } from "@material-tailwind/react";
+import React from "react";
 
 export default function PrimaryButton({
   leftIcon,
-  RightIcon,
+  rightIcon,
   title,
   variant,
   color,
@@ -12,6 +13,10 @@ export default function PrimaryButton({
   type,
   onClick,
 }) {
+  const colors = {
+    primary: "text-primary",
+    secondary: "text-secondary",
+  };
   return (
     <Button
       className={`flex items-center justify-center m-2 shadow-none outline-none rounded-[4px] ${className}`}
@@ -24,12 +29,21 @@ export default function PrimaryButton({
       style={{ backgroundColor: disabled && "gray" }}
       onClick={onClick}
     >
-      {leftIcon}
+      {leftIcon &&
+        React.createElement(leftIcon, {
+          className: `w-4 h-4 mr-1 ${
+            variant == "outlined" ? colors[color] : "text-white"
+          }`,
+        })}
       <Typography className={`text-md font-semibold capitalize`}>
         {title}
       </Typography>
-
-      {RightIcon}
+      {rightIcon &&
+        React.createElement(rightIcon, {
+          className: `w-4 h-4 ml-1 ${
+            variant == "outlined" ? colors[color] : "text-white"
+          }`,
+        })}
     </Button>
   );
 }

@@ -18,6 +18,12 @@ import TextInput from "../../../../newComponents/TextInput";
 import PayslipTable from "../../../../newComponents/PayslipTable.jsx";
 import DropdownInput from "../../../../newComponents/DropdownInput";
 import SearchInput from "../../../../newComponents/SearchInput.jsx";
+import TableLayout from "../../../../layout/TableLayout.jsx";
+import PayslipsUpload from "../../../../newComponents/PayslipsUpload.jsx";
+import {
+  ArrowUpTrayIcon,
+  PaperAirplaneIcon,
+} from "@heroicons/react/24/outline";
 
 function mapStateToProps(state) {
   return {
@@ -49,6 +55,15 @@ const _PayslipsPanel = ({ employerId, dispatch }) => {
     year: year,
     month: month,
   });
+  console.log("payslips data:", data?.body);
+  const TABLE_HEADERS = [
+    { label: "Emp ID", value: "employerEmployeeId" },
+    { label: "Name", value: "name" },
+    { label: "Take Home Salary", value: "ewa" },
+    { label: "Deductions", value: "totalPresentDays" },
+    { label: "Gross Pay", value: "totalHalfDays" },
+    { label: "Action", value: "totalHolidays" },
+  ];
   const [filteredData, setFilteredData] = useState(data?.body);
 
   const [safePayslips, setSafePayslips] = useState([]);
@@ -133,34 +148,33 @@ const _PayslipsPanel = ({ employerId, dispatch }) => {
         <DateDropdown />
         <div className="flex-row flex items-center justify-between">
           <PrimaryButton
+            title={"Upload Salary Slip"}
+            color="primary"
+            size={"sm"}
+            onClick={() => setOpen(true)}
+            leftIcon={ArrowUpTrayIcon}
+          />
+          <PrimaryButton
             title={"Send Salary Slip"}
             color="secondary"
             size={"sm"}
+            className={"ml-0"}
+            leftIcon={PaperAirplaneIcon}
           />
         </div>
       </div>
-      <div className="w-full flex-row flex items-center justify-between">
-        <SearchInput
-          label="Search by Name, Phone, Employee ID and Email ID"
-          data={filteredData}
-          setData={setFilteredData}
-          mainData={data?.body}
-        />
-        <PrimaryButton
-          title={"Filter"}
-          color="secondary"
-          variant={"outlined"}
-          size={"sm"}
-        />
-      </div>
-      <PayslipTable
+
+      <TableLayout
+        mainData={data?.body}
+        rowData={filteredData}
+        setRowData={setFilteredData}
+        tableHeaders={TABLE_HEADERS}
+      />
+      <PayslipsUpload
         setOpen={setOpen}
         handleOpen={handleOpen}
         open={open}
         payslipsData={data?.body}
-        dateChanged={dateChanged}
-        year={year}
-        month={month}
       />
     </div>
   );

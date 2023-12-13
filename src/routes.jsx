@@ -84,6 +84,8 @@ import { AttendancePanel } from "./components/dashboard/attendance/info/attendan
 import { PayrollInfo } from "./components/dashboard/payouts/info/PayrollInfo";
 import { Disbursements } from "./components/dashboard/ewa/details";
 import { PayslipsPanel } from "./components/dashboard/payslips/info/payslipsPanel";
+import Repayments from "./pages/dashboard/Repayments";
+import CommissionTracking from "./pages/dashboard/CommissionTracking";
 
 const icon = {
   className: "w-6 h-6 text-inherit color-gray",
@@ -157,8 +159,28 @@ export const routes = [
   {
     title: "On Demand Salary",
     icon: <CurrencyDollarIcon {...icon} />,
-    parentRoute: "/disbursements",
-    parentElement: <Disbursements />,
+    parentRoute: "/on-demand-salary",
+    // parentElement: <Disbursements />,
+    children: [
+      {
+        name: "Withdrawal",
+        // TODO: Rename
+        route: "/disbursements",
+        element: <Disbursements />,
+      },
+      {
+        name: "Repayment",
+
+        route: "/repayment",
+        element: <Repayments />,
+      },
+      {
+        name: "Commission Tracking",
+
+        route: "/commission-tracking",
+        element: <CommissionTracking />,
+      },
+    ],
   },
   {
     title: "Payouts",

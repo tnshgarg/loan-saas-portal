@@ -19,8 +19,13 @@ export function StatisticsCard({
   return (
     <Card className={`rounded-lg shadow-none ${className}`}>
       <div className="flex flex-row w-full justify-between">
-        <CardHeader floated={false} className="col-span-1 shadow-none">
-          <Typography className="col-span-3 text-sm">{title}</Typography>
+        <CardHeader
+          floated={false}
+          className="col-span-1 shadow-none rounded-none"
+        >
+          <Typography className="col-span-3 text-xs font-medium ">
+            {title}
+          </Typography>
         </CardHeader>
 
         <CardHeader
@@ -45,16 +50,16 @@ export function StatisticsCard({
         >
           {data.map(({ label, value, type, className }, index) => (
             <div
-              className={`flex flex-col pl-${index != 0 ? 4 : 0} ${
+              className={`flex mt-2 flex-col pl-${index != 0 ? 4 : 0} ${
                 data.length > 2 && index + 1 != data.length
                   ? "border-lightGray border-r"
                   : null
               }`}
             >
-              <Typography variant="h3" className={`${className}`}>
+              <Typography className={`text-2xl font-bold ${className}`}>
                 {value}
               </Typography>
-              <Typography variant="small" className="font-normal text-black">
+              <Typography className="text-xs font-regular text-black">
                 {label}
               </Typography>
             </div>

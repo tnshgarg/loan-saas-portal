@@ -1,6 +1,7 @@
 import { Button } from "@blueprintjs/core";
 import { CSVLink } from "react-csv";
 import PrimaryButton from "../../../newComponents/PrimaryButton";
+import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 
 export function TemplateDownloadButton({
   title,
@@ -26,7 +27,7 @@ export function TemplateDownloadButton({
         color="secondary"
         variant={"outlined"}
         className={"w-full outline-none px-0"}
-        leftIcon={<i class="fa fa-download mr-2" aria-hidden="true"></i>}
+        rightIcon={ArrowDownTrayIcon}
       />
       {/* <Button loading={loading} icon="cloud-download">
         Download Template File

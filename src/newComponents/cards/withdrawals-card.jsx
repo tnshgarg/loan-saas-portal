@@ -4,7 +4,13 @@ import {
   ListItemSuffix,
   Card,
   IconButton,
+  CardHeader,
+  Typography,
+  CardBody,
+  CardFooter,
 } from "@material-tailwind/react";
+import PropTypes from "prop-types";
+import PrimaryButton from "../PrimaryButton";
 
 function TrashIcon() {
   return (
@@ -23,35 +29,52 @@ function TrashIcon() {
   );
 }
 
-export default function WithdrawalsCard() {
+export default function WithdrawalsCard({ title, icon, className, footer }) {
   return (
-    <Card className="w-full">
-      <List>
-        <ListItem ripple={false} className="py-1 pr-1 pl-4">
-          Item One
-          <ListItemSuffix>
-            <IconButton variant="text" color="blue-gray">
-              <TrashIcon />
-            </IconButton>
-          </ListItemSuffix>
-        </ListItem>
-        <ListItem ripple={false} className="py-1 pr-1 pl-4">
-          Item Two
-          <ListItemSuffix>
-            <IconButton variant="text" color="blue-gray">
-              <TrashIcon />
-            </IconButton>
-          </ListItemSuffix>
-        </ListItem>
-        <ListItem ripple={false} className="py-1 pr-1 pl-4">
-          Item Three
-          <ListItemSuffix>
-            <IconButton variant="text" color="blue-gray">
-              <TrashIcon />
-            </IconButton>
-          </ListItemSuffix>
-        </ListItem>
-      </List>
+    <Card className={`rounded-lg shadow-none ${className}`}>
+      <div className="flex flex-row w-full justify-between">
+        <CardHeader
+          floated={false}
+          className="w-full shadow-none rounded-none flex flex-row justify-between"
+        >
+          <Typography className="text-xs font-medium">{title}</Typography>
+          <Typography className="text-xs font-medium text-secondary">
+            View All
+          </Typography>
+        </CardHeader>
+      </div>
+      <CardBody className="p-4 ">
+        <List className="w-full p-0">
+          <ListItem
+            ripple={false}
+            className="px-3 my-1 py-1 w-full bg-lightgray_01 rounded-md"
+          >
+            <div>
+              <Typography className="text-xs font-medium text-black">
+                5000
+              </Typography>
+              <Typography className="text-xs text-[10px] text-black">
+                February, 2023
+              </Typography>
+            </div>
+
+            <ListItemSuffix>
+              <PrimaryButton
+                title={"Pay Now"}
+                className={"h-8 mr-0"}
+                size={"sm"}
+                color={"primary"}
+                variant={"outlined"}
+              />
+            </ListItemSuffix>
+          </ListItem>
+        </List>
+      </CardBody>
+      {footer && (
+        <CardFooter className="border-t border-blue-gray-50 p-4">
+          {footer}
+        </CardFooter>
+      )}
     </Card>
   );
 }

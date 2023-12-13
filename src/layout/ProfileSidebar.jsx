@@ -74,8 +74,6 @@ export function ProfileSidebar({
     empStatus,
   } = profileData ?? {};
 
-  console.log({ profileData });
-
   const sidenavColors = {
     blue: "from-blue-400 to-blue-600",
     "blue-gray": "from-blue-gray-800 to-blue-gray-900",
@@ -204,8 +202,6 @@ export function ProfileSidebar({
                                 <div className="grid grid-cols-3 gap-4">
                                   {Object.entries(fieldsList).map(
                                     ([key, value], index) => {
-                                      console.log({ key });
-                                      console.log({ value });
                                       return (
                                         <div key={index}>
                                           <Typography className="text-xs text-gray mt-8 font-normal">

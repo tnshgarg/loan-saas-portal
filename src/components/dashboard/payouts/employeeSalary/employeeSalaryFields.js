@@ -49,7 +49,10 @@ export const FIELDS = [
     validations: noValidation,
     prefetch: true,
   },
+  //TODO Merge history fields
 ];
+
+export const HEADER_LIST = FIELDS.map((column) => column.header);
 
 export const ONE_CLICK_HEADERS = FIELDS.map((column) => ({
   ...column,

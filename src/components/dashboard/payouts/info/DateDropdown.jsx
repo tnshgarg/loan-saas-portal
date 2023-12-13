@@ -1,4 +1,5 @@
 import { HTMLSelect } from "@blueprintjs/core";
+import { Option, Select } from "@material-tailwind/react";
 
 const MONTHS = [
   "",
@@ -32,9 +33,35 @@ export const DateDropdown = (props) => {
       year -= 1;
     }
   }
+  console.log({ options });
   return (
     <>
-      <HTMLSelect
+      <div className="w-48">
+        <Select
+          variant="outlined"
+          label="Select Date"
+          className="bg-white"
+          size="md"
+          color="primary"
+          onChange={(event) => {
+            if (props.onChange) {
+              const date = parseInt(event.currentTarget.value);
+              props.onChange({
+                year: parseInt(date / 100),
+                month: date % 100,
+              });
+            }
+          }}
+          selected={options[0]}
+        >
+          {options.map((option, index) => (
+            <Option value={option.value} key={option.value}>
+              {option.text}
+            </Option>
+          ))}
+        </Select>
+      </div>
+      {/* <HTMLSelect
         onChange={(event) => {
           if (props.onChange) {
             const date = parseInt(event.currentTarget.value);
@@ -50,7 +77,7 @@ export const DateDropdown = (props) => {
             {option.text}
           </option>
         ))}
-      </HTMLSelect>
+      </HTMLSelect> */}
     </>
   );
 };

@@ -11,13 +11,18 @@ import { useGetDisbursementsQuery } from "../../../store/slices/apiSlices/employ
 import { initBrowserTable } from "../../../store/slices/browserTableSlice.ts";
 import { getExcel } from "../../../utils/excelHandling";
 import { DateDropdown } from "../payouts/info/DateDropdown";
-import EmployeeTable from "../../../newComponents/EmployeeTable";
 import PrimaryButton from "../../../newComponents/PrimaryButton";
 import { Option, Select, Typography } from "@material-tailwind/react";
 import StatisticsCard from "../../../newComponents/cards/StatisticsCard";
-import { UserGroupIcon, UserIcon } from "@heroicons/react/24/outline";
+import {
+  UserGroupIcon,
+  UserIcon,
+  BanknotesIcon,
+} from "@heroicons/react/24/outline";
 import DropdownInput from "../../../newComponents/DropdownInput";
 import SearchInput from "../../../newComponents/SearchInput.jsx";
+import DisbursementsTable from "../../../newComponents/DisbursementsTable.jsx";
+import TableLayout from "../../../layout/TableLayout.jsx";
 
 function mapStateToProps(state) {
   return {
@@ -100,6 +105,18 @@ const _Disbursements = ({ employerId, dispatch }) => {
     month: today.getMonth() + 1,
   });
 
+  const TABLE_HEADERS = [
+    { label: "Emp ID", value: "employerEmployeeId" },
+    { label: "Name", value: "name" },
+    { label: "Withdrawn", value: "ewa" },
+    { label: "Status", value: "totalPresentDays" },
+    { label: "Disbursement date", value: "totalHalfDays" },
+    { label: "Due Date", value: "totalHolidays" },
+    { label: "UTR number", value: "totalHolidays" },
+    { label: "Bank Account", value: "totalHolidays" },
+    { label: "", value: "options" },
+  ];
+
   const dateChanged = (updatedDate) => {
     setDate(updatedDate);
     // dataRefetch();
@@ -111,6 +128,8 @@ const _Disbursements = ({ employerId, dispatch }) => {
     year: year,
     month: month,
   });
+
+  console.log("Dis:", data?.body);
   const [filteredData, setFilteredData] = useState(data?.body);
 
   const [safeDisbursements, setSafeDisbursements] = useState([]);
@@ -147,33 +166,26 @@ const _Disbursements = ({ employerId, dispatch }) => {
   };
   const statisticsCardsData = [
     {
-      icon: UserGroupIcon,
+      icon: BanknotesIcon,
       className: "col-span-2",
       title: "On Demand Withdrawal",
       data: [
-        { label: "All Employees", value: 345, className: "text-primary" },
-        { label: "All Employees", value: 345, className: "text-primary" },
+        { label: "Total Amount", value: "₹4,57,000", className: "text-black" },
+        { label: "Employees", value: 567, className: "text-black" },
       ],
-      footer: {
-        color: "text-green-500",
-        value: "345",
-        label: "Active Employees:",
-      },
     },
     {
-      icon: UserIcon,
+      icon: BanknotesIcon,
       className: "col-span-2",
       title: "Offer Available",
       data: [
-        { label: "Enrolled Employees", value: 45, className: "text-primary" },
-        { label: "Enrolled Employees", value: 45, className: "text-primary" },
+        {
+          label: "Amount Available",
+          value: "₹4,57,000",
+          className: "text-black",
+        },
+        { label: "Employee Available ", value: 567, className: "text-black" },
       ],
-
-      footer: {
-        color: "text-green-500",
-        value: "45",
-        label: "KYC Done:",
-      },
     },
   ];
   return (
@@ -231,7 +243,9 @@ const _Disbursements = ({ employerId, dispatch }) => {
         )}
       </Dashlet> */}
 
-      <div className="mb-6 grid gap-y-10 gap-x-4 md:grid-cols-3 xl:grid-cols-5">
+      <DateDropdown />
+
+      <div className="mb-6 mt-4 grid gap-y-10 gap-x-4 md:grid-cols-3 xl:grid-cols-5">
         {statisticsCardsData.map(({ icon, title, footer, span, ...rest }) => (
           <StatisticsCard
             span={span}
@@ -242,45 +256,23 @@ const _Disbursements = ({ employerId, dispatch }) => {
               className: "w-6 h-6 text-gray",
             })}
             footer={
-              <Typography className="text-md text-black">
-                {footer.label}
-                <strong className={footer.color}> {footer.value}</strong>
-              </Typography>
+              footer && (
+                <Typography className="text-md text-black">
+                  {footer.label}
+                  <strong className={footer.color}> {footer.value}</strong>
+                </Typography>
+              )
             }
           />
         ))}
       </div>
 
-      <div className="w-full flex-row flex items-center justify-between">
-        <SearchInput
-          label="Search by Name, Phone, Employee ID and Email ID"
-          data={filteredData}
-          setData={setFilteredData}
-          mainData={data?.body}
-        />
-        <PrimaryButton
-          title={"Advance Filter"}
-          color="secondary"
-          variant={"outlined"}
-        />
-        <PrimaryButton
-          title={"Download"}
-          color="secondary"
-          variant={"outlined"}
-        />
-      </div>
-      <div className="w-full flex-row flex items-center justify-between">
-        {/* <DropdownInput /> */}
-        {/* <div className="flex-row flex items-center justify-between">
-          <PrimaryButton title={"Send Salary Slip"} color="secondary" />
-        </div> */}
-      </div>
-      <EmployeeTable />
-      {/* <div className="w-full flex-row flex items-center justify-between">
-        <TextInput />
-        <PrimaryButton title={"Filter"} />
-        <PrimaryButton title={"Download"} />
-      </div> */}
+      <TableLayout
+        mainData={data?.body}
+        rowData={filteredData}
+        setRowData={setFilteredData}
+        tableHeaders={TABLE_HEADERS}
+      />
 
       {/* <EmployerMetrics
         data={metricsData}

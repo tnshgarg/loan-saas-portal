@@ -884,7 +884,7 @@ const customTheme = {
     defaultProps: {
       variant: "outlined",
       color: "blue",
-      size: "md",
+      size: "sm",
       label: "",
       error: false,
       success: false,
@@ -908,7 +908,7 @@ const customTheme = {
     },
     valid: {
       variants: ["standard", "outlined", "static"],
-      sizes: ["md", "lg"],
+      sizes: ["sm", "md", "lg"],
       colors: [
         "blue-gray",
         "gray",
@@ -1059,6 +1059,32 @@ const customTheme = {
             },
           },
           sizes: {
+            sm: {
+              container: {
+                height: "h-[10px]",
+              },
+              select: {
+                fontSize: "text-sm",
+                fontFamily: "font-sans",
+                px: "px-3",
+                py: "py-2.5",
+                borderRadius: "rounded-[7px]",
+              },
+              label: {
+                initial: { fontSize: "text-sm", fontFamily: "font-sans" },
+                states: {
+                  close: {
+                    lineHeight: "leading-[3.75]",
+                  },
+                  open: {
+                    lineHeight: "leading-tight",
+                  },
+                  withValue: {
+                    lineHeight: "leading-tight",
+                  },
+                },
+              },
+            },
             md: {
               container: {
                 height: "h-10",

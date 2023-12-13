@@ -9,7 +9,7 @@ import { faMoneyCheck } from "@fortawesome/free-solid-svg-icons";
 import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
 import { getExcel } from "../../../../utils/excelHandling";
 
-const HISTORICAL_PAYOUTS_HEADERS = FIELDS.concat([
+export const HISTORICAL_PAYOUTS_HEADERS = FIELDS.concat([
   {
     header: "Account Number",
     field: "accountNumber",
