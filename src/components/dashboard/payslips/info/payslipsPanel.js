@@ -24,6 +24,7 @@ import {
   ArrowUpTrayIcon,
   PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
+import LoadingIndicator from "../../../../newComponents/LoadingIndicator.jsx";
 
 function mapStateToProps(state) {
   return {
@@ -96,6 +97,8 @@ const _PayslipsPanel = ({ employerId, dispatch }) => {
   };
 
   console.log("mounting payslip panel", year, month, isLoading, isFetching);
+
+  if (isLoading || isFetching) return <LoadingIndicator />;
 
   return (
     <div className="mt-4">

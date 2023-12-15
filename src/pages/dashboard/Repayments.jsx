@@ -10,6 +10,7 @@ import { DateDropdown } from "../../components/dashboard/payouts/info/DateDropdo
 import WithdrawalsCard from "../../newComponents/cards/withdrawals-card";
 import RepaymentsTable from "../../newComponents/RepaymentsTable";
 import TableLayout from "../../layout/TableLayout";
+import LoadingIndicator from "../../newComponents/LoadingIndicator";
 
 const Repayments = () => {
   const [filteredData, setFilteredData] = useState([]);
@@ -51,6 +52,8 @@ const Repayments = () => {
     //   ],
     // },
   ];
+
+  // if (isLoading || isFetching) return <LoadingIndicator />;
   return (
     <div className="mt-4">
       <DateDropdown />

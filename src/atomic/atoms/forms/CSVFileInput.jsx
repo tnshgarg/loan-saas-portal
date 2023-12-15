@@ -84,7 +84,9 @@ export function CSVFileInput({
           />
         </div>
       </div>
-      <p className="text-xs text-center mt-4 mx-4 text-gray">{description}</p>
+      {description && (
+        <p className="text-xs text-center mt-4 mx-4 text-gray">{description}</p>
+      )}
     </>
   );
   // <>

@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-// import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import { IconButton } from "@material-tailwind/react";
 import routes from "../routes";
 import { useMaterialTailwindController } from "../contexts/SidebarContext";
@@ -15,23 +14,29 @@ export function Dashboard() {
 
   const auth = useSelector((state) => state.auth);
 
-  if (auth === undefined || auth === {} || !auth.isLoggedIn) {
+  if (Object.keys(auth).length === 0 || !auth.isLoggedIn) {
     return <Navigate to="/" />;
   }
 
   return (
-    <div className="min-h-screen bg-[#f2f2f2]">
-      <Sidenav routes={routes} brandImg={"/img/logo.png"} />
-      <div className="p-8 xl:ml-80 bg-[#f2f2f2]">
+    <div className="min-h-screen bg-[#F8F6F7]">
+      <Sidenav routes={routes} brandImg="/img/logo.png" />
+      <div className="p-8 xl:ml-80">
         <DashboardNavbar />
 
         <Routes>
           {routes.map(({ title, children, parentRoute, parentElement }) =>
             !children ? (
-              <Route exact path={`${parentRoute}`} element={parentElement} />
+              <Route
+                key={parentRoute}
+                exact
+                path={parentRoute}
+                element={parentElement}
+              />
             ) : (
               children.map(({ path, element, route }) => (
                 <Route
+                  key={`${parentRoute}${route}`}
                   exact
                   path={`${parentRoute}${route}`}
                   element={element}
@@ -41,10 +46,6 @@ export function Dashboard() {
           )}
         </Routes>
 
-        {/* <Routes>
-          <Route exact path={`/`} element={<Home />} />
-        </Routes> */}
-        {/* <Home /> */}
         <div className="text-blue-gray-600">{/* <Footer /> */}</div>
       </div>
     </div>

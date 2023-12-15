@@ -3,26 +3,27 @@ import { faWallet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Spacer } from "../../../atomic/atoms/layouts/alignment";
-import { Dashlet } from "../../../atomic/molecules/dashlets/dashlet";
-import BrowserTable from "../../../atomic/organisms/browserTable";
-import { MultiLineCell } from "../../../atomic/organisms/browserTable/cells";
-import { useGetDisbursementsQuery } from "../../../store/slices/apiSlices/employer/ewaApiSlice";
-import { initBrowserTable } from "../../../store/slices/browserTableSlice.ts";
-import { getExcel } from "../../../utils/excelHandling";
-import { DateDropdown } from "../payouts/info/DateDropdown";
-import PrimaryButton from "../../../newComponents/PrimaryButton";
+import { Spacer } from "../../atomic/atoms/layouts/alignment.jsx";
+import { Dashlet } from "../../atomic/molecules/dashlets/dashlet.jsx";
+import BrowserTable from "../../atomic/organisms/browserTable/index.js";
+import { MultiLineCell } from "../../atomic/organisms/browserTable/cells.js";
+import { useGetDisbursementsQuery } from "../../store/slices/apiSlices/employer/ewaApiSlice.js";
+import { initBrowserTable } from "../../store/slices/browserTableSlice.ts";
+import { getExcel } from "../../utils/excelHandling.js";
+import { DateDropdown } from "../../components/dashboard/payouts/info/DateDropdown.jsx";
+import PrimaryButton from "../../newComponents/PrimaryButton.jsx";
 import { Option, Select, Typography } from "@material-tailwind/react";
-import StatisticsCard from "../../../newComponents/cards/StatisticsCard";
+import StatisticsCard from "../../newComponents/cards/StatisticsCard.jsx";
 import {
   UserGroupIcon,
   UserIcon,
   BanknotesIcon,
 } from "@heroicons/react/24/outline";
-import DropdownInput from "../../../newComponents/DropdownInput";
-import SearchInput from "../../../newComponents/SearchInput.jsx";
-import DisbursementsTable from "../../../newComponents/DisbursementsTable.jsx";
-import TableLayout from "../../../layout/TableLayout.jsx";
+import DropdownInput from "../../newComponents/DropdownInput.jsx";
+import SearchInput from "../../newComponents/SearchInput.jsx";
+import DisbursementsTable from "../../newComponents/DisbursementsTable.jsx";
+import TableLayout from "../../layout/TableLayout.jsx";
+import LoadingIndicator from "../../newComponents/LoadingIndicator.jsx";
 
 function mapStateToProps(state) {
   return {
@@ -98,7 +99,7 @@ const DISBURSEMENT_FIELDS = [
 }));
 
 const DISBURSEMENTS_MODULE = "disbursements";
-const _Disbursements = ({ employerId, dispatch }) => {
+const _WithdrawalsPage = ({ employerId, dispatch }) => {
   const today = new Date();
   const [{ year, month }, setDate] = useState({
     year: today.getFullYear(),
@@ -188,6 +189,8 @@ const _Disbursements = ({ employerId, dispatch }) => {
       ],
     },
   ];
+  if (isLoading || isFetching) return <LoadingIndicator />;
+
   return (
     <div className="mt-4">
       {/* <Dashlet
@@ -303,4 +306,4 @@ const _Disbursements = ({ employerId, dispatch }) => {
     </div>
   );
 };
-export const Disbursements = connect(mapStateToProps)(_Disbursements);
+export const WithdrawalsPage = connect(mapStateToProps)(_WithdrawalsPage);

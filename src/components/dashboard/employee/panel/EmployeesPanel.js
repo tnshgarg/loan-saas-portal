@@ -51,6 +51,7 @@ import employee_icon from "../../../../assets/icons/employee_data.png";
 import EmployeeUpload from "../../../../newComponents/EmployeeUpload.jsx";
 import FilterModal from "../../../../newComponents/FilterModal.jsx";
 import TableLayout from "../../../../layout/TableLayout.jsx";
+import LoadingIndicator from "../../../../newComponents/LoadingIndicator.jsx";
 
 const checkOverallStatus = (aadhaar, pan, bank) => {
   return aadhaar?.verifyStatus === "SUCCESS" &&
@@ -257,7 +258,7 @@ const TabularTabsComponent = () => {
 
   const responseFromQuery =
     useGetAllEmployeesPanelByEmployerIdQuery(employerId);
-  const { data } = responseFromQuery;
+  const { data, isFetching, isLoading } = responseFromQuery;
 
   const [filteredData, setFilteredData] = useState(data?.body);
 
@@ -343,8 +344,8 @@ const TabularTabsComponent = () => {
       footer: {
         color: "text-green-500",
         value: "",
-        label:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        label: "KYC is mandatory by RBI guidelines.",
+        //TODO: Change text
       },
     },
   ];
@@ -467,6 +468,8 @@ const TabularTabsComponent = () => {
     "Other Property1",
     "Other Property2",
   ];
+
+  if (isLoading || isFetching) return <LoadingIndicator />;
 
   return (
     <div className="mt-4">

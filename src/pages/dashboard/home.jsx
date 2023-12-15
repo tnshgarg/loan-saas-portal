@@ -26,12 +26,7 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import StatisticsCard from "../../newComponents/cards/StatisticsCard";
-// import  StatisticsChart  from "../../newComponents/charts/st";
-import {
-  // statisticsChartsData,
-  projectsTableData,
-  ordersOverviewData,
-} from "../../data";
+import { projectsTableData, ordersOverviewData } from "../../data";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import BannerCard from "../../newComponents/cards/banner-card";
 import WithdrawalsCard from "../../newComponents/cards/withdrawals-card";
@@ -94,7 +89,6 @@ const statisticsCardsData = [
 
 function Home() {
   const [open, setOpen] = useState(false);
-
   const [activeStep, setActiveStep] = useState(0);
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
@@ -113,13 +107,12 @@ function Home() {
 
   const dateChanged = (updatedDate) => {
     setDate(updatedDate);
-    // dataRefetch();
   };
 
   useEffect(() => {
-    if (employeesData?.length == 0 && attendanceData?.length == 0)
+    if (employeesData?.length === 0 && attendanceData?.length === 0)
       setActiveStep(0);
-    else if (employeesData?.length != 0 && attendanceData?.length == 0)
+    else if (employeesData?.length !== 0 && attendanceData?.length === 0)
       setActiveStep(1);
     else setActiveStep(2);
   }, [employeesData, attendanceData]);
@@ -151,30 +144,27 @@ function Home() {
     },
   ];
 
-  const handleOpen = (e) => {
+  const handleOpen = () => {
     setOpen(true);
   };
   const dispatch = useDispatch();
 
   return activeStep < 2 ? (
-    <>
-      <div className="mt-4 flex flex-col items-center justify-center h-[75vh]">
-        <HomeSteps
-          subHeader={stepsData[activeStep].subHeader}
-          header={stepsData[activeStep].header}
-          headerImage={stepsData[activeStep].headerImage}
-          stepTitle={stepsData[activeStep].stepTitle}
-          stepSubtitle={stepsData[activeStep].stepSubtitle}
-          templateData={stepsData[activeStep].templateData}
-          btnName={stepsData[activeStep].btnName}
-          note="Quick Tip: Always ensure your data is up-to-date and accurate. It helps in ensuring seamless processing and payouts."
-          setOpen={setOpen}
-          open={open}
-          handleOpen={handleOpen}
-        />
-        {/* <OnboardingStep /> */}
-      </div>
-      {activeStep == 0 && open ? (
+    <div className="mt-4 flex flex-col items-center justify-center h-[75vh]">
+      <HomeSteps
+        subHeader={stepsData[activeStep].subHeader}
+        header={stepsData[activeStep].header}
+        headerImage={stepsData[activeStep].headerImage}
+        stepTitle={stepsData[activeStep].stepTitle}
+        stepSubtitle={stepsData[activeStep].stepSubtitle}
+        templateData={stepsData[activeStep].templateData}
+        btnName={stepsData[activeStep].btnName}
+        note="Quick Tip: Always ensure your data is up-to-date and accurate. It helps in ensuring seamless processing and payouts."
+        setOpen={setOpen}
+        open={open}
+        handleOpen={handleOpen}
+      />
+      {activeStep === 0 && open ? (
         <EmployeeUpload
           setOpen={setOpen}
           handleOpen={handleOpen}
@@ -184,7 +174,7 @@ function Home() {
       ) : (
         <></>
       )}
-      {activeStep == 1 && open ? (
+      {activeStep === 1 && open ? (
         <AttendanceUpload
           setOpen={setOpen}
           handleOpen={handleOpen}
@@ -197,13 +187,12 @@ function Home() {
       ) : (
         <></>
       )}
-    </>
+    </div>
   ) : (
     <div className="mt-4">
       <div className="mb-6 grid gap-y-10 gap-x-6">
         <BannerCard />
       </div>
-
       <div className="mb-6 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-6">
         {statisticsCardsData.map(({ icon, title, footer, ...rest }) => (
           <StatisticsCard
@@ -221,12 +210,9 @@ function Home() {
             }
           />
         ))}
-
-        {/* <VideoCard /> */}
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-6">
-        {/* <WithdrawalsCard /> */}
         <Card className="overflow-hidden shadow-none xl:col-span-2">
           <CardHeader
             floated={false}
@@ -234,19 +220,19 @@ function Home() {
             color="transparent"
             className="m-0 flex items-center justify-between p-6 flex flex-col"
           >
-            <div className="flex flex-row w-full jusitfy-between items-center pt-0">
+            <div className="flex flex-row w-full justify-between items-center pt-0">
               <Typography className="mb-4 text-md">
                 Recent Withdrawals
               </Typography>
             </div>
             {[1, 2, 3, 4].map((item, index) => (
-              <ListItem className="bg-lightgray_01 mt-2">
+              <ListItem className="bg-lightgray_01 mt-2" key={index}>
                 <ListItemPrefix>
                   <Avatar
                     size="sm"
                     variant="circular"
-                    alt="candice"
-                    src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=2000"
+                    alt={`Avatar ${index}`}
+                    src={`https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=2000`}
                   />
                 </ListItemPrefix>
                 <div>
@@ -254,7 +240,7 @@ function Home() {
                     Tania Andrew
                   </Typography>
                   <Typography className="text-xs text-gray">
-                    14 Jan,2023
+                    14 Jan, 2023
                   </Typography>
                 </div>
                 <ListItemSuffix>
@@ -281,31 +267,13 @@ function Home() {
           </CardHeader>
           <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
             {/* <List>
-              <ListItem>Inbox</ListItem>
-              <ListItem>Trash</ListItem>
-              <ListItem>Settings</ListItem>
-            </List> */}
+          <ListItem>Inbox</ListItem>
+          <ListItem>Trash</ListItem>
+          <ListItem>Settings</ListItem>
+        </List> */}
           </CardBody>
         </Card>
       </div>
-
-      {/* <div className="mt-12 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
-        {statisticsChartsData.map((props) => (
-          <StatisticsChart
-            key={props.title}
-            {...props}
-            footer={
-              <Typography
-                variant="small"
-                className="flex items-center font-normal text-blue-gray-600"
-              >
-                <ClockIcon strokeWidth={2} className="h-4 w-4 text-inherit" />
-                &nbsp;{props.footer}
-              </Typography>
-            }
-          />
-        ))}
-      </div> */}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
+import { Dashlet } from "../../atomic/molecules/dashlets/dashlet";
 import { faMoneyCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -7,22 +7,28 @@ import {
   HTMLSelect,
   Intent,
   PopoverPosition,
+  Tag,
 } from "@blueprintjs/core";
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Spacer } from "../../../../atomic/atoms/layouts/alignment";
-import { useGetPayoutsQuery } from "../../../../store/slices/apiSlices/employer/payrollApiSlice";
-import { DateDropdown } from "./DateDropdown";
+import { Spacer } from "../../atomic/atoms/layouts/alignment";
+import {
+  useFetchInstrumentMutation,
+  useGetPayoutsQuery,
+  useProcessPayoutsMutation,
+  useUpdatePayoutsMutation,
+} from "../../store/slices/apiSlices/employer/payrollApiSlice";
+import { DateDropdown } from "../../components/dashboard/payouts/info/DateDropdown";
 import {
   HISTORICAL_PAYOUTS_HEADERS,
   HistoricalPayoutsTable,
-} from "./HistoricalPayoutsTable";
-import { PayoutsSummary } from "./PayoutsSummary";
+} from "../../components/dashboard/payouts/info/HistoricalPayoutsTable";
+import { PayoutsSummary } from "../../components/dashboard/payouts/info/PayoutsSummary";
 import { Popover2 } from "@blueprintjs/popover2";
-import { PendingPayoutsTable } from "./PendingPayoutsTable";
-import TableLayout from "../../../../layout/TableLayout";
-import PayslipsUpload from "../../../../newComponents/PayslipsUpload";
-import PrimaryButton from "../../../../newComponents/PrimaryButton";
+import { PendingPayoutsTable } from "../../components/dashboard/payouts/info/PendingPayoutsTable";
+import TableLayout from "../../layout/TableLayout";
+import PayslipsUpload from "../../newComponents/PayslipsUpload";
+import PrimaryButton from "../../newComponents/PrimaryButton";
 import {
   ArrowUpTrayIcon,
   BanknotesIcon,
@@ -32,8 +38,10 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { Checkbox, Switch, Typography } from "@material-tailwind/react";
-import StatisticsCard from "../../../../newComponents/cards/StatisticsCard";
-import PayoutsUpload from "../../../../newComponents/PayoutsUpload";
+import StatisticsCard from "../../newComponents/cards/StatisticsCard";
+import PayoutsUpload from "../../newComponents/PayoutsUpload";
+import LoadingIndicator from "../../newComponents/LoadingIndicator";
+import ProcessPayouts from "../../newComponents/ProcessPayouts";
 
 // tech-debt: move to utilities or atoms
 
@@ -43,7 +51,7 @@ function mapStateToProps(state) {
   };
 }
 
-export function _PayrollInfo({ employerId, dispatch }) {
+export function _PayoutsPage({ employerId, dispatch }) {
   const TABLE_HEADERS = [
     { label: "Emp ID", value: "employerEmployeeId" },
     { label: "Name", value: "employeeName" },
@@ -59,6 +67,7 @@ export function _PayrollInfo({ employerId, dispatch }) {
     { label: "Message", value: "status" },
   ];
   const [open, setOpen] = useState(false);
+  const [type, setType] = useState("");
 
   const handleOpen = (e) => {
     setOpen(true);
@@ -131,6 +140,38 @@ export function _PayrollInfo({ employerId, dispatch }) {
     ifsc = "**********" + ifsc?.slice(8);
   }
 
+  const [sendPayoutConfirmation, { isLoading: isProcessing }] =
+    useProcessPayoutsMutation();
+  const [updatePayouts, { isLoading: isSaving }] = useUpdatePayoutsMutation();
+  const [fetchInstrument] = useFetchInstrumentMutation();
+  const key = `payout-info-pending-${year}-${month}`;
+
+  const totalAmount = entries["PENDING"].reduce(
+    (total, item) => total + item.amount,
+    0
+  );
+
+  const refetchInstrument = () => {
+    fetchInstrument({
+      employerId,
+    });
+  };
+
+  const sufficientFunds =
+    totalAmount > 0 && totalAmount < meta?.virtual_account;
+  const providerLabel = {
+    cashfree: (
+      <Tag intent={Intent.WARNING} minimal large>
+        Cashfree
+      </Tag>
+    ),
+    razorpay: (
+      <Tag intent={Intent.PRIMARY} minimal large>
+        Razorpay
+      </Tag>
+    ),
+  };
+
   const statisticsCardsData = [
     {
       icon: BuildingLibraryIcon,
@@ -191,6 +232,7 @@ export function _PayrollInfo({ employerId, dispatch }) {
       },
     },
   ];
+  if (isLoading || isFetching) return <LoadingIndicator />;
 
   return (
     <div className="mt-4">
@@ -287,22 +329,35 @@ export function _PayrollInfo({ employerId, dispatch }) {
             title={"Upload Salary Data"}
             color="primary"
             size={"sm"}
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              setType("Salary");
+              setOpen(true);
+            }}
             leftIcon={ArrowUpTrayIcon}
           />
           <PrimaryButton
             title={"Upload Payments"}
             color="primary"
-            size={"sm"}
-            onClick={() => setOpen(true)}
-            leftIcon={ArrowUpTrayIcon}
-          />
-          <PrimaryButton
-            title={"Process Payouts"}
-            color="secondary"
+            variant={"outlined"}
             size={"sm"}
             className={"ml-0"}
-            leftIcon={PaperAirplaneIcon}
+            onClick={() => {
+              setType("Payments");
+              setOpen(true);
+            }}
+            leftIcon={ArrowUpTrayIcon}
+          />
+          <ProcessPayouts
+            data={entries["PENDING"]}
+            employerId={employerId}
+            tableName={key}
+            month={month}
+            year={year}
+            provider={provider}
+            module={"payouts-pending"}
+            loading={isLoading || isFetching || isProcessing}
+            disabled={!sufficientFunds}
+            updateHook={sendPayoutConfirmation}
           />
         </div>
       </div>
@@ -318,9 +373,10 @@ export function _PayrollInfo({ employerId, dispatch }) {
         handleOpen={handleOpen}
         open={open}
         payslipsData={data?.body}
+        type={type}
       />
     </div>
   );
 }
 
-export const PayrollInfo = connect(mapStateToProps)(_PayrollInfo);
+export const PayoutsPage = connect(mapStateToProps)(_PayoutsPage);

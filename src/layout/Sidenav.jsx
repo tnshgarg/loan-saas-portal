@@ -207,7 +207,10 @@ export default function Sidenav({ brandImg, brandName, routes }) {
                   className={`border-b-0  p-3 transition-colors `}
                 >
                   <ListItemPrefix>{icon}</ListItemPrefix>
-                  <Typography color="[#597e8c]" className="mr-auto font-normal">
+                  <Typography
+                    color="[#597e8c]"
+                    className="mr-auto font-normal text-sm"
+                  >
                     {title}
                   </Typography>
                 </AccordionHeader>
@@ -223,7 +226,12 @@ export default function Sidenav({ brandImg, brandName, routes }) {
                     >
                       {/* <ListItemPrefix></ListItemPrefix> */}
                       <ListItem className="rounded-none pl-12 focus:bg-gradient-to-r from-[#ebf9d9] to-[#f5fdc8]">
-                        {name}
+                        <Typography
+                          color="[#597e8c]"
+                          className="mr-auto font-normal text-sm"
+                        >
+                          {name}
+                        </Typography>
                       </ListItem>
                     </NavLink>
                   ))}

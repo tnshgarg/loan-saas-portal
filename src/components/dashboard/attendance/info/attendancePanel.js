@@ -24,6 +24,7 @@ import {
 import AttendanceUpload from "../../../../newComponents/AttendanceUpload.jsx";
 import TableLayout from "../../../../layout/TableLayout.jsx";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import LoadingIndicator from "../../../../newComponents/LoadingIndicator.jsx";
 
 function mapStateToProps(state) {
   return {
@@ -100,6 +101,8 @@ const _AttendancePanel = ({ employerId, dispatch }) => {
   };
 
   console.log("mounting attendance panel", year, month, isLoading, isFetching);
+
+  if (isLoading || isFetching) return <LoadingIndicator />;
 
   return (
     <div className="mt-4">
