@@ -1,47 +1,24 @@
-import { Dashlet } from "../../atomic/molecules/dashlets/dashlet";
-import { faMoneyCheck } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Intent, Tag } from "@blueprintjs/core";
 import {
-  Button,
-  Card,
-  HTMLSelect,
-  Intent,
-  PopoverPosition,
-  Tag,
-} from "@blueprintjs/core";
+  ArrowUpTrayIcon,
+  BanknotesIcon,
+  BuildingLibraryIcon,
+} from "@heroicons/react/24/outline";
+import { Switch, Typography } from "@material-tailwind/react";
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Spacer } from "../../atomic/atoms/layouts/alignment";
+import { DateDropdown } from "../../components/dashboard/payouts/info/DateDropdown";
+import TableLayout from "../../layout/TableLayout";
+import PayoutsUpload from "../../newComponents/PayoutsUpload";
+import PrimaryButton from "../../newComponents/PrimaryButton";
+import ProcessPayouts from "../../newComponents/ProcessPayouts";
+import StatisticsCard from "../../newComponents/cards/StatisticsCard";
 import {
   useFetchInstrumentMutation,
   useGetPayoutsQuery,
   useProcessPayoutsMutation,
   useUpdatePayoutsMutation,
 } from "../../store/slices/apiSlices/employer/payrollApiSlice";
-import { DateDropdown } from "../../components/dashboard/payouts/info/DateDropdown";
-import {
-  HISTORICAL_PAYOUTS_HEADERS,
-  HistoricalPayoutsTable,
-} from "../../components/dashboard/payouts/info/HistoricalPayoutsTable";
-import { PayoutsSummary } from "../../components/dashboard/payouts/info/PayoutsSummary";
-import { Popover2 } from "@blueprintjs/popover2";
-import { PendingPayoutsTable } from "../../components/dashboard/payouts/info/PendingPayoutsTable";
-import TableLayout from "../../layout/TableLayout";
-import PayslipsUpload from "../../newComponents/PayslipsUpload";
-import PrimaryButton from "../../newComponents/PrimaryButton";
-import {
-  ArrowUpTrayIcon,
-  BanknotesIcon,
-  PaperAirplaneIcon,
-  UserGroupIcon,
-  BuildingLibraryIcon,
-  UserIcon,
-} from "@heroicons/react/24/outline";
-import { Checkbox, Switch, Typography } from "@material-tailwind/react";
-import StatisticsCard from "../../newComponents/cards/StatisticsCard";
-import PayoutsUpload from "../../newComponents/PayoutsUpload";
-import LoadingIndicator from "../../newComponents/LoadingIndicator";
-import ProcessPayouts from "../../newComponents/ProcessPayouts";
 
 // tech-debt: move to utilities or atoms
 
@@ -232,7 +209,6 @@ export function _PayoutsPage({ employerId, dispatch }) {
       },
     },
   ];
-  if (isLoading || isFetching) return <LoadingIndicator />;
 
   return (
     <div className="mt-4">

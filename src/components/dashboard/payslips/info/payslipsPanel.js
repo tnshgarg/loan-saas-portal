@@ -1,30 +1,17 @@
-import { Button, Intent, NonIdealState, ProgressBar } from "@blueprintjs/core";
-import { faRectangleList } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  ArrowUpTrayIcon,
+  PaperAirplaneIcon,
+} from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Spacer } from "../../../../atomic/atoms/layouts/alignment";
-import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
-import BrowserTable from "../../../../atomic/organisms/browserTable";
+import TableLayout from "../../../../layout/TableLayout.jsx";
+import PayslipsUpload from "../../../../newComponents/PayslipsUpload.jsx";
+import PrimaryButton from "../../../../newComponents/PrimaryButton";
 import { useGetPayslipsQuery } from "../../../../store/slices/apiSlices/employer/payslipsApiSlice";
 import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts";
 import { getExcel } from "../../../../utils/excelHandling";
 import { DateDropdown } from "../../payouts/info/DateDropdown";
 import { PAYSLIPS_TABLE_FIELDS } from "./tableColumns";
-import PrimaryButton from "../../../../newComponents/PrimaryButton";
-import { Option, Select } from "@material-tailwind/react";
-import AttendanceTable from "../../../../newComponents/AttendanceTable";
-import TextInput from "../../../../newComponents/TextInput";
-import PayslipTable from "../../../../newComponents/PayslipTable.jsx";
-import DropdownInput from "../../../../newComponents/DropdownInput";
-import SearchInput from "../../../../newComponents/SearchInput.jsx";
-import TableLayout from "../../../../layout/TableLayout.jsx";
-import PayslipsUpload from "../../../../newComponents/PayslipsUpload.jsx";
-import {
-  ArrowUpTrayIcon,
-  PaperAirplaneIcon,
-} from "@heroicons/react/24/outline";
-import LoadingIndicator from "../../../../newComponents/LoadingIndicator.jsx";
 
 function mapStateToProps(state) {
   return {
@@ -97,8 +84,6 @@ const _PayslipsPanel = ({ employerId, dispatch }) => {
   };
 
   console.log("mounting payslip panel", year, month, isLoading, isFetching);
-
-  if (isLoading || isFetching) return <LoadingIndicator />;
 
   return (
     <div className="mt-4">

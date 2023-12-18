@@ -1,12 +1,12 @@
-import React from "react";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import {
-  Typography,
   Alert,
   Card,
-  CardHeader,
   CardBody,
+  CardHeader,
+  Typography,
 } from "@material-tailwind/react";
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import React from "react";
 
 export function Notifications() {
   const [showAlerts, setShowAlerts] = React.useState({

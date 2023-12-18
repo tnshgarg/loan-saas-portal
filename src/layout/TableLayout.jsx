@@ -1,5 +1,8 @@
-// EmployeeTableLayout.js
-import React, { useState } from "react";
+import {
+  AdjustmentsVerticalIcon,
+  ArrowDownTrayIcon,
+  ChevronUpDownIcon,
+} from "@heroicons/react/24/outline";
 import {
   Card,
   CardBody,
@@ -9,19 +12,15 @@ import {
   MenuList,
   Typography,
 } from "@material-tailwind/react";
-import {
-  AdjustmentsVerticalIcon,
-  ArrowDownTrayIcon,
-  ChevronUpDownIcon,
-} from "@heroicons/react/24/outline";
+import React, { useState } from "react";
+import { CSVLink } from "react-csv";
 import {
   setOpenConfigurator,
   useMaterialTailwindController,
 } from "../contexts/SidebarContext";
 import ProfileSidebar from "../layout/ProfileSidebar";
-import SearchInput from "../newComponents/SearchInput";
 import PrimaryButton from "../newComponents/PrimaryButton";
-import { CSVLink } from "react-csv";
+import SearchInput from "../newComponents/SearchInput";
 
 const TableLayout = ({
   tableHeaders,
@@ -31,6 +30,13 @@ const TableLayout = ({
   searchDisabled,
 }) => {
   console.log("rowData", rowData);
+  console.log("tableHeaders", tableHeaders);
+
+  const csvHeaders = tableHeaders.map(({ label, value }) => ({
+    label,
+    key: value,
+  }));
+
   const itemsPerPage = 10;
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,25 +48,31 @@ const TableLayout = ({
   const [controller, dispatch] = useMaterialTailwindController();
 
   const renderValue = (value) => {
-    if (value !== null && value !== undefined) return value;
-    else if (value == true)
+    if (value === true) {
       return (
         <Typography className="text-xs font-semibold text-primary">
           Active
         </Typography>
       );
-    else
+    } else if (value === false) {
+      return (
+        <Typography className="text-xs font-semibold text-danger">
+          EXITED
+        </Typography>
+      );
+    } else if (value !== null && value !== undefined && value !== "") {
+      return <Typography className="text-sm font-normal">{value}</Typography>;
+    } else {
       return (
         <Typography className="text-sm font-bold text-danger">-</Typography>
       );
+    }
   };
 
   return (
     <>
       <div className="w-full flex-row flex items-center justify-between">
-        {searchDisabled ? (
-          <></>
-        ) : (
+        {!searchDisabled && (
           <SearchInput
             label="Search by Name, Phone, Employee ID and Email ID"
             data={rowData}
@@ -69,29 +81,28 @@ const TableLayout = ({
           />
         )}
         <PrimaryButton
-          title={"Filter"}
+          title="Filter"
           color="secondary"
-          variant={"outlined"}
-          size={"sm"}
+          variant="outlined"
+          size="sm"
           leftIcon={AdjustmentsVerticalIcon}
-          //   onClick={() => setIsFilterModalOpen(true)}
         />
-        {/* <CSVLink
+
+        <CSVLink
           data={rowData ?? []}
-          filename={"safeFileName"}
-          headers={tableHeaders ?? []}
+          filename={"tableData.csv"}
+          headers={csvHeaders ?? []}
           style={{ outlineWidth: 0 }}
-        > */}
-        <PrimaryButton
-          title={"Download"}
-          color="secondary"
-          variant={"outlined"}
-          size={"sm"}
-          className={"ml-0"}
-          leftIcon={ArrowDownTrayIcon}
-          // onClick={downloadCsv}
-        />
-        {/* </CSVLink> */}
+        >
+          <PrimaryButton
+            title="Download"
+            color="secondary"
+            variant="outlined"
+            size="sm"
+            className="ml-0"
+            leftIcon={ArrowDownTrayIcon}
+          />
+        </CSVLink>
       </div>
       <Card className="mt-4 shadow-none rounded-none ">
         <CardBody className="h-full w-full overflow-x-scroll p-0">
@@ -129,7 +140,7 @@ const TableLayout = ({
                   <tr key={item.mobile}>
                     {tableHeaders.map(({ value }, index) => (
                       <td className={classes} key={index}>
-                        {value == "options" ? (
+                        {value === "options" ? (
                           <Menu>
                             <MenuHandler>
                               <svg
@@ -185,7 +196,7 @@ const TableLayout = ({
             if (currentPage > 1) setCurrentPage((prevPage) => prevPage - 1);
           }}
         >
-          <i class="fa fa-arrow-left text-xs" aria-hidden="true"></i>
+          <i className="fa fa-arrow-left text-xs" aria-hidden="true"></i>
         </div>
         <div className="bg-white h-5 w-5 items-center flex flex-col justify-center mx-2 shadow-sm">
           <Typography className="font-medium text-[10px]">
@@ -199,7 +210,7 @@ const TableLayout = ({
               setCurrentPage((prevPage) => prevPage + 1);
           }}
         >
-          <i class="fa fa-arrow-right text-xs" aria-hidden="true"></i>
+          <i className="fa fa-arrow-right text-xs" aria-hidden="true"></i>
         </div>
       </div>
       <ProfileSidebar profileData={rowData?.[activeIndex] ?? {}} />

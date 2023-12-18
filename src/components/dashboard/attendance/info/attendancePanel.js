@@ -1,30 +1,14 @@
-import { Button, Intent, NonIdealState, ProgressBar } from "@blueprintjs/core";
-import { faCalendarDays } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Spacer } from "../../../../atomic/atoms/layouts/alignment";
-import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
-import BrowserTable from "../../../../atomic/organisms/browserTable";
+import TableLayout from "../../../../layout/TableLayout.jsx";
+import AttendanceUpload from "../../../../newComponents/AttendanceUpload.jsx";
+import PrimaryButton from "../../../../newComponents/PrimaryButton";
 import { useGetAttendanceQuery } from "../../../../store/slices/apiSlices/employer/attendanceApiSlice";
 import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts";
 import { getExcel } from "../../../../utils/excelHandling";
 import { DateDropdown } from "../../payouts/info/DateDropdown";
 import { ATTENDANCE_TABLE_FIELDS } from "./tableColumns";
-import { Option, Select, Typography } from "@material-tailwind/react";
-import PrimaryButton from "../../../../newComponents/PrimaryButton";
-import AttendanceTable from "../../../../newComponents/AttendanceTable";
-import DropdownInput from "../../../../newComponents/DropdownInput";
-import SearchInput from "../../../../newComponents/SearchInput.jsx";
-import {
-  HEADER_GROUPS,
-  HEADER_LIST,
-  transformHeadersToFields,
-} from "../dataUpload/attendanceDataUploadPanelFields.js";
-import AttendanceUpload from "../../../../newComponents/AttendanceUpload.jsx";
-import TableLayout from "../../../../layout/TableLayout.jsx";
-import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
-import LoadingIndicator from "../../../../newComponents/LoadingIndicator.jsx";
 
 function mapStateToProps(state) {
   return {
@@ -101,8 +85,6 @@ const _AttendancePanel = ({ employerId, dispatch }) => {
   };
 
   console.log("mounting attendance panel", year, month, isLoading, isFetching);
-
-  if (isLoading || isFetching) return <LoadingIndicator />;
 
   return (
     <div className="mt-4">

@@ -1,13 +1,10 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { CSVLink } from "react-csv";
 import {
-  FIELD_STATUS,
   FS,
   VALIDATIONS,
   VALIDATIONS_MESSAGES,
 } from "../components/dashboard/employee/onboarding/validations";
-import { useState } from "react";
 
 const FullReportButton = ({ loading, templateData, fileName, fields }) => {
   const [data, setData] = useState(templateData?.data);
@@ -16,49 +13,36 @@ const FullReportButton = ({ loading, templateData, fileName, fields }) => {
   const safeFileName =
     `${fileName}_${new Date().toISOString()}`.replaceAll(/\s|-|\./g, "_") +
     ".csv";
-  let headers = [];
-
-  fields?.forEach((item) => {
-    headers.push({ label: item.header, key: item.field });
-  });
-  // console.log("headers", headers);
-  // console.log("data", data);
-
+  const headers = fields?.map(({ header, field }) => ({
+    label: header,
+    key: field,
+  }));
   let validLevel = FS.VALID;
 
-  // data?.forEach((item, index) => {
-  //   fields.forEach(({ field, validations }, i) => {
-  //     Object.preventExtensions(data[index]);
-  //     validLevel = VALIDATIONS[validations](item[field] ?? "");
-  //     let array = data[index];
-  //     if (validLevel == 1) console.log("ERROR", item[field]);
-  //     else if (validLevel == 2) {
-  //       console.log("WARN", data[index][field]);
-  //       data[index][field] = "WARNING";
-  //     } else if (validLevel == 3) console.log("VALID", item[field]);
-  //   });
-  // });
-
   useEffect(() => {
-    let errorObj = [];
+    const processErrors = () => {
+      const errorObj = data.map((item) => {
+        const updatedItem = { ...item };
 
-    data.forEach((item, index) => {
-      let updatedItem = Object.assign({}, item);
+        fields.forEach(({ field, validations }) => {
+          validLevel = VALIDATIONS[validations](item[field] ?? "");
 
-      fields.forEach(({ field, validations }, i) => {
-        validLevel = VALIDATIONS[validations](item[field] ?? "");
+          if (validLevel === FS.ERROR || validLevel === FS.WARN) {
+            updatedItem[
+              field
+            ] = `${item[field]} [${VALIDATIONS_MESSAGES[validations]}]`;
+          }
+        });
 
-        if (validLevel == FS.ERROR || validLevel == FS.WARN)
-          updatedItem[
-            field
-          ] = `${item[field]} [${VALIDATIONS_MESSAGES[validations]}]`;
+        return updatedItem;
       });
-      errorObj.push(updatedItem);
-    });
-    // x@gmail.com | ERROR: email is invalid
-    setErrorData(errorObj);
-    console.log("errorObj", errorObj);
-  }, [data]);
+
+      setErrorData(errorObj);
+      console.log("errorObj", errorObj);
+    };
+
+    processErrors();
+  }, [data, fields]);
 
   return (
     data && (
@@ -66,14 +50,14 @@ const FullReportButton = ({ loading, templateData, fileName, fields }) => {
         data={errorData ?? []}
         filename={safeFileName}
         headers={headers ?? []}
-        style={{ outlineWidth: 0 }}
+        style={{ outlineWidth: 0, textDecoration: "none" }} // Add textDecoration: 'none'
       >
         <div className="border border-lightGray p-3 rounded-md col-span-1 flex flex-row items-center justify-between">
-          <i class="fa fa-file text-secondary" aria-hidden="true"></i>
+          <i className="fa fa-file text-secondary" aria-hidden="true"></i>
           <p className="text-sm text-secondary font-normal w-full pl-2">
             Full Report
           </p>
-          <i class="fa fa-download" aria-hidden="true"></i>
+          <i className="fa fa-download" aria-hidden="true"></i>
         </div>
       </CSVLink>
     )

@@ -14,6 +14,7 @@ import LoadingIndicator from "../../newComponents/LoadingIndicator";
 
 const Repayments = () => {
   const [filteredData, setFilteredData] = useState([]);
+
   const TABLE_HEADERS = [
     { label: "Emp ID", value: "employerEmployeeId" },
     { label: "Name", value: "employeeName" },
@@ -38,22 +39,8 @@ const Repayments = () => {
         { label: "Due Employees", value: 567, className: "text-black" },
       ],
     },
-    // {
-    //   icon: BanknotesIcon,
-    //   className: "col-span-2",
-    //   title: "Offer Available",
-    //   data: [
-    //     {
-    //       label: "Amount Available",
-    //       value: "₹4,57,000",
-    //       className: "text-black",
-    //     },
-    //     { label: "Employee Available ", value: 567, className: "text-black" },
-    //   ],
-    // },
   ];
 
-  // if (isLoading || isFetching) return <LoadingIndicator />;
   return (
     <div className="mt-4">
       <DateDropdown />
@@ -64,9 +51,7 @@ const Repayments = () => {
             key={title}
             {...rest}
             title={title}
-            icon={React.createElement(icon, {
-              className: "w-6 h-6 text-gray",
-            })}
+            icon={React.createElement(icon, { className: "w-6 h-6 text-gray" })}
             footer={
               <div className="flex flex-row items-center">
                 <PrimaryButton
@@ -106,13 +91,6 @@ const Repayments = () => {
           className={"ml-0"}
         />
       </div>
-      {/* 
-      <TableLayout
-        // mainData={data?.body}
-        // rowData={filteredData}
-        // setRowData={setFilteredData}
-        // tableHeaders={TABLE_HEADERS}
-      /> */}
 
       <RepaymentsTable />
     </div>

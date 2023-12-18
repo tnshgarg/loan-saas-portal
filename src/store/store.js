@@ -16,10 +16,11 @@ import { employerTaxApi } from "./slices/apiSlices/employer/taxApiSlice";
 import { uploadedFiles } from "./slices/apiSlices/files/filesApiSlice";
 import authReducer from "./slices/authSlice";
 // import CSVUploadReducer from "./slices/browserTableSlice.ts";
+import csvReducer from "./slices/csvSlice";
 import employeeReducer from "./slices/employeeSlice";
+import loadingReducer, { setLoading } from "./slices/loadingSlice"; // Import the loading reducer
 import messageReducer from "./slices/messageSlice";
 import registerFormReducer from "./slices/registerFormSlice";
-import csvReducer from "./slices/csvSlice";
 
 export const store = configureStore({
   reducer: {
@@ -28,6 +29,7 @@ export const store = configureStore({
     registerForm: registerFormReducer,
     employee: employeeReducer,
     csvUploads: csvReducer,
+    loading: loadingReducer,
     [employerAddressApi.reducerPath]: employerAddressApi.reducer,
     [employerPayrollApi.reducerPath]: employerPayrollApi.reducer,
     [employerEWAApi.reducerPath]: employerEWAApi.reducer,
@@ -63,7 +65,21 @@ export const store = configureStore({
       .concat(employerMetricsApi.middleware)
       .concat(uploadedFiles.middleware)
       .concat(payslipsApi.middleware)
-      .concat(attendanceApi.middleware),
+      .concat(attendanceApi.middleware)
+      .concat((store) => (next) => (action) => {
+        console.log("action", action);
+        if (action.type.endsWith("/pending")) {
+          console.log("loadingStart:");
+          store.dispatch(setLoading(true));
+        } else if (
+          action.type.endsWith("/fulfilled") ||
+          action.type.endsWith("/rejected")
+        ) {
+          console.log("loadingEnd:");
+          store.dispatch(setLoading(false));
+        }
+        return next(action);
+      }),
 });
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors

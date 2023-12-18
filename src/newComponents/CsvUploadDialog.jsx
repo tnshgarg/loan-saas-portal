@@ -1,40 +1,37 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
+import { Intent } from "@blueprintjs/core";
 import {
   Button,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
   Checkbox,
+  Dialog,
+  DialogFooter,
+  DialogHeader,
   Typography,
 } from "@material-tailwind/react";
-import { CSVFileInput } from "../atomic/atoms/forms/CSVFileInput";
-import { Intent } from "@blueprintjs/core";
-import { read, utils } from "xlsx";
-import { useToastContext } from "../contexts/ToastContext";
 import * as Papa from "papaparse";
+import React, { useEffect, useState } from "react";
 import { connect, useSelector } from "react-redux";
-import { Upload } from "@aws-sdk/lib-storage";
-import { S3Client } from "@aws-sdk/client-s3";
-import { MAX_SIZE } from "../atomic/organisms/csvUploads/CSVUploadDashlet";
-import ErrorReportButton from "./ErrorReportButton";
-import FullReportButton from "./FullReportButton";
-import { useGetUploadedFilesQuery } from "../store/slices/apiSlices/files/filesApiSlice.js";
-import ProgressBar from "./ProgressBar.jsx";
-import IntervalTimer from "../utils/intervalTimer.js";
-import PrimaryButton from "./PrimaryButton.jsx";
-import { DateDropdown } from "../components/dashboard/payouts/info/DateDropdown.jsx";
-import { TemplateDownloadButton } from "../atomic/atoms/forms/TemplateDownloadButton.jsx";
+import { read, utils } from "xlsx";
+import { CSVFileInput } from "../atomic/atoms/forms/CSVFileInput";
 import CloseIcon from "../atomic/atoms/icons/CloseIcon.jsx";
-import UploadSuccess from "./atoms/csvUploads/common/UploadSuccess.jsx";
-import UploadStepper, {
-  UploadStep,
-} from "./atoms/csvUploads/common/UploadStepper.jsx";
+import { MAX_SIZE } from "../atomic/organisms/csvUploads/CSVUploadDashlet";
+import { DateDropdown } from "../components/dashboard/payouts/info/DateDropdown.jsx";
+import { useToastContext } from "../contexts/ToastContext";
+import { useGetUploadedFilesQuery } from "../store/slices/apiSlices/files/filesApiSlice.js";
 import {
   clearActiveFileName,
   initCsvTable,
   setActiveFileName,
 } from "../store/slices/csvSlice.js";
+import IntervalTimer from "../utils/intervalTimer.js";
+import ErrorReportButton from "./ErrorReportButton";
+import FullReportButton from "./FullReportButton";
+import ProgressBar from "./ProgressBar.jsx";
+import UploadStepper, {
+  UploadStep,
+} from "./atoms/csvUploads/common/UploadStepper.jsx";
+import UploadSuccess from "./atoms/csvUploads/common/UploadSuccess.jsx";
 
 const mapOnboardPropsToState = (state, ownProps) => {
   const { module } = ownProps;
@@ -438,6 +435,10 @@ const _CsvUploadDialog = ({
                 templateData={currentData}
                 fields={fields}
               />
+              {/* <CombinedReportButton
+                templateData={currentData}
+                fields={fields}
+              /> */}
             </div>
             <div className="flex flex-row items-center justify-start w-full">
               <Checkbox

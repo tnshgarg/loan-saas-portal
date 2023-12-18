@@ -1,29 +1,13 @@
-import { Button, Intent, NonIdealState, ProgressBar } from "@blueprintjs/core";
-import { faWallet } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { BanknotesIcon } from "@heroicons/react/24/outline";
+import { Typography } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Spacer } from "../../atomic/atoms/layouts/alignment.jsx";
-import { Dashlet } from "../../atomic/molecules/dashlets/dashlet.jsx";
-import BrowserTable from "../../atomic/organisms/browserTable/index.js";
-import { MultiLineCell } from "../../atomic/organisms/browserTable/cells.js";
+import { DateDropdown } from "../../components/dashboard/payouts/info/DateDropdown.jsx";
+import TableLayout from "../../layout/TableLayout.jsx";
+import StatisticsCard from "../../newComponents/cards/StatisticsCard.jsx";
 import { useGetDisbursementsQuery } from "../../store/slices/apiSlices/employer/ewaApiSlice.js";
 import { initBrowserTable } from "../../store/slices/browserTableSlice.ts";
 import { getExcel } from "../../utils/excelHandling.js";
-import { DateDropdown } from "../../components/dashboard/payouts/info/DateDropdown.jsx";
-import PrimaryButton from "../../newComponents/PrimaryButton.jsx";
-import { Option, Select, Typography } from "@material-tailwind/react";
-import StatisticsCard from "../../newComponents/cards/StatisticsCard.jsx";
-import {
-  UserGroupIcon,
-  UserIcon,
-  BanknotesIcon,
-} from "@heroicons/react/24/outline";
-import DropdownInput from "../../newComponents/DropdownInput.jsx";
-import SearchInput from "../../newComponents/SearchInput.jsx";
-import DisbursementsTable from "../../newComponents/DisbursementsTable.jsx";
-import TableLayout from "../../layout/TableLayout.jsx";
-import LoadingIndicator from "../../newComponents/LoadingIndicator.jsx";
 
 function mapStateToProps(state) {
   return {
@@ -189,7 +173,6 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
       ],
     },
   ];
-  if (isLoading || isFetching) return <LoadingIndicator />;
 
   return (
     <div className="mt-4">

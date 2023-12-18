@@ -1,57 +1,22 @@
-import {
-  Card,
-  Dialog,
-  Elevation,
-  Intent,
-  Spinner,
-  Tag,
-} from "@blueprintjs/core";
-import { isObject } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Dashlet } from "../../../../atomic/molecules/dashlets/dashlet";
-import BrowserTable from "../../../../atomic/organisms/browserTable";
-import {
-  SerialNumberCell,
-  StatusCell,
-} from "../../../../atomic/organisms/browserTable/cells";
-import EmployerMetrics from "../../../../atomic/organisms/employerMetrics/EmployerMetrics";
-import {
-  allEmployeesPanelDetails,
-  useGetAllEmployeesPanelByEmployerIdQuery,
-  useLazyGetAllEmployeesPanelByEmployerIdQuery,
-} from "../../../../store/slices/apiSlices/employees/panelApiSlice";
-import { initBrowserTable } from "../../../../store/slices/browserTableSlice.ts";
+import { useGetAllEmployeesPanelByEmployerIdQuery } from "../../../../store/slices/apiSlices/employees/panelApiSlice";
 import { groupByKeyCount } from "../../../../utils/aggregates";
-import { EmployeeModal } from "../employeeModal/EmployeeModal";
-import { tableColumns } from "./tableColumns";
 
-import { Button, Typography } from "@material-tailwind/react";
-import StatisticsCard from "../../../../newComponents/cards/StatisticsCard";
 import {
   ArrowUpTrayIcon,
-  BanknotesIcon,
   ListBulletIcon,
   UserGroupIcon,
   UserIcon,
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
-import PrimaryButton from "../../../../newComponents/PrimaryButton";
-import TextInput from "../../../../newComponents/TextInput";
-import EmployeeTable from "../../../../newComponents/EmployeeTable";
-import SearchInput from "../../../../newComponents/SearchInput.jsx";
-import { CsvUploadDialog } from "../../../../newComponents/CsvUploadDialog.jsx";
-import {
-  HEADER_GROUPS,
-  HEADER_LIST,
-  transformHeadersToFields,
-} from "../onboarding/fields.jsx";
-import employee_icon from "../../../../assets/icons/employee_data.png";
+import { Typography } from "@material-tailwind/react";
+import TableLayout from "../../../../layout/TableLayout.jsx";
 import EmployeeUpload from "../../../../newComponents/EmployeeUpload.jsx";
 import FilterModal from "../../../../newComponents/FilterModal.jsx";
-import TableLayout from "../../../../layout/TableLayout.jsx";
-import LoadingIndicator from "../../../../newComponents/LoadingIndicator.jsx";
+import PrimaryButton from "../../../../newComponents/PrimaryButton";
+import StatisticsCard from "../../../../newComponents/cards/StatisticsCard";
 
 const checkOverallStatus = (aadhaar, pan, bank) => {
   return aadhaar?.verifyStatus === "SUCCESS" &&
@@ -62,7 +27,7 @@ const checkOverallStatus = (aadhaar, pan, bank) => {
 };
 
 const reformatEmployeeData = (employeeData) => {
-  return employeeData.map((employee) => {
+  return employeeData?.map((employee) => {
     const {
       employerEmployeeId,
       employeeName,
@@ -99,153 +64,6 @@ const reformatEmployeeData = (employeeData) => {
       "Principal Employer": principalEmployer,
     };
   });
-};
-
-const MODAL_STYLING = {
-  marginTop: "7.5rem",
-  marginBottom: "5rem",
-  width: "55rem",
-};
-
-const TabularViewTab = ({ handlers }) => {
-  const employerId =
-    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
-  const dispatch = useDispatch();
-  const responseFromQuery =
-    useGetAllEmployeesPanelByEmployerIdQuery(employerId);
-  const { data, isLoading, error, refetch } = responseFromQuery;
-  console.log({ data, isLoading, error, refetch });
-  const responseFromLazyQuery = useLazyGetAllEmployeesPanelByEmployerIdQuery();
-  const [
-    trigger,
-    { data: lazyData, isLoading: lazyIsLoading, error: lazyError },
-  ] = responseFromLazyQuery;
-
-  const [fetchedRows, setFetchedRows] = useState([]);
-
-  const setFetchedRowsFromBody = (body) => {
-    const fetchedRowsData = reformatEmployeeData(body);
-    setFetchedRows(fetchedRowsData);
-  };
-
-  const columns = tableColumns.map((header) => {
-    if (isObject(header)) {
-      return {
-        Header: header.Header,
-        columns: header.columns,
-      };
-    }
-    return {
-      Header: header,
-      accessor: header,
-    };
-  });
-
-  useEffect(() => {
-    if (data) {
-      const body = data?.body ?? [];
-      setFetchedRowsFromBody(body);
-      dispatch(
-        initBrowserTable({
-          data: reformatEmployeeData(body),
-          fields: columns,
-          fileName: "employees-tabular-view",
-          module: "employees-panel",
-        })
-      );
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (lazyData) {
-      const body = lazyData.body ?? [];
-      setFetchedRowsFromBody(body);
-      dispatch(
-        initBrowserTable({
-          data: reformatEmployeeData(body),
-          fields: columns,
-          fileName: "employees-tabular-view",
-          module: "employees-panel",
-        })
-      );
-    }
-  }, [lazyData]);
-
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [didDialogChange, setDidDialogChange] = useState(false);
-
-  const [currEmployeeId, setCurrEmployeeId] = useState(null);
-  const [currEmploymentId, setCurrEmploymentId] = useState(null);
-
-  const handleRowClick = (currentRow) => {
-    const { original: { _id, employmentId } = {} } = currentRow;
-    setIsDialogOpen(true);
-    setCurrEmployeeId(_id);
-    setCurrEmploymentId(employmentId);
-  };
-
-  const handleDialogClose = () => {
-    setIsDialogOpen(false);
-    if (didDialogChange) {
-      trigger(employerId);
-    }
-    setDidDialogChange(false);
-  };
-
-  handlers["refresh"] = () => {
-    refetch();
-  };
-  console.log(fetchedRows);
-  let component = "";
-  if (isLoading || lazyIsLoading) {
-    component = (
-      <Spinner style={{ marginTop: "2em", marginBottom: "2em" }} size={54} />
-    );
-  } else if (error || lazyError) {
-    component = (
-      <Tag icon={"error"} intent={Intent.DANGER} large minimal>
-        {error || lazyError}
-      </Tag>
-    );
-  } else {
-    component = (
-      <BrowserTable
-        key="employees-tabular-view"
-        module="employees-panel"
-        tableName="employees-tabular-view"
-        disableEdits={true}
-        onRowClick={handleRowClick}
-        customCells={{
-          "S/N": SerialNumberCell,
-          "Aadhaar Status": StatusCell,
-          "PAN Status": StatusCell,
-          "Account Status": StatusCell,
-          "Onboarding Status": StatusCell,
-          "Employment Status": StatusCell,
-        }}
-      />
-    );
-  }
-
-  return (
-    <>
-      {component}
-      <Dialog
-        isOpen={isDialogOpen}
-        onClose={handleDialogClose}
-        title="Employee Details"
-        style={MODAL_STYLING}
-      >
-        <Card interactive={true} elevation={Elevation.THREE}>
-          <EmployeeModal
-            currEmployeeId={currEmployeeId}
-            currEmploymentId={currEmploymentId}
-            setDidDialogChange={setDidDialogChange}
-          />
-        </Card>
-      </Dialog>
-    </>
-  );
 };
 
 const TabularTabsComponent = () => {
@@ -374,6 +192,9 @@ const TabularTabsComponent = () => {
     { label: "", value: "options" },
   ];
 
+  const modified = reformatEmployeeData(data?.body);
+  console.log("modified", modified);
+
   const [metricsData, setMetricsData] = useState({});
   useEffect(() => {
     if (data) {
@@ -403,6 +224,7 @@ const TabularTabsComponent = () => {
         bank: bankAccountAggregationResult,
         employment: employmentAggregationResult,
       };
+      console.log("metricDataObject", metricDataObject);
       setMetricsData(metricDataObject);
     }
   }, [data]);
@@ -430,8 +252,6 @@ const TabularTabsComponent = () => {
       // setUserName(auth.user.attributes.name);
     }
   }, [auth, navigate]);
-
-  console.log({ metricsData });
 
   const handlers = {};
   const createHandler = (e) => {
@@ -468,8 +288,6 @@ const TabularTabsComponent = () => {
     "Other Property1",
     "Other Property2",
   ];
-
-  if (isLoading || isFetching) return <LoadingIndicator />;
 
   return (
     <div className="mt-4">
@@ -528,38 +346,7 @@ const TabularTabsComponent = () => {
         setRowData={setFilteredData}
         tableHeaders={TABLE_HEADERS}
       />
-      {/* <div className="w-full flex-row flex items-center justify-between">
-        <TextInput />
-        <PrimaryButton title={"Filter"} />
-        <PrimaryButton title={"Download"} />
-      </div> */}
 
-      {/* <EmployerMetrics
-        data={metricsData}
-        primaryKey={"SUCCESS"}
-        config={metricsConfig}
-      /> */}
-      {/* <Dashlet
-        icon={"people"}
-        title={"Employee Records"}
-        actions={
-          <>
-            <Button icon={"refresh"} onClick={createHandler("refresh")}>
-              Refresh
-            </Button>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <Button
-              icon={"saved"}
-              intent={Intent.SUCCESS}
-              onClick={createHandler("download-excel")}
-            >
-              Download Excel
-            </Button>
-          </>
-        }
-      >
-        <TabularViewTab handlers={handlers} />
-      </Dashlet> */}
       <FilterModal
         isOpen={isFilterModalOpen}
         onClose={closeFilterModal}

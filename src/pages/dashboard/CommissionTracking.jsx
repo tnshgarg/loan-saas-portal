@@ -1,13 +1,8 @@
-import React, { useState } from "react";
-import SearchInput from "../../newComponents/SearchInput";
-import PrimaryButton from "../../newComponents/PrimaryButton";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
-import { useGetDisbursementsQuery } from "../../store/slices/apiSlices/employer/ewaApiSlice";
-import StatisticsCard from "../../newComponents/cards/StatisticsCard";
-import { Typography } from "@material-tailwind/react";
+import React, { useState } from "react";
 import DisbursementsTable from "../../newComponents/DisbursementsTable";
-import { DateDropdown } from "../../components/dashboard/payouts/info/DateDropdown";
-import WithdrawalsCard from "../../newComponents/cards/withdrawals-card";
+import PrimaryButton from "../../newComponents/PrimaryButton";
+import StatisticsCard from "../../newComponents/cards/StatisticsCard";
 
 const CommissionTracking = () => {
   const [filteredData, setFilteredData] = useState([]);
