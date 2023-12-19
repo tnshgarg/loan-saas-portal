@@ -23,6 +23,7 @@ const TaxSetupForm = () => {
 
   const responseFromQuery = useGetEmployerTaxByIdQuery(employerId);
   const { data, isLoading, error } = responseFromQuery;
+  console.log("TaxSetupForm", data);
 
   const {
     body: {

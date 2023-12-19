@@ -18,7 +18,7 @@ import authReducer from "./slices/authSlice";
 // import CSVUploadReducer from "./slices/browserTableSlice.ts";
 import csvReducer from "./slices/csvSlice";
 import employeeReducer from "./slices/employeeSlice";
-import loadingReducer, { setLoading } from "./slices/loadingSlice"; // Import the loading reducer
+import loadingReducer from "./slices/loadingSlice"; // Import the loading reducer
 import messageReducer from "./slices/messageSlice";
 import registerFormReducer from "./slices/registerFormSlice";
 
@@ -68,16 +68,7 @@ export const store = configureStore({
       .concat(attendanceApi.middleware)
       .concat((store) => (next) => (action) => {
         console.log("action", action);
-        if (action.type.endsWith("/pending")) {
-          console.log("loadingStart:");
-          store.dispatch(setLoading(true));
-        } else if (
-          action.type.endsWith("/fulfilled") ||
-          action.type.endsWith("/rejected")
-        ) {
-          console.log("loadingEnd:");
-          store.dispatch(setLoading(false));
-        }
+
         return next(action);
       }),
 });

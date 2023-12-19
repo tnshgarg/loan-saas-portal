@@ -1,18 +1,18 @@
+import { Button, FileInput, Intent, Spinner } from "@blueprintjs/core";
+import React, { useContext, useState } from "react";
+import { useForm } from "react-hook-form";
+import { connect } from "react-redux";
+import FormInput from "../../../../atomic/atoms/forms/FormInput";
+import { AppToaster } from "../../../../contexts/ToastContext";
+import UpdateAlertContext from "../../../../contexts/updateAlertContext";
 import {
   useGetEmployerCredentialsByIdQuery,
   useUpdateEmployerCredentialsMutation,
 } from "../../../../store/slices/apiSlices/employer/credentialsApiSlice";
-import { Button, FileInput, Intent, Spinner } from "@blueprintjs/core";
-import FormInput from "../../../../atomic/atoms/forms/FormInput";
-import React, { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
-import { AppToaster } from "../../../../contexts/ToastContext";
 import {
   NO_CHANGE_ERROR,
   VALUES_UPDATED,
 } from "../../../../utils/messageStrings";
-import UpdateAlertContext from "../../../../contexts/updateAlertContext";
-import { connect } from "react-redux";
 
 function mapStateToProps(state) {
   return {
@@ -27,6 +27,8 @@ function _CashfreeCredentialsForm({ employerId }) {
       employerId,
       portal: "cashfree",
     }));
+
+  console.log("_CashfreeCredentialsForm", data);
   console.log(res);
   const {
     body: {

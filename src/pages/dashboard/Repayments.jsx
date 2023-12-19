@@ -1,16 +1,12 @@
-import React, { useState } from "react";
-import SearchInput from "../../newComponents/SearchInput";
-import PrimaryButton from "../../newComponents/PrimaryButton";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
-import { useGetDisbursementsQuery } from "../../store/slices/apiSlices/employer/ewaApiSlice";
-import StatisticsCard from "../../newComponents/cards/StatisticsCard";
 import { Typography } from "@material-tailwind/react";
-import DisbursementsTable from "../../newComponents/DisbursementsTable";
-import { DateDropdown } from "../../components/dashboard/payouts/info/DateDropdown";
-import WithdrawalsCard from "../../newComponents/cards/withdrawals-card";
+import React, { useState } from "react";
+import DateDropdown from "../../components/dashboard/payouts/info/DateDropdown";
+import PrimaryButton from "../../newComponents/PrimaryButton";
 import RepaymentsTable from "../../newComponents/RepaymentsTable";
-import TableLayout from "../../layout/TableLayout";
-import LoadingIndicator from "../../newComponents/LoadingIndicator";
+import SearchInput from "../../newComponents/SearchInput";
+import StatisticsCard from "../../newComponents/cards/StatisticsCard";
+import WithdrawalsCard from "../../newComponents/cards/withdrawals-card";
 
 const Repayments = () => {
   const [filteredData, setFilteredData] = useState([]);

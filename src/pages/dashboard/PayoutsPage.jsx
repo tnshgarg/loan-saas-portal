@@ -7,7 +7,7 @@ import {
 import { Switch, Typography } from "@material-tailwind/react";
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { DateDropdown } from "../../components/dashboard/payouts/info/DateDropdown";
+import DateDropdown from "../../components/dashboard/payouts/info/DateDropdown";
 import TableLayout from "../../layout/TableLayout";
 import PayoutsUpload from "../../newComponents/PayoutsUpload";
 import PrimaryButton from "../../newComponents/PrimaryButton";
@@ -26,6 +26,14 @@ function mapStateToProps(state) {
   return {
     employerId: state.auth.user?.attributes.sub || "",
   };
+}
+
+function formatAsINR(value) {
+  console.log("value:", value);
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  }).format(value);
 }
 
 export function _PayoutsPage({ employerId, dispatch }) {
@@ -167,7 +175,7 @@ export function _PayoutsPage({ employerId, dispatch }) {
         },
         {
           label: "Balance",
-          value: (balance ?? 0).toINR() + " INR",
+          value: formatAsINR(balance),
           className: "text-primary text-[14px] font-semibold",
         },
       ],
@@ -186,19 +194,18 @@ export function _PayoutsPage({ employerId, dispatch }) {
         {
           label: "Processing",
           value:
-            (totals["CONFIRMED"] ?? 0) +
-            (totals["INPROGRESS"] ?? 0).toINR() +
-            " INR",
+            formatAsINR(totals["CONFIRMED"]) +
+            formatAsINR(totals["INPROGRESS"]),
           className: "text-warning text-[14px] font-semibold",
         },
         {
           label: "Completed",
-          value: (totals["SUCCESS"] ?? 0).toINR() + " INR",
+          value: formatAsINR(totals["SUCCESS"]),
           className: "text-primary text-[14px] font-semibold",
         },
         {
           label: "Errors",
-          value: (totals["ERROR"] ?? 0).toINR() + " INR",
+          value: formatAsINR(totals["ERROR"]),
           className: "text-danger text-[14px] font-semibold",
         },
       ],
@@ -239,12 +246,6 @@ export function _PayoutsPage({ employerId, dispatch }) {
                         setChecked(e.target.checked);
                       }}
                       className={checked ? "bg-secondary" : "bg-lightGray"}
-                      // containerProps={{
-                      //   className: "w-11 h-4",
-                      // }}
-                      // circleProps={{
-                      //   className: "border-none",
-                      // }}
                     />
                   )}
                 </div>
@@ -253,51 +254,7 @@ export function _PayoutsPage({ employerId, dispatch }) {
           )
         )}
       </div>
-      {/* <Dashlet
-        icon={<FontAwesomeIcon icon={faMoneyCheck} />}
-        title={"Payout Details"}
-        actions={
-          <>
-            <Popover2
-              position={PopoverPosition.BOTTOM}
-              content={
-                <Card>
-                  Provider
-                  <Spacer />
-                  <HTMLSelect
-                    value={provider}
-                    options={["cashfree", "razorpay"]}
-                    onChange={(item) => setProvider(item.target.value)}
-                  />
-                </Card>
-              }
-            >
-              <Button intent={Intent.NONE} icon={"cog"} />
-            </Popover2>
-            <Spacer />
-            <DateDropdown onChange={dateChanged} />
-            <Spacer />
-            <Button icon={"refresh"} loading={false} onClick={dataRefetch}>
-              Refresh data
-            </Button>
-          </>
-        }
-      />
-      <PayoutsSummary
-        {...{ year, month, dispatch }}
-        data={entries["ALL"]}
-        loading={isLoading || isFetching}
-      />
-      <PendingPayoutsTable
-        {...{ employerId, year, month, dispatch, meta, provider }}
-        data={entries["PENDING"]}
-        loading={isLoading || isFetching}
-      />
-      <HistoricalPayoutsTable
-        {...{ year, month, dispatch }}
-        data={entries["HISTORY"]}
-        loading={isLoading || isFetching}
-      /> */}
+
       <div className="w-full flex-row flex items-center justify-between">
         <DateDropdown />
         <div className="flex-row flex items-center justify-between">
@@ -323,18 +280,20 @@ export function _PayoutsPage({ employerId, dispatch }) {
             }}
             leftIcon={ArrowUpTrayIcon}
           />
-          <ProcessPayouts
-            data={entries["PENDING"]}
-            employerId={employerId}
-            tableName={key}
-            month={month}
-            year={year}
-            provider={provider}
-            module={"payouts-pending"}
-            loading={isLoading || isFetching || isProcessing}
-            disabled={!sufficientFunds}
-            updateHook={sendPayoutConfirmation}
-          />
+          {entries["PENDING"].length > 0 && (
+            <ProcessPayouts
+              data={entries["PENDING"]}
+              employerId={employerId}
+              tableName={key}
+              month={month}
+              year={year}
+              provider={provider}
+              module={"payouts-pending"}
+              loading={isLoading || isFetching || isProcessing}
+              disabled={!sufficientFunds}
+              updateHook={sendPayoutConfirmation}
+            />
+          )}
         </div>
       </div>
 

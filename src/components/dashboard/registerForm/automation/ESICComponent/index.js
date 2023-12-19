@@ -4,17 +4,17 @@ import { useSelector } from "react-redux";
 //Components
 import Table from "../../../../../atomic/organisms/table";
 
-import EditableDropdown from "./EditableDropdown";
-import {
-  NO_CHANGE_ERROR,
-  VALUES_UPDATED,
-} from "../../../../../utils/messageStrings";
+import { Intent } from "@blueprintjs/core";
+import { AppToaster } from "../../../../../contexts/ToastContext";
 import {
   useGetEmployerCredentialsByIdQuery,
   useUpdateEmployerCredentialsMutation,
 } from "../../../../../store/slices/apiSlices/employer/credentialsApiSlice";
-import { Intent } from "@blueprintjs/core";
-import { AppToaster } from "../../../../../contexts/ToastContext";
+import {
+  NO_CHANGE_ERROR,
+  VALUES_UPDATED,
+} from "../../../../../utils/messageStrings";
+import EditableDropdown from "./EditableDropdown";
 
 export default function ESICComponent() {
   const columns = React.useMemo(
@@ -50,6 +50,8 @@ export default function ESICComponent() {
     portal: "esic",
   });
   const { data: responseData } = responseFromQuery;
+
+  console.log("ESICComponent", responseData);
 
   const [updateEmployerCredentials] = useUpdateEmployerCredentialsMutation();
   const [esicForm, setEsicForm] = React.useState({});

@@ -1,7 +1,26 @@
 import { Typography } from "@material-tailwind/react";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import RegisterForm from "../../components/dashboard/registerForm/RegisterForm";
+import { useGetEmployerAddressByIdQuery } from "../../store/slices/apiSlices/employer/addressApiSlice";
 
 const CompanyDetails = () => {
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
+
+  const responseFromQuery = useGetEmployerAddressByIdQuery(employerId);
+  const { data: companyData, isLoading, error } = responseFromQuery;
+  const {
+    body: {
+      pin: pinInitial,
+      state: stateInitial,
+      street: streetInitial,
+      company: companyInitial,
+      brand: brandInitial,
+    } = {},
+  } = companyData ?? {};
+  console.log("companyData", companyData);
+
   const tabs = [
     "Company Details",
     "Tax Setup",
@@ -32,25 +51,31 @@ const CompanyDetails = () => {
 
   const renderDetailsGrid = () => (
     <div className="col-span-3 p-4 grid grid-cols-4 gap-2">
-      {[1, 2, 3, 4, 5].map((_, index) => (
-        <div className="flex flex-col h-12" key={index}>
-          <Typography className="text-[10px] text-gray font-medium">
-            Label
-          </Typography>
-          <Typography className="text-[14px] text-black font-medium">
-            Value
-          </Typography>
-        </div>
-      ))}
+      {companyData?.body ? (
+        Object.entries(companyData.body).map(([label, value], index) => (
+          <div className="flex flex-col h-12" key={index}>
+            <Typography className="text-[10px] text-gray font-medium">
+              {label}
+            </Typography>
+            <Typography className="text-[14px] text-black font-medium">
+              {value}
+            </Typography>
+          </div>
+        ))
+      ) : (
+        <Typography className="text-[14px] text-black font-medium">
+          Loading...
+        </Typography>
+      )}
     </div>
   );
-
   return (
     <div className="mt-4">
       <div className="bg-white w-full rounded-md grid grid-cols-4">
         {renderTabs()}
         {renderDetailsGrid()}
       </div>
+      <RegisterForm />
     </div>
   );
 };

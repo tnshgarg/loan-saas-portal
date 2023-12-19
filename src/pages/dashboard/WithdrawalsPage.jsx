@@ -2,7 +2,7 @@ import { BanknotesIcon } from "@heroicons/react/24/outline";
 import { Typography } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { DateDropdown } from "../../components/dashboard/payouts/info/DateDropdown.jsx";
+import DateDropdown from "../../components/dashboard/payouts/info/DateDropdown.jsx";
 import TableLayout from "../../layout/TableLayout.jsx";
 import StatisticsCard from "../../newComponents/cards/StatisticsCard.jsx";
 import { useGetDisbursementsQuery } from "../../store/slices/apiSlices/employer/ewaApiSlice.js";

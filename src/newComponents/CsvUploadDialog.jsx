@@ -16,7 +16,7 @@ import { read, utils } from "xlsx";
 import { CSVFileInput } from "../atomic/atoms/forms/CSVFileInput";
 import CloseIcon from "../atomic/atoms/icons/CloseIcon.jsx";
 import { MAX_SIZE } from "../atomic/organisms/csvUploads/CSVUploadDashlet";
-import { DateDropdown } from "../components/dashboard/payouts/info/DateDropdown.jsx";
+import DateDropdown from "../components/dashboard/payouts/info/DateDropdown.jsx";
 import { useToastContext } from "../contexts/ToastContext";
 import { useGetUploadedFilesQuery } from "../store/slices/apiSlices/files/filesApiSlice.js";
 import {

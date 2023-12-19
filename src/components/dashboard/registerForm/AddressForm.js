@@ -1,19 +1,19 @@
+import { Button, Intent } from "@blueprintjs/core";
 import React, { useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import Select from "react-select";
+import FormInput from "../../../atomic/atoms/forms/FormInput";
+import { AppToaster } from "../../../contexts/ToastContext";
+import UpdateAlertContext from "../../../contexts/updateAlertContext";
+import withUpdateAlert from "../../../hoc/withUpdateAlert";
 import {
   useGetEmployerAddressByIdQuery,
   useUpdateEmployerAddressMutation,
 } from "../../../store/slices/apiSlices/employer/addressApiSlice";
-import FormInput from "../../../atomic/atoms/forms/FormInput";
-import withUpdateAlert from "../../../hoc/withUpdateAlert";
-import UpdateAlertContext from "../../../contexts/updateAlertContext";
-import UpdateAlert from "../../common/UpdateAlert";
-import Select from "react-select";
 import { NO_CHANGE_ERROR } from "../../../utils/messageStrings";
 import states from "../../../utils/states";
-import { Button, Intent } from "@blueprintjs/core";
-import { AppToaster } from "../../../contexts/ToastContext";
+import UpdateAlert from "../../common/UpdateAlert";
 
 const AddressForm = () => {
   const { value, setValue } = useContext(UpdateAlertContext);
@@ -25,6 +25,8 @@ const AddressForm = () => {
 
   const responseFromQuery = useGetEmployerAddressByIdQuery(employerId);
   const { data, isLoading, error } = responseFromQuery;
+
+  console.log("AddressForm", data);
 
   const {
     body: {

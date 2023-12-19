@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { read, utils } from "xlsx";
 import { FS } from "../../../components/dashboard/employee/onboarding/validations";
 import { VerifyAndUploadEmployees } from "../../../components/dashboard/employee/onboarding/verifyAndUploadEmployees";
-import { DateDropdown } from "../../../components/dashboard/payouts/info/DateDropdown";
+import DateDropdown from "../../../components/dashboard/payouts/info/DateDropdown";
 import { useToastContext } from "../../../contexts/ToastContext";
 import {
   clearActiveFileName,

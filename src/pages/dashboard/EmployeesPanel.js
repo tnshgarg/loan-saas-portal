@@ -1,9 +1,3 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { useGetAllEmployeesPanelByEmployerIdQuery } from "../../../../store/slices/apiSlices/employees/panelApiSlice";
-import { groupByKeyCount } from "../../../../utils/aggregates";
-
 import {
   ArrowUpTrayIcon,
   ListBulletIcon,
@@ -12,11 +6,16 @@ import {
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import { Typography } from "@material-tailwind/react";
-import TableLayout from "../../../../layout/TableLayout.jsx";
-import EmployeeUpload from "../../../../newComponents/EmployeeUpload.jsx";
-import FilterModal from "../../../../newComponents/FilterModal.jsx";
-import PrimaryButton from "../../../../newComponents/PrimaryButton";
-import StatisticsCard from "../../../../newComponents/cards/StatisticsCard";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import TableLayout from "../../layout/TableLayout.jsx";
+import EmployeeUpload from "../../newComponents/EmployeeUpload.jsx";
+import FilterModal from "../../newComponents/FilterModal.jsx";
+import PrimaryButton from "../../newComponents/PrimaryButton.jsx";
+import StatisticsCard from "../../newComponents/cards/StatisticsCard.jsx";
+import { useGetAllEmployeesPanelByEmployerIdQuery } from "../../store/slices/apiSlices/employees/panelApiSlice.js";
+import { groupByKeyCount } from "../../utils/aggregates.js";
 
 const checkOverallStatus = (aadhaar, pan, bank) => {
   return aadhaar?.verifyStatus === "SUCCESS" &&
@@ -224,7 +223,6 @@ const TabularTabsComponent = () => {
         bank: bankAccountAggregationResult,
         employment: employmentAggregationResult,
       };
-      console.log("metricDataObject", metricDataObject);
       setMetricsData(metricDataObject);
     }
   }, [data]);
@@ -252,6 +250,8 @@ const TabularTabsComponent = () => {
       // setUserName(auth.user.attributes.name);
     }
   }, [auth, navigate]);
+
+  console.log({ metricsData });
 
   const handlers = {};
   const createHandler = (e) => {

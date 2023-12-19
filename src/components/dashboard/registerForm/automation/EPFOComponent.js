@@ -1,22 +1,22 @@
+import { Button, Intent, ProgressBar } from "@blueprintjs/core";
+import { Tag } from "@blueprintjs/icons/lib/esm/generated/16px/paths";
 import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  NO_CHANGE_ERROR,
-  VALUES_UPDATED,
-} from "../../../../utils/messageStrings";
-import { setPfForm } from "../../../../store/slices/registerFormSlice";
 import FormInput from "../../../../atomic/atoms/forms/FormInput";
-import withUpdateAlert from "../../../../hoc/withUpdateAlert";
+import { AppToaster } from "../../../../contexts/ToastContext";
 import UpdateAlertContext from "../../../../contexts/updateAlertContext";
-import UpdateAlert from "../../../common/UpdateAlert";
+import withUpdateAlert from "../../../../hoc/withUpdateAlert";
 import {
   useGetEmployerCredentialsByIdQuery,
   useUpdateEmployerCredentialsMutation,
 } from "../../../../store/slices/apiSlices/employer/credentialsApiSlice";
-import { Button, Intent, ProgressBar } from "@blueprintjs/core";
-import { AppToaster } from "../../../../contexts/ToastContext";
-import { Tag } from "@blueprintjs/icons/lib/esm/generated/16px/paths";
+import { setPfForm } from "../../../../store/slices/registerFormSlice";
+import {
+  NO_CHANGE_ERROR,
+  VALUES_UPDATED,
+} from "../../../../utils/messageStrings";
+import UpdateAlert from "../../../common/UpdateAlert";
 
 const EPFOComponent = () => {
   const dispatch = useDispatch();
@@ -28,6 +28,8 @@ const EPFOComponent = () => {
     portal: "epfo",
   });
   const { data, isLoading, error } = responseFromQuery;
+
+  console.log("EPFOComponent", data);
 
   const {
     body: { username: usernameInitial, password: passwordInitial } = {},
@@ -136,8 +138,8 @@ const EPFOComponent = () => {
   return (
     <div>
       <h5>EPFO Portal Credentials</h5>
-      {isLoading ? (<ProgressBar />) : ""}
-      {error ? (<Tag intent={Intent.DANGER}>{error}</Tag>) : ""}
+      {isLoading ? <ProgressBar /> : ""}
+      {error ? <Tag intent={Intent.DANGER}>{error}</Tag> : ""}
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormInput
           register={register}

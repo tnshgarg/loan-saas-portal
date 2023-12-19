@@ -1,25 +1,18 @@
-import Overview from "./components/dashboard/overview/Overview";
-import Home from "./pages/dashboard/Home";
-import RegisterForm from "./components/dashboard/registerForm/RegisterForm";
 import {
   BuildingOfficeIcon,
-  ClipboardDocumentIcon,
   ClipboardDocumentListIcon,
-  HomeIcon,
+  CurrencyDollarIcon,
   StarIcon,
   UserGroupIcon,
-  CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
-import { EmployeesPanel } from "./components/dashboard/employee/panel/EmployeesPanel";
-import { EmployeesBulkUpdatesPanel } from "./components/dashboard/employee/bulkUpdates/bulkUpdatesPanel";
-import { Onboard } from "./components/dashboard/employee/onboarding/Onboard";
-import { AttendancePanel } from "./components/dashboard/attendance/info/attendancePanel";
-import { PayslipsPanel } from "./components/dashboard/payslips/info/payslipsPanel";
-import Repayments from "./pages/dashboard/Repayments";
-import CommissionTracking from "./pages/dashboard/CommissionTracking";
-import CompanyDetails from "./pages/dashboard/CompanyDetails";
 import ComingSoon from "./pages/ComingSoon";
+import AttendancePanel from "./pages/dashboard/AttendancePanel";
+import CompanyDetails from "./pages/dashboard/CompanyDetails";
+import { EmployeesPanel } from "./pages/dashboard/EmployeesPanel";
+import Home from "./pages/dashboard/Home";
 import { PayoutsPage } from "./pages/dashboard/PayoutsPage";
+import PayslipsPanel from "./pages/dashboard/PayslipsPanel";
+import Repayments from "./pages/dashboard/Repayments";
 import { WithdrawalsPage } from "./pages/dashboard/WithdrawalsPage";
 
 const icon = {

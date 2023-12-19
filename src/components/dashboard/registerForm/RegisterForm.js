@@ -1,7 +1,7 @@
+import { Card, Elevation, Tab, Tabs } from "@blueprintjs/core";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Card, Elevation, Tab, Tabs } from "@blueprintjs/core";
 import AddressForm from "./AddressForm";
 import TaxSetupForm from "./TaxSetupForm";
 import AutomationForm from "./automation/AutomationForm";

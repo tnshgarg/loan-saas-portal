@@ -1,5 +1,5 @@
-import { HTMLSelect } from "@blueprintjs/core";
 import { Option, Select } from "@material-tailwind/react";
+import React from "react";
 
 const MONTHS = [
   "",
@@ -17,67 +17,52 @@ const MONTHS = [
   "Dec",
 ];
 
-export const DateDropdown = (props) => {
+const DateDropdown = ({ onChange }) => {
   const date = new Date();
-  const options = [];
   let year = date.getFullYear();
   let month = date.getMonth() + 1;
-  for (let i = 0; i < 12; i++) {
-    options.push({
-      value: year * 100 + month,
-      text: `${MONTHS[month]} ${year}`,
-    });
+
+  const options = Array.from({ length: 12 }, (_, index) => {
     month -= 1;
     if (month === 0) {
       month = 12;
       year -= 1;
     }
-  }
-  console.log({ options });
+    return {
+      value: year * 100 + month,
+      text: `${MONTHS[month]} ${year}`,
+    };
+  }).reverse();
+
+  const handleSelectChange = (event) => {
+    if (onChange) {
+      const selectedDate = parseInt(event.currentTarget.value);
+      onChange({
+        year: parseInt(selectedDate / 100),
+        month: selectedDate % 100,
+      });
+    }
+  };
+
   return (
-    <>
-      <div className="w-48">
-        <Select
-          variant="outlined"
-          label="Select Date"
-          className="bg-white"
-          size="md"
-          color="primary"
-          onChange={(event) => {
-            if (props.onChange) {
-              const date = parseInt(event.currentTarget.value);
-              props.onChange({
-                year: parseInt(date / 100),
-                month: date % 100,
-              });
-            }
-          }}
-          selected={options[0]}
-        >
-          {options.map((option, index) => (
-            <Option value={option.value} key={option.value}>
-              {option.text}
-            </Option>
-          ))}
-        </Select>
-      </div>
-      {/* <HTMLSelect
-        onChange={(event) => {
-          if (props.onChange) {
-            const date = parseInt(event.currentTarget.value);
-            props.onChange({
-              year: parseInt(date / 100),
-              month: date % 100,
-            });
-          }
-        }}
+    <div className="w-48">
+      <Select
+        variant="outlined"
+        label="Select Date"
+        className="bg-white"
+        size="md"
+        color="primary"
+        onChange={handleSelectChange}
+        selected={options[0]}
       >
         {options.map((option) => (
-          <option selected={option === 0} value={option.value}>
+          <Option value={option.value} key={option.value}>
             {option.text}
-          </option>
+          </Option>
         ))}
-      </HTMLSelect> */}
-    </>
+      </Select>
+    </div>
   );
 };
+
+export default DateDropdown;
