@@ -12,31 +12,21 @@ export function Dashboard() {
 
   const auth = useSelector((state) => state.auth);
   const allSlices = useSelector((state) => state);
-  console.log("allSlices", allSlices);
 
   const ignoredKeywords = ["upload", "polling"];
 
-  const isSomeApiPending = Object.values(allSlices).some((slice) => {
-    console.log(slice, "slice");
+  // const isSomeApiPending = Object.values(allSlices).some((slice) => {
+  //   const isSlicePending =
+  //     slice?.queries &&
+  //     Object.values(slice.queries).some((query) => {
+  //       // Check if the query status is pending and doesn't contain ignored keywords
+  //       return query?.status === "pending";
+  //     });
 
-    const isSlicePending =
-      slice?.queries &&
-      Object.values(slice.queries).some((query) => {
-        console.log(query, "query");
+  //   return isSlicePending;
+  // });
 
-        // Check if the query status is pending and doesn't contain ignored keywords
-        return (
-          query?.status === "pending" &&
-          !ignoredKeywords.some((keyword) =>
-            query.endpoint?.toLowerCase().includes(keyword)
-          )
-        );
-      });
-
-    return isSlicePending;
-  });
-
-  console.log("isSomeApiPending", isSomeApiPending);
+  // console.log("isSomeApiPending", isSomeApiPending);
 
   if (Object.keys(auth).length === 0 || !auth.isLoggedIn) {
     return <Navigate to="/" />;
@@ -48,7 +38,7 @@ export function Dashboard() {
       <div className="p-8 xl:ml-80">
         <DashboardNavbar />
 
-        {isSomeApiPending ? (
+        {false ? (
           <LoadingIndicator />
         ) : (
           <Routes>

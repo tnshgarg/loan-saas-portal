@@ -24,7 +24,8 @@ export const employerEWAApi = createApi({
     // Define endpoints here
     getDisbursements: builder.query({
       query: ({ id, year, month, status = [] }) => {
-        const path = `/ewa?id=${id}&year=${year}&month=${month}`;
+        console.log("values:", id, year, month, status);
+        const path = `/ewa/withdrawal?id=${id}&year=${year}&month=${month}`;
         if (!id || !year || !month)
           throw Error(
             `none of these can be null ${JSON.stringify({
@@ -40,6 +41,7 @@ export const employerEWAApi = createApi({
         return path;
       },
       transformResponse: (responseData) => {
+        console.log("responseData:", responseData);
         if (responseData.body) {
           responseData.body = JSON.parse(responseData.body);
         }

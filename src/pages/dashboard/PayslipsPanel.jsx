@@ -10,10 +10,7 @@ import TableLayout from "../../layout/TableLayout.jsx";
 import PayslipsUpload from "../../newComponents/PayslipsUpload.jsx";
 import PrimaryButton from "../../newComponents/PrimaryButton.jsx";
 import { useGetPayslipsQuery } from "../../store/slices/apiSlices/employer/payslipsApiSlice.js";
-import { initBrowserTable } from "../../store/slices/browserTableSlice.ts";
 import { getExcel } from "../../utils/excelHandling.js";
-
-const PAYSLIPS_MODULE = "payslips";
 
 const PayslipsPanel = () => {
   const [open, setOpen] = useState(false);
@@ -56,16 +53,6 @@ const PayslipsPanel = () => {
     const safePayslipsCurrent = payslipsCurrent.map((item) => ({ ...item }));
     console.log("safePayslipsCurrent", safePayslipsCurrent);
     setSafePayslips(safePayslipsCurrent);
-    if (safePayslipsCurrent.length) {
-      dispatch(
-        initBrowserTable({
-          data: safePayslipsCurrent,
-          fields: PAYSLIPS_TABLE_FIELDS,
-          fileName: key,
-          module: PAYSLIPS_MODULE,
-        })
-      );
-    }
   }, [data]);
 
   const dataRefetch = () => {

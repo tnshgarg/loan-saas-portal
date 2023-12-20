@@ -67,7 +67,7 @@ export const store = configureStore({
       .concat(payslipsApi.middleware)
       .concat(attendanceApi.middleware)
       .concat((store) => (next) => (action) => {
-        console.log("action", action);
+        // console.log("action", action);
 
         return next(action);
       }),

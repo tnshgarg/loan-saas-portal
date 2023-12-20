@@ -8,8 +8,6 @@ import PrimaryButton from "../../newComponents/PrimaryButton.jsx";
 import { useGetAttendanceQuery } from "../../store/slices/apiSlices/employer/attendanceApiSlice.js";
 import { getExcel } from "../../utils/excelHandling.js";
 
-const ATTENDANCE_MODULE = "attendance";
-
 const AttendancePanel = () => {
   const today = new Date();
   const [open, setOpen] = useState(false);
