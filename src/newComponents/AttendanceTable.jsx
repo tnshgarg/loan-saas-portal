@@ -4,10 +4,6 @@ import {
   Card,
   CardBody,
   CardFooter,
-  Menu,
-  MenuHandler,
-  MenuItem,
-  MenuList,
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
@@ -132,7 +128,6 @@ export default function AttendanceTable({ attendanceData }) {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = attendanceData?.slice(indexOfFirstItem, indexOfLastItem);
-  console.log("currentItems", currentItems);
 
   console.log({ attendanceData });
 

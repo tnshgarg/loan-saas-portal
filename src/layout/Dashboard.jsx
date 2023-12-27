@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useMaterialTailwindController } from "../contexts/SidebarContext";
@@ -12,21 +13,22 @@ export function Dashboard() {
 
   const auth = useSelector((state) => state.auth);
   const allSlices = useSelector((state) => state);
+  const [loading, setLoading] = useState(false);
 
   const ignoredKeywords = ["upload", "polling"];
 
-  // const isSomeApiPending = Object.values(allSlices).some((slice) => {
-  //   const isSlicePending =
-  //     slice?.queries &&
-  //     Object.values(slice.queries).some((query) => {
-  //       // Check if the query status is pending and doesn't contain ignored keywords
-  //       return query?.status === "pending";
-  //     });
-
-  //   return isSlicePending;
-  // });
-
-  // console.log("isSomeApiPending", isSomeApiPending);
+  useEffect(() => {
+    const isSomeApiPending = Object.values(allSlices).some((slice) => {
+      const isSlicePending =
+        slice?.queries &&
+        Object.values(slice.queries).some((query) => {
+          console.log("Slice", query);
+          return query?.status === "pending";
+        });
+      return isSlicePending;
+    });
+    setLoading(isSomeApiPending);
+  }, [allSlices]);
 
   if (Object.keys(auth).length === 0 || !auth.isLoggedIn) {
     return <Navigate to="/" />;
@@ -38,31 +40,29 @@ export function Dashboard() {
       <div className="p-8 xl:ml-80">
         <DashboardNavbar />
 
-        {false ? (
-          <LoadingIndicator />
-        ) : (
-          <Routes>
-            {routes.map(({ title, children, parentRoute, parentElement }) =>
-              !children ? (
+        {loading ? <LoadingIndicator /> : <></>}
+
+        <Routes>
+          {routes.map(({ title, children, parentRoute, parentElement }) =>
+            !children ? (
+              <Route
+                key={parentRoute}
+                exact
+                path={parentRoute}
+                element={parentElement}
+              />
+            ) : (
+              children.map(({ path, element, route }) => (
                 <Route
-                  key={parentRoute}
+                  key={`${parentRoute}${route}`}
                   exact
-                  path={parentRoute}
-                  element={parentElement}
+                  path={`${parentRoute}${route}`}
+                  element={element}
                 />
-              ) : (
-                children.map(({ path, element, route }) => (
-                  <Route
-                    key={`${parentRoute}${route}`}
-                    exact
-                    path={`${parentRoute}${route}`}
-                    element={element}
-                  />
-                ))
-              )
-            )}
-          </Routes>
-        )}
+              ))
+            )
+          )}
+        </Routes>
 
         <div className="text-blue-gray-600">{/* <Footer /> */}</div>
       </div>

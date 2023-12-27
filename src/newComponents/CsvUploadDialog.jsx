@@ -21,7 +21,6 @@ import { useToastContext } from "../contexts/ToastContext";
 import { useGetUploadedFilesQuery } from "../store/slices/apiSlices/files/filesApiSlice.js";
 import {
   clearActiveFileName,
-  initCsvTable,
   setActiveFileName,
 } from "../store/slices/csvSlice.js";
 import IntervalTimer from "../utils/intervalTimer.js";
@@ -264,14 +263,14 @@ const _CsvUploadDialog = ({
 
   const handleFileImport = (data) => {
     console.log("init", data);
-    dispatch(
-      initCsvTable({
-        data: preProcessing(data, year, month),
-        fileName: file.object.name,
-        fields: headerGroups,
-        module: module,
-      })
-    );
+    // dispatch(
+    //   initCsvTable({
+    //     data: preProcessing(data, year, month),
+    //     fileName: file.object.name,
+    //     fields: headerGroups,
+    //     module: module,
+    //   })
+    // );
     setActiveCSVName(file.object.name);
   };
 

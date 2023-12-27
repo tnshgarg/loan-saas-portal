@@ -1,22 +1,20 @@
 import {
-  Button,
   Card,
   CardBody,
-  CardFooter,
   Menu,
   MenuHandler,
   MenuItem,
   MenuList,
   Typography,
 } from "@material-tailwind/react";
-import ProfileSidebar from "../layout/ProfileSidebar";
 import {
   setOpenConfigurator,
   useMaterialTailwindController,
 } from "../contexts/SidebarContext";
+import ProfileSidebar from "../layout/ProfileSidebar";
 
-import { useState } from "react";
 import { ChevronUpDownIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 
 const TABLE_HEAD = [
   "Emp ID",
@@ -40,7 +38,6 @@ export default function EmployeeTable({ employeesData }) {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = employeesData?.slice(indexOfFirstItem, indexOfLastItem);
-  console.log("currentItems", currentItems);
 
   const [controller, dispatch] = useMaterialTailwindController();
   function renderValue(value) {

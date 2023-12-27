@@ -1,37 +1,32 @@
-import { useLocation, Link, useNavigate } from "react-router-dom";
-import {
-  Navbar,
-  Typography,
-  Button,
-  IconButton,
-  Breadcrumbs,
-  Input,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
-  Avatar,
-  Badge,
-} from "@material-tailwind/react";
-import {
-  Cog6ToothIcon,
-  ClockIcon,
-  CreditCardIcon,
-  Bars3Icon,
-  UserIcon,
-  EllipsisHorizontalIcon,
-  ArrowRightOnRectangleIcon,
-} from "@heroicons/react/24/solid";
 import {
   BellIcon,
-  WalletIcon,
   UserCircleIcon,
+  WalletIcon,
 } from "@heroicons/react/24/outline";
 import {
-  useMaterialTailwindController,
-  setOpenConfigurator,
+  ArrowRightOnRectangleIcon,
+  Bars3Icon,
+  ClockIcon,
+  CreditCardIcon,
+  EllipsisHorizontalIcon,
+} from "@heroicons/react/24/solid";
+import {
+  Avatar,
+  Badge,
+  IconButton,
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
+  Navbar,
+  Typography,
+} from "@material-tailwind/react";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
   setOpenSidenav,
+  useMaterialTailwindController,
 } from "../contexts/SidebarContext";
+import { logout } from "../store/slices/authSlice";
 
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -54,6 +49,7 @@ export function DashboardNavbar() {
       title: "Logout",
       icon: <ArrowRightOnRectangleIcon className="h-4 w-4" />,
       href: "/dashboard/company",
+      action: () => dispatch(logout()),
     },
   ];
 
@@ -245,7 +241,10 @@ export function DashboardNavbar() {
               {menuOptions.map((item, index) => (
                 <MenuItem
                   className="flex items-center gap-3 p-3"
-                  onClick={() => navigate(item.href)}
+                  onClick={() => {
+                    navigate(item.href);
+                    item.action();
+                  }}
                 >
                   <div className="flex flex-row items-center w-full">
                     {item.icon}

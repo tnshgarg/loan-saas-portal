@@ -1,13 +1,11 @@
 import { BanknotesIcon } from "@heroicons/react/24/outline";
 import { Typography } from "@material-tailwind/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import DateDropdown from "../../components/dashboard/payouts/info/DateDropdown.jsx";
 import TableLayout from "../../layout/TableLayout.jsx";
 import StatisticsCard from "../../newComponents/cards/StatisticsCard.jsx";
 import { useGetDisbursementsQuery } from "../../store/slices/apiSlices/employer/ewaApiSlice.js";
-import { initBrowserTable } from "../../store/slices/browserTableSlice.ts";
-import { getExcel } from "../../utils/excelHandling.js";
 
 function mapStateToProps(state) {
   return {
@@ -91,14 +89,14 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
   });
 
   const TABLE_HEADERS = [
-    { label: "Emp ID", value: "employerEmployeeId" },
+    { label: "Emp ID", value: "employeeId" },
     { label: "Name", value: "name" },
-    { label: "Withdrawn", value: "ewa" },
-    { label: "Status", value: "totalPresentDays" },
-    { label: "Disbursement date", value: "totalHalfDays" },
-    { label: "Due Date", value: "totalHolidays" },
-    { label: "UTR number", value: "totalHolidays" },
-    { label: "Bank Account", value: "totalHolidays" },
+    { label: "Withdrawn", value: "loanAmount" },
+    { label: "Status", value: "status" },
+    { label: "Disbursement date", value: "disbursedAt" },
+    { label: "Due Date", value: "dueDate" },
+    { label: "UTR number", value: "utr" },
+    { label: "Bank Account", value: "bankAccountNumber" },
     { label: "", value: "options" },
   ];
 
@@ -110,53 +108,39 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
   const key = `disbursements-info-historical-${year}-${month}`;
   const { data, isLoading, refetch, isFetching } = useGetDisbursementsQuery({
     id: employerId,
-    year: year,
-    month: month,
+    year: 2023,
+    month: 11,
   });
 
   console.log("Dis:", data?.body);
   const [filteredData, setFilteredData] = useState(data?.body);
 
-  const [safeDisbursements, setSafeDisbursements] = useState([]);
+  const totalLoanAmount = data?.body.reduce((total, disbursement) => {
+    return total + (disbursement.loanAmount || 0);
+  }, 0);
 
-  useEffect(() => {
-    const disbursementsCurrent = data?.body ?? [];
-    console.log(disbursementsCurrent);
-    const safeDisbursementsCurrent = disbursementsCurrent.map((item) => {
-      const mutableItem = Object.assign({}, item);
-      mutableItem.loanStatus = mutableItem.status;
-      mutableItem.pendingAmount =
-        mutableItem.loanAmount - (mutableItem.paidAmount || 0);
-      mutableItem.status = {};
-      return mutableItem;
-    });
-    setSafeDisbursements(safeDisbursementsCurrent);
-    if (safeDisbursementsCurrent.length) {
-      dispatch(
-        initBrowserTable({
-          data: safeDisbursementsCurrent,
-          fields: DISBURSEMENT_FIELDS,
-          fileName: key,
-          module: DISBURSEMENTS_MODULE,
-        })
-      );
-    }
-  }, [data]);
+  const totalEmployeesWithWithdrawals = data?.body?.length;
 
   const dataRefetch = () => {
     refetch();
   };
-  const downloadExcel = () => {
-    getExcel([{ headers: DISBURSEMENT_FIELDS }], safeDisbursements);
-  };
+
   const statisticsCardsData = [
     {
       icon: BanknotesIcon,
       className: "col-span-2",
       title: "On Demand Withdrawal",
       data: [
-        { label: "Total Amount", value: "₹4,57,000", className: "text-black" },
-        { label: "Employees", value: 567, className: "text-black" },
+        {
+          label: "Total Amount",
+          value: totalLoanAmount,
+          className: "text-black",
+        },
+        {
+          label: "Employees",
+          value: totalEmployeesWithWithdrawals,
+          className: "text-black",
+        },
       ],
     },
     {
@@ -176,60 +160,7 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
 
   return (
     <div className="mt-4">
-      {/* <Dashlet
-        icon={<FontAwesomeIcon icon={faWallet} />}
-        title={"Disbursements"}
-        actions={
-          <>
-            <DateDropdown onChange={dateChanged} />
-            <Spacer />
-            <Button icon={"refresh"} loading={false} onClick={dataRefetch}>
-              Refresh data
-            </Button>
-            <Spacer />
-            <Button
-              icon={"download"}
-              intent={Intent.SUCCESS}
-              onClick={downloadExcel}
-            >
-              Download Excel
-            </Button>
-          </>
-        }
-      >
-        {isLoading || isFetching ? (
-          <div style={{ padding: "3em" }}>
-            <ProgressBar animate stripes />
-          </div>
-        ) : safeDisbursements && safeDisbursements.length ? (
-          <BrowserTable
-            key={"ewa-info"}
-            tableName={key}
-            module={DISBURSEMENTS_MODULE}
-            disableEdits={true}
-            customCells={{
-              transferMode: MultiLineCell,
-              payoutDate: MultiLineCell,
-              payoutAmount: MultiLineCell,
-              payoutStatus: MultiLineCell,
-            }}
-          />
-        ) : (
-          <>
-            <br />
-            <NonIdealState
-              icon={"property"}
-              title={"No Disbursements"}
-              description={
-                <>Looks like no disbursements were made this month</>
-              }
-              layout={"horizontal"}
-            />
-          </>
-        )}
-      </Dashlet> */}
-
-      <DateDropdown />
+      <DateDropdown onChange={dateChanged} />
 
       <div className="mb-6 mt-4 grid gap-y-10 gap-x-4 md:grid-cols-3 xl:grid-cols-5">
         {statisticsCardsData.map(({ icon, title, footer, span, ...rest }) => (
@@ -259,33 +190,6 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
         setRowData={setFilteredData}
         tableHeaders={TABLE_HEADERS}
       />
-
-      {/* <EmployerMetrics
-        data={metricsData}
-        primaryKey={"SUCCESS"}
-        config={metricsConfig}
-      /> */}
-      {/* <Dashlet
-        icon={"people"}
-        title={"Employee Records"}
-        actions={
-          <>
-            <Button icon={"refresh"} onClick={createHandler("refresh")}>
-              Refresh
-            </Button>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <Button
-              icon={"saved"}
-              intent={Intent.SUCCESS}
-              onClick={createHandler("download-excel")}
-            >
-              Download Excel
-            </Button>
-          </>
-        }
-      >
-        <TabularViewTab handlers={handlers} />
-      </Dashlet> */}
     </div>
   );
 };

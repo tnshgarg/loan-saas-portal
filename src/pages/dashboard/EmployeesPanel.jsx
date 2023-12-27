@@ -5,11 +5,18 @@ import {
   UserIcon,
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
-import { Typography } from "@material-tailwind/react";
+import {
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
+  Typography,
+} from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import TableLayout from "../../layout/TableLayout.jsx";
+import BulkUpload from "../../newComponents/BulkUpload.jsx";
 import EmployeeUpload from "../../newComponents/EmployeeUpload.jsx";
 import FilterModal from "../../newComponents/FilterModal.jsx";
 import PrimaryButton from "../../newComponents/PrimaryButton.jsx";
@@ -76,7 +83,7 @@ const TabularTabsComponent = () => {
   const responseFromQuery =
     useGetAllEmployeesPanelByEmployerIdQuery(employerId);
   const { data, isFetching, isLoading } = responseFromQuery;
-
+  console.log("employee data:", data?.body);
   const [filteredData, setFilteredData] = useState(data?.body);
 
   const getPendingAadhaar = () => {
@@ -91,9 +98,9 @@ const TabularTabsComponent = () => {
 
   const kycDone = data?.body?.filter(
     (item) =>
-      item.aadhaar.verifyStatus == "SUCCESS" &&
-      item.pan.verifyStatus == "SUCCESS" &&
-      item.bank.verifyStatus == "SUCCESS"
+      item.aadhaar?.verifyStatus == "SUCCESS" &&
+      item.pan?.verifyStatus == "SUCCESS" &&
+      item.bank?.verifyStatus == "SUCCESS"
   )?.length;
 
   const enrolledEmployees = data?.body?.filter(
@@ -101,13 +108,13 @@ const TabularTabsComponent = () => {
   )?.length;
 
   const aadhaarPending = data?.body?.filter(
-    (item) => item.aadhaar.verifyStatus != "SUCCESS"
+    (item) => item.aadhaar?.verifyStatus != "SUCCESS"
   )?.length;
   const panPending = data?.body?.filter(
-    (item) => item.pan.verifyStatus != "SUCCESS"
+    (item) => item.pan?.verifyStatus != "SUCCESS"
   )?.length;
   const bankPending = data?.body?.filter(
-    (item) => item.aadhaar.verifyStatus != "SUCCESS"
+    (item) => item.aadhaar?.verifyStatus != "SUCCESS"
   )?.length;
 
   const statisticsCardsData = [
@@ -180,7 +187,7 @@ const TabularTabsComponent = () => {
   const TABLE_HEADERS = [
     { label: "Emp ID", value: "employerEmployeeId" },
     { label: "Name", value: "employeeName" },
-    { label: "EWA", value: "ewa" },
+    // { label: "EWA", value: "ewa" },
     { label: "Mobile", value: "mobile" },
     { label: "EWA Status", value: "ewaStatus" },
     { label: "Email", value: "email" },
@@ -259,11 +266,11 @@ const TabularTabsComponent = () => {
       if (handlers[e]) handlers[e]();
     };
   };
-  const [open, setOpen] = useState(false);
+  const [onboardOpen, setOnboardOpen] = useState(false);
+  const [bulkOpen, setBulkOpen] = useState(false);
+
   const dispatch = useDispatch();
-  const handleOpen = (e) => {
-    setOpen(true);
-  };
+
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [filter, setFilter] = useState(null);
 
@@ -326,7 +333,7 @@ const TabularTabsComponent = () => {
             title={"Onboard Employees"}
             color="primary"
             size={"sm"}
-            onClick={handleOpen}
+            onClick={() => setOnboardOpen(true)}
             className={"ml-0"}
             leftIcon={UserPlusIcon}
           />
@@ -336,6 +343,7 @@ const TabularTabsComponent = () => {
             size={"sm"}
             className={"ml-0"}
             leftIcon={ListBulletIcon}
+            onClick={() => setBulkOpen(true)}
           />
         </div>
       </div>
@@ -345,6 +353,38 @@ const TabularTabsComponent = () => {
         rowData={filteredData}
         setRowData={setFilteredData}
         tableHeaders={TABLE_HEADERS}
+        renderActionItems={
+          <Menu>
+            <MenuHandler>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </MenuHandler>
+            <MenuList>
+              <MenuItem>Turn Off EWA Access</MenuItem>
+              <MenuItem
+                onClick={() => {
+                  // setActiveIndex(index);
+                  // setOpenConfigurator(dispatch, true);
+                }}
+              >
+                Go To Profile
+              </MenuItem>
+              <MenuItem>Delete</MenuItem>
+            </MenuList>
+          </Menu>
+        }
       />
 
       <FilterModal
@@ -354,9 +394,15 @@ const TabularTabsComponent = () => {
         properties={availableProperties}
       />
       <EmployeeUpload
-        setOpen={setOpen}
-        handleOpen={handleOpen}
-        open={open}
+        setOpen={setOnboardOpen}
+        handleOpen={() => setOnboardOpen(true)}
+        open={onboardOpen}
+        employeesData={data?.body}
+      />
+      <BulkUpload
+        setOpen={setBulkOpen}
+        handleOpen={() => setBulkOpen(true)}
+        open={bulkOpen}
         employeesData={data?.body}
       />
     </div>

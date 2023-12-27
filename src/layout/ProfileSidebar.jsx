@@ -1,95 +1,105 @@
-import React from "react";
-import { XMarkIcon, PencilIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
-  Button,
-  IconButton,
-  Switch,
-  Typography,
-  Chip,
   Avatar,
-  Tabs,
-  TabsHeader,
+  IconButton,
   Tab,
   TabPanel,
+  Tabs,
   TabsBody,
+  TabsHeader,
+  Typography,
 } from "@material-tailwind/react";
-import _ from "lodash";
+import React, { useState } from "react";
+import { newEmployeeFieldsToTabsMap } from "../components/dashboard/employee/employeeModal/employeeFieldsToTabsMap";
 import {
-  useMaterialTailwindController,
   setOpenConfigurator,
-  setSidenavColor,
-  setSidenavType,
-  setFixedNavbar,
+  useMaterialTailwindController,
 } from "../contexts/SidebarContext";
-import {
-  employeeFieldsToTabsMap,
-  newEmployeeFieldsToTabsMap,
-} from "../components/dashboard/employee/employeeModal/employeeFieldsToTabsMap";
 import PrimaryButton from "../newComponents/PrimaryButton";
+import { useGetEmployeeDetailsQuery } from "../store/slices/apiSlices/employee/employeeDetailsApiSlice";
 
-function formatNumber(number, decPlaces) {
-  decPlaces = Math.pow(10, decPlaces);
+// New FieldItem component
+const FieldItem = ({ label, value }) => (
+  <div>
+    <Typography className="text-xs text-gray mt-8 font-normal">
+      {label}
+    </Typography>
+    <Typography className="text-sm text-black font-semibold">
+      {value}
+    </Typography>
+  </div>
+);
 
-  const abbrev = ["K", "M", "B", "T"];
+// New CategoryFields component
+const CategoryFields = ({ category, fields, profileData }) => (
+  <div>
+    <Typography className="text-xs font-normal text-black mt-8">
+      {category}
+    </Typography>
+    <div className={`grid ${fields.length > 1 ? "grid-cols-3" : ""} gap-4`}>
+      {fields.map((field, index) => (
+        <FieldItem
+          key={index}
+          label={field.label}
+          value={profileData[field.key]}
+        />
+      ))}
+    </div>
+  </div>
+);
 
-  for (let i = abbrev.length - 1; i >= 0; i--) {
-    var size = Math.pow(10, (i + 1) * 3);
+// New DynamicTabBody component
+const DynamicTabBody = ({ category, fields, profileData }) => {
+  const responseFromQuery = useGetEmployeeDetailsQuery({
+    id: profileData?._id,
+    employmentId: profileData?.employmentId,
+    category: category,
+    // subCategory: "bank",
+  });
+  const { data, isLoading, error } = responseFromQuery;
 
-    if (size <= number) {
-      number = Math.round((number * decPlaces) / size) / decPlaces;
+  console.log("category data:", category, data?.body, fields);
 
-      if (number == 1000 && i < abbrev.length - 1) {
-        number = 1;
-        i++;
-      }
-
-      number += abbrev[i];
-
-      break;
-    }
+  if (!Array.isArray(fields)) {
+    console.error(`Invalid 'fields' data for category ${category}`);
+    return null; // or provide a default behavior
   }
 
-  return number;
-}
+  return (
+    <TabPanel key={category} value={category} className="p-8">
+      <div className="flex flex-row w-full items-center justify-between">
+        <Typography className="text-xs text-gray">{category}</Typography>
+        <PrimaryButton variant={"primary"} size="sm" title={"Edit Details"} />
+      </div>
 
-export function ProfileSidebar({
-  profileData,
-  currEmployeeId,
-  currEmploymentId,
-}) {
+      {fields.map(([key, value], index) => (
+        <CategoryFields
+          key={index}
+          category={key}
+          fields={value}
+          profileData={data?.body}
+        />
+      ))}
+    </TabPanel>
+  );
+};
+
+export function ProfileSidebar({ profileData }) {
   const [controller, dispatch] = useMaterialTailwindController();
-  const { openConfigurator, sidenavColor, sidenavType, fixedNavbar } =
-    controller;
+  const { openConfigurator } = controller;
+  const { employeeName /* other variables */ } = profileData ?? {};
 
-  const {
-    employmentId,
-    employeeName,
-    ewa,
-    mobile,
-    ewaStatus,
-    email,
-    dob,
-    designation,
-    principalEmployer,
-    empStatus,
-  } = profileData ?? {};
-
-  const sidenavColors = {
-    blue: "from-blue-400 to-blue-600",
-    "blue-gray": "from-blue-gray-800 to-blue-gray-900",
-    green: "from-green-400 to-green-600",
-    orange: "from-orange-400 to-orange-600",
-    red: "from-red-400 to-red-600",
-    pink: "from-pink-400 to-pink-600",
-  };
-
-  const [activeTab, setActiveTab] = React.useState("html");
+  const [activeTab, setActiveTab] = useState("");
 
   const topData = [
     { label: "Location", value: "Bangalore", icon: "fa fa-map-marker" },
     { label: "Mobile", value: "9041225676", icon: "fa fa-phone" },
     { label: "Email", value: "raunak@unipe.money", icon: "fa fa-envelope" },
   ];
+
+  const tabsMapEntries = Object.entries(newEmployeeFieldsToTabsMap);
+
+  console.log("tabsMapEntries", tabsMapEntries);
 
   return (
     <aside
@@ -162,82 +172,14 @@ export function ProfileSidebar({
           )}
         </TabsHeader>
         <TabsBody>
-          {Object.entries(newEmployeeFieldsToTabsMap).map(
-            ([key, value], index) => {
-              const {
-                category,
-                fields,
-                requiredFields,
-                fieldPatterns,
-                readOnlyFields,
-                hasSubTabs,
-              } = value;
-
-              const fieldsInverted = _.invert(fields);
-
-              return (
-                <TabPanel key={index} value={key} className="p-8">
-                  <div className="flex flex-row w-full items-center justify-between">
-                    <Typography className="text-xs text-gray">{key}</Typography>
-                    <PrimaryButton
-                      variant={"primary"}
-                      size="sm"
-                      title={"Edit Details"}
-                    />
-                  </div>
-
-                  <div
-                    className={`grid ${
-                      hasSubTabs ? "grid-cols-1" : "grid-cols-3 "
-                    }gap-4`}
-                  >
-                    {hasSubTabs
-                      ? Object.entries(fields).map(
-                          ([key, fieldsList], index) => {
-                            return (
-                              <div key={index}>
-                                <Typography className="text-xs font-normal text-black mt-8">
-                                  {key}
-                                </Typography>
-                                <div className="grid grid-cols-3 gap-4">
-                                  {Object.entries(fieldsList).map(
-                                    ([key, value], index) => {
-                                      return (
-                                        <div key={index}>
-                                          <Typography className="text-xs text-gray mt-8 font-normal">
-                                            {key}
-                                          </Typography>
-                                          <Typography className="text-sm text-black font-semibold">
-                                            {profileData[value]}
-                                          </Typography>
-                                        </div>
-                                      );
-                                    }
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          }
-                        )
-                      : Object.entries(fieldsInverted).map(
-                          ([key, value], index) => {
-                            return (
-                              <div key={index}>
-                                <Typography className="text-xs text-gray mt-8 font-normal">
-                                  {key}
-                                </Typography>
-                                <Typography className="text-sm text-black font-semibold">
-                                  {profileData[value]}
-                                </Typography>
-                              </div>
-                            );
-                          }
-                        )}
-                  </div>
-                </TabPanel>
-              );
-            }
-          )}
+          {tabsMapEntries.map(([key, value], index) => (
+            <DynamicTabBody
+              key={index}
+              category={value.category}
+              fields={value.fields}
+              profileData={profileData}
+            />
+          ))}
         </TabsBody>
       </Tabs>
     </aside>

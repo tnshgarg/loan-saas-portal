@@ -1,22 +1,20 @@
 import {
-  Button,
   Card,
   CardBody,
-  CardFooter,
   Menu,
   MenuHandler,
   MenuItem,
   MenuList,
   Typography,
 } from "@material-tailwind/react";
-import ProfileSidebar from "../layout/ProfileSidebar";
 import {
   setOpenConfigurator,
   useMaterialTailwindController,
 } from "../contexts/SidebarContext";
+import ProfileSidebar from "../layout/ProfileSidebar";
 
-import { useState } from "react";
 import { ChevronUpDownIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 
 const TABLE_HEAD = [
   "Emp ID",
@@ -33,88 +31,26 @@ const TABLE_HEAD = [
 
 const TABLE_ROWS = [
   {
-    id: "123456",
-    name: "Amar Roy",
-    takeHomeSalary: "5000",
-    deductions: 235,
-    grossPay: 5000,
-    // action: 2,
-  },
-  {
-    id: "123456",
-    name: "Amar Roy",
-    takeHomeSalary: "5000",
-    deductions: 235,
-    grossPay: 5000,
-    // action: 2,
-  },
-  {
-    id: "123456",
-    name: "Amar Roy",
-    takeHomeSalary: "5000",
-    deductions: 235,
-    grossPay: 5000,
-    // action: 2,
-  },
-  {
-    id: "123456",
-    name: "Amar Roy",
-    takeHomeSalary: "5000",
-    deductions: 235,
-    grossPay: 5000,
-    // action: 2,
-  },
-  {
-    id: "123456",
-    name: "Amar Roy",
-    takeHomeSalary: "5000",
-    deductions: 235,
-    grossPay: 5000,
-    // action: 2,
-  },
-  {
-    id: "123456",
-    name: "Amar Roy",
-    takeHomeSalary: "5000",
-    deductions: 235,
-    grossPay: 5000,
-    // action: 2,
-  },
-  {
-    id: "123456",
-    name: "Amar Roy",
-    takeHomeSalary: "5000",
-    deductions: 235,
-    grossPay: 5000,
-    // action: 2,
-  },
-  {
-    id: "123456",
-    name: "Amar Roy",
-    takeHomeSalary: "5000",
-    deductions: 235,
-    grossPay: 5000,
-    // action: 2,
-  },
-  {
-    id: "123456",
-    name: "Amar Roy",
-    takeHomeSalary: "5000",
-    deductions: 235,
-    grossPay: 5000,
-    // action: 2,
+    "Emp ID": "123456",
+    Name: "Amar Roy",
+    "Loan Amount": "5000",
+    Status: true,
+    "Disbursement date": "2023-01-01",
+    "Due Date": "2023-02-01",
+    "Pending Amount": 1000,
+    "Repaid amount": 4000,
+    "Repayment date": "2023-03-01",
   },
 ];
 
-export default function RepaymentsTable({ employeesData }) {
+export default function RepaymentsTable({ repaymentsData }) {
   const itemsPerPage = 10;
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = employeesData?.slice(indexOfFirstItem, indexOfLastItem);
-  console.log("currentItems", currentItems);
+  const currentItems = repaymentsData?.slice(indexOfFirstItem, indexOfLastItem);
 
   const [controller, dispatch] = useMaterialTailwindController();
   function renderValue(value) {
@@ -332,7 +268,7 @@ export default function RepaymentsTable({ employeesData }) {
         <div
           className="bg-white h-5 w-5 items-center flex flex-col justify-center hover:bg-lightGray cursor-pointer shadow-sm"
           onClick={() => {
-            if (currentPage < Math.ceil(employeesData?.length / itemsPerPage))
+            if (currentPage < Math.ceil(repaymentsData?.length / itemsPerPage))
               setCurrentPage((prevPage) => prevPage + 1);
           }}
         >
@@ -340,7 +276,7 @@ export default function RepaymentsTable({ employeesData }) {
         </div>
       </div>
 
-      <ProfileSidebar profileData={employeesData?.[activeIndex] ?? {}} />
+      <ProfileSidebar profileData={repaymentsData?.[activeIndex] ?? {}} />
     </>
   );
 }

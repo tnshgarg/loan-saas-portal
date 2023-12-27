@@ -1,29 +1,56 @@
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import { Typography } from "@material-tailwind/react";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import DateDropdown from "../../components/dashboard/payouts/info/DateDropdown";
+import TableLayout from "../../layout/TableLayout";
 import PrimaryButton from "../../newComponents/PrimaryButton";
-import RepaymentsTable from "../../newComponents/RepaymentsTable";
-import SearchInput from "../../newComponents/SearchInput";
 import StatisticsCard from "../../newComponents/cards/StatisticsCard";
 import WithdrawalsCard from "../../newComponents/cards/withdrawals-card";
+import { useGetRepaymentsQuery } from "../../store/slices/apiSlices/employer/ewaApiSlice";
 
 const Repayments = () => {
   const [filteredData, setFilteredData] = useState([]);
+  const today = new Date();
+  const [{ year, month }, setDate] = useState({
+    year: today.getFullYear(),
+    month: today.getMonth() + 1,
+  });
+  const employerId =
+    useSelector((state) => state.auth.user?.attributes.sub) ?? "";
+
+  const { data, isLoading, refetch, isFetching } = useGetRepaymentsQuery({
+    id: employerId,
+    year: 2023,
+    month: 11,
+  });
+
+  console.log("Repayments:", data?.body);
 
   const TABLE_HEADERS = [
-    { label: "Emp ID", value: "employerEmployeeId" },
-    { label: "Name", value: "employeeName" },
-    { label: "EWA", value: "ewa" },
-    { label: "Mobile", value: "mobile" },
-    { label: "EWA Status", value: "ewaStatus" },
-    { label: "Email", value: "email" },
-    { label: "DOB", value: "dob" },
-    { label: "Designation", value: "designation" },
-    { label: "Employeer", value: "principalEmployer" },
-    { label: "Emp Status", value: "active" },
+    { label: "Emp ID", value: "employeeId" },
+    { label: "Name", value: "name" },
+    { label: "Loan Amount", value: "loanAmount" },
+    { label: "Status", value: "status" },
+    { label: "Disbursement Date", value: "availedAt" },
+    { label: "Due Date", value: "dueDate" },
+    { label: "Pending Amount", value: "pendingAmount" },
+    { label: "Repaid Amount", value: "paidAmount" },
+    { label: "Repayment Date", value: "repaymentDate" },
     { label: "", value: "options" },
   ];
+
+  const dueEmployees = data?.body.filter(
+    (repayment) => repayment.status === "PENDING"
+  );
+  const dueEmployeesCount = dueEmployees.length;
+
+  const amountDue = data?.body.reduce((totalDue, repayment) => {
+    if (repayment.status === "PENDING") {
+      return totalDue + repayment.pendingAmount;
+    }
+    return totalDue;
+  }, 0);
 
   const statisticsCardsData = [
     {
@@ -31,8 +58,12 @@ const Repayments = () => {
       className: "col-span-2",
       title: "Repayment Summary",
       data: [
-        { label: "Amount Due", value: "₹4,57,000", className: "text-black" },
-        { label: "Due Employees", value: 567, className: "text-black" },
+        { label: "Amount Due", value: amountDue, className: "text-black" },
+        {
+          label: "Due Employees",
+          value: dueEmployeesCount,
+          className: "text-black",
+        },
       ],
     },
   ];
@@ -66,29 +97,12 @@ const Repayments = () => {
         <WithdrawalsCard title={"Repayment Summary"} className={"col-span-2"} />
       </div>
 
-      <div className="w-full flex-row flex items-center justify-between">
-        <SearchInput
-          label="Search by Name, Phone, Employee ID and Email ID"
-          data={filteredData}
-          setData={setFilteredData}
-          mainData={[]}
-        />
-        <PrimaryButton
-          title={"Filter"}
-          color="secondary"
-          variant={"outlined"}
-          size={"sm"}
-        />
-        <PrimaryButton
-          title={"Download"}
-          color="secondary"
-          variant={"outlined"}
-          size={"sm"}
-          className={"ml-0"}
-        />
-      </div>
-
-      <RepaymentsTable />
+      <TableLayout
+        mainData={data?.body}
+        rowData={filteredData}
+        setRowData={setFilteredData}
+        tableHeaders={TABLE_HEADERS}
+      />
     </div>
   );
 };

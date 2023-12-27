@@ -35,6 +35,8 @@ const AttendancePanel = () => {
     year: year,
     month: month,
   });
+
+  console.log("Attendance Data:", data?.body);
   const [safeAttendance, setSafeAttendance] = useState([]);
 
   useEffect(() => {

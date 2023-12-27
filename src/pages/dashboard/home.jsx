@@ -1,60 +1,30 @@
-import React, { useEffect, useState } from "react";
+import { UserGroupIcon, UserIcon } from "@heroicons/react/24/outline";
 import {
-  Typography,
-  Card,
-  CardHeader,
-  CardBody,
-  IconButton,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
   Avatar,
-  Tooltip,
-  Progress,
-  List,
+  Card,
+  CardBody,
+  CardHeader,
   ListItem,
   ListItemPrefix,
   ListItemSuffix,
+  Typography,
 } from "@material-tailwind/react";
-import {
-  ClockIcon,
-  CheckIcon,
-  EllipsisVerticalIcon,
-  ArrowUpIcon,
-  UserIcon,
-  UserGroupIcon,
-} from "@heroicons/react/24/outline";
+import React, { useEffect, useState } from "react";
 import StatisticsCard from "../../newComponents/cards/StatisticsCard";
-import { projectsTableData, ordersOverviewData } from "../../data";
-import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import BannerCard from "../../newComponents/cards/banner-card";
-import WithdrawalsCard from "../../newComponents/cards/withdrawals-card";
-import VideoCard from "../../newComponents/cards/video-card";
 
-import {
-  HEADER_GROUPS as EMPLOYEE_HEADER_GROUPS,
-  HEADER_LIST as EMPLOYEE_HEADER_LIST,
-  transformHeadersToFields,
-} from "../../components/dashboard/employee/onboarding/fields";
-import {
-  HEADER_GROUPS as ATTENDANCE_HEADER_GROUPS,
-  HEADER_LIST as ATTENDANCE_HEADER_LIST,
-} from "../../components/dashboard/attendance/dataUpload/attendanceDataUploadPanelFields";
+import { HEADER_LIST as ATTENDANCE_HEADER_LIST } from "../../components/dashboard/attendance/dataUpload/attendanceDataUploadPanelFields";
+import { HEADER_LIST as EMPLOYEE_HEADER_LIST } from "../../components/dashboard/employee/onboarding/fields";
 
-import {
-  allEmployeesPanelDetails,
-  useGetAllEmployeesPanelByEmployerIdQuery,
-} from "../../store/slices/apiSlices/employees/panelApiSlice";
 import { useDispatch, useSelector } from "react-redux";
-import HomeSteps from "../../newComponents/HomeSteps";
-import employee_icon from "../../assets/icons/employee_data.png";
 import attendance_icon from "../../assets/icons/attendance.png";
-import PrimaryButton from "../../newComponents/PrimaryButton";
-import EmployeeUpload from "../../newComponents/EmployeeUpload";
-import { useGetAttendanceQuery } from "../../store/slices/apiSlices/employer/attendanceApiSlice";
+import employee_icon from "../../assets/icons/employee_data.png";
 import AttendanceUpload from "../../newComponents/AttendanceUpload";
-import OnboardingStep from "../../newComponents/atoms/homeBanner/employees/OnboardingStep";
+import EmployeeUpload from "../../newComponents/EmployeeUpload";
+import HomeSteps from "../../newComponents/HomeSteps";
+import { useGetAllEmployeesPanelByEmployerIdQuery } from "../../store/slices/apiSlices/employees/panelApiSlice";
+import { useGetAttendanceQuery } from "../../store/slices/apiSlices/employer/attendanceApiSlice";
+import ComingSoon from "../ComingSoon";
 
 const statisticsCardsData = [
   {
@@ -148,6 +118,8 @@ function Home() {
     setOpen(true);
   };
   const dispatch = useDispatch();
+
+  return <ComingSoon />;
 
   return activeStep < 2 ? (
     <div className="mt-4 flex flex-col items-center justify-center h-[75vh]">

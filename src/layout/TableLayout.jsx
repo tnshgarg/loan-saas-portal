@@ -3,22 +3,10 @@ import {
   ArrowDownTrayIcon,
   ChevronUpDownIcon,
 } from "@heroicons/react/24/outline";
-import {
-  Card,
-  CardBody,
-  Menu,
-  MenuHandler,
-  MenuItem,
-  MenuList,
-  Typography,
-} from "@material-tailwind/react";
+import { Card, CardBody, Typography } from "@material-tailwind/react";
 import React, { useState } from "react";
 import { CSVLink } from "react-csv";
-import {
-  setOpenConfigurator,
-  useMaterialTailwindController,
-} from "../contexts/SidebarContext";
-import ProfileSidebar from "../layout/ProfileSidebar";
+import { useMaterialTailwindController } from "../contexts/SidebarContext";
 import PrimaryButton from "../newComponents/PrimaryButton";
 import SearchInput from "../newComponents/SearchInput";
 
@@ -28,9 +16,10 @@ const TableLayout = ({
   setRowData,
   mainData,
   searchDisabled,
+  renderActionItems,
 }) => {
-  console.log("rowData", rowData);
-  console.log("tableHeaders", tableHeaders);
+  // console.log("rowData", rowData);
+  // console.log("tableHeaders", tableHeaders);
 
   const csvHeaders = tableHeaders.map(({ label, value }) => ({
     label,
@@ -137,51 +126,19 @@ const TableLayout = ({
                 const classes = isLast ? "p-4" : "p-4";
 
                 return (
-                  <tr key={item.mobile}>
-                    {tableHeaders.map(({ value }, index) => (
-                      <td className={classes} key={index}>
-                        {value === "options" ? (
-                          <Menu>
-                            <MenuHandler>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-6 h-6"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                            </MenuHandler>
-                            <MenuList>
-                              <MenuItem>Turn Off EWA Access</MenuItem>
-                              <MenuItem
-                                onClick={() => {
-                                  setActiveIndex(index);
-                                  setOpenConfigurator(dispatch, true);
-                                }}
-                              >
-                                Go To Profile
-                              </MenuItem>
-                              <MenuItem>Delete</MenuItem>
-                            </MenuList>
-                          </Menu>
-                        ) : (
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal text-xs"
-                          >
-                            {renderValue(item[value])}
-                          </Typography>
-                        )}
+                  <tr key={index}>
+                    {tableHeaders.map(({ value }, key) => (
+                      <td className={classes} key={key}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal text-xs"
+                        >
+                          {renderValue(item[value])}
+                        </Typography>
                       </td>
                     ))}
+                    <td>{renderActionItems(item)}</td>
                   </tr>
                 );
               })}
@@ -213,7 +170,7 @@ const TableLayout = ({
           <i className="fa fa-arrow-right text-xs" aria-hidden="true"></i>
         </div>
       </div>
-      <ProfileSidebar profileData={rowData?.[activeIndex] ?? {}} />
+      {/* <ProfileSidebar profileData={rowData?.[activeIndex] ?? {}} /> */}
     </>
   );
 };
