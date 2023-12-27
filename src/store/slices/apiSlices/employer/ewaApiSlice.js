@@ -78,8 +78,39 @@ export const employerEWAApi = createApi({
       },
       providesTags: ["EWA"],
     }),
+    getWithdrawalTimeline: builder.query({
+      query: ({ id, year, month, status = [] }) => {
+        console.log("values:", id, year, month, status);
+        const path = `/ewa/withdrawal-timeline`;
+        if (!id || !year || !month)
+          throw Error(
+            `none of these can be null ${JSON.stringify({
+              id,
+              year,
+              month,
+            })}`
+          );
+        if (status && status.length) {
+          return path + `&status=${JSON.stringify(status)}`;
+        }
+
+        return path;
+      },
+      transformResponse: (responseData) => {
+        console.log("responseData:", responseData);
+        if (responseData.body) {
+          responseData.body = JSON.parse(responseData.body);
+        }
+        console.log(responseData.body);
+        return responseData;
+      },
+      providesTags: ["EWA"],
+    }),
   }),
 });
 
-export const { useGetDisbursementsQuery, useGetRepaymentsQuery } =
-  employerEWAApi;
+export const {
+  useGetDisbursementsQuery,
+  useGetRepaymentsQuery,
+  useGetWithdrawalTimelineQuery,
+} = employerEWAApi;

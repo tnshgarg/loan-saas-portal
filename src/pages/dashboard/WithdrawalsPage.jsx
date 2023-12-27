@@ -90,7 +90,7 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
   });
 
   const TABLE_HEADERS = [
-    { label: "Emp ID", value: "employeeId" },
+    { label: "Emp ID", value: "employeeId", sortable: true },
     { label: "Name", value: "name" },
     { label: "Withdrawn", value: "loanAmount" },
     { label: "Status", value: "status" },
@@ -98,7 +98,7 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
     { label: "Due Date", value: "dueDate" },
     { label: "UTR number", value: "utr" },
     { label: "Bank Account", value: "bankAccountNumber" },
-    { label: "", value: "options" },
+    // { label: "", value: "options" },
   ];
 
   const dateChanged = (updatedDate) => {
@@ -123,15 +123,18 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
 
   console.log("Dis:", data?.body);
   const [filteredData, setFilteredData] = useState(data?.body);
+  const { totalEwaAmount, activeEmployeesCount } = EmployeesData?.body.reduce(
+    (result, employeeData) => {
+      // Check if the status is "active" before adding the loan amount
+      if (employeeData.ewaStatus === "ACTIVE") {
+        result.totalEwaAmount += employeeData.ewa ?? 0;
+        result.activeEmployeesCount += 1;
+      }
 
-  // const totalEwaAmount = EmployeesData?.body.reduce((total, employeeData) => {
-  //   // Check if the status is "active" before adding the loan amount
-  //   if (employeeData.ewaStatus === "ACTIVE") {
-  //     return total + (employeeData.ewa? || 0);
-  //   }
-
-  //   return total;
-  // }, 0);
+      return result;
+    },
+    { totalEwaAmount: 0, activeEmployeesCount: 0 }
+  );
   const totalLoanAmount = data?.body.reduce((total, disbursement) => {
     return total + (disbursement.loanAmount || 0);
   }, 0);
@@ -167,10 +170,14 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
       data: [
         {
           label: "Amount Available",
-          value: "₹4,57,000",
+          value: totalEwaAmount,
           className: "text-black",
         },
-        { label: "Employee Available ", value: 567, className: "text-black" },
+        {
+          label: "Employee Available ",
+          value: activeEmployeesCount,
+          className: "text-black",
+        },
       ],
     },
   ];

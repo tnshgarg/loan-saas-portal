@@ -192,7 +192,7 @@ const TabularTabsComponent = () => {
   const TABLE_HEADERS = [
     { label: "Emp ID", value: "employerEmployeeId" },
     { label: "Name", value: "employeeName" },
-    // { label: "EWA", value: "ewa" },
+    { label: "EWA", value: "ewa" },
     { label: "Mobile", value: "mobile" },
     { label: "EWA Status", value: "ewaStatus" },
     { label: "Email", value: "email" },

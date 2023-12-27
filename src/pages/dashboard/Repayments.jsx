@@ -1,10 +1,17 @@
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
-import { Typography } from "@material-tailwind/react";
+import {
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
+  Typography,
+} from "@material-tailwind/react";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import DateDropdown from "../../components/dashboard/payouts/info/DateDropdown";
 import TableLayout from "../../layout/TableLayout";
 import PrimaryButton from "../../newComponents/PrimaryButton";
+import RepaymentsDialog from "../../newComponents/RepaymentsDialog";
 import StatisticsCard from "../../newComponents/cards/StatisticsCard";
 import WithdrawalsCard from "../../newComponents/cards/withdrawals-card";
 import { useGetRepaymentsQuery } from "../../store/slices/apiSlices/employer/ewaApiSlice";
@@ -12,6 +19,8 @@ import { useGetRepaymentsQuery } from "../../store/slices/apiSlices/employer/ewa
 const Repayments = () => {
   const [filteredData, setFilteredData] = useState([]);
   const today = new Date();
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [{ year, month }, setDate] = useState({
     year: today.getFullYear(),
     month: today.getMonth() + 1,
@@ -37,13 +46,13 @@ const Repayments = () => {
     { label: "Pending Amount", value: "pendingAmount" },
     { label: "Repaid Amount", value: "paidAmount" },
     { label: "Repayment Date", value: "repaymentDate" },
-    { label: "", value: "options" },
+    // { label: "", value: "options" },
   ];
 
   const dueEmployees = data?.body.filter(
     (repayment) => repayment.status === "PENDING"
   );
-  const dueEmployeesCount = dueEmployees.length;
+  const dueEmployeesCount = dueEmployees?.length;
 
   const amountDue = data?.body.reduce((totalDue, repayment) => {
     if (repayment.status === "PENDING") {
@@ -102,6 +111,42 @@ const Repayments = () => {
         rowData={filteredData}
         setRowData={setFilteredData}
         tableHeaders={TABLE_HEADERS}
+        renderActionItems={(item, index) => (
+          <Menu>
+            <MenuHandler>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </MenuHandler>
+            <MenuList>
+              <MenuItem
+                onClick={() => {
+                  setActiveIndex(index);
+                  setOpen(true);
+                }}
+              >
+                View Breakdown
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        )}
+      />
+
+      <RepaymentsDialog
+        open={open}
+        setOpen={setOpen}
+        repaymentsData={data?.body[activeIndex]?.breakdown}
       />
     </div>
   );

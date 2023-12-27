@@ -57,8 +57,13 @@ export const employeeFieldsToTabsMap = {
   "Bank Details": {
     category: "bankDetails",
     fields: {
-      accountNumber: "Bank Account Number",
-      ifsc: "Bank IFSC Code",
+      beneficiaryName: "Beneficiary Name",
+      accountNumber: "Account Number",
+      ifsc: "IFSC Code",
+      bankName: "Bank Name",
+      branchName: "Branch Name",
+      branchCity: "City",
+      upi: "UPI",
     },
     requiredFields: { accountNumber: true },
     fieldPatterns: {
@@ -267,8 +272,13 @@ export const newEmployeeFieldsToTabsMap = {
   "Bank Details": {
     category: "bankDetails",
     fields: {
-      accountNumber: "Bank Account Number",
-      ifsc: "Bank IFSC Code",
+      beneficiaryName: "Beneficiary Name",
+      accountNumber: "Account Number",
+      ifsc: "IFSC Code",
+      bankName: "Bank Name",
+      branchName: "Branch Name",
+      branchCity: "City",
+      upi: "UPI",
     },
     requiredFields: { accountNumber: true },
     fieldPatterns: {
@@ -279,7 +289,7 @@ export const newEmployeeFieldsToTabsMap = {
   },
 
   "Withdrawal Timeline": {
-    category: "relatives",
+    category: "withdrawalTimeline",
     hasSubTabs: true,
     types: {
       "Father / Husband": "fh",

@@ -37,10 +37,34 @@ const TableLayout = ({
   const [controller, dispatch] = useMaterialTailwindController();
 
   const renderValue = (value) => {
-    if (value === true) {
+    if (value === true || value === "ACTIVE") {
       return (
         <Typography className="text-xs font-semibold text-primary">
-          Active
+          ACTIVE
+        </Typography>
+      );
+    } else if (value === "INPROGRESS") {
+      return (
+        <Typography className="text-xs font-semibold text-warning">
+          INPROGRESS
+        </Typography>
+      );
+    } else if (value === "SUCCESS") {
+      return (
+        <Typography className="text-xs font-semibold text-primary">
+          SUCCESS
+        </Typography>
+      );
+    } else if (value === "PENDING") {
+      return (
+        <Typography className="text-xs font-semibold text-warning">
+          PENDING
+        </Typography>
+      );
+    } else if (value === "INACTIVE") {
+      return (
+        <Typography className="text-xs font-semibold text-danger">
+          INACTIVE
         </Typography>
       );
     } else if (value === false) {
@@ -50,10 +74,10 @@ const TableLayout = ({
         </Typography>
       );
     } else if (value !== null && value !== undefined && value !== "") {
-      return <Typography className="text-sm font-normal">{value}</Typography>;
+      return <Typography className="text-xs font-normal">{value}</Typography>;
     } else {
       return (
-        <Typography className="text-sm font-bold text-danger">-</Typography>
+        <Typography className="text-xs font-bold text-danger">-</Typography>
       );
     }
   };
@@ -101,15 +125,14 @@ const TableLayout = ({
                 {tableHeaders.map((item, index) => (
                   <th
                     key={index}
-                    className="cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50"
+                    className="cursor-pointer border-b border-lightGray  p-4 transition-colors hover:bg-blue-gray-50"
                   >
                     <Typography
                       variant="small"
-                      color="blue-gray"
-                      className="flex items-center justify-between gap-2 font-normal leading-none opacity-70"
+                      className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-medium text-black"
                     >
                       {item.label}
-                      {index !== tableHeaders.length - 1 && (
+                      {index !== tableHeaders.length - 1 && item.sortable && (
                         <ChevronUpDownIcon
                           strokeWidth={2}
                           className="h-4 w-4"
@@ -129,13 +152,7 @@ const TableLayout = ({
                   <tr key={index}>
                     {tableHeaders.map(({ value }, key) => (
                       <td className={classes} key={key}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal text-xs"
-                        >
-                          {renderValue(item[value])}
-                        </Typography>
+                        {renderValue(item[value])}
                       </td>
                     ))}
                     {renderActionItems && (
