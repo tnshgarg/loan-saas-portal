@@ -13,8 +13,13 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import {
+  setOpenConfigurator,
+  useMaterialTailwindController,
+} from "../../contexts/SidebarContext.js";
+import ProfileSidebar from "../../layout/ProfileSidebar.jsx";
 import TableLayout from "../../layout/TableLayout.jsx";
 import BulkUpload from "../../newComponents/BulkUpload.jsx";
 import EmployeeUpload from "../../newComponents/EmployeeUpload.jsx";
@@ -195,7 +200,7 @@ const TabularTabsComponent = () => {
     { label: "Designation", value: "designation" },
     { label: "Employeer", value: "principalEmployer" },
     { label: "Emp Status", value: "active" },
-    { label: "", value: "options" },
+    // { label: "", value: "options" },
   ];
 
   const modified = reformatEmployeeData(data?.body);
@@ -268,11 +273,11 @@ const TabularTabsComponent = () => {
   };
   const [onboardOpen, setOnboardOpen] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
-
-  const dispatch = useDispatch();
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [filter, setFilter] = useState(null);
+  const [controller, dispatch] = useMaterialTailwindController();
 
   const openFilterModal = () => {
     setIsFilterModalOpen(true);
@@ -353,7 +358,7 @@ const TabularTabsComponent = () => {
         rowData={filteredData}
         setRowData={setFilteredData}
         tableHeaders={TABLE_HEADERS}
-        renderActionItems={
+        renderActionItems={(item, index) => (
           <Menu>
             <MenuHandler>
               <svg
@@ -375,8 +380,9 @@ const TabularTabsComponent = () => {
               <MenuItem>Turn Off EWA Access</MenuItem>
               <MenuItem
                 onClick={() => {
-                  // setActiveIndex(index);
-                  // setOpenConfigurator(dispatch, true);
+                  // console.log(index);
+                  setOpenConfigurator(dispatch, true);
+                  setActiveIndex(index);
                 }}
               >
                 Go To Profile
@@ -384,7 +390,7 @@ const TabularTabsComponent = () => {
               <MenuItem>Delete</MenuItem>
             </MenuList>
           </Menu>
-        }
+        )}
       />
 
       <FilterModal
@@ -405,6 +411,7 @@ const TabularTabsComponent = () => {
         open={bulkOpen}
         employeesData={data?.body}
       />
+      <ProfileSidebar profileData={filteredData?.[activeIndex] ?? {}} />
     </div>
   );
 };

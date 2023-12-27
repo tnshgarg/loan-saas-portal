@@ -16,7 +16,7 @@ import {
   useMaterialTailwindController,
 } from "../contexts/SidebarContext";
 import PrimaryButton from "../newComponents/PrimaryButton";
-import { useGetEmployeeDetailsQuery } from "../store/slices/apiSlices/employee/employeeDetailsApiSlice";
+import { useLazyGetEmployeeDetailsQuery } from "../store/slices/apiSlices/employee/employeeDetailsApiSlice";
 
 // New FieldItem component
 const FieldItem = ({ label, value }) => (
@@ -31,26 +31,28 @@ const FieldItem = ({ label, value }) => (
 );
 
 // New CategoryFields component
-const CategoryFields = ({ category, fields, profileData }) => (
-  <div>
-    <Typography className="text-xs font-normal text-black mt-8">
-      {category}
-    </Typography>
-    <div className={`grid ${fields.length > 1 ? "grid-cols-3" : ""} gap-4`}>
-      {fields.map((field, index) => (
-        <FieldItem
-          key={index}
-          label={field.label}
-          value={profileData[field.key]}
-        />
-      ))}
+const CategoryFields = ({ category, fields, bodyData }) => {
+  console.log("CategoryFields:", bodyData);
+  return (
+    <div>
+      <Typography className="text-xs font-normal text-black mt-8">
+        {category}
+      </Typography>
+      <div className={`grid ${fields.length > 1 ? "grid-cols-3" : ""} gap-4`}>
+        {fields.map((field, index) => (
+          <FieldItem
+            key={index}
+            label={field.label}
+            value={bodyData[field.key]}
+          />
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-// New DynamicTabBody component
-const DynamicTabBody = ({ category, fields, profileData }) => {
-  const responseFromQuery = useGetEmployeeDetailsQuery({
+const DynamicTabBody = ({ label, category, fields, profileData }) => {
+  const responseFromQuery = useLazyGetEmployeeDetailsQuery({
     id: profileData?._id,
     employmentId: profileData?.employmentId,
     category: category,
@@ -58,32 +60,36 @@ const DynamicTabBody = ({ category, fields, profileData }) => {
   });
   const { data, isLoading, error } = responseFromQuery;
 
-  console.log("category data:", category, data?.body, fields);
+  console.log("category fields:", fields);
+  console.log("category name:", category);
+  console.log("category data:", data?.body);
 
-  if (!Array.isArray(fields)) {
-    console.error(`Invalid 'fields' data for category ${category}`);
-    return null; // or provide a default behavior
-  }
+  if (isLoading) return <div>Loading</div>;
 
   return (
-    <TabPanel key={category} value={category} className="p-8">
+    <TabPanel key={label} value={label} className="p-8">
       <div className="flex flex-row w-full items-center justify-between">
-        <Typography className="text-xs text-gray">{category}</Typography>
+        <Typography className="text-xs text-gray">{label}</Typography>
         <PrimaryButton variant={"primary"} size="sm" title={"Edit Details"} />
       </div>
 
-      {fields.map(([key, value], index) => (
-        <CategoryFields
-          key={index}
-          category={key}
-          fields={value}
-          profileData={data?.body}
-        />
-      ))}
+      {/* Render tabs based on the type of data.body */}
+      {Array.isArray(data?.body)
+        ? data?.body.map((item, index) => (
+            <CategoryFields
+              key={index}
+              label={item.label}
+              category={item.category}
+              fields={item.fields}
+              profileData={profileData}
+            />
+          ))
+        : Object.entries(data?.body || {}).map(([key, value], index) => (
+            <FieldItem key={index} label={key} value={value} />
+          ))}
     </TabPanel>
   );
 };
-
 export function ProfileSidebar({ profileData }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { openConfigurator } = controller;
@@ -154,29 +160,31 @@ export function ProfileSidebar({ profileData }) {
               "bg-transparent border-b-2 border-[#016bff] shadow-none rounded-none",
           }}
         >
-          {Object.entries(newEmployeeFieldsToTabsMap).map(
-            ([key, value], index) => {
-              return (
-                <Tab
-                  key={index}
-                  value={key}
-                  onClick={() => setActiveTab(value)}
-                  className={`text-xs py-2 ${
-                    activeTab === value ? `text-[#016bff]` : `text-gray`
-                  }`}
-                >
-                  {key}
-                </Tab>
-              );
-            }
-          )}
+          {tabsMapEntries.map(([key, value], index) => {
+            return (
+              <Tab
+                key={index}
+                value={key}
+                onClick={() => {
+                  console.log("value:", key, value);
+                  setActiveTab(key);
+                }}
+                className={`text-xs py-2 ${
+                  activeTab === value ? `text-[#016bff]` : `text-gray`
+                }`}
+              >
+                {key}
+              </Tab>
+            );
+          })}
         </TabsHeader>
         <TabsBody>
-          {tabsMapEntries.map(([key, value], index) => (
+          {tabsMapEntries.map((item, index) => (
             <DynamicTabBody
               key={index}
-              category={value.category}
-              fields={value.fields}
+              label={item[0]}
+              category={item[1].category}
+              fields={item[1].fields}
               profileData={profileData}
             />
           ))}

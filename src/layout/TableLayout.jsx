@@ -138,7 +138,9 @@ const TableLayout = ({
                         </Typography>
                       </td>
                     ))}
-                    <td>{renderActionItems(item)}</td>
+                    {renderActionItems && (
+                      <td>{renderActionItems(item, index)}</td>
+                    )}
                   </tr>
                 );
               })}
@@ -170,7 +172,6 @@ const TableLayout = ({
           <i className="fa fa-arrow-right text-xs" aria-hidden="true"></i>
         </div>
       </div>
-      {/* <ProfileSidebar profileData={rowData?.[activeIndex] ?? {}} /> */}
     </>
   );
 };

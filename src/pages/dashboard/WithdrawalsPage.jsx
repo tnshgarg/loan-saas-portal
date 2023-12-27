@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import DateDropdown from "../../components/dashboard/payouts/info/DateDropdown.jsx";
 import TableLayout from "../../layout/TableLayout.jsx";
 import StatisticsCard from "../../newComponents/cards/StatisticsCard.jsx";
+import { useGetAllEmployeesPanelByEmployerIdQuery } from "../../store/slices/apiSlices/employees/panelApiSlice.js";
 import { useGetDisbursementsQuery } from "../../store/slices/apiSlices/employer/ewaApiSlice.js";
 
 function mapStateToProps(state) {
@@ -112,9 +113,25 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
     month: 11,
   });
 
+  const responseFromQuery =
+    useGetAllEmployeesPanelByEmployerIdQuery(employerId);
+  const {
+    data: EmployeesData,
+    isFetching: isEmployeesFetching,
+    isLoading: isEmployeesLoading,
+  } = responseFromQuery;
+
   console.log("Dis:", data?.body);
   const [filteredData, setFilteredData] = useState(data?.body);
 
+  // const totalEwaAmount = EmployeesData?.body.reduce((total, employeeData) => {
+  //   // Check if the status is "active" before adding the loan amount
+  //   if (employeeData.ewaStatus === "ACTIVE") {
+  //     return total + (employeeData.ewa? || 0);
+  //   }
+
+  //   return total;
+  // }, 0);
   const totalLoanAmount = data?.body.reduce((total, disbursement) => {
     return total + (disbursement.loanAmount || 0);
   }, 0);
