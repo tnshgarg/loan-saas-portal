@@ -79,22 +79,19 @@ export const employerEWAApi = createApi({
       providesTags: ["EWA"],
     }),
     getWithdrawalTimeline: builder.query({
-      query: ({ id, year, month, status = [] }) => {
-        console.log("values:", id, year, month, status);
-        const path = `/ewa/withdrawal-timeline`;
-        if (!id || !year || !month)
-          throw Error(
-            `none of these can be null ${JSON.stringify({
-              id,
-              year,
-              month,
-            })}`
-          );
-        if (status && status.length) {
-          return path + `&status=${JSON.stringify(status)}`;
-        }
+      query: (body) => {
+        const path = "/ewa/withdrawal-timeline";
 
-        return path;
+        const requestBody = JSON.stringify(body);
+
+        return {
+          url: path,
+          method: "GET",
+          body: requestBody,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
       },
       transformResponse: (responseData) => {
         console.log("responseData:", responseData);

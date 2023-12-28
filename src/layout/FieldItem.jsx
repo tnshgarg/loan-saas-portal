@@ -7,7 +7,7 @@ const FieldItem = ({ label, value }) => (
       {label}
     </Typography>
     <Typography className="text-xs text-black font-semibold">
-      {value}
+      {value ?? "-"}
     </Typography>
   </div>
 );

@@ -5,6 +5,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import React from "react";
+import { useGetWithdrawalTimelineQuery } from "../store/slices/apiSlices/employer/ewaApiSlice";
 import FieldItem from "./FieldItem";
 
 function Icon({ id, open }) {
@@ -26,9 +27,11 @@ function Icon({ id, open }) {
   );
 }
 
-const WithdrawalTimeline = () => {
+const WithdrawalTimeline = ({ employeeId }) => {
   const [open, setOpen] = React.useState(0);
-
+  const responseFromQuery = useGetWithdrawalTimelineQuery(employeeId);
+  const { data, isLoading, error } = responseFromQuery;
+  console.log("WithdrawalTimeline:", data?.body);
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
   return (

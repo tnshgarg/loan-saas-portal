@@ -10,6 +10,8 @@ import { useMaterialTailwindController } from "../contexts/SidebarContext";
 import PrimaryButton from "../newComponents/PrimaryButton";
 import SearchInput from "../newComponents/SearchInput";
 
+const tableCellClass = "p-4";
+
 const TableLayout = ({
   tableHeaders,
   rowData,
@@ -27,7 +29,6 @@ const TableLayout = ({
   }));
 
   const itemsPerPage = 10;
-  const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -36,49 +37,81 @@ const TableLayout = ({
 
   const [controller, dispatch] = useMaterialTailwindController();
 
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+
+  const sortData = (data) => {
+    if (sortConfig.key === null) return data;
+
+    return data.slice().sort((a, b) => {
+      const keyA = a[sortConfig.key];
+      const keyB = b[sortConfig.key];
+
+      if (keyA < keyB) return sortConfig.direction === "asc" ? -1 : 1;
+      if (keyA > keyB) return sortConfig.direction === "asc" ? 1 : -1;
+
+      return 0;
+    });
+  };
+
+  const requestSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
   const renderValue = (value) => {
-    if (value === true || value === "ACTIVE") {
-      return (
-        <Typography className="text-xs font-semibold text-primary">
-          ACTIVE
-        </Typography>
-      );
-    } else if (value === "INPROGRESS") {
-      return (
-        <Typography className="text-xs font-semibold text-warning">
-          INPROGRESS
-        </Typography>
-      );
-    } else if (value === "SUCCESS") {
-      return (
-        <Typography className="text-xs font-semibold text-primary">
-          SUCCESS
-        </Typography>
-      );
-    } else if (value === "PENDING") {
-      return (
-        <Typography className="text-xs font-semibold text-warning">
-          PENDING
-        </Typography>
-      );
-    } else if (value === "INACTIVE") {
-      return (
-        <Typography className="text-xs font-semibold text-danger">
-          INACTIVE
-        </Typography>
-      );
-    } else if (value === false) {
-      return (
-        <Typography className="text-xs font-semibold text-danger">
-          EXITED
-        </Typography>
-      );
-    } else if (value !== null && value !== undefined && value !== "") {
-      return <Typography className="text-xs font-normal">{value}</Typography>;
-    } else {
-      return (
-        <Typography className="text-xs font-bold text-danger">-</Typography>
-      );
+    switch (value) {
+      case true:
+      case "ACTIVE":
+        return (
+          <Typography className="text-xs font-semibold text-primary">
+            ACTIVE
+          </Typography>
+        );
+
+      case "INPROGRESS":
+        return (
+          <Typography className="text-xs font-semibold text-warning">
+            INPROGRESS
+          </Typography>
+        );
+
+      case "SUCCESS":
+        return (
+          <Typography className="text-xs font-semibold text-primary">
+            SUCCESS
+          </Typography>
+        );
+
+      case "PENDING":
+        return (
+          <Typography className="text-xs font-semibold text-warning">
+            PENDING
+          </Typography>
+        );
+
+      case "INACTIVE":
+        return (
+          <Typography className="text-xs font-semibold text-danger">
+            INACTIVE
+          </Typography>
+        );
+
+      case false:
+        return (
+          <Typography className="text-xs font-semibold text-danger">
+            EXITED
+          </Typography>
+        );
+
+      default:
+        return value !== null && value !== undefined && value !== "" ? (
+          <Typography className="text-xs font-normal">{value}</Typography>
+        ) : (
+          <Typography className="text-xs font-bold text-danger">-</Typography>
+        );
     }
   };
 
@@ -126,16 +159,21 @@ const TableLayout = ({
                   <th
                     key={index}
                     className="cursor-pointer border-b border-lightGray  p-4 transition-colors hover:bg-blue-gray-50"
+                    onClick={() => item.sortable && requestSort(item.value)}
                   >
                     <Typography
                       variant="small"
                       className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-medium text-black"
                     >
                       {item.label}
-                      {index !== tableHeaders.length - 1 && item.sortable && (
+                      {item.sortable && (
                         <ChevronUpDownIcon
                           strokeWidth={2}
-                          className="h-4 w-4"
+                          className={`h-4 w-4 ${
+                            sortConfig.key === item.value
+                              ? "text-primary"
+                              : "text-gray"
+                          }`}
                         />
                       )}
                     </Typography>
@@ -144,23 +182,18 @@ const TableLayout = ({
               </tr>
             </thead>
             <tbody>
-              {currentItems?.map((item, index) => {
-                const isLast = index === currentItems?.length - 1;
-                const classes = isLast ? "p-4" : "p-4";
-
-                return (
-                  <tr key={index}>
-                    {tableHeaders.map(({ value }, key) => (
-                      <td className={classes} key={key}>
-                        {renderValue(item[value])}
-                      </td>
-                    ))}
-                    {renderActionItems && (
-                      <td>{renderActionItems(item, index)}</td>
-                    )}
-                  </tr>
-                );
-              })}
+              {sortData(currentItems)?.map((item, index) => (
+                <tr key={index}>
+                  {tableHeaders.map(({ value }, key) => (
+                    <td className={tableCellClass} key={key}>
+                      {renderValue(item?.[value])}
+                    </td>
+                  ))}
+                  {renderActionItems && (
+                    <td>{renderActionItems(item, index)}</td>
+                  )}
+                </tr>
+              ))}
             </tbody>
           </table>
         </CardBody>
@@ -182,8 +215,9 @@ const TableLayout = ({
         <div
           className="bg-white h-5 w-5 items-center flex flex-col justify-center hover:bg-lightGray cursor-pointer shadow-sm"
           onClick={() => {
-            if (currentPage < Math.ceil(rowData?.length / itemsPerPage))
+            if (currentPage < Math.ceil(rowData?.length / itemsPerPage)) {
               setCurrentPage((prevPage) => prevPage + 1);
+            }
           }}
         >
           <i className="fa fa-arrow-right text-xs" aria-hidden="true"></i>

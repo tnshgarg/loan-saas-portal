@@ -136,7 +136,7 @@ const Repayments = () => {
                   setOpen(true);
                 }}
               >
-                View Breakdown
+                View Payments
               </MenuItem>
             </MenuList>
           </Menu>
