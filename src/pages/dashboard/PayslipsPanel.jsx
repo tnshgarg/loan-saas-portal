@@ -9,11 +9,16 @@ import { PAYSLIPS_TABLE_FIELDS } from "../../components/dashboard/payslips/info/
 import TableLayout from "../../layout/TableLayout.jsx";
 import PayslipsUpload from "../../newComponents/PayslipsUpload.jsx";
 import PrimaryButton from "../../newComponents/PrimaryButton.jsx";
-import { useGetPayslipsQuery } from "../../store/slices/apiSlices/employer/payslipsApiSlice.js";
+import SendPayslipsDialog from "../../newComponents/SendPayslipsDialog.jsx";
+import {
+  useGetPayslipsQuery,
+  useSendPayslipsMutation,
+} from "../../store/slices/apiSlices/employer/payslipsApiSlice.js";
 import { getExcel } from "../../utils/excelHandling.js";
 
 const PayslipsPanel = () => {
   const [open, setOpen] = useState(false);
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
   const dispatch = useDispatch();
 
   const employerId = useSelector(
@@ -25,16 +30,22 @@ const PayslipsPanel = () => {
     month: today.getMonth() + 1,
   });
 
-  const dateChanged = (updatedDate) => {
-    setDate(updatedDate);
-  };
-
   const key = `payslips-info-historical-${year}-${month}`;
   const { data, isLoading, refetch, isFetching } = useGetPayslipsQuery({
     id: employerId,
     year: year,
     month: month,
   });
+
+  console.log("Payslips Data:", data?.body);
+
+  const dateChanged = (updatedDate) => {
+    setDate(updatedDate);
+    refetch();
+  };
+
+  const [sendPayslipsMutation, { isLoading: isSending }] =
+    useSendPayslipsMutation();
 
   const TABLE_HEADERS = [
     { label: "Emp ID", value: "employerEmployeeId" },
@@ -81,6 +92,7 @@ const PayslipsPanel = () => {
             size={"sm"}
             className={"ml-0"}
             leftIcon={PaperAirplaneIcon}
+            onClick={() => setOpenConfirmationDialog(true)}
           />
         </div>
       </div>
@@ -95,6 +107,12 @@ const PayslipsPanel = () => {
         setOpen={setOpen}
         handleOpen={() => setOpen(true)}
         open={open}
+        payslipsData={data?.body}
+      />
+
+      <SendPayslipsDialog
+        open={openConfirmationDialog}
+        setOpen={setOpenConfirmationDialog}
         payslipsData={data?.body}
       />
     </div>

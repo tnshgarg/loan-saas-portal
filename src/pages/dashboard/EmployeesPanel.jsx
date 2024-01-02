@@ -303,7 +303,7 @@ const TabularTabsComponent = () => {
 
   return (
     <div className="mt-4">
-      <div className="mb-6 grid gap-y-10 gap-x-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="mb-6 grid gap-y-10 gap-x-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {statisticsCardsData.map(
           ({ icon, title, footer, className, ...rest }) => (
             <StatisticsCard

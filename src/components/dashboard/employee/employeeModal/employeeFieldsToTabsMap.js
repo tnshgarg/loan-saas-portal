@@ -259,10 +259,12 @@ export const newEmployeeFieldsToTabsMap = {
     },
     fields: {
       Aadhaar: {
-        number: "ID Number",
+        number: "Aadhaar Number",
+        verifyStatus: "Verify Status",
       },
       PAN: {
-        number: "ID Number",
+        number: "PAN Number",
+        verifyStatus: "Verify Status",
       },
     },
     requiredFields: {},

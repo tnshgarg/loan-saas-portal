@@ -51,7 +51,6 @@ const DateDropdown = ({ onChange }) => {
         label="Select Date"
         className="bg-white"
         size="md"
-        color="primary"
         onChange={handleSelectChange}
         selected={options[0]}
       >

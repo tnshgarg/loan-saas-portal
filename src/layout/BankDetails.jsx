@@ -1,29 +1,25 @@
 import React, { useEffect } from "react";
-import { useGetEmployeeDetailsQuery } from "../store/slices/apiSlices/employee/employeeDetailsApiSlice";
+import { useLazyGetEmployeeDetailsQuery } from "../store/slices/apiSlices/employee/employeeDetailsApiSlice";
 import FieldItem from "./FieldItem";
 
 const BankDetails = ({ fields, employeeId }) => {
   const fieldsArray = Object.entries(fields);
 
-  const { data, isLoading, error, refetch } = useGetEmployeeDetailsQuery({
-    id: employeeId,
-    category: "bankDetails",
-  });
-
-  console.log("bankDetails", data?.body);
+  const [getEmployeeDetails, { data, loading, error }] =
+    useLazyGetEmployeeDetailsQuery();
 
   useEffect(() => {
-    refetch(); // You can use refetch whenever you want to refresh the data
-  }, [employeeId, refetch]);
+    getEmployeeDetails({
+      id: employeeId,
+      category: "bankDetails",
+    });
+  }, [employeeId, getEmployeeDetails]);
 
-  if (isLoading) return <div>Loading</div>;
+  if (loading) return <div>Loading</div>;
   if (error) return <div>Error: {error.message}</div>;
 
   // Check if data.body is defined before parsing
   const parsedData = data?.body ? data?.body : {};
-
-  console.log({ fieldsArray });
-  console.log({ parsedData });
 
   return (
     <div className="grid grid-cols-3">

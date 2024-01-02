@@ -34,28 +34,35 @@ const WithdrawalTimeline = ({ employeeId }) => {
   console.log("WithdrawalTimeline:", data?.body);
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
-  return (
-    <>
+  return data?.body?.map((item, index) => {
+    const timestamp = item.availedAt;
+    const dateObject = new Date(timestamp);
+    const day = dateObject.getUTCDate();
+    const month = dateObject.toLocaleString("default", { month: "short" });
+    const year = dateObject.getUTCFullYear().toString().slice(-2);
+    return (
       <Accordion
-        open={open === 1}
-        icon={<Icon id={1} open={open} />}
+        open={open === index + 1}
+        icon={<Icon id={index + 1} open={open} />}
         className="focus:outline-none active:outline-none rounded-xl drop-shadow-md mt-8 bg-white"
         style={{ outline: "none" }}
       >
         <AccordionHeader
-          onClick={() => handleOpen(1)}
+          onClick={() => handleOpen(index + 1)}
           className="flex flex-row w-full rounded-xl m-0 p-0 border-white border-0 focus:outline-none"
         >
           <div className="bg-lightgray_01 px-4 py-2 rounded-l-xl flex flex-col items-center">
             <Typography className="text-2xl font-medium text-gray">
-              15
+              {day}
             </Typography>
             <Typography className="text-[10px] font-regular text-gray">
-              MAR’23
+              {month + "'" + year}
             </Typography>
           </div>
           <div className="p-4 flex flex-col w-full">
-            <Typography className="text-xs text-danger">₹5000</Typography>
+            <Typography className="text-xs text-danger">
+              ₹{item.loanAmount}
+            </Typography>
             <Typography className="text-xs text-gray">
               Due date 1st Sep, 2022
             </Typography>
@@ -73,8 +80,8 @@ const WithdrawalTimeline = ({ employeeId }) => {
           <FieldItem label={"On-Demand Salary "} value={"+₹7500"} />
         </AccordionBody>
       </Accordion>
-    </>
-  );
+    );
+  });
 };
 
 export default WithdrawalTimeline;

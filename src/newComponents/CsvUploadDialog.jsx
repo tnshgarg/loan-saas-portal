@@ -105,6 +105,8 @@ const _CsvUploadDialog = ({
       (state) => state?.csvUploads?.[module]?.tableData[currentFileName]
     ) ?? [];
 
+  console.log({ currentData });
+
   const [uploadStatus, setUploadStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [cloudUploadDisabled, setCloudUploadDisabled] = useState(false);
@@ -177,6 +179,8 @@ const _CsvUploadDialog = ({
           return csvRow;
         })
     );
+
+    console.log("tableCSV", tableCSV);
 
     const csvFile = new Blob([tableCSV], { type: "text/csv" });
     const timestamp = new Date().getTime();
@@ -297,13 +301,16 @@ const _CsvUploadDialog = ({
 
   useEffect(() => {
     if (file?.object?.name && file?.object?.size) {
+      console.log({ file });
       const reader = new FileReader();
       reader.onload = (event) => {
+        console.log("event", event);
         const wb = read(event.target.result, {
           type: "string",
           raw: true,
         });
         const sheets = wb.SheetNames;
+        console.log("sheets", sheets);
         if (sheets.length) {
           const rows = utils.sheet_to_json(wb.Sheets[sheets[0]]);
           handleFileImport(rows);
@@ -325,10 +332,10 @@ const _CsvUploadDialog = ({
     setFileName(file.name);
     setFile({ object: file, validations: [] });
     let count = 0;
+    console.log("file", file);
     console.log("current data:", currentData?.data);
     currentData?.data?.forEach((item, index) => {
       if (employeesData.find((e) => e.mobile === item.mobile)) {
-        /* same result as above, but a different function return type */
         count++;
       }
     });

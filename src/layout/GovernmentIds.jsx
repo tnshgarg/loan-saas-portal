@@ -1,41 +1,69 @@
 import React, { useEffect } from "react";
-import { useGetEmployeeDetailsQuery } from "../store/slices/apiSlices/employee/employeeDetailsApiSlice";
+import { useLazyGetEmployeeDetailsQuery } from "../store/slices/apiSlices/employee/employeeDetailsApiSlice";
 import FieldItem from "./FieldItem";
 
 const GovernmentIds = ({ fields, employeeId }) => {
-  const fieldsArray = Object.entries(fields);
+  const aadhaarFieldsArray = Object.entries(fields.Aadhaar);
+  const panFieldsArray = Object.entries(fields.PAN);
 
-  const { data, isLoading, error, refetch } = useGetEmployeeDetailsQuery({
-    id: employeeId,
-    category: "governmentIds",
-    subCategory: "aadhaar",
-  });
+  const [
+    getPanDetails,
+    { data: panData, loading: panLoading, error: panError },
+  ] = useLazyGetEmployeeDetailsQuery();
 
-  console.log("GovernmentIds", data?.body);
+  const [
+    getAadhaarDetails,
+    { data: aadhaarData, loading: aadhaarLoading, error: aadhaarError },
+  ] = useLazyGetEmployeeDetailsQuery();
 
   useEffect(() => {
-    refetch(); // You can use refetch whenever you want to refresh the data
-  }, [employeeId, refetch]);
+    getPanDetails({
+      id: employeeId,
+      category: "governmentIds",
+      subCategory: "pan",
+    });
 
-  if (isLoading) return <div>Loading</div>;
-  if (error) return <div>Error: {error.message}</div>;
+    getAadhaarDetails({
+      id: employeeId,
+      category: "governmentIds",
+      subCategory: "aadhaar",
+    });
+  }, [employeeId, getPanDetails, getAadhaarDetails]);
+
+  if (panLoading || aadhaarLoading) return <div>Loading</div>;
+  if (panError || aadhaarError) {
+    return <div>Error: {panError?.message || aadhaarError?.message}</div>;
+  }
 
   // Check if data.body is defined before parsing
-  const parsedData = data?.body ? data?.body : {};
-
-  console.log({ fieldsArray });
-  console.log({ parsedData });
+  const panDataParsed = panData?.body ? panData.body : {};
+  const aadhaarDataParsed = aadhaarData?.body ? aadhaarData.body : {};
 
   return (
-    <div className="grid grid-cols-3">
-      {Array.isArray(fieldsArray) &&
-        fieldsArray.map((field, index) => (
-          <FieldItem
-            key={index}
-            label={field[1]}
-            value={parsedData?.[0]?.[field[0]]}
-          />
-        ))}
+    <div>
+      {/* Render Pan details */}
+      <div className="grid grid-cols-3">
+        {Array.isArray(panFieldsArray) &&
+          panFieldsArray.map((field, index) => (
+            <FieldItem
+              key={index}
+              label={field[1]}
+              value={panDataParsed?.[field[0]]}
+            />
+          ))}
+      </div>
+
+      {/* Render Aadhaar details */}
+      <div className="grid grid-cols-3">
+        {Array.isArray(aadhaarFieldsArray) &&
+          aadhaarFieldsArray.map((field, index) => (
+            <FieldItem
+              key={index}
+              label={field[1]}
+              value={aadhaarDataParsed?.[field[0]]}
+            />
+          ))}
+      </div>
     </div>
   );
 };

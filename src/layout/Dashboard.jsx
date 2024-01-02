@@ -22,7 +22,6 @@ export function Dashboard() {
       const isSlicePending =
         slice?.queries &&
         Object.values(slice.queries).some((query) => {
-          console.log("Slice", query);
           return query?.status === "pending";
         });
       return isSlicePending;
@@ -37,7 +36,7 @@ export function Dashboard() {
   return (
     <div className="min-h-screen bg-[#F8F6F7]">
       <Sidenav routes={routes} brandImg="/img/logo.png" />
-      <div className="p-8 xl:ml-80">
+      <div className="p-8 ml-72">
         <DashboardNavbar />
 
         {loading ? <LoadingIndicator /> : <></>}

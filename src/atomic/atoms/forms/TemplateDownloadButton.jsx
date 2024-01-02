@@ -1,7 +1,6 @@
-import { Button } from "@blueprintjs/core";
+import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { CSVLink } from "react-csv";
 import PrimaryButton from "../../../newComponents/PrimaryButton";
-import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 
 export function TemplateDownloadButton({
   title,

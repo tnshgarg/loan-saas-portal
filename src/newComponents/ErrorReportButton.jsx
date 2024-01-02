@@ -7,6 +7,7 @@ import {
 } from "../components/dashboard/employee/onboarding/validations";
 
 const ErrorReportButton = ({ loading, templateData, fileName, fields }) => {
+  console.log("ErrorReportButton", templateData);
   const [data, setData] = useState(templateData?.data);
   const [errorData, setErrorData] = useState([]);
   loading = loading ?? false;
@@ -24,27 +25,29 @@ const ErrorReportButton = ({ loading, templateData, fileName, fields }) => {
   useEffect(() => {
     let errorObj = [];
 
-    data.forEach((item, index) => {
-      let updatedItem = { ...item };
+    // Add a check to ensure data is not undefined or null
+    if (data) {
+      data.forEach((item, index) => {
+        let updatedItem = { ...item };
 
-      if (item?.status[FS.WARN] || item?.status[FS.ERROR]) {
-        fields.forEach(({ field, validations }) => {
-          validLevel = VALIDATIONS[validations](item[field] ?? "");
+        if (item?.status[FS.WARN] || item?.status[FS.ERROR]) {
+          fields.forEach(({ field, validations }) => {
+            validLevel = VALIDATIONS[validations](item[field] ?? "");
 
-          if (validLevel === FS.ERROR || validLevel === FS.WARN) {
-            updatedItem[
-              field
-            ] = `${item[field]} [${VALIDATIONS_MESSAGES[validations]}]`;
-          }
-        });
-        errorObj.push(updatedItem);
-      }
-    });
+            if (validLevel === FS.ERROR || validLevel === FS.WARN) {
+              updatedItem[
+                field
+              ] = `${item[field]} [${VALIDATIONS_MESSAGES[validations]}]`;
+            }
+          });
+          errorObj.push(updatedItem);
+        }
+      });
+    }
 
     setErrorData(errorObj);
     console.log("errorObj", errorObj);
   }, [data]);
-
   return (
     data && (
       <CSVLink

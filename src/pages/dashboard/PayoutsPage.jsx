@@ -29,7 +29,6 @@ function mapStateToProps(state) {
 }
 
 function formatAsINR(value) {
-  console.log("value:", value);
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
@@ -93,8 +92,7 @@ export function _PayoutsPage({ employerId, dispatch }) {
       ).push(item);
     });
   }
-  console.log("meta", meta);
-  console.log("entries", entries);
+
   const [filteredData, setFilteredData] = useState(entries["ALL"]);
   const metrics = {},
     totals = {};

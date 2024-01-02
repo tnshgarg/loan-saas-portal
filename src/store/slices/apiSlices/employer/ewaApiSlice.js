@@ -43,7 +43,7 @@ export const employerEWAApi = createApi({
       transformResponse: (responseData) => {
         console.log("responseData:", responseData);
         if (responseData.body) {
-          responseData.body = JSON.parse(responseData.body);
+          responseData.body = responseData.body;
         }
         console.log(responseData.body);
         return responseData;
@@ -71,7 +71,7 @@ export const employerEWAApi = createApi({
       transformResponse: (responseData) => {
         console.log("responseData:", responseData);
         if (responseData.body) {
-          responseData.body = JSON.parse(responseData.body);
+          responseData.body = responseData.body;
         }
         console.log(responseData.body);
         return responseData;
@@ -80,23 +80,18 @@ export const employerEWAApi = createApi({
     }),
     getWithdrawalTimeline: builder.query({
       query: (body) => {
-        const path = "/ewa/withdrawal-timeline";
-
-        const requestBody = JSON.stringify(body);
+        const path = `/ewa/withdrawal-timeline?id=${body}`;
 
         return {
           url: path,
           method: "GET",
-          body: requestBody,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          // body: body,
         };
       },
       transformResponse: (responseData) => {
         console.log("responseData:", responseData);
         if (responseData.body) {
-          responseData.body = JSON.parse(responseData.body);
+          responseData.body = responseData.body;
         }
         console.log(responseData.body);
         return responseData;

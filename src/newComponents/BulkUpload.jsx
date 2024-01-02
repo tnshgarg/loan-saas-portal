@@ -1,18 +1,16 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import employee_icon from "../assets/icons/employee_data.png";
-import {
-  BULK_UPDATES_HEADER_MAP,
-  FIELDS,
-} from "../components/dashboard/employee/bulkUpdates/bulkUpdatesFields";
+import { FIELDS } from "../components/dashboard/employee/bulkUpdates/bulkUpdatesFields";
 import { FS } from "../components/dashboard/employee/onboarding/validations";
+import { buildTemplate } from "../components/dashboard/payouts/util";
 import { allEmployeesPanelDetails } from "../store/slices/apiSlices/employees/panelApiSlice";
 import { CsvUploadDialog } from "./CsvUploadDialog";
 
 const BulkUpload = ({ open, setOpen, employeesData, handleOpen }) => {
-  console.log("BULK_UPDATES_HEADER_MAP", BULK_UPDATES_HEADER_MAP);
-
   // const HEADERS = BULK_UPDATES_HEADER_MAP.filter((item) => returnitem.header)
+  const templateData = buildTemplate(FIELDS, employeesData);
+
   const dispatch = useDispatch();
   return (
     open && (
@@ -24,7 +22,7 @@ const BulkUpload = ({ open, setOpen, employeesData, handleOpen }) => {
         label={"employee_details"}
         headerImage={employee_icon}
         module={"employment"}
-        templateData={[BULK_UPDATES_HEADER_MAP]}
+        templateData={templateData}
         // headerGroups={HEADER_GROUPS}
         fields={FIELDS}
         validations={FS}

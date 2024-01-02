@@ -25,14 +25,21 @@ export function buildTemplate(
   employeesData,
   defaultValues = {}
 ) {
-  const headers = templateFields?.map((column) => column.header);
-  const rows = employeesData?.map((employee) =>
-    templateFields?.map((column) =>
-      column.prefetch && employee[column.field]
+  // Extract headers from templateFields
+  const headers = templateFields.map((column) => column.header);
+
+  // Map each employee's data to a row in the template
+  const rows = employeesData.map((employee) =>
+    // Map each template field to its corresponding value in the employee data
+    templateFields.map((column) =>
+      // Use employee data if available, otherwise use default value
+      column.prefetch !== false && employee[column.field] !== undefined
         ? employee[column.field].toString()
         : defaultValues[column.field] ?? ""
     )
   );
+
+  // Return the CSV template with headers and rows
   return [headers, ...rows];
 }
 

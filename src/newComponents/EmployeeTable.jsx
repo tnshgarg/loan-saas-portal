@@ -248,7 +248,7 @@ export default function EmployeeTable({ employeesData }) {
             if (currentPage > 1) setCurrentPage((prevPage) => prevPage - 1);
           }}
         >
-          <i class="fa fa-arrow-left text-xs" aria-hidden="true"></i>
+          <i className="fa fa-arrow-left text-xs" aria-hidden="true"></i>
         </div>
         <div className="bg-white h-5 w-5 items-center flex flex-col justify-center mx-2 shadow-sm">
           <Typography className="font-medium text-[10px]">
@@ -262,7 +262,7 @@ export default function EmployeeTable({ employeesData }) {
               setCurrentPage((prevPage) => prevPage + 1);
           }}
         >
-          <i class="fa fa-arrow-right text-xs" aria-hidden="true"></i>
+          <i className="fa fa-arrow-right text-xs" aria-hidden="true"></i>
         </div>
       </div>
 

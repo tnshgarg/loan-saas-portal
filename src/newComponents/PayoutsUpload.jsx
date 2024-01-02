@@ -1,29 +1,22 @@
 import React from "react";
-import { CsvUploadDialog } from "./CsvUploadDialog";
-import employee_icon from "../assets/icons/employee_data.png";
-import {
-  HEADER_GROUPS,
-  transformHeadersToFields,
-} from "../components/dashboard/payslips/dataUpload/payslipsDataUploadPanelFields";
-import {
-  allEmployeesPanelDetails,
-  useGetAllEmployeesPanelByEmployerIdQuery,
-} from "../store/slices/apiSlices/employees/panelApiSlice";
 import { useDispatch, useSelector } from "react-redux";
+import employee_icon from "../assets/icons/employee_data.png";
 import { FS } from "../components/dashboard/employee/onboarding/validations";
 import {
-  FIELDS as SALARY_FIELDS,
-  HEADER_LIST,
   ONE_CLICK_PAYMENTS_HEADER_MAP as ONE_CLICK_SALARY_HEADER_MAP,
+  FIELDS as SALARY_FIELDS,
 } from "../components/dashboard/payouts/employeeSalary/employeeSalaryFields";
+import { FIELDS as PAYMENTS_FIELDS } from "../components/dashboard/payouts/oneClickPayouts/payoutFields";
 import {
   buildRowMapper,
   buildTemplate,
 } from "../components/dashboard/payouts/util";
+import { HEADER_GROUPS } from "../components/dashboard/payslips/dataUpload/payslipsDataUploadPanelFields";
 import {
-  FIELDS as PAYMENTS_FIELDS,
-  ONE_CLICK_PAYMENTS_HEADER_MAP,
-} from "../components/dashboard/payouts/oneClickPayouts/payoutFields";
+  allEmployeesPanelDetails,
+  useGetAllEmployeesPanelByEmployerIdQuery,
+} from "../store/slices/apiSlices/employees/panelApiSlice";
+import { CsvUploadDialog } from "./CsvUploadDialog";
 
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
@@ -52,9 +45,6 @@ const PayoutsUpload = ({ open, setOpen, payslipsData, handleOpen, type }) => {
     useGetAllEmployeesPanelByEmployerIdQuery(employerId);
 
   if (error) console.error(error);
-
-  console.log("Salary fields:", ONE_CLICK_SALARY_HEADER_MAP);
-  console.log("Payment fields:", ONE_CLICK_PAYMENTS_HEADER_MAP);
 
   const employeesData = data?.body ?? [];
   const paymentsTemplateData = buildTemplate(

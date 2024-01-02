@@ -17,6 +17,13 @@ const REQUIRED_SUFFIX = " (Required)";
 // FIELDS are order Sensitive
 export const FIELDS = [
   {
+    header: "Employee ID" + REQUIRED_SUFFIX,
+    field: "employerEmployeeId",
+    required: true,
+    validations: requiredValidation,
+    group: FG.PERSISTENT,
+  },
+  {
     header: "Mobile Number" + REQUIRED_SUFFIX,
     field: "mobile",
     required: true,
@@ -24,12 +31,13 @@ export const FIELDS = [
     group: FG.PERSISTENT,
   },
   {
-    header: "Employee ID" + REQUIRED_SUFFIX,
-    field: "employerEmployeeId",
+    header: "Name" + REQUIRED_SUFFIX,
+    field: "employeeName",
     required: true,
-    validations: requiredValidation,
+    validations: phoneValidation,
     group: FG.PERSISTENT,
   },
+
   {
     header: "Date Credited" + REQUIRED_SUFFIX,
     field: "dateCredited",
@@ -100,20 +108,20 @@ export const FIELDS = [
     validations: currencyValidation,
     group: FG.DEDUCTIONS,
   },
-  {
-    header: "Earning" + REQUIRED_SUFFIX,
-    field: "earning",
-    required: true,
-    validations: currencyValidation,
-    group: FG.NET_PAY,
-  },
-  {
-    header: "Deductions" + REQUIRED_SUFFIX,
-    field: "deductions",
-    required: true,
-    validations: currencyValidation,
-    group: FG.NET_PAY,
-  },
+  // {
+  //   header: "Earning" + REQUIRED_SUFFIX,
+  //   field: "earning",
+  //   required: true,
+  //   validations: currencyValidation,
+  //   group: FG.NET_PAY,
+  // },
+  // {
+  //   header: "Deductions" + REQUIRED_SUFFIX,
+  //   field: "deductions",
+  //   required: true,
+  //   validations: currencyValidation,
+  //   group: FG.NET_PAY,
+  // },
   {
     header: "Net Pay Post Tax" + REQUIRED_SUFFIX,
     field: "netPayPostTax",

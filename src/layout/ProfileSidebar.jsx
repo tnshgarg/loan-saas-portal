@@ -3,6 +3,7 @@ import {
   Avatar,
   IconButton,
   Tab,
+  TabPanel,
   Tabs,
   TabsBody,
   TabsHeader,
@@ -14,7 +15,11 @@ import {
   setOpenConfigurator,
   useMaterialTailwindController,
 } from "../contexts/SidebarContext";
-import DynamicTabBody from "./DynamicTabBody";
+import BankDetails from "./BankDetails";
+import EmploymentDetails from "./EmploymentDetails";
+import GovernmentIds from "./GovernmentIds";
+import ProfileDetails from "./ProfileDetails";
+import WithdrawalTimeline from "./WithdrawalTimeline";
 
 export function ProfileSidebar({ profileData }) {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -22,15 +27,23 @@ export function ProfileSidebar({ profileData }) {
   const { employeeName } = profileData ?? {};
   const [activeTab, setActiveTab] = useState("");
 
+  console.log({ profileData });
+
   const topData = [
     { label: "Location", value: "Bangalore", icon: "fa fa-map-marker" },
     { label: "Mobile", value: "9041225676", icon: "fa fa-phone" },
     { label: "Email", value: "raunak@unipe.money", icon: "fa fa-envelope" },
   ];
 
-  const tabsMapEntries = Object.entries(newEmployeeFieldsToTabsMap);
+  const categoryComponentMap = {
+    profile: ProfileDetails,
+    employment: EmploymentDetails,
+    governmentIds: GovernmentIds,
+    bankDetails: BankDetails,
+    withdrawalTimeline: WithdrawalTimeline,
+  };
 
-  console.log("tabsMapEntries", tabsMapEntries);
+  const tabsMapEntries = Object.entries(newEmployeeFieldsToTabsMap);
 
   return (
     <aside
@@ -99,15 +112,27 @@ export function ProfileSidebar({ profileData }) {
           ))}
         </TabsHeader>
         <TabsBody>
-          {tabsMapEntries.map((item, index) => (
-            <DynamicTabBody
-              key={index}
-              label={item[0]}
-              category={item[1].category}
-              fields={item[1].fields}
-              profileData={profileData}
-            />
-          ))}
+          {tabsMapEntries.map(([label, { category, fields }], index) => {
+            const Component = categoryComponentMap[category];
+            return (
+              <TabPanel key={index} value={label} className="p-8">
+                <div className="flex flex-row w-full items-center justify-between">
+                  <Typography className="text-xs text-gray font-medium">
+                    {label}
+                  </Typography>
+                  {/* <PrimaryButton color={"primary"} size="sm" title={"Edit Details"} /> */}
+                </div>
+
+                {Component && (
+                  <Component
+                    fields={fields}
+                    employeeId={profileData?._id}
+                    employmentId={profileData?.employmentId}
+                  />
+                )}
+              </TabPanel>
+            );
+          })}
         </TabsBody>
       </Tabs>
     </aside>

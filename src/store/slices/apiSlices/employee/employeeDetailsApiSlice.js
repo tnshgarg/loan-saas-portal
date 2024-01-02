@@ -24,8 +24,10 @@ export const employeeDetails = createApi({
     // Define endpoints here
     getEmployeeDetails: builder.query({
       query: ({ id, employmentId, category, subCategory }) => {
+        if (!id) throw Error("Id is required");
         return `/employee?id=${id}&category=${category}&subCategory=${subCategory}&employmentId=${employmentId}`;
       },
+      // transformResponse:
       providesTags: (id) => [{ type: "EmployeeDetails", id }],
     }),
     updateEmployeeDetails: builder.mutation({

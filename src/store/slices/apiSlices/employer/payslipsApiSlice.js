@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { EMPLOYER_BASE_API_URL, TIMEOUT } from "../../../../utils/apiUrls";
 
-// Define a service using a base URL and expected endpoints
 export const payslipsApi = createApi({
   reducerPath: "payslips",
   baseQuery: fetchBaseQuery({
@@ -10,7 +9,6 @@ export const payslipsApi = createApi({
       const token =
         getState().auth.user?.signInUserSession.idToken.jwtToken ?? "";
 
-      // If we have a token set in state, let's assume that we should be passing it.
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
       }
@@ -21,7 +19,6 @@ export const payslipsApi = createApi({
   tagTypes: ["Payslips"],
   keepUnusedDataFor: TIMEOUT,
   endpoints: (builder) => ({
-    // Define endpoints here
     getPayslips: builder.query({
       query: ({ id, year, month, status = [] }) => {
         const path = `/payslips?id=${id}&year=${year}&month=${month}`;
@@ -41,14 +38,21 @@ export const payslipsApi = createApi({
       },
       transformResponse: (responseData) => {
         if (responseData.body) {
-          responseData.body = JSON.parse(responseData.body);
+          responseData.body = responseData.body;
         }
         console.log(responseData.body);
         return responseData;
       },
       providesTags: ["Payslips"],
     }),
+    sendPayslips: builder.mutation({
+      query: ({ payslipData }) => ({
+        url: "/send-payslips", // Replace with the actual endpoint for sending payslips
+        method: "POST",
+        body: payslipData,
+      }),
+    }),
   }),
 });
 
-export const { useGetPayslipsQuery } = payslipsApi;
+export const { useGetPayslipsQuery, useSendPayslipsMutation } = payslipsApi;

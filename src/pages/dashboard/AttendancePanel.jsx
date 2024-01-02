@@ -41,7 +41,7 @@ const AttendancePanel = () => {
 
   useEffect(() => {
     const attendanceCurrent = data?.body || [];
-    const safeAttendanceCurrent = attendanceCurrent.map((item) => ({
+    const safeAttendanceCurrent = attendanceCurrent?.map((item) => ({
       ...item,
     }));
     setSafeAttendance(safeAttendanceCurrent);

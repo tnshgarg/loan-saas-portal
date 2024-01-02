@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import { useGetEmployeeDetailsQuery } from "../store/slices/apiSlices/employee/employeeDetailsApiSlice";
 import FieldItem from "./FieldItem";
 
-const EmploymentDetails = ({ fields, employeeId }) => {
+const EmploymentDetails = ({ fields, employeeId, employmentId }) => {
   const fieldsArray = Object.entries(fields);
 
   const { data, isLoading, error, refetch } = useGetEmployeeDetailsQuery({
     id: employeeId,
+    employmentId: employmentId,
     category: "employment",
   });
 

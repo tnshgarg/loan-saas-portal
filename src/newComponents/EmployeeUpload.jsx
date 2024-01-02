@@ -13,7 +13,7 @@ import { CsvUploadDialog } from "./CsvUploadDialog";
 
 const EmployeeUpload = ({ open, setOpen, employeesData, handleOpen }) => {
   const dispatch = useDispatch();
-  console.log("HEADER_LIST", HEADER_LIST);
+
   return (
     open && (
       <CsvUploadDialog

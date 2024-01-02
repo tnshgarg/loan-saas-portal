@@ -21,24 +21,27 @@ const FullReportButton = ({ loading, templateData, fileName, fields }) => {
 
   useEffect(() => {
     const processErrors = () => {
-      const errorObj = data.map((item) => {
-        const updatedItem = { ...item };
+      // Add a check to ensure data is not undefined or null
+      if (data) {
+        const errorObj = data.map((item) => {
+          const updatedItem = { ...item };
 
-        fields.forEach(({ field, validations }) => {
-          validLevel = VALIDATIONS[validations](item[field] ?? "");
+          fields.forEach(({ field, validations }) => {
+            validLevel = VALIDATIONS[validations](item[field] ?? "");
 
-          if (validLevel === FS.ERROR || validLevel === FS.WARN) {
-            updatedItem[
-              field
-            ] = `${item[field]} [${VALIDATIONS_MESSAGES[validations]}]`;
-          }
+            if (validLevel === FS.ERROR || validLevel === FS.WARN) {
+              updatedItem[
+                field
+              ] = `${item[field]} [${VALIDATIONS_MESSAGES[validations]}]`;
+            }
+          });
+
+          return updatedItem;
         });
 
-        return updatedItem;
-      });
-
-      setErrorData(errorObj);
-      console.log("errorObj", errorObj);
+        setErrorData(errorObj);
+        console.log("errorObj", errorObj);
+      }
     };
 
     processErrors();
@@ -50,7 +53,7 @@ const FullReportButton = ({ loading, templateData, fileName, fields }) => {
         data={errorData ?? []}
         filename={safeFileName}
         headers={headers ?? []}
-        style={{ outlineWidth: 0, textDecoration: "none" }} // Add textDecoration: 'none'
+        style={{ outlineWidth: 0, textDecoration: "none" }}
       >
         <div className="border border-lightGray p-3 rounded-md col-span-1 flex flex-row items-center justify-between">
           <i className="fa fa-file text-secondary" aria-hidden="true"></i>
