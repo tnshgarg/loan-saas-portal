@@ -1,17 +1,3 @@
-import { Tooltip2 } from "@blueprintjs/popover2";
-import React, { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import Select from "react-select";
-import ErrorDialog from "../../atomic/atoms/alerts/ErrorDialog";
-import FormInput from "../../atomic/atoms/forms/FormInput";
-import { confirmSignUp, registerUser } from "../../store/slices/authSlice";
-import {
-  companyTypes,
-  numberOfEmployees,
-  states,
-} from "../../utils/numberOfEmployees";
 import {
   Card,
   CardBody,
@@ -19,14 +5,24 @@ import {
   CardHeader,
   Checkbox,
   Typography,
-  Button,
 } from "@material-tailwind/react";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import ErrorDialog from "../../atomic/atoms/alerts/ErrorDialog";
+import { confirmSignUp, registerUser } from "../../store/slices/authSlice";
+import {
+  companyTypes,
+  numberOfEmployees,
+  states,
+} from "../../utils/numberOfEmployees";
 
-import TextInput from "../../newComponents/TextInput";
-import PhoneInput from "../../newComponents/PhoneInput";
 import AuthNavbar from "../../layout/AuthNavbar";
-import PrimaryButton from "../../newComponents/PrimaryButton";
 import OtpInput from "../../newComponents/OtpInput";
+import PhoneInput from "../../newComponents/PhoneInput";
+import PrimaryButton from "../../newComponents/PrimaryButton";
+import TextInput from "../../newComponents/TextInput";
 
 import CustomStepper from "../../newComponents/cards/CustomStepper";
 import DropdownInput from "../../newComponents/DropdownInput";
@@ -77,8 +73,6 @@ export const SignUp = () => {
     preferredModules: preferred_modules,
   } = values;
   const onSubmit = () => {
-    console.log(values);
-
     dispatch(
       registerUser(
         username,
@@ -108,7 +102,8 @@ export const SignUp = () => {
         setActiveStep(3);
         // navigate("/confirm-sign-up");
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("ERROR: ", err);
         setSuccessful(false);
       });
   }; // your form submit function which will invoke after successful validation

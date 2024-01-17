@@ -1,4 +1,4 @@
-import { Amplify, Auth } from "aws-amplify";
+import { Auth } from "aws-amplify";
 
 const signUp = (
   username,
@@ -24,12 +24,13 @@ const signUp = (
 ) => {
   if (!phone_number.startsWith("+91")) phone_number = "+91" + phone_number;
   return Auth.signUp({
-    username: username,
+    username,
     password,
     attributes: {
+      username,
       email,
-      phone_number: phone_number,
-      name: name,
+      phone_number,
+      name,
       "custom:company_name": company_name,
       "custom:company_type": company_type,
       "custom:employee_count": employee_count,

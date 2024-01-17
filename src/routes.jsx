@@ -9,11 +9,11 @@ import ComingSoon from "./pages/ComingSoon";
 import AttendancePanel from "./pages/dashboard/AttendancePanel";
 import CompanyDetails from "./pages/dashboard/CompanyDetails";
 import { EmployeesPanel } from "./pages/dashboard/EmployeesPanel";
-import Home from "./pages/dashboard/Home";
 import { PayoutsPage } from "./pages/dashboard/PayoutsPage";
 import PayslipsPanel from "./pages/dashboard/PayslipsPanel";
 import Repayments from "./pages/dashboard/Repayments";
 import { WithdrawalsPage } from "./pages/dashboard/WithdrawalsPage";
+import Home from "./pages/dashboard/home";
 
 const icon = {
   className: "w-6 h-6 text-inherit text-gray",
