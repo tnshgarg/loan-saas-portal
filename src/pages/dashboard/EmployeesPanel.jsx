@@ -255,7 +255,7 @@ const TabularTabsComponent = () => {
   };
 
   useEffect(() => {
-    if (auth === undefined || auth === {} || !auth.isLoggedIn) {
+    if (auth === undefined || auth == {} || !auth.isLoggedIn) {
       navigate("auth/login", { replace: true });
     } else {
       // setUserName(user.signInUserSession.idToken.payload.name);
@@ -355,7 +355,7 @@ const TabularTabsComponent = () => {
 
       <TableLayout
         mainData={data?.body}
-        rowData={filteredData}
+        rowData={filteredData || []}
         setRowData={setFilteredData}
         tableHeaders={TABLE_HEADERS}
         renderActionItems={(item, index) => (

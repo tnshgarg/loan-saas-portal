@@ -1,5 +1,5 @@
 import { Option, Select } from "@material-tailwind/react";
-import React from "react";
+import React, { useEffect } from "react";
 
 const MONTHS = [
   "",
@@ -22,6 +22,14 @@ const DateDropdown = ({ onChange }) => {
   let year = date.getFullYear();
   let month = date.getMonth() + 1;
 
+  useEffect(() => {
+    if (onChange)
+      onChange({
+        year,
+        month,
+      });
+  }, []);
+
   const options = Array.from({ length: 12 }, (_, index) => {
     month -= 1;
     if (month === 0) {
@@ -36,7 +44,7 @@ const DateDropdown = ({ onChange }) => {
 
   const handleSelectChange = (event) => {
     if (onChange) {
-      const selectedDate = parseInt(event.currentTarget.value);
+      const selectedDate = parseInt(event);
       onChange({
         year: parseInt(selectedDate / 100),
         month: selectedDate % 100,
@@ -53,6 +61,7 @@ const DateDropdown = ({ onChange }) => {
         size="md"
         onChange={handleSelectChange}
         selected={options[0]}
+        value={options[0].value}
       >
         {options.map((option) => (
           <Option value={option.value} key={option.value}>

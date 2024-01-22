@@ -1,6 +1,6 @@
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import DateDropdown from "../../components/dashboard/payouts/info/DateDropdown.jsx";
 import TableLayout from "../../layout/TableLayout.jsx";
 import AttendanceUpload from "../../newComponents/AttendanceUpload.jsx";
@@ -8,6 +8,14 @@ import PrimaryButton from "../../newComponents/PrimaryButton.jsx";
 import { useGetAttendanceQuery } from "../../store/slices/apiSlices/employer/attendanceApiSlice.js";
 import { getExcel } from "../../utils/excelHandling.js";
 
+const TABLE_HEADERS = [
+  { label: "Emp ID", value: "employerEmployeeId" },
+  { label: "Name", value: "name" },
+  { label: "EWA", value: "ewa" },
+  { label: "Present", value: "totalPresentDays" },
+  { label: "Half Day", value: "totalHalfDays" },
+  { label: "Paid Holidays", value: "totalHolidays" },
+];
 const AttendancePanel = () => {
   const today = new Date();
   const [open, setOpen] = useState(false);
@@ -16,21 +24,11 @@ const AttendancePanel = () => {
     month: today.getMonth() + 1,
   });
 
-  const TABLE_HEADERS = [
-    { label: "Emp ID", value: "employerEmployeeId" },
-    { label: "Name", value: "name" },
-    { label: "EWA", value: "ewa" },
-    { label: "Present", value: "totalPresentDays" },
-    { label: "Half Day", value: "totalHalfDays" },
-    { label: "Paid Holidays", value: "totalHolidays" },
-  ];
-
   const employerId = useSelector(
     (state) => state.auth.user?.attributes.sub || ""
   );
-  const dispatch = useDispatch();
 
-  const { data, isLoading, refetch, isFetching } = useGetAttendanceQuery({
+  const { data } = useGetAttendanceQuery({
     id: employerId,
     year: year,
     month: month,
@@ -49,10 +47,6 @@ const AttendancePanel = () => {
 
   const dateChanged = (updatedDate) => {
     setDate(updatedDate);
-  };
-
-  const dataRefetch = () => {
-    refetch();
   };
 
   const downloadExcel = () => {

@@ -78,8 +78,11 @@ export default function Sidenav({ brandImg, brandName, routes }) {
       </List>
       <div className="mt-auto justify-end bg-lightgray_01 m-4 rounded-md p-4">
         <Typography className="font-bold text-md">Need Help?</Typography>
-        <Typography className="text-sm text-gray">
-          Loreum Ipsum info but
+        <Typography className="text-xs text-blue-gray-400">
+          See how Open-Offer works?
+        </Typography>
+        <Typography className="text-light-blue-500 text-xs mt-3">
+          Chat With Us
         </Typography>
       </div>
       {/* <Alert

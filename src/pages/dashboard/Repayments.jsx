@@ -16,6 +16,18 @@ import StatisticsCard from "../../newComponents/cards/StatisticsCard";
 import WithdrawalsCard from "../../newComponents/cards/withdrawals-card";
 import { useGetRepaymentsQuery } from "../../store/slices/apiSlices/employer/ewaApiSlice";
 
+const TABLE_HEADERS = [
+  { label: "Emp ID", value: "employeeId" },
+  { label: "Name", value: "name" },
+  { label: "Loan Amount", value: "loanAmount" },
+  { label: "Status", value: "status" },
+  { label: "Disbursement Date", value: "availedAt" },
+  { label: "Due Date", value: "dueDate" },
+  { label: "Pending Amount", value: "pendingAmount" },
+  { label: "Repaid Amount", value: "paidAmount" },
+  { label: "Repayment Date", value: "repaymentDate" },
+];
+
 const Repayments = () => {
   const [filteredData, setFilteredData] = useState([]);
   const today = new Date();
@@ -28,26 +40,13 @@ const Repayments = () => {
   const employerId =
     useSelector((state) => state.auth.user?.attributes.sub) ?? "";
 
-  const { data, isLoading, refetch, isFetching } = useGetRepaymentsQuery({
+  const { data } = useGetRepaymentsQuery({
     id: employerId,
-    year: 2023,
-    month: 11,
+    year: year,
+    month: month,
   });
 
   console.log("Repayments:", data?.body);
-
-  const TABLE_HEADERS = [
-    { label: "Emp ID", value: "employeeId" },
-    { label: "Name", value: "name" },
-    { label: "Loan Amount", value: "loanAmount" },
-    { label: "Status", value: "status" },
-    { label: "Disbursement Date", value: "availedAt" },
-    { label: "Due Date", value: "dueDate" },
-    { label: "Pending Amount", value: "pendingAmount" },
-    { label: "Repaid Amount", value: "paidAmount" },
-    { label: "Repayment Date", value: "repaymentDate" },
-    // { label: "", value: "options" },
-  ];
 
   const dueEmployees = data?.body.filter(
     (repayment) => repayment.status === "PENDING"
@@ -77,9 +76,13 @@ const Repayments = () => {
     },
   ];
 
+  const dateChanged = (updatedDate) => {
+    setDate(updatedDate);
+  };
+
   return (
     <div className="mt-4">
-      <DateDropdown />
+      <DateDropdown onChange={dateChanged} />
       <div className="mb-6 mt-4 grid gap-y-10 gap-x-4 md:grid-cols-3 xl:grid-cols-5">
         {statisticsCardsData.map(({ icon, title, footer, span, ...rest }) => (
           <StatisticsCard
@@ -108,7 +111,7 @@ const Repayments = () => {
 
       <TableLayout
         mainData={data?.body}
-        rowData={filteredData}
+        rowData={filteredData || []}
         setRowData={setFilteredData}
         tableHeaders={TABLE_HEADERS}
         renderActionItems={(item, index) => (

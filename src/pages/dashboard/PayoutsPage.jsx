@@ -34,22 +34,22 @@ function formatAsINR(value) {
     currency: "INR",
   }).format(value);
 }
+const TABLE_HEADERS = [
+  { label: "Emp ID", value: "employerEmployeeId" },
+  { label: "Name", value: "employeeName" },
+  { label: "Mobile Number", value: "mobile" },
+  { label: "Year", value: "year" },
+  { label: "Month", value: "month" },
+  { label: "Amount Payable", value: "amount" },
+  { label: "Remarks", value: "remarks" },
+  { label: "Account Number", value: "accountNumber" },
+  { label: "IFSC", value: "ifsc" },
+  { label: "URN", value: "totalHolidays" },
+  { label: "Payout Status", value: "payoutStatus" },
+  { label: "Message", value: "status" },
+];
 
 export function _PayoutsPage({ employerId, dispatch }) {
-  const TABLE_HEADERS = [
-    { label: "Emp ID", value: "employerEmployeeId" },
-    { label: "Name", value: "employeeName" },
-    { label: "Mobile Number", value: "mobile" },
-    { label: "Year", value: "year" },
-    { label: "Month", value: "month" },
-    { label: "Amount Payable", value: "amount" },
-    { label: "Remarks", value: "remarks" },
-    { label: "Account Number", value: "accountNumber" },
-    { label: "IFSC", value: "ifsc" },
-    { label: "URN", value: "totalHolidays" },
-    { label: "Payout Status", value: "payoutStatus" },
-    { label: "Message", value: "status" },
-  ];
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
 
@@ -254,7 +254,7 @@ export function _PayoutsPage({ employerId, dispatch }) {
       </div>
 
       <div className="w-full flex-row flex items-center justify-between">
-        <DateDropdown />
+        <DateDropdown onChange={dateChanged} />
         <div className="flex-row flex items-center justify-between">
           <PrimaryButton
             title={"Upload Salary Data"}
@@ -297,7 +297,7 @@ export function _PayoutsPage({ employerId, dispatch }) {
 
       <TableLayout
         mainData={data?.body}
-        rowData={filteredData?.data}
+        rowData={filteredData?.data || []}
         setRowData={setFilteredData}
         tableHeaders={TABLE_HEADERS}
       />

@@ -182,18 +182,22 @@ const TableLayout = ({
               </tr>
             </thead>
             <tbody>
-              {sortData(currentItems)?.map((item, index) => (
-                <tr key={index}>
-                  {tableHeaders.map(({ value }, key) => (
-                    <td className={tableCellClass} key={key}>
-                      {renderValue(item?.[value])}
-                    </td>
-                  ))}
-                  {renderActionItems && (
-                    <td>{renderActionItems(item, index)}</td>
-                  )}
-                </tr>
-              ))}
+              {currentItems.length > 0 ? (
+                sortData(currentItems)?.map((item, index) => (
+                  <tr key={index}>
+                    {tableHeaders.map(({ value }, key) => (
+                      <td className={tableCellClass} key={key}>
+                        {renderValue(item?.[value])}
+                      </td>
+                    ))}
+                    {renderActionItems && (
+                      <td>{renderActionItems(item, index)}</td>
+                    )}
+                  </tr>
+                ))
+              ) : (
+                <p className="pl-4 py-2 text-blue-gray-500">No Data Present</p>
+              )}
             </tbody>
           </table>
         </CardBody>

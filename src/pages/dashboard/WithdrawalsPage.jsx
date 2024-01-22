@@ -1,6 +1,6 @@
 import { BanknotesIcon } from "@heroicons/react/24/outline";
 import { Typography } from "@material-tailwind/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import DateDropdown from "../../components/dashboard/payouts/info/DateDropdown.jsx";
 import TableLayout from "../../layout/TableLayout.jsx";
@@ -14,80 +14,13 @@ function mapStateToProps(state) {
   };
 }
 
-const DISBURSEMENT_FIELDS = [
-  {
-    header: "Employee Id",
-    field: "employeeId",
-  },
-  {
-    header: "Principal Employer",
-    field: "principalEmployer",
-  },
-  {
-    header: "Employee Name",
-    field: "name",
-  },
-  {
-    header: "Account Number",
-    field: "bankAccountNumber",
-  },
-  {
-    header: "Availed At",
-    field: "availedAt",
-  },
-  {
-    header: "Loan Amount",
-    field: "loanAmount",
-  },
-  {
-    header: "Due Date",
-    field: "dueDate",
-  },
-  {
-    header: "Status",
-    field: "loanStatus",
-  },
-  {
-    header: "Disbursement Date",
-    field: "disbursedAt",
-  },
-  {
-    header: "Pending Amount",
-    field: "pendingAmount",
-  },
-  {
-    header: "Total Paid Amount",
-    field: "paidAmount",
-  },
-  {
-    header: "Paid Amount",
-    field: "payoutAmount",
-  },
-  {
-    header: "Payment Status",
-    field: "payoutStatus",
-  },
-  {
-    header: "Payment Time",
-    field: "payoutDate",
-  },
-  {
-    header: "Payment Mode",
-    field: "transferMode",
-  },
-].map((column) => ({
-  ...column,
-  Header: column.header,
-  accessor: column.field,
-}));
-
-const DISBURSEMENTS_MODULE = "disbursements";
 const _WithdrawalsPage = ({ employerId, dispatch }) => {
   const today = new Date();
   const [{ year, month }, setDate] = useState({
     year: today.getFullYear(),
     month: today.getMonth() + 1,
   });
+  const [filteredData, setFilteredData] = useState([]);
 
   const TABLE_HEADERS = [
     { label: "Emp ID", value: "employeeId", sortable: true },
@@ -98,19 +31,17 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
     { label: "Due Date", value: "dueDate" },
     { label: "UTR number", value: "utr" },
     { label: "Bank Account", value: "bankAccountNumber" },
-    // { label: "", value: "options" },
   ];
 
   const dateChanged = (updatedDate) => {
     setDate(updatedDate);
-    // dataRefetch();
   };
 
   const key = `disbursements-info-historical-${year}-${month}`;
-  const { data, isLoading, refetch, isFetching } = useGetDisbursementsQuery({
+  const { data } = useGetDisbursementsQuery({
     id: employerId,
-    year: 2023,
-    month: 11,
+    year: year,
+    month: month,
   });
 
   const responseFromQuery =
@@ -122,10 +53,18 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
   } = responseFromQuery;
 
   console.log("Dis:", data?.body);
-  const [filteredData, setFilteredData] = useState(data?.body);
-  const { totalEwaAmount, activeEmployeesCount } = EmployeesData?.body.reduce(
+  console.log("Employees Data:", EmployeesData?.body);
+
+  useEffect(() => {
+    if (data?.body) {
+      setFilteredData(data?.body);
+    }
+  }, [data]);
+
+  const { totalEwaAmount, activeEmployeesCount } = (
+    EmployeesData?.body || []
+  ).reduce(
     (result, employeeData) => {
-      // Check if the status is "active" before adding the loan amount
       if (employeeData.ewaStatus === "ACTIVE") {
         result.totalEwaAmount += employeeData.ewa ?? 0;
         result.activeEmployeesCount += 1;
@@ -135,15 +74,11 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
     },
     { totalEwaAmount: 0, activeEmployeesCount: 0 }
   );
-  const totalLoanAmount = data?.body.reduce((total, disbursement) => {
+  const totalLoanAmount = (data?.body || []).reduce((total, disbursement) => {
     return total + (disbursement.loanAmount || 0);
   }, 0);
 
   const totalEmployeesWithWithdrawals = data?.body?.length;
-
-  const dataRefetch = () => {
-    refetch();
-  };
 
   const statisticsCardsData = [
     {
@@ -209,7 +144,7 @@ const _WithdrawalsPage = ({ employerId, dispatch }) => {
       </div>
 
       <TableLayout
-        mainData={data?.body}
+        mainData={data?.body || []}
         rowData={filteredData}
         setRowData={setFilteredData}
         tableHeaders={TABLE_HEADERS}
