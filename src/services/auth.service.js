@@ -27,7 +27,6 @@ const signUp = (
     username,
     password,
     attributes: {
-      username,
       email,
       phone_number,
       name,
