@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { EMPLOYER_BASE_API_URL, TIMEOUT } from "../../../../utils/apiUrls";
 
-// Define a service using a base URL and expected endpoints
 export const allEmployeesPanelDetails = createApi({
   reducerPath: "allEmployeesPanelDetails",
   baseQuery: fetchBaseQuery({
@@ -10,7 +9,6 @@ export const allEmployeesPanelDetails = createApi({
       const token =
         getState().auth?.user.signInUserSession.idToken.jwtToken ?? "";
 
-      // If we have a token set in state, let's assume that we should be passing it.
       if (token) {
         headers.set("authorization", `${token}`);
       }
@@ -21,10 +19,30 @@ export const allEmployeesPanelDetails = createApi({
   tagTypes: ["AllEmployeesPanelDetails"],
   keepUnusedDataFor: TIMEOUT,
   endpoints: (builder) => ({
-    // Define endpoints here
     getAllEmployeesPanelByEmployerId: builder.query({
       query: (id) => `/employees?id=${id}&category=panel`,
       providesTags: ["AllEmployeesPanelDetails"],
+      transformResponse: (responseData) => {
+        if (responseData.body) {
+          responseData.meta = {};
+          responseData.meta.activeEmployees = responseData?.body?.filter(
+            (item) => item.active == true
+          )?.length;
+          responseData.meta.kycPending = responseData?.body?.filter(
+            (item) =>
+              item.aadhaar?.verifyStatus != "SUCCESS" ||
+              item.pan?.verifyStatus != "SUCCESS" ||
+              item.bank?.verifyStatus != "SUCCESS"
+          )?.length;
+          responseData.meta.kycDone = responseData?.body?.filter(
+            (item) =>
+              item.aadhaar?.verifyStatus == "SUCCESS" &&
+              item.pan?.verifyStatus == "SUCCESS" &&
+              item.bank?.verifyStatus == "SUCCESS"
+          )?.length;
+        }
+        return responseData;
+      },
     }),
   }),
 });

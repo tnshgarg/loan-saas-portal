@@ -29,6 +29,7 @@ function Icon({ id, open }) {
 
 const WithdrawalTimeline = ({ employeeId }) => {
   const [open, setOpen] = React.useState(0);
+  //FIXME: use lazy query instead of useQuery
   const responseFromQuery = useGetWithdrawalTimelineQuery(employeeId);
   const { data, isLoading, error } = responseFromQuery;
   console.log("WithdrawalTimeline:", data?.body);
@@ -64,7 +65,7 @@ const WithdrawalTimeline = ({ employeeId }) => {
               ₹{item.loanAmount}
             </Typography>
             <Typography className="text-xs text-gray">
-              Due date 1st Sep, 2022
+              Due date: {new Date(item.dueDate).toLocaleDateString()}
             </Typography>
           </div>
           <div className="bg-primary rounded-xl">
@@ -73,11 +74,17 @@ const WithdrawalTimeline = ({ employeeId }) => {
             </Typography>
           </div>
         </AccordionHeader>
-        <AccordionBody className="w-full grid grid-cols-4 p-4 pt-0">
-          <FieldItem label={"On-Demand Salary "} value={"+₹7500"} />
-          <FieldItem label={"On-Demand Salary "} value={"+₹7500"} />
-          <FieldItem label={"On-Demand Salary "} value={"+₹7500"} />
-          <FieldItem label={"On-Demand Salary "} value={"+₹7500"} />
+        <AccordionBody className="w-full grid grid-cols-3 p-4 pt-0">
+          <FieldItem label={"On-Demand Salary "} value={item.loanAmount} />
+          <FieldItem
+            label={"Loan Account Number "}
+            value={item.loanAccountNumber}
+          />
+          <FieldItem
+            label={"Net Disbursement Amount"}
+            value={item.netDisbursementAmount}
+          />
+          <FieldItem label={"Lender"} value={item.lender} />
         </AccordionBody>
       </Accordion>
     );

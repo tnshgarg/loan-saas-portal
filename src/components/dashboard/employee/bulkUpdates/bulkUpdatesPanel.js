@@ -12,11 +12,14 @@ const headerMapper = buildRowMapper(BULK_UPDATES_HEADER_MAP, "");
 
 function _EmployeesBulkUpdatesPanel({ employerId }) {
   // techdebt: fetches on render, can lead to unnecessary API calls
-  const { data, error, isLoading } =
+  const { data, error, isLoading, isSuccess } =
     useGetAllEmployeesEmploymentByEmployerIdQuery(employerId);
   if (error) console.error(error);
   const employeesData = data?.body ?? [];
-  const templateData = buildTemplate(FIELDS, employeesData);
+  let templateData = [];
+  if (isSuccess) {
+    templateData = buildTemplate(FIELDS, employeesData);
+  }
   return (
     <>
       <CSVUploadDashlet

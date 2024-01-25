@@ -26,6 +26,8 @@ export function buildTemplate(
   defaultValues = {}
 ) {
   const headers = templateFields?.map((column) => column.header);
+  //HACK: Error should be handled by calling parent function
+  if (!employeesData) return [headers];
   const rows = employeesData?.map((employee) =>
     templateFields?.map((column) =>
       column.prefetch && employee[column.field]

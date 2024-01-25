@@ -25,7 +25,9 @@ export function ProfileSidebar({ profileData }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { openConfigurator } = controller;
   const { employeeName } = profileData ?? {};
-  const [activeTab, setActiveTab] = useState("");
+  const [activeTab, setActiveTab] = useState(
+    Object.keys(newEmployeeFieldsToTabsMap)[0]
+  );
 
   console.log({ profileData });
 
@@ -97,6 +99,8 @@ export function ProfileSidebar({ profileData }) {
             className:
               "bg-transparent border-b-2 border-[#016bff] shadow-none rounded-none",
           }}
+          defaultValue={"Employee Details"}
+          defaultChecked={true}
         >
           {tabsMapEntries.map(([key, value], index) => (
             <Tab

@@ -29,6 +29,7 @@ function mapStateToProps(state) {
 }
 
 function formatAsINR(value) {
+  console.log("VAL: ", value);
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
@@ -94,8 +95,8 @@ export function _PayoutsPage({ employerId, dispatch }) {
   }
 
   const [filteredData, setFilteredData] = useState(entries["ALL"]);
-  const metrics = {},
-    totals = {};
+  const metrics = {};
+  const totals = {};
   if (entries["ALL"]) {
     entries["ALL"].forEach((item) => {
       metrics[item.status] = (metrics[item.status] ?? 0) + 1;
@@ -191,19 +192,21 @@ export function _PayoutsPage({ employerId, dispatch }) {
       data: [
         {
           label: "Processing",
-          value:
-            formatAsINR(totals["CONFIRMED"]) +
-            formatAsINR(totals["INPROGRESS"]),
+          value: formatAsINR(
+            parseInt(totals["CONFIRMED"] || 0) +
+              parseInt(totals["INPROGRESS"] || 0)
+          ),
+
           className: "text-warning text-[14px] font-semibold",
         },
         {
           label: "Completed",
-          value: formatAsINR(totals["SUCCESS"]),
+          value: formatAsINR(parseInt(totals["SUCCESS"] || 0)),
           className: "text-primary text-[14px] font-semibold",
         },
         {
           label: "Errors",
-          value: formatAsINR(totals["ERROR"]),
+          value: formatAsINR(parseInt(totals["ERROR"]) || 0),
           className: "text-danger text-[14px] font-semibold",
         },
       ],

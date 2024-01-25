@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { EMPLOYER_BASE_API_URL, TIMEOUT } from "../../../../utils/apiUrls";
 
-// Define a service using a base URL and expected endpoints
 export const allEmployeesEmploymentDetails = createApi({
   reducerPath: "allEmployeesEmploymentDetails",
   baseQuery: fetchBaseQuery({
@@ -10,7 +9,6 @@ export const allEmployeesEmploymentDetails = createApi({
       const token =
         getState().auth?.user.signInUserSession.idToken.jwtToken ?? "";
 
-      // If we have a token set in state, let's assume that we should be passing it.
       if (token) {
         headers.set("authorization", `${token}`);
       }
@@ -21,10 +19,18 @@ export const allEmployeesEmploymentDetails = createApi({
   tagTypes: ["AllEmployeesEmploymentDetails"],
   keepUnusedDataFor: TIMEOUT,
   endpoints: (builder) => ({
-    // Define endpoints here
     getAllEmployeesEmploymentByEmployerId: builder.query({
       query: (id) => `/employees?id=${id}&category=employment`,
       providesTags: ["AllEmployeesEmploymentDetails"],
+      transformResponse: (responseData) => {
+        if (responseData.body) {
+          responseData.meta = {};
+          responseData.meta.onboardedUsers = responseData?.body?.filter(
+            (item) => item.onboarded == true
+          )?.length;
+        }
+        return responseData;
+      },
     }),
   }),
 });
