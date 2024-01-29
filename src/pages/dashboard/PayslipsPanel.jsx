@@ -50,9 +50,9 @@ const PayslipsPanel = () => {
   const TABLE_HEADERS = [
     { label: "Emp ID", value: "employerEmployeeId" },
     { label: "Name", value: "name" },
-    { label: "Take Home Salary", value: "ewa" },
-    { label: "Deductions", value: "totalPresentDays" },
-    { label: "Gross Pay", value: "totalHalfDays" },
+    { label: "Take Home Salary", value: "netPayPostTax" },
+    { label: "Deductions", value: "deductions" },
+    { label: "Gross Pay", value: "totalEarnings" },
     { label: "Action", value: "totalHolidays" },
   ];
 

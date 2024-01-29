@@ -21,7 +21,7 @@ export const payslipsApi = createApi({
   endpoints: (builder) => ({
     getPayslips: builder.query({
       query: ({ id, year, month, status = [] }) => {
-        const path = `/payslips?id=${id}&year=${year}&month=${month}`;
+        const path = `/payslips/get?id=${id}&year=${year}&month=${month}`;
         if (!id || !year || !month)
           throw Error(
             `none of these can be null ${JSON.stringify({
@@ -46,8 +46,8 @@ export const payslipsApi = createApi({
       providesTags: ["Payslips"],
     }),
     sendPayslips: builder.mutation({
-      query: ({ payslipData }) => ({
-        url: "/send-payslips", // Replace with the actual endpoint for sending payslips
+      query: (payslipData) => ({
+        url: "/payslips/send",
         method: "POST",
         body: payslipData,
       }),
