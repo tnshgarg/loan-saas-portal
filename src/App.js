@@ -102,11 +102,12 @@
 
 // export default App;
 
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "./layout/Dashboard";
 
-import { useEffect } from "react";
 import Amplify from "aws-amplify";
+import { useEffect } from "react";
+import { EmployerUnapproved } from "./components/employerUnapproved";
 import Auth from "./layout/Auth";
 
 function App() {
@@ -124,6 +125,7 @@ function App() {
     <Routes>
       <Route path="/dashboard/*" element={<Dashboard />} />
       <Route path="/auth/*" element={<Auth />} />
+      <Route path="/unapproved" element={<EmployerUnapproved />} />
       <Route path="*" element={<Navigate to="/auth/login" replace />} />
     </Routes>
   );
