@@ -1,4 +1,6 @@
 import {
+  AdjustmentsHorizontalIcon,
+  ArrowDownTrayIcon,
   ArrowUpTrayIcon,
   PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
@@ -53,7 +55,6 @@ const PayslipsPanel = () => {
     { label: "Take Home Salary", value: "netPayPostTax" },
     { label: "Deductions", value: "deductions" },
     { label: "Gross Pay", value: "totalEarnings" },
-    { label: "Action", value: "totalHolidays" },
   ];
 
   const [filteredData, setFilteredData] = useState(data?.body);
@@ -102,6 +103,39 @@ const PayslipsPanel = () => {
         rowData={safePayslips}
         setRowData={setFilteredData}
         tableHeaders={TABLE_HEADERS}
+        renderActionItems={(item, index) => (
+          <div className="flex flex-row items-center">
+            {item?.documents?.url ? (
+              <a
+                href={item?.documents?.url}
+                target="_blank"
+                className="hover:bg-blue-gray-50 cursor-pointer rounded-md p-2"
+                onClick={() => {}}
+              >
+                <ArrowDownTrayIcon width={18} height={18} />
+              </a>
+            ) : (
+              <a
+                href={"#"}
+                className="rounded-md p-2 cursor-not-allowed"
+                onClick={() => {}}
+              >
+                <ArrowDownTrayIcon
+                  className="cursor-not-allowed"
+                  width={18}
+                  height={18}
+                  color="lightgray"
+                />
+              </a>
+            )}
+            <div
+              className="hover:bg-blue-gray-50 cursor-pointer rounded-md p-2"
+              onClick={() => {}}
+            >
+              <AdjustmentsHorizontalIcon width={18} height={18} />
+            </div>
+          </div>
+        )}
       />
       <PayslipsUpload
         setOpen={setOpen}

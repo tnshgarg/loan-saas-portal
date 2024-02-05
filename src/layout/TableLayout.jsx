@@ -153,17 +153,17 @@ const TableLayout = ({
       <Card className="mt-4 shadow-none rounded-none ">
         <CardBody className="h-full w-full overflow-x-scroll p-0">
           <table className="w-full min-w-max table-auto text-left">
-            <thead className="w-full">
+            <thead className="w-full border-b border-lightGray">
               <tr>
                 {tableHeaders.map((item, index) => (
                   <th
                     key={index}
-                    className="cursor-pointer border-b border-lightGray  p-4 transition-colors hover:bg-blue-gray-50"
+                    className="cursor-pointer  p-4 transition-colors hover:bg-blue-gray-50"
                     onClick={() => item.sortable && requestSort(item.value)}
                   >
                     <Typography
                       variant="small"
-                      className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-medium text-black"
+                      className="flex items-center justify-between gap-2 leading-none opacity-70 font-medium text-black"
                     >
                       {item.label}
                       {item.sortable && (
