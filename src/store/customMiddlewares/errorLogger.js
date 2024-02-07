@@ -12,7 +12,7 @@ export const rtkQueryErrorLogger = (api) => (next) => (action) => {
 
     const supportEmail = action?.payload?.meta?.supportEmail;
     const baseUrl = window.location.origin;
-    const supportRedirectUrl = new URL("/unapproved", baseUrl);
+    const supportRedirectUrl = new URL("/dashboard/unapproved", baseUrl);
     supportRedirectUrl.searchParams.append("supportEmail", supportEmail);
 
     window.location.href = supportRedirectUrl;

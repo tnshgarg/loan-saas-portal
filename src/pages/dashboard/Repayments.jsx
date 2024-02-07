@@ -60,13 +60,29 @@ const Repayments = () => {
     return totalDue;
   }, 0);
 
+  const repaymentDueDays = data?.body.reduce((repaymentDate, repayment) => {
+    repaymentDate = new Date();
+    const date = new Date(repayment.dueDate);
+    const diffInMs = date - repaymentDate;
+
+    const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
+    if (diffInDays < 0) return `Payment Overdue`;
+
+    return `Payment due in ${diffInDays} days`;
+  }, 0);
+
   const statisticsCardsData = [
     {
       icon: DocumentTextIcon,
       className: "col-span-2",
       title: "Repayment Summary",
       data: [
-        { label: "Amount Due", value: amountDue, className: "text-black" },
+        {
+          label: "Amount Due",
+          value: amountDue,
+          className: "text-black",
+          repaymentDays: repaymentDueDays,
+        },
         {
           label: "Due Employees",
           value: dueEmployeesCount,
@@ -84,29 +100,38 @@ const Repayments = () => {
     <div className="mt-4">
       <DateDropdown onChange={dateChanged} />
       <div className="mb-6 mt-4 grid gap-y-10 gap-x-4 md:grid-cols-3 xl:grid-cols-5">
-        {statisticsCardsData.map(({ icon, title, footer, span, ...rest }) => (
-          <StatisticsCard
-            span={span}
-            key={title}
-            {...rest}
-            title={title}
-            icon={React.createElement(icon, { className: "w-6 h-6 text-gray" })}
-            footer={
-              <div className="flex flex-row items-center">
-                <PrimaryButton
-                  title={"Pay Now"}
-                  color={"primary"}
-                  size={"sm"}
-                  className={"w-1/3 m-0 ml-0"}
-                />
-                <Typography className="text-xs ml-5 text-warning">
-                  Payment due in 2 days
-                </Typography>
-              </div>
-            }
-          />
-        ))}
-        <WithdrawalsCard title={"Repayment Summary"} className={"col-span-2"} />
+        {statisticsCardsData.map(
+          ({ icon, title, footer, span, data, ...rest }) => (
+            <StatisticsCard
+              span={span}
+              key={title}
+              {...rest}
+              data={data}
+              title={title}
+              icon={React.createElement(icon, {
+                className: "w-6 h-6 text-gray",
+              })}
+              footer={
+                <div className="flex flex-row items-center">
+                  <PrimaryButton
+                    title={"Pay Now"}
+                    col
+                    size={"sm"}
+                    className={"w-1/3 m-0 ml-0 bg-black"}
+                  />
+                  <Typography className="text-xs ml-5 text-warning">
+                    {data[0].repaymentDays}
+                  </Typography>
+                </div>
+              }
+            />
+          )
+        )}
+        <WithdrawalsCard
+          title={"Repayment Summary"}
+          className={"col-span-2"}
+          data={data?.body}
+        />
       </div>
 
       <TableLayout

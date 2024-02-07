@@ -1,7 +1,7 @@
 import {
-  AdjustmentsHorizontalIcon,
   ArrowDownTrayIcon,
   ArrowUpTrayIcon,
+  EyeIcon,
   PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
@@ -12,6 +12,7 @@ import TableLayout from "../../layout/TableLayout.jsx";
 import PayslipsUpload from "../../newComponents/PayslipsUpload.jsx";
 import PrimaryButton from "../../newComponents/PrimaryButton.jsx";
 import SendPayslipsDialog from "../../newComponents/SendPayslipsDialog.jsx";
+import ViewDetailsDialog from "../../newComponents/ViewDetailsDialog.jsx";
 import {
   useGetPayslipsQuery,
   useSendPayslipsMutation,
@@ -21,6 +22,7 @@ import { getExcel } from "../../utils/excelHandling.js";
 const PayslipsPanel = () => {
   const [open, setOpen] = useState(false);
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+  const [viewDetailsDialog, setViewDetailsDialog] = useState(true);
   const dispatch = useDispatch();
 
   const employerId = useSelector(
@@ -130,10 +132,17 @@ const PayslipsPanel = () => {
             )}
             <div
               className="hover:bg-blue-gray-50 cursor-pointer rounded-md p-2"
-              onClick={() => {}}
+              onClick={() => {
+                setViewDetailsDialog(true);
+              }}
             >
-              <AdjustmentsHorizontalIcon width={18} height={18} />
+              <EyeIcon width={18} height={18} />
             </div>
+            <ViewDetailsDialog
+              open={viewDetailsDialog}
+              setOpen={setViewDetailsDialog}
+              data={item}
+            />
           </div>
         )}
       />

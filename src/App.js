@@ -107,7 +107,6 @@ import Dashboard from "./layout/Dashboard";
 
 import Amplify from "aws-amplify";
 import { useEffect } from "react";
-import { EmployerUnapproved } from "./components/employerUnapproved";
 import Auth from "./layout/Auth";
 
 function App() {
@@ -125,7 +124,6 @@ function App() {
     <Routes>
       <Route path="/dashboard/*" element={<Dashboard />} />
       <Route path="/auth/*" element={<Auth />} />
-      <Route path="/unapproved" element={<EmployerUnapproved />} />
       <Route path="*" element={<Navigate to="/auth/login" replace />} />
     </Routes>
   );

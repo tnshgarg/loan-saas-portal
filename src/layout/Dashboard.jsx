@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { EmployerUnapproved } from "../components/employerUnapproved";
 import { useMaterialTailwindController } from "../contexts/SidebarContext";
 import LoadingIndicator from "../newComponents/LoadingIndicator";
 import routes from "../routes";
@@ -61,6 +62,7 @@ export function Dashboard() {
               ))
             )
           )}
+          <Route path="/unapproved" element={<EmployerUnapproved />} />
         </Routes>
 
         <div className="text-blue-gray-600">{/* <Footer /> */}</div>
