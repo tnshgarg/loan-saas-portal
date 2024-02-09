@@ -142,12 +142,14 @@ const Repayments = () => {
             />
           )
         )}
-        <WithdrawalsCard
-          title={"Repayment Summary"}
-          className={"col-span-2"}
-          data={data?.body}
-          payNowAction={handleComingSoonModal}
-        />
+        {data?.body.length > 0 && (
+          <WithdrawalsCard
+            title={"Repayment Summary"}
+            className={"col-span-2"}
+            data={data?.body}
+            payNowAction={handleComingSoonModal}
+          />
+        )}
       </div>
 
       <TableLayout
