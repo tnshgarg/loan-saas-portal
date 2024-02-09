@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import DateDropdown from "../../components/dashboard/payouts/info/DateDropdown";
 import TableLayout from "../../layout/TableLayout";
+import ComingSoonDialog from "../../newComponents/ComingSoonDialog";
 import PrimaryButton from "../../newComponents/PrimaryButton";
 import RepaymentsDialog from "../../newComponents/RepaymentsDialog";
 import StatisticsCard from "../../newComponents/cards/StatisticsCard";
@@ -30,6 +31,7 @@ const TABLE_HEADERS = [
 
 const Repayments = () => {
   const [filteredData, setFilteredData] = useState([]);
+  const [comingSoonModal, setComingSoonModal] = useState(false);
   const today = new Date();
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -60,16 +62,26 @@ const Repayments = () => {
     return totalDue;
   }, 0);
 
-  const repaymentDueDays = data?.body.reduce((repaymentDate, repayment) => {
-    repaymentDate = new Date();
-    const date = new Date(repayment.dueDate);
-    const diffInMs = date - repaymentDate;
+  const repaymentDueDays = (() => {
+    const currentDate = new Date();
+    let minDaysLeft = Infinity;
 
-    const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
-    if (diffInDays < 0) return `Payment Overdue`;
+    if (data?.body.length == 0) return `No Data Present`;
 
-    return `Payment due in ${diffInDays} days`;
-  }, 0);
+    data?.body.forEach((item) => {
+      const repaymentDate = new Date(item.dueDate);
+      const diffInMs = repaymentDate - currentDate;
+      const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
+
+      if (diffInDays < minDaysLeft) {
+        minDaysLeft = diffInDays;
+      }
+    });
+
+    if (minDaysLeft < 0) return `Payment Overdue`;
+
+    return `Payment Due in ${minDaysLeft} days`;
+  })();
 
   const statisticsCardsData = [
     {
@@ -96,6 +108,8 @@ const Repayments = () => {
     setDate(updatedDate);
   };
 
+  const handleComingSoonModal = () => setComingSoonModal(true);
+
   return (
     <div className="mt-4">
       <DateDropdown onChange={dateChanged} />
@@ -118,6 +132,7 @@ const Repayments = () => {
                     col
                     size={"sm"}
                     className={"w-1/3 m-0 ml-0 bg-black"}
+                    onClick={handleComingSoonModal}
                   />
                   <Typography className="text-xs ml-5 text-warning">
                     {data[0].repaymentDays}
@@ -131,6 +146,7 @@ const Repayments = () => {
           title={"Repayment Summary"}
           className={"col-span-2"}
           data={data?.body}
+          payNowAction={handleComingSoonModal}
         />
       </div>
 
@@ -176,6 +192,8 @@ const Repayments = () => {
         setOpen={setOpen}
         repaymentsData={data?.body[activeIndex]?.breakdown}
       />
+
+      <ComingSoonDialog open={comingSoonModal} setOpen={setComingSoonModal} />
     </div>
   );
 };

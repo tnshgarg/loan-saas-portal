@@ -10,9 +10,8 @@ import {
 import React from "react";
 import { NavLink } from "react-router-dom";
 
-export default function Sidenav({ brandImg, brandName, routes }) {
+export default function Sidenav({ brandImg, routes }) {
   const [open, setOpen] = React.useState(0);
-  const [openAlert, setOpenAlert] = React.useState(true);
 
   const handleOpen = (value) => {
     console.log({ open });
@@ -21,7 +20,6 @@ export default function Sidenav({ brandImg, brandName, routes }) {
 
   return (
     <aside className="bg-white fixed z-50 h-[calc(100vh)] w-full max-w-[18rem] flex flex-col">
-      {/* className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5"> */}
       <div className="mb-2 flex items-center gap-4 p-4">
         <img src={brandImg} className="w-1/2 h-20px" />
       </div>
@@ -59,7 +57,6 @@ export default function Sidenav({ brandImg, brandName, routes }) {
                       to={`/dashboard${parentRoute}${route}`}
                       style={{ textDecoration: "none" }}
                     >
-                      {/* <ListItemPrefix></ListItemPrefix> */}
                       <ListItem className="rounded-none pl-12 focus:bg-gradient-to-r from-[#ebf9d9] to-[#f5fdc8]">
                         <Typography
                           color="[#597e8c]"
@@ -85,34 +82,6 @@ export default function Sidenav({ brandImg, brandName, routes }) {
           Chat With Us
         </Typography>
       </div>
-      {/* <Alert
-        open={openAlert}
-        className="mt-auto"
-        onClose={() => setOpenAlert(false)}
-      >
-        <CubeTransparentIcon className="mb-4 h-12 w-12" />
-        <Typography variant="h6" className="mb-1">
-          Upgrade to PRO
-        </Typography>
-        <Typography variant="small" className="font-normal opacity-80">
-          Upgrade to Material Tailwind PRO and get even more components,
-          plugins, advanced features and premium.
-        </Typography>
-        <div className="mt-4 flex gap-3">
-          <Typography
-            as="a"
-            href="#"
-            variant="small"
-            className="font-medium opacity-80"
-            onClick={() => setOpenAlert(false)}
-          >
-            Dismiss
-          </Typography>
-          <Typography as="a" href="#" variant="small" className="font-medium">
-            Upgrade Now
-          </Typography>
-        </div>
-      </Alert> */}
     </aside>
   );
 }

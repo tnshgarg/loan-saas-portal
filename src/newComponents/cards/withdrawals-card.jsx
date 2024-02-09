@@ -10,7 +10,13 @@ import {
 } from "@material-tailwind/react";
 import PrimaryButton from "../PrimaryButton";
 
-export default function WithdrawalsCard({ title, className, footer, data }) {
+export default function WithdrawalsCard({
+  title,
+  className,
+  footer,
+  data,
+  payNowAction,
+}) {
   return (
     <Card className={`rounded-lg shadow-none ${className}`}>
       <div className="flex flex-row w-full justify-between">
@@ -26,38 +32,40 @@ export default function WithdrawalsCard({ title, className, footer, data }) {
       </div>
       <CardBody className="p-4 ">
         <List className="w-full p-0">
-          {data.map(({ loanAmount, dueDate }) => {
-            const month = new Intl.DateTimeFormat("en-US", {
-              month: "short",
-            }).format(new Date());
-            const year = new Date(dueDate).getFullYear();
+          {data &&
+            data.map(({ loanAmount, dueDate }) => {
+              const month = new Intl.DateTimeFormat("en-US", {
+                month: "short",
+              }).format(new Date());
+              const year = new Date(dueDate).getFullYear();
 
-            return (
-              <ListItem
-                ripple={false}
-                className="px-3 my-1 py-1 w-full bg-lightgray_01 rounded-md"
-              >
-                <div>
-                  <Typography className="text-xs font-medium text-black">
-                    ₹{loanAmount}
-                  </Typography>
-                  <Typography className="text-xs text-[10px] text-black">
-                    {month} {year}
-                  </Typography>
-                </div>
+              return (
+                <ListItem
+                  ripple={false}
+                  className="px-3 my-1 py-1 w-full bg-lightgray_01 rounded-md"
+                >
+                  <div>
+                    <Typography className="text-xs font-medium text-black">
+                      ₹{loanAmount}
+                    </Typography>
+                    <Typography className="text-xs text-[10px] text-black">
+                      {month} {year}
+                    </Typography>
+                  </div>
 
-                <ListItemSuffix>
-                  <PrimaryButton
-                    title={"Pay Now"}
-                    className={"h-8 mr-0"}
-                    size={"sm"}
-                    color={"primary"}
-                    variant={"outlined"}
-                  />
-                </ListItemSuffix>
-              </ListItem>
-            );
-          })}
+                  <ListItemSuffix>
+                    <PrimaryButton
+                      title={"Pay Now"}
+                      className={"h-8 mr-0"}
+                      size={"sm"}
+                      color={"primary"}
+                      variant={"outlined"}
+                      onClick={payNowAction}
+                    />
+                  </ListItemSuffix>
+                </ListItem>
+              );
+            })}
         </List>
       </CardBody>
       {footer && (
